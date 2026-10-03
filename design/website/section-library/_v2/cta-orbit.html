@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CTA orbit band</title>
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+<!--
+  COMPOSITION  — Floating rounded CTA band. Left-aligned content stack
+                 (oversized 2-line headline → supporting line → a row of two
+                 pill buttons, each closed by a circular "knob" chip carrying
+                 the CR → glyph). A concentric radial GLOW bleeds off the right
+                 edge from a bright core — rendered here as the CR orbit motif:
+                 stacked concentric FILLED bands (white core → progressively
+                 deeper blue, dissolving into the surface), crisp-edged, on the
+                 deep cool navy CTA-band gradient. A left scrim keeps the text
+                 zone dark for contrast.
+                 NOTE: text-left / glow-right is followed here because the
+                 inspiration dictates it — the catalog does NOT hardcode this
+                 split; composition is varied per section.
+  INSPIRATION  — "Let's Get In Touch." lab-instruments CTA shot (orange band
+                 with concentric ripple glow + knobbed pills). Layout/spacing
+                 lifted only; the source orange/fonts are ignored, reskinned in
+                 the CR kit (cool cool navy + brand blue #149DFF).
+  MOTION       — Scroll-reveal: headline, sub, and button row stagger-fade up
+                 (translateY) when the band enters the viewport. Rings are
+                 static. Button arrow nudges 4px on hover; pill snaps to 97% on
+                 press. Honors prefers-reduced-motion.
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-bg-grey-50);            /* var(--cr-bg-warm) — lets the card float */
+    font-family: var(--cr-font-body); color: var(--cr-ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Page band — the card sits inside the gutter */
+  .section {
+    padding: 80px 100px;
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }
+
+  /* ── The floating CTA card ──────────────────────────────────── */
+  .banner {
+    position: relative; overflow: hidden;
+    border-radius: 32px;
+    /* Dark surface — deep cool navy, never flat black */
+    background: linear-gradient(135deg, var(--cr-ink-cool) 0%, var(--cr-ink-cool) 55%, var(--cr-ink-card) 100%);
+    display: grid;
+    grid-template-columns: minmax(0, 560px) 1fr;
+    align-items: center;
+    min-height: 480px;
+    padding: 88px 80px;
+  }
+
+  /* ── Orbit: concentric FILLED bands radiating from a glowing core ──
+     The inspiration's ripple = stacked solid circles, each a step
+     brighter toward the centre. CRISP edges — no blur. All share one
+     origin (concentric); outer edges fall off-card (clipped by overflow)
+     or under the left scrim, so the rings read sharp at the core and
+     dissolve toward the text. Centred just off the right edge. */
+  .orbit {
+    position: absolute; z-index: 1;
+    top: 50%; left: calc(100% - 25px);   /* core hugs the right edge, rings sweep left */
+    transform: translate(-50%, -50%);
+    width: 0; height: 0;
+    pointer-events: none;
+  }
+  .orbit > span {
+    position: absolute; top: 0; left: 0;
+    transform: translate(-50%, -50%);
+    border-radius: 50%; display: block;
+  }
+  /* largest (deepest) → smallest (white core). Solid crisp bands; the
+     hard outer edges sit off-card or under the scrim, so nothing reads
+     as a hard cut while the inner rings stay sharp. */
+  .orbit .b1   { width: 820px;  height: 820px;  background: #15316E; }
+  .orbit .b2   { width: 660px;  height: 660px;  background: #1E4E9A; }
+  .orbit .b3   { width: 520px;  height: 520px;  background: #2F73C8; }
+  .orbit .b4   { width: 400px;  height: 400px;  background: #5BA2EE; }
+  .orbit .b5   { width: 300px;  height: 300px;  background: #93CBFF; }
+  .orbit .b6   { width: 220px;  height: 220px;  background: var(--cr-brand-300); }
+  .orbit .b7   { width: 150px;  height: 150px;  background: #E4F3FF; }
+  /* White core. No box-shadow/glow (per the no-shadow charter) — the
+     pale inner bands alone read as the luminous centre. */
+  .orbit .core { width: 98px;   height: 98px;   background: #FFFFFF; }
+
+  /* Left scrim — protects text contrast over the glow */
+  .scrim {
+    position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    background: linear-gradient(90deg,
+      var(--cr-ink-cool) 0%, rgba(11,27,48,0.92) 28%, rgba(11,27,48,0.45) 50%, rgba(11,27,48,0) 72%);
+  }
+
+  /* Grain overlay — tile at native size, never set background-size */
+  .banner::after {
+    content: ""; position: absolute; inset: 0; z-index: 3;
+    background: url("../assets/../../brand-pack/assets/imagery/textures/texture-grain.png");
+    opacity: 0.06; pointer-events: none;
+  }
+
+  /* ── Content stack ──────────────────────────────────────────── */
+  .content { position: relative; z-index: 4; max-width: 560px; }
+
+  .headline {
+    font-family: var(--cr-font-display);
+    font-weight: 700; font-size: 60px; line-height: 1.06;
+    letter-spacing: -0.025em; color: #fff;
+    margin: 0 0 20px;
+  }
+  .sub {
+    font-family: var(--cr-font-body);
+    font-weight: 400; font-size: 18px; line-height: 1.55;
+    color: rgba(255,255,255,0.66);
+    margin: 0 0 40px; max-width: 480px;
+  }
+
+  .actions { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  /* Pill button — text left, circular knob chip on the right (→ glyph) */
+  .btn {
+    display: inline-flex; align-items: center; gap: 18px;
+    padding: 7px 7px 7px 28px;
+    border-radius: var(--cr-radius-pill);
+    font-family: var(--cr-font-display);
+    font-weight: 700; font-size: 16px; letter-spacing: -0.01em;
+    cursor: pointer; border: 1px solid transparent;
+    transition: background .16s ease, border-color .16s ease, transform .12s ease;
+  }
+  .btn .knob {
+    flex-shrink: 0;
+    width: 42px; height: 42px; border-radius: 50%;
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; line-height: 1; color: var(--cr-brand);
+    transition: transform .16s ease;
+  }
+  .btn:hover .knob { transform: translateX(4px); }
+  .btn:active { transform: scale(.97); }
+
+  /* Primary — brand blue, pops against the dark surface */
+  .btn-primary { background: var(--cr-brand); color: #fff; }
+  .btn-primary:hover { background: var(--cr-brand-700); }
+
+  /* Secondary — ghost pill, hairline border, same white knob */
+  .btn-ghost {
+    background: rgba(255,255,255,0.04); color: #fff;
+    border-color: rgba(255,255,255,0.22);
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.42); }
+
+  /* ── Scroll-reveal ──────────────────────────────────────────── */
+  .has-js .anim {
+    opacity: 0; transform: translateY(26px);
+    transition: opacity .7s cubic-bezier(.2,.7,.2,1) var(--d, 0ms),
+                transform .7s cubic-bezier(.2,.7,.2,1) var(--d, 0ms);
+  }
+  .banner.reveal .anim { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .anim { opacity: 1 !important; transform: none !important; transition: none; }
+  }
+
+  /* ── Responsive ─────────────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .section { padding: 60px 40px; }
+    .banner {
+      grid-template-columns: 1fr; min-height: 0;
+      padding: 72px 48px;
+    }
+    .headline { font-size: 48px; }
+    .orbit { left: calc(100% - 10px); transform: translate(-50%, -50%) scale(.82); }
+    .scrim {
+      background: linear-gradient(90deg,
+        var(--cr-ink-cool) 0%, rgba(11,27,48,0.92) 40%, rgba(11,27,48,0.55) 70%, rgba(11,27,48,0.2) 100%);
+    }
+  }
+  @media (max-width: 640px) {
+    .section { padding: 40px 18px; }
+    .banner { padding: 56px 26px; border-radius: 24px; }
+    .headline { font-size: 34px; line-height: 1.1; letter-spacing: -0.02em; }
+    .sub { font-size: 16px; }
+    .content { max-width: 100%; }
+    .orbit { top: -20px; left: calc(100% + 20px); transform: translate(-50%, -50%) scale(.55); }
+    .scrim {
+      background: linear-gradient(180deg,
+        rgba(11,27,48,0.55) 0%, rgba(11,27,48,0.85) 22%, var(--cr-ink-cool) 45%);
+    }
+    .actions { flex-direction: column; align-items: stretch; }
+    .btn { justify-content: space-between; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<section class="section" data-screen-label="CTA orbit band">
+  <div class="banner">
+    <!-- Orbit: concentric filled bands bleeding off the right edge -->
+    <div class="orbit" aria-hidden="true">
+      <span class="b1"></span>
+      <span class="b2"></span>
+      <span class="b3"></span>
+      <span class="b4"></span>
+      <span class="b5"></span>
+      <span class="b6"></span>
+      <span class="b7"></span>
+      <span class="core"></span>
+    </div>
+    <div class="scrim" aria-hidden="true"></div>
+
+    <div class="content">
+      <h2 class="headline anim" style="--d:0ms">Plan Your Journey<br>To AI-Native.</h2>
+      <p class="sub anim" style="--d:110ms">
+        Most AI pilots stall before they ship. Ours go live in four weeks, billed
+        on outcomes. Let's scope yours.
+      </p>
+      <div class="actions anim" style="--d:220ms">
+        <button class="btn btn-primary">
+          Book a Strategy Call
+          <span class="knob" aria-hidden="true">&rarr;</span>
+        </button>
+        <button class="btn btn-ghost">
+          Talk To An Architect
+          <span class="knob" aria-hidden="true">&rarr;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var banner = document.querySelector(".banner");
+    if (!banner) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { banner.classList.add("reveal"); io.disconnect(); }
+      });
+    }, { threshold: 0.15 });
+    io.observe(banner);
+  })();
+</script>
+</body>
+</html>

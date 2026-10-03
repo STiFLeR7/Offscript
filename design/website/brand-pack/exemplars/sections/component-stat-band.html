@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stat band</title>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background: var(--cr-bg-grey-50);
+    font-family: var(--cr-font-body); color: var(--cr-ink-flat);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .section {
+    padding: 120px 100px;
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }
+
+  /* ── Top block ─────────────────────────────────────────────────
+     Eyebrow sits alone on the top-left. Below it, the headline (left)
+     and the supporting copy + button (right) share one row — so the
+     right column top-aligns with the HEADLINE, not the eyebrow. ──── */
+  .top {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    column-gap: 80px;
+    margin-bottom: 80px;
+  }
+  .eyebrow {
+    grid-column: 1; grid-row: 1;
+    font-family: "Inter", sans-serif; font-weight: 600; font-size: 13px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--cr-fg-3);
+    margin: 0 0 24px;
+  }
+  .headline {
+    grid-column: 1; grid-row: 2;
+    font-family: "Urbanist", sans-serif; font-weight: 700;
+    font-size: 52px; line-height: 1.12; letter-spacing: -0.02em;
+    color: var(--cr-ink-flat); margin: 0; max-width: 600px;
+  }
+  .aside {
+    /* row 2 / right column → its top edge lines up with the headline */
+    grid-column: 2; grid-row: 2;
+    align-self: start; justify-self: end; max-width: 440px;
+  }
+  .aside p {
+    font-family: "Inter", sans-serif; font-weight: 400; font-size: 16px;
+    line-height: 1.7; color: var(--cr-fg-2); margin: 0 0 28px;
+  }
+  /* Outlined pill in the brand action colour — blue border + blue text,
+     transparent fill; hover fills blue with white text. → per CTA rule. */
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 26px;
+    background: transparent; color: var(--cr-brand);
+    border: 1px solid var(--cr-brand); border-radius: 500px; cursor: pointer;
+    font-family: "Inter", sans-serif; font-weight: 500; font-size: 15px;
+    transition: background .15s ease, color .15s ease, border-color .15s ease, transform .15s ease;
+  }
+  .btn-outline:hover { background: var(--cr-brand); color: #fff; border-color: var(--cr-brand); }
+  .btn-outline:active { transform: scale(.97); }
+
+  /* ── Stat band ─────────────────────────────────────────────────
+     A row of columns, each preceded by a tall vertical hairline. ── */
+  .stats {
+    --num: 80px;                 /* one knob drives the whole proportion */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);   /* brand default: 3 columns */
+  }
+  .stats.cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+    --num: 64px;                 /* smaller so 4 columns never crowd */
+  }
+
+  .stat {
+    /* Per-instance accent — set --accent inline (or via a class) on each
+       .stat. It is MEANT to vary per page; falls back to ink when unset.
+       Never indigo. See the demo markup below. */
+    border-left: 1px solid var(--cr-line);   /* divider before every column, incl. the first */
+    padding: 56px 24px 56px 32px;     /* generous top/bottom → the rule reads as a tall line */
+  }
+  .stat-num {
+    font-family: "Urbanist", sans-serif; font-weight: 700;
+    font-size: var(--num); line-height: 1; letter-spacing: -0.03em;
+    color: var(--accent, var(--cr-ink-flat));
+    display: flex; align-items: baseline; gap: 0;
+  }
+  /* word/symbol that sits beside the number — sized off --num so the
+     proportion holds at every breakpoint, never overlaps the neighbor.
+     Colour inherits the number's accent. */
+  .stat-unit {
+    font-family: "Urbanist", sans-serif; font-weight: 700;
+    font-size: calc(var(--num) * 0.38);
+    letter-spacing: -0.02em;
+    margin-left: 4px;            /* symbols (%, ×) sit tight against the number */
+  }
+  .stat-unit.word { margin-left: 12px; }   /* word units (weeks, FTE) get a real space */
+  .stat-cap {
+    font-family: "Inter", sans-serif; font-weight: 400;
+    font-size: clamp(13px, calc(var(--num) * 0.18), 16px);
+    line-height: 1.45; color: var(--cr-fg-3);
+    margin-top: 18px; max-width: 220px;   /* keeps the caption inside its column */
+  }
+
+  /* ── Responsive — deliberate per-device behavior ───────────────── */
+
+  /* Tablet: top block stacks (copy + button drop below the headline,
+     left-aligned); stat band → 2 columns; numbers step down. */
+  @media (max-width: 1024px) {
+    .section { padding: 80px 60px; }
+    .top { grid-template-columns: 1fr; gap: 32px; margin-bottom: 56px; }
+    .headline { font-size: 40px; }
+    .aside { justify-self: start; max-width: 560px; }
+    .stats { grid-template-columns: repeat(2, 1fr); --num: 64px; }
+    .stats.cols-4 { grid-template-columns: repeat(2, 1fr); }
+    .stat { padding: 44px 20px 44px 28px; }
+  }
+
+  /* Mobile: single-column stack; vertical dividers become a full-width
+     top border (vertical rules read wrong when stacked); type tightens. */
+  @media (max-width: 680px) {
+    .section { padding: 48px 20px; }
+    .headline { font-size: 30px; line-height: 1.15; }
+    .stats,
+    .stats.cols-4 { grid-template-columns: 1fr; --num: 48px; }
+    .stat {
+      border-left: 0;
+      border-top: 1px solid var(--cr-line);
+      padding: 36px 0;
+    }
+    .stat:first-child { border-top: 0; }   /* dividers sit between stats, not above the first */
+    .stat-cap { max-width: none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="section" data-screen-label="Stat band">
+  <!-- TOP BLOCK -->
+  <div class="top">
+    <p class="eyebrow">The Proof</p>
+    <h2 class="headline">Fewer Manual Hours.<br/>Higher Margins.<br/>Outcomes You Can Measure.</h2>
+    <div class="aside">
+      <p>We deploy production AI agents into the systems your team already uses and bill on outcomes, not seats. The result is operational work that runs itself — and numbers your CFO can verify.</p>
+      <button class="btn-outline">Learn More About Us <span>&rarr;</span></button>
+    </div>
+  </div>
+
+  <!-- STAT BAND — default 3 columns (brand-preferred).
+       Each .stat sets its own --accent inline; these are demo values and are
+       MEANT to differ per page (don't reuse the same palette every time).
+       Use brand blue / semantic green / amber etc. — never indigo.
+       For a 4-column band, add the `cols-4` class to .stats and a 4th .stat,
+       e.g.  <div class="stat" style="--accent:#1E6E6E"><div class="stat-num">5<span class="stat-unit word">FTE</span></div>
+              <div class="stat-cap">of manual capacity automated per deployment</div></div> -->
+  <div class="stats">
+    <div class="stat" style="--accent:var(--cr-brand)">
+      <div class="stat-num">92<span class="stat-unit">%</span></div>
+      <div class="stat-cap">of operational cost removed in year one</div>
+    </div>
+    <div class="stat" style="--accent:var(--cr-success)">
+      <div class="stat-num">11.3<span class="stat-unit">&times;</span></div>
+      <div class="stat-cap">return on every agent we put into production</div>
+    </div>
+    <div class="stat" style="--accent:var(--cr-amber)">
+      <div class="stat-num">4<span class="stat-unit word">weeks</span></div>
+      <div class="stat-cap">from process audit to a live agent in production</div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

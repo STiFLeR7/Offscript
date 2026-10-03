@@ -1,0 +1,1763 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PRISM — Case Study · A Hybrid Agentic Architecture on FosterX</title>
+<style>
+  /* Urbanist = display · Inter = body (charter) */
+  @font-face{font-family:"Urbanist";src:url("../fonts/Urbanist-Light.ttf")    format("truetype");font-weight:300;font-display:swap;}
+  @font-face{font-family:"Urbanist";src:url("../fonts/Urbanist-Regular.ttf")  format("truetype");font-weight:400;font-display:swap;}
+  @font-face{font-family:"Urbanist";src:url("../fonts/Urbanist-Medium.ttf")   format("truetype");font-weight:500;font-display:swap;}
+  @font-face{font-family:"Urbanist";src:url("../fonts/Urbanist-SemiBold.ttf") format("truetype");font-weight:600;font-display:swap;}
+  @font-face{font-family:"Urbanist";src:url("../fonts/Urbanist-Bold.ttf")     format("truetype");font-weight:700;font-display:swap;}
+  @font-face{font-family:"Urbanist";src:url("../fonts/Urbanist-ExtraBold.ttf")format("truetype");font-weight:800;font-display:swap;}
+  @font-face{font-family:"Inter";src:url("../fonts/Inter-Regular.ttf")  format("truetype");font-weight:400;font-display:swap;}
+  @font-face{font-family:"Inter";src:url("../fonts/Inter-Medium.ttf")   format("truetype");font-weight:500;font-display:swap;}
+  @font-face{font-family:"Inter";src:url("../fonts/Inter-SemiBold.ttf") format("truetype");font-weight:600;font-display:swap;}
+  @font-face{font-family:"Inter";src:url("../fonts/Inter-Bold.ttf")     format("truetype");font-weight:700;font-display:swap;}
+</style>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--cr-bg); font-family: var(--cr-font-body); color: var(--cr-fg); }
+  [data-lucide] { display: inline-block; stroke-width: 1.8; color: currentColor; }
+</style>
+</head>
+<body>
+<main>
+
+<!--
+  CURATION TABLE — Example Brand · PRISM case study (REGENERATED v2 · rotation logic)
+  Built per SKILL.md "Building a page" + tools/selection-diversity.js. Same brief as
+  pages/prism-case-study.html; every slot ROTATED to a fresh, equally-serving component
+  (best intent-fit kept hard; variety only breaks ties among equals). One justified KEEP:
+  compare-table (band 5) — the only component that renders a concern-by-concern matrix, so
+  the diversity check will flag it as the expected single soft warning.
+
+  | # | intent | surface | candidates (>=2, filtered by serves) | chosen | mode | reason |
+  | - | ------ | ------- | ------------------------------------ | ------ | ---- | ------ |
+  | 1 | hero | light | hero-actions, hero-bento, hero-agent | hero-actions | as-is | PRISM's thesis is "agentic at the interface" — hero-actions' nav + read-only tool panel renders exactly that surface, beating hero-bento (the original build's pick — rotate) and hero-agent, whose autonomous framing oversells a read-only advisory. Light opens the page. |
+  | 2 | value-prop | light | mission-reveal, value-prop, feature-stack | mission-reveal | as-is | A one-sentence language/compute boundary lands harder as a scroll reveal than a static block — mission-reveal beats value-prop because its progressive ink reveal dramatizes the thesis word by word. Centered-stack differs from band 1's two-col on shared light. |
+  | 3 | feature | light | more-solutions, feature-trio, feature-bento | more-solutions | as-is | The architecture is a binary split (language zone vs deterministic core), so more-solutions' 2-up divided columns fit better than feature-trio (three peers — wrong arity) or feature-bento (the original's pick — rotate). Split-row layout differs from band 2's centered stack. |
+  | 4 | stats | warm | stat-band, stat-cards, outcome-stats | stat-band | as-is | Validation gates read as a warm proof beat with per-stat accents; stat-band beats stat-cards (the original's pick — rotate) and keeps the contrast off ink so it doesn't pre-empt the ink CTA later. Warm differs from the light bands on both sides. |
+  | 5 | comparison | light | compare-table, comparison, pricing-packages | compare-table | as-is | A concern-by-concern spreadsheet-era-vs-hybrid matrix is uniquely a table-matrix; comparison and pricing-packages render cards, not a factor grid, so compare-table is the one justified reuse from the original page. Light differs from band 4 warm. |
+  | 6 | feature | light | value-stats, feature-bento, feature-trio | value-stats | as-is | The operating principles are number-led (0 writes / 37 cols / 3 entities), needing value-stats' left-prose + right-number-bento; feature-bento (rotate) and feature-trio carry no count emphasis. Bento layout differs from band 5's table-matrix on shared light. |
+  | 7 | cta | ink | cta-banner, cta-orbit, cta-band | cta-banner | as-is | A clean centered ink banner generalizes the pattern to other verticals; cta-banner beats cta-orbit (the original's pick — rotate) and cta-band. Centered-stack differs from band 8's link columns on shared ink. |
+  | 8 | footer | ink | footer-orbit, footer-mega, footer-dark | footer-orbit | as-is | A decorated orbit footer with a newsletter closes a flagship case study; footer-orbit beats footer-mega (the original's pick — rotate) and footer-dark. Link-columns/split-row differs from band 7's centered banner on shared ink. |
+-->
+
+<!-- ════ BAND 1 · HERO (hero-actions) ════ -->
+<style>
+[data-crf="hero-actions"] .cr-ha { background: var(--cr-bg); font-family: var(--cr-font-body); }[data-crf="hero-actions"] .cr-ha *,
+[data-crf="hero-actions"] .cr-ha *::before,
+[data-crf="hero-actions"] .cr-ha *::after { box-sizing: border-box; }[data-crf="hero-actions"] .cr-ha [data-lucide] { width: 1em; height: 1em; display: inline-block; vertical-align: middle; }[data-crf="hero-actions"] /* ── (0) Canonical nav — LIGHT variant (reused from hero-bento) ───────── */
+  .ha-navband { background: var(--cr-bg); border-bottom: 1px solid var(--cr-line); }[data-crf="hero-actions"] .ha-nav {
+    max-width: var(--cr-content-max); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px clamp(24px, 4vw, 64px); gap: 24px;
+  }[data-crf="hero-actions"] .ha-logo { height: 30px; width: auto; display: block; flex: 0 0 auto; }[data-crf="hero-actions"] .ha-links {
+    display: flex; gap: clamp(20px, 2.6vw, 38px); align-items: center;
+    font-family: var(--cr-font-display); font-weight: 500; font-size: 16px;
+    color: var(--cr-fg); letter-spacing: -0.01em;
+  }[data-crf="hero-actions"] .ha-link { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; white-space: nowrap; }[data-crf="hero-actions"] .ha-link svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 2; fill: none; opacity: .85; }[data-crf="hero-actions"] .ha-navcta {
+    flex: 0 0 auto; background: var(--cr-ink); color: #fff;
+    font-family: var(--cr-font-display); font-weight: 700; font-size: 15px;
+    padding: 12px 26px; border-radius: var(--cr-radius-pill); border: 0; cursor: pointer;
+    letter-spacing: -0.01em; transition: background .18s ease;
+  }[data-crf="hero-actions"] .ha-navcta:hover { background: var(--cr-fg); }[data-crf="hero-actions"] /* ── Well ─────────────────────────────────────────────────────────────── */
+  .ha-wrap { max-width: var(--cr-content-max); margin: 0 auto; padding: 0 clamp(24px, 4vw, 64px); }[data-crf="hero-actions"] /* ── (1)+(2) Hero grid ────────────────────────────────────────────────── */
+  .ha-hero {
+    display: grid; grid-template-columns: 1fr 1.06fr;
+    gap: clamp(32px, 5vw, 60px); align-items: center;
+    padding: clamp(44px, 6vw, 84px) 0 clamp(40px, 5vw, 64px);
+  }[data-crf="hero-actions"] .ha-col-text { min-width: 0; }[data-crf="hero-actions"] .ha-title {
+    margin: 0; font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(40px, 5.4vw, 68px); line-height: 1.06; letter-spacing: -0.025em;
+    color: var(--cr-ink);
+  }[data-crf="hero-actions"] .ha-sub {
+    margin: clamp(20px, 2.2vw, 30px) 0 0; max-width: 440px;
+    font-size: clamp(17px, 1.5vw, 20px); line-height: 1.5; color: var(--cr-fg-3);
+  }[data-crf="hero-actions"] .ha-cta-row {
+    display: flex; align-items: center; gap: clamp(18px, 2.4vw, 30px);
+    margin-top: clamp(30px, 3.4vw, 44px); flex-wrap: wrap;
+  }[data-crf="hero-actions"] .ha-cta {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: var(--cr-brand); color: #fff; border: 0; cursor: pointer;
+    font-family: var(--cr-font-display); font-weight: 600; font-size: 16px;
+    padding: 16px 30px; border-radius: var(--cr-radius-pill); text-decoration: none;
+    transition: background .2s ease, transform .15s ease;
+  }[data-crf="hero-actions"] .ha-cta:hover { background: var(--cr-brand-700); }[data-crf="hero-actions"] .ha-cta:active { transform: scale(.97); }[data-crf="hero-actions"] .ha-cta .ar { transition: transform .16s ease; }[data-crf="hero-actions"] .ha-cta:hover .ar { transform: translateX(4px); }[data-crf="hero-actions"] .ha-reassure {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 14.5px; color: var(--cr-fg-3); white-space: nowrap;
+  }[data-crf="hero-actions"] .ha-reassure svg { width: 16px; height: 16px; color: var(--cr-fg-muted); }[data-crf="hero-actions"] /* ── (2) Gradient card ────────────────────────────────────────────────── */
+  .ha-card {
+    position: relative; overflow: hidden;
+    min-height: clamp(520px, 46vw, 620px);
+    border-radius: 28px;
+    /* soft white veil mutes the warm image (calmer, less "pop" than the saturated source) */
+    background: linear-gradient(rgba(255,255,255,0.30), rgba(255,255,255,0.30)),
+                url("../assets/creative-background/blur-7.png") center / cover no-repeat;
+    padding: clamp(40px, 5vw, 64px) clamp(26px, 3.4vw, 46px) clamp(56px, 6.5vw, 78px);
+    display: flex;
+  }[data-crf="hero-actions"] /* faint grain — no background-size (it tiles into a visible grid) */
+  .ha-card-grain {
+    position: absolute; inset: 0; z-index: 0;
+    background-image: url("../assets/texture-grain.png"); background-repeat: repeat;
+    opacity: 0.035; pointer-events: none;
+  }[data-crf="hero-actions"] .ha-panel {
+    position: relative; z-index: 1; width: 100%; align-self: flex-start;
+    background: #fff; border: 1px solid rgba(14,14,14,0.07);
+    border-radius: 20px; padding: clamp(20px, 2.4vw, 28px);
+  }[data-crf="hero-actions"] .ha-panel-title {
+    margin: 2px 0 clamp(16px, 1.8vw, 22px); font-family: var(--cr-font-display);
+    font-weight: 700; font-size: clamp(18px, 1.6vw, 21px); letter-spacing: -0.01em;
+    color: var(--cr-ink);
+  }[data-crf="hero-actions"] .ha-actions { display: flex; flex-direction: column; gap: clamp(12px, 1.4vw, 16px); }[data-crf="hero-actions"] .ha-action {
+    border: 1px solid var(--cr-line); border-radius: 14px;
+    padding: clamp(15px, 1.7vw, 19px); position: relative;
+  }[data-crf="hero-actions"] .ha-action-head { display: flex; align-items: center; justify-content: space-between; }[data-crf="hero-actions"] .ha-chip {
+    width: 42px; height: 42px; border-radius: 13px; flex: 0 0 auto;
+    display: flex; align-items: center; justify-content: center; color: #fff;
+  }[data-crf="hero-actions"] .ha-chip svg { width: 21px; height: 21px; stroke-width: 2; }[data-crf="hero-actions"] .ha-chip-dark { background: var(--cr-ink); }[data-crf="hero-actions"] .ha-chip-blue { background: var(--cr-brand); border-radius: 50%; }[data-crf="hero-actions"] /* source: card-2 chip is a circle,
+[data-crf="hero-actions"] card-1 a rounded square */
+
+  .ha-toggle {
+    width: 46px; height: 26px; border-radius: 500px; background: var(--cr-success);
+    position: relative; flex: 0 0 auto;
+  }[data-crf="hero-actions"] .ha-knob {
+    position: absolute; top: 3px; left: 23px; width: 20px; height: 20px;
+    border-radius: 50%; background: #fff;
+  }[data-crf="hero-actions"] .ha-action-label {
+    margin: clamp(15px, 1.7vw, 19px) 0 14px; font-family: var(--cr-font-display);
+    font-weight: 600; font-size: clamp(15px, 1.4vw, 17px); color: var(--cr-ink);
+    letter-spacing: -0.01em;
+  }[data-crf="hero-actions"] .ha-skel { height: 10px; border-radius: 500px; background: var(--cr-bg-grey-100); }[data-crf="hero-actions"] .ha-skel + .ha-skel { margin-top: 9px; }[data-crf="hero-actions"] .ha-skel.w1 { width: 86%; }[data-crf="hero-actions"] .ha-skel.w2 { width: 54%; }[data-crf="hero-actions"] /* cursor on the 2nd toggle */
+  .ha-cursor { position: absolute; top: 30px; right: 4px; z-index: 2; pointer-events: none; }[data-crf="hero-actions"] .ha-cursor svg { width: 23px; height: 23px; display: block; }[data-crf="hero-actions"] /* pause control — bottom-left of the gradient frame */
+  .ha-pause { position: absolute; left: clamp(18px, 2.2vw, 28px); bottom: clamp(18px, 2.2vw, 28px); z-index: 2; width: 54px; height: 54px; }[data-crf="hero-actions"] .ha-pause-ring { position: absolute; inset: 0; width: 54px; height: 54px; transform: rotate(-90deg); }[data-crf="hero-actions"] .ha-pause-btn {
+    position: absolute; inset: 6px; border-radius: 50%; background: rgba(14,18,28,0.5);
+    display: flex; align-items: center; justify-content: center;
+  }[data-crf="hero-actions"] .ha-pause-btn svg { width: 17px; height: 17px; color: #fff; fill: #fff; stroke: #fff; }[data-crf="hero-actions"] /* ── (3) Trust bar ────────────────────────────────────────────────────── */
+  .ha-trust {
+    display: flex; align-items: center; justify-content: space-between; gap: clamp(24px, 3vw, 40px);
+    padding: clamp(26px, 4vw, 44px) 0 clamp(52px, 7vw, 88px); flex-wrap: wrap;
+  }[data-crf="hero-actions"] .ha-trust-label { font-size: 16px; color: var(--cr-fg-2); flex: 0 0 auto; }[data-crf="hero-actions"] .ha-trust-label strong { font-family: var(--cr-font-display); font-weight: 700; color: var(--cr-ink); }[data-crf="hero-actions"] .ha-logos { display: flex; align-items: center; gap: clamp(18px, 2.4vw, 32px); flex-wrap: wrap; }[data-crf="hero-actions"] .ha-logo-item { display: inline-flex; align-items: center; gap: 8px; opacity: 0.42; }[data-crf="hero-actions"] .ha-logo-item svg { height: 21px; width: auto; display: block; }[data-crf="hero-actions"] .ha-logo-item svg * { fill: var(--cr-ink) !important; stroke: var(--cr-ink) !important; }[data-crf="hero-actions"] .ha-logo-wm { font-family: var(--cr-font-display); font-weight: 700; font-size: 18px; color: var(--cr-ink); letter-spacing: -0.01em; }[data-crf="hero-actions"] /* ── Motion ───────────────────────────────────────────────────────────── */
+  /* entrance: transform-only (opacity stays 1 → preview-safe,
+[data-crf="hero-actions"] never blank) */
+  .ha-reveal { animation: hero-actions-kf-haRise .7s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--d, 0s); }
+  @keyframes hero-actions-kf-haRise { from { transform: translateY(16px); } to { transform: none; } }[data-crf="hero-actions"] /* demo loop: subtle cursor tap; both toggles stay ON every frame */
+  .ha-cursor { animation: hero-actions-kf-haTap 2.8s ease-in-out infinite; }
+  @keyframes hero-actions-kf-haTap { 0%, 38%, 100% { transform: translate(0,0); } 48%, 56% { transform: translate(-3px,-4px); } }[data-crf="hero-actions"] .ha-action--live .ha-knob { animation: hero-actions-kf-haBounce 2.8s ease-in-out infinite; }
+  @keyframes hero-actions-kf-haBounce { 0%, 40%, 100% { transform: scale(1); } 50% { transform: scale(.9); } }
+  @media (prefers-reduced-motion: reduce) {[data-crf="hero-actions"] .ha-reveal,
+[data-crf="hero-actions"] .ha-cursor,
+[data-crf="hero-actions"] .ha-action--live .ha-knob { animation: none; }
+  }[data-crf="hero-actions"] /* ── Responsive ───────────────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .ha-hero { grid-template-columns: 1fr; gap: clamp(36px, 6vw, 52px); }
+    .ha-col-text { text-align: center; }
+    .ha-sub { margin-left: auto; margin-right: auto; }
+    .ha-cta-row { justify-content: center; }
+    .ha-card { max-width: 560px; margin: 0 auto; width: 100%; }
+  }
+  @media (max-width: 860px) {[data-crf="hero-actions"] .ha-links { display: none; } }
+  @media (max-width: 780px) {[data-crf="hero-actions"] .ha-trust { justify-content: center; text-align: center; }
+  }
+  @media (max-width: 480px) {[data-crf="hero-actions"] .ha-card { padding: 28px 18px 56px; min-height: 0; }[data-crf="hero-actions"] .ha-panel { padding: 18px; }
+  }
+</style>
+<div data-crf="hero-actions">
+<section class="cr-ha" data-screen-label="Hero · AI Actions">
+
+  <!-- ── (0) Canonical CR nav — light variant ─────────────────────────── -->
+  <div class="ha-navband">
+    <nav class="ha-nav">
+      <img class="ha-logo" src="../assets/logo-color.svg" alt="Example Brand">
+      <div class="ha-links">
+        <span class="ha-link">AI <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ha-link">Industry <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ha-link">FosterX <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ha-link">About us</span>
+        <span class="ha-link">Resources <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+      <button class="ha-navcta">Let's talk</button>
+    </nav>
+  </div>
+
+  <div class="ha-wrap">
+
+    <!-- ── (1)+(2) Hero ───────────────────────────────────────────────── -->
+    <div class="ha-hero">
+
+      <!-- LEFT — copy -->
+      <div class="ha-col-text">
+        <h1 class="ha-title ha-reveal" style="--d:.05s">Agentic at the Interface.<br>Deterministic at the Core.</h1>
+        <p class="ha-sub ha-reveal" style="--d:.16s">PRISM is the Madhuban Group deployment of the Construction vertical on FosterX &mdash; a read-only advisory agent over a deterministic enterprise core for multi-entity rent, CAM, GST e-invoicing and tiered escalation.</p>
+        <div class="ha-cta-row ha-reveal" style="--d:.26s">
+          <a class="ha-cta" href="#">Talk to an architect <span class="ar" aria-hidden="true">&rarr;</span></a>
+          <span class="ha-reassure"><i data-lucide="clock"></i>Read-only &middot; default-DENY on writes</span>
+        </div>
+      </div>
+
+      <!-- RIGHT — gradient card + AI Actions panel -->
+      <div class="ha-card ha-reveal" style="--d:.2s">
+        <span class="ha-card-grain" aria-hidden="true"></span>
+
+        <div class="ha-panel">
+          <h2 class="ha-panel-title">Read-only tools</h2>
+          <div class="ha-actions">
+
+            <!-- action 1 -->
+            <div class="ha-action">
+              <div class="ha-action-head">
+                <span class="ha-chip ha-chip-dark"><i data-lucide="receipt"></i></span>
+                <span class="ha-toggle"><span class="ha-knob"></span></span>
+              </div>
+              <div class="ha-action-label">Tenant rent &amp; CAM lookup</div>
+              <div class="ha-skel w1"></div>
+              <div class="ha-skel w2"></div>
+            </div>
+
+            <!-- action 2 (cursor sits on its toggle) -->
+            <div class="ha-action ha-action--live">
+              <div class="ha-action-head">
+                <span class="ha-chip ha-chip-blue"><i data-lucide="split"></i></span>
+                <span class="ha-toggle"><span class="ha-knob"></span></span>
+                <span class="ha-cursor" aria-hidden="true">
+                  <svg viewBox="0 0 16 16"><path d="M1 1 L1 13.2 L4.3 9.9 L6.5 14.7 L8.4 13.85 L6.2 9.1 L10.7 9.1 Z" fill="var(--cr-ink-flat)" stroke="#fff" stroke-width="1.1" stroke-linejoin="round"/></svg>
+                </span>
+              </div>
+              <div class="ha-action-label">Escalation tier check</div>
+              <div class="ha-skel w1"></div>
+              <div class="ha-skel w2"></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- pause control -->
+        <span class="ha-pause" aria-hidden="true">
+          <svg class="ha-pause-ring" viewBox="0 0 54 54">
+            <circle cx="27" cy="27" r="25" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="3"/>
+            <circle cx="27" cy="27" r="25" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="62"/>
+          </svg>
+          <span class="ha-pause-btn"><i data-lucide="pause"></i></span>
+        </span>
+      </div>
+
+    </div>
+
+    <!-- ── (3) Trust bar ──────────────────────────────────────────────── -->
+    <div class="ha-trust ha-reveal" style="--d:.34s" aria-label="Trusted by">
+      <div class="ha-trust-label"><strong>Live in production</strong> &middot; Madhuban Group</div>
+      <div class="ha-logos">
+        <span class="ha-logo-item">
+          <svg viewBox="0 0 122.8 122.8" aria-hidden="true"><path d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9zm6.5 0c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z"/><path d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2zm0 6.5c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 51.1 0 45.3 0 38.2s5.8-12.9 12.9-12.9h32.3z"/><path d="M97 38.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97V38.2zm-6.5 0c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V5.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9v25.3z"/><path d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9zm0-6.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z"/></svg>
+          <span class="ha-logo-wm">SAP</span>
+        </span>
+        <span class="ha-logo-item">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.78 12.653a5.22 5.22 0 1 0 0 10.44 5.22 5.22 0 0 0 0-10.44zm-13.56 0a5.22 5.22 0 1 0 0 10.44 5.22 5.22 0 0 0 0-10.44zM12 .908a5.22 5.22 0 1 0 0 10.44A5.22 5.22 0 0 0 12 .908z"/></svg>
+          <span class="ha-logo-wm">Salesforce</span>
+        </span>
+        <span class="ha-logo-item">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 1.807 0 5.629l6 3.822 6.001-3.822zM18 1.807l-6 3.822 6 3.822 6-3.822zM0 13.274l6 3.822 6.001-3.822L6 9.452zM18 9.452l-6.001 3.822L18 17.096l6-3.822zM6 18.371l6.001 3.822 6-3.822-6-3.822z"/></svg>
+          <span class="ha-logo-wm">Oracle</span>
+        </span>
+        <span class="ha-logo-item">
+          <svg viewBox="0 0 23 23" aria-hidden="true"><rect x="1" y="1" width="10" height="10"/><rect x="12" y="1" width="10" height="10"/><rect x="1" y="12" width="10" height="10"/><rect x="12" y="12" width="10" height="10"/></svg>
+          <span class="ha-logo-wm">Zoho</span>
+        </span>
+        <span class="ha-logo-item"><span class="ha-logo-wm">Epic</span></span>
+        <span class="ha-logo-item"><span class="ha-logo-wm">NIC&nbsp;IRP</span></span>
+      </div>
+    </div>
+
+  </div>
+</section>
+</div>
+<script>
+(function(){
+var __crf_hero_actions = document.querySelector('[data-crf="hero-actions"]');
+if(!__crf_hero_actions) return;
+lucide.createIcons();
+})();
+</script>
+
+
+<!-- ════ BAND 2 · THESIS (mission-reveal) ════ -->
+<style>
+[data-crf="mission-reveal"] .ms-section,
+[data-crf="mission-reveal"] .ms-section * { box-sizing: border-box; }[data-crf="mission-reveal"] .ms-section {
+    background: var(--cr-bg);            /* pure white */
+    height: 220vh;                       /* tall scroll runway (NO overflow here or on ancestors) */
+    font-family: var(--cr-font-body);
+  }[data-crf="mission-reveal"] .ms-sticky {
+    position: sticky; top: 0;
+    height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 40px;
+  }[data-crf="mission-reveal"] .ms-text { max-width: 920px; width: 100%; }[data-crf="mission-reveal"] .ms-para {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 600;
+    font-size: clamp(26px, 3.9vw, 52px);
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    color: var(--cr-ink);                /* the reveal is pure opacity over this one ink */
+  }[data-crf="mission-reveal"] .ms-para + .ms-para { margin-top: 0.9em; }[data-crf="mission-reveal"] .ms-w { transition: opacity .12s linear; }[data-crf="mission-reveal"] /* tiny smoothing between rAF frames */
+
+  /* faded INITIAL state — scoped to .has-js so without JS every word is full ink */
+  .has-js .ms-section .ms-w { opacity: 0.16; }
+
+  @media (prefers-reduced-motion: reduce) {.has-js [data-crf="mission-reveal"] .ms-section .ms-w { opacity: 1; }     /* JS also forces 1; this is the CSS guarantee */
+  }
+
+  @media (max-width: 600px) {[data-crf="mission-reveal"] .ms-section { height: 200vh; }[data-crf="mission-reveal"] .ms-sticky { padding: 0 24px; align-items: flex-start; padding-top: 22vh; }
+  }
+</style>
+<div data-crf="mission-reveal">
+<section class="ms-section" data-screen-label="Mission · scroll reveal">
+  <div class="ms-sticky">
+    <div class="ms-text">
+      <p class="ms-para"><span class="ms-w">The</span> <span class="ms-w">LLM</span> <span class="ms-w">does</span> <span class="ms-w">language</span> <span class="ms-w">&mdash;</span> <span class="ms-w">intent,</span> <span class="ms-w">routing,</span> <span class="ms-w">tool</span> <span class="ms-w">choice,</span> <span class="ms-w">and</span> <span class="ms-w">the</span> <span class="ms-w">answer</span> <span class="ms-w">it</span> <span class="ms-w">writes</span> <span class="ms-w">back</span> <span class="ms-w">to</span> <span class="ms-w">you.</span></p>
+      <p class="ms-para"><span class="ms-w">Deterministic</span> <span class="ms-w">Python</span> <span class="ms-w">does</span> <span class="ms-w">every</span> <span class="ms-w">figure</span> <span class="ms-w">&mdash;</span> <span class="ms-w">rent,</span> <span class="ms-w">CAM,</span> <span class="ms-w">GST,</span> <span class="ms-w">TDS,</span> <span class="ms-w">net-to-bank</span> <span class="ms-w">&mdash;</span> <span class="ms-w">and</span> <span class="ms-w">the</span> <span class="ms-w">model</span> <span class="ms-w">never</span> <span class="ms-w">computes</span> <span class="ms-w">a</span> <span class="ms-w">rupee.</span></p>
+    </div>
+  </div>
+</section>
+</div>
+<script>
+(function(){
+var __crf_mission_reveal = document.querySelector('[data-crf="mission-reveal"]');
+if(!__crf_mission_reveal) return;
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var section = __crf_mission_reveal.querySelector('.ms-section');
+  if (!section) return;
+  var words = Array.prototype.slice.call(section.querySelectorAll('.ms-w'));
+  var N = words.length;
+  var MIN = 0.16, FADE = 5, END = 0.88;        // front softness (words) + finish progress
+
+  function update(p) {
+    var eff = p / END; eff = eff < 0 ? 0 : (eff > 1 ? 1 : eff);
+    var front = eff * (N + FADE);              // +FADE buffer so the last word reaches full
+    for (var i = 0; i < N; i++) {
+      var o = (front - i) / FADE;
+      o = o < 0 ? 0 : (o > 1 ? 1 : o);
+      words[i].style.opacity = (MIN + (1 - MIN) * o).toFixed(3);
+    }
+  }
+  window.__msUpdate = update;                  // QA hook for a forced-progress still
+
+  if (reduce) { words.forEach(function (w) { w.style.opacity = 1; }); return; }
+
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(function () {
+      var rect = section.getBoundingClientRect();             // TALL section, not the sticky
+      var denom = section.offsetHeight - window.innerHeight;
+      update(denom > 0 ? (-rect.top / denom) : 0);
+      ticking = false;
+    });
+  }
+  update(0);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+})();
+})();
+</script>
+
+
+<!-- ════ BAND 3 · THE BOUNDARY (more-solutions) ════ -->
+<style>
+[data-crf="more-solutions"] /* ─── scope reset ─────────────────────────────────────────────── */
+  .ms-section,
+[data-crf="more-solutions"] .ms-section * { box-sizing: border-box; }[data-crf="more-solutions"] .ms-section {
+    background: var(--cr-bg);
+    padding: 120px 100px;
+    font-family: var(--cr-font-body);
+  }[data-crf="more-solutions"] .ms-wrap { max-width: var(--cr-content-max); margin: 0 auto; }[data-crf="more-solutions"] /* centred well */
+
+  /* ─── headline (left-aligned at the well's top,
+[data-crf="more-solutions"] per source) ───── */
+  .ms-head {
+    margin: 0 0 clamp(56px, 7vw, 88px);
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(32px, 3.6vw, 44px);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--cr-fg);
+  }[data-crf="more-solutions"] /* ─── 2-up grid + centred vertical divider ────────────────────── */
+  .ms-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 0;                        /* divider centred via symmetric column padding */
+  }[data-crf="more-solutions"] .ms-col { min-width: 0; padding: 0 52px; }[data-crf="more-solutions"] .ms-col:first-child { padding-left: 0; }[data-crf="more-solutions"] .ms-col:last-child { padding-right: 0; }[data-crf="more-solutions"] .ms-col--b { border-left: 1px solid var(--cr-line); }[data-crf="more-solutions"] /* the centred vertical rule */
+
+  /* ─── creative stage (free-floating layers,
+[data-crf="more-solutions"] no card wrapper) ──── */
+  .ms-creative {
+    --photo-w: 136px;
+    --photo-h: 154px;
+    position: relative;
+    min-height: 330px;
+    /* the creative spans the column; the CARD is capped narrow (below) so the
+       orbit motif has open space to show on the right */
+  }[data-crf="more-solutions"] /* geometric "orbit" backdrop — thin NEUTRAL-GREY line motifs (tilted orbit
+     ellipses,
+[data-crf="more-solutions"] a wireframe sphere,
+[data-crf="more-solutions"] a dotted orbit,
+[data-crf="more-solutions"] concentric circles + planet
+     dots & 4-point sparkles) ghosting behind the creatives in corner clusters.
+     A re-skin of the Hanwha orbital-geometry reference; blue stays reserved for
+     the real UI accents (bookmarks / chart) — decoration never spends it. */
+  .ms-grid-bd {
+    position: absolute;
+    width: 232px; height: 232px;
+    z-index: 0;
+    pointer-events: none;
+    color: rgba(14,14,14,0.22);       /* one neutral ink — strokes + dots + sparkles */
+  }[data-crf="more-solutions"] .ms-grid-bd svg { width: 100%; height: 100%; display: block; overflow: visible; }[data-crf="more-solutions"] /* LIGHT: one orbit line (--1) + one lone sparkle (--2) per creative */
+  .ms-creative--a .ms-grid-bd--1 { left: 56%; top: 2%; }[data-crf="more-solutions"] /* orbit ellipse — right of card */
+  .ms-creative--a .ms-grid-bd--2 { width: 42px; height: 42px; left: 40px; bottom: 30px; }[data-crf="more-solutions"] /* lone sparkle — bottom-left */
+  .ms-creative--b .ms-grid-bd--1 { left: 54%; top: 8%; }[data-crf="more-solutions"] /* dotted orbit — right of card */
+  .ms-creative--b .ms-grid-bd--2 { width: 42px; height: 42px; right: 26%; bottom: 34px; }[data-crf="more-solutions"] /* lone sparkle — bottom */
+
+  /* overlapping photo card */
+  .ms-photo {
+    position: absolute;
+    width: var(--photo-w); height: var(--photo-h);
+    margin: 0;
+    border-radius: 14px; overflow: hidden;
+    border: 1px solid var(--cr-line);
+    background: var(--cr-bg-grey-100);
+    z-index: 3;
+  }[data-crf="more-solutions"] .ms-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }[data-crf="more-solutions"] .ms-creative--a .ms-photo { left: 0;   top: 0; }[data-crf="more-solutions"] /* top-left  */
+  .ms-creative--b .ms-photo { left: 8px; bottom: 34px; }[data-crf="more-solutions"] /* bottom-left,
+[data-crf="more-solutions"] overlaps card's bottom-row corner (mirror) */
+
+  /* the UI mock card */
+  .ms-uicard {
+    position: absolute;
+    background: var(--cr-bg);
+    border: 1px solid var(--cr-line);
+    border-radius: 14px;
+    overflow: hidden;
+    z-index: 2;
+  }[data-crf="more-solutions"] /* cards positioned px-relative to their photo (calc) so the photo↔card overlap AND the
+     header clearance stay CONSTANT across the whole 2-col range — not just tuned to 1440 */
+  .ms-creative--a .ms-uicard { left: calc(var(--photo-w) - 22px); top: 80px; width: min(300px, calc(100% - var(--photo-w) + 22px)); }[data-crf="more-solutions"] /* narrow,
+[data-crf="more-solutions"] photo-anchored */
+  .ms-creative--b .ms-uicard { left: calc(var(--photo-w) - 30px); top: 14px; width: min(332px, calc(100% - var(--photo-w) + 30px)); }[data-crf="more-solutions"] /* narrow,
+[data-crf="more-solutions"] photo-anchored (mirror) */
+  .ms-creative--a .ms-uihead { padding-left: 34px; }[data-crf="more-solutions"] /* shift header text right of the overlapping photo (the bar still runs under it) */
+
+  .ms-uihead {
+    background: var(--cr-ink-night);             /* CR navy header bar (source's dark-green) */
+    color: #fff;
+    font-family: var(--cr-font-body); font-weight: 600; font-size: 13px;
+    padding: 11px 16px;
+  }[data-crf="more-solutions"] .ms-uibody { padding: 2px 16px 12px; }[data-crf="more-solutions"] .ms-uirow {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--cr-line);
+    font-family: var(--cr-font-body); font-size: 13px; color: var(--cr-fg-2);
+    white-space: nowrap;
+  }[data-crf="more-solutions"] .ms-uirow:last-child { border-bottom: none; }[data-crf="more-solutions"] .ms-uirow--label { font-family: var(--cr-font-display); font-weight: 700; color: var(--cr-fg); }[data-crf="more-solutions"] /* avatar trio (real faces — labelled "Assigned reviewers",
+[data-crf="more-solutions"] not agents) */
+  .ms-avatars { display: flex; flex: none; }[data-crf="more-solutions"] .ms-avatars img {
+    width: 28px; height: 28px; border-radius: 50%; object-fit: cover;
+    border: 2px solid #fff; margin-left: -8px;
+  }[data-crf="more-solutions"] .ms-avatars img:first-child { margin-left: 0; }[data-crf="more-solutions"] .ms-chart { color: var(--cr-brand); display: flex; flex: none; }[data-crf="more-solutions"] /* blue line-chart accent */
+  .ms-chart .ms-i { width: 22px; height: 22px; stroke-width: 2; }[data-crf="more-solutions"] /* integration rows */
+  .ms-introw {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--cr-line);
+  }[data-crf="more-solutions"] .ms-introw:last-child { border-bottom: none; }[data-crf="more-solutions"] .ms-bookmark { flex: none; display: flex; color: var(--cr-brand); }[data-crf="more-solutions"] /* filled blue bookmark */
+  .ms-bookmark .ms-i { width: 18px; height: 18px; fill: var(--cr-brand); stroke: var(--cr-brand); }[data-crf="more-solutions"] .ms-logo {
+    flex: none; width: 92px;
+    font-family: var(--cr-font-display); font-weight: 700; font-size: 14px; color: var(--cr-fg);
+    white-space: nowrap;
+  }[data-crf="more-solutions"] .ms-introw-desc {
+    flex: 1 1 auto; min-width: 0;
+    font-family: var(--cr-font-body); font-size: 12.5px; color: var(--cr-fg-3);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }[data-crf="more-solutions"] /* ─── text block below each creative ──────────────────────────── */
+  .ms-text { margin-top: 44px; }[data-crf="more-solutions"] .ms-title {
+    margin: 0 0 14px;
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(26px, 2.6vw, 34px); line-height: 1.2; letter-spacing: -0.01em;
+    color: var(--cr-fg);
+  }[data-crf="more-solutions"] .ms-body {
+    margin: 0 0 28px; max-width: 40ch;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 16px; line-height: 1.6;
+    color: var(--cr-fg-2);
+  }[data-crf="more-solutions"] .ms-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 15px;
+    color: var(--cr-fg);
+    background: none;
+    border: 1px solid var(--cr-line);
+    border-radius: var(--cr-radius-pill);
+    padding: 12px 24px;
+    text-decoration: none; cursor: pointer;
+    transition: border-color .2s ease, color .2s ease, transform .15s ease;
+  }[data-crf="more-solutions"] .ms-cta:hover { border-color: var(--cr-fg-3); }[data-crf="more-solutions"] .ms-cta:active { transform: scale(.98); }[data-crf="more-solutions"] /* ─── MOTION: reveal + backdrop draw-in (anti-race,
+[data-crf="more-solutions"] fires once) ── */
+  .has-js .ms-section [data-reveal] { opacity: 0; transform: translateY(20px); }.has-js [data-crf="more-solutions"] .ms-section [data-reveal].in-view {
+    animation: more-solutions-kf-msRise .7s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes more-solutions-kf-msRise { to { opacity: 1; transform: none; } }[data-crf="more-solutions"] /* geometric backdrop scales IN rather than rising */
+  .has-js .ms-section [data-reveal].ms-grid-bd { transform: scale(.9); }.has-js [data-crf="more-solutions"] .ms-section [data-reveal].ms-grid-bd.in-view {
+    animation: more-solutions-kf-msGridIn .9s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes more-solutions-kf-msGridIn { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
+
+  @media (prefers-reduced-motion: reduce) {.has-js [data-crf="more-solutions"] .ms-section [data-reveal],
+.has-js [data-crf="more-solutions"] .ms-section [data-reveal].in-view {
+      opacity: 1; transform: none; animation: none;
+    }
+  }[data-crf="more-solutions"] /* ─── responsive ──────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .ms-section { padding: 88px 56px; }
+    .ms-grid { grid-template-columns: 1fr; row-gap: 64px; }
+    .ms-col { padding: 0; }
+    .ms-col--b { border-left: none; border-top: 1px solid var(--cr-line); padding-top: 64px; }
+    /* cap the now-full-width creative so the narrow card + orbit motif stay grouped */
+    .ms-creative { max-width: 560px; }
+  }
+  @media (max-width: 560px) {[data-crf="more-solutions"] .ms-section { padding: 64px 24px; }[data-crf="more-solutions"] .ms-head { font-size: clamp(28px, 8vw, 34px); }[data-crf="more-solutions"] .ms-creative {
+      --photo-w: 112px; --photo-h: 128px;
+      min-height: 300px;
+    }[data-crf="more-solutions"] /* card positions are calc-derived from --photo-w,
+[data-crf="more-solutions"] so they retune automatically;
+       only nudge the right photo up to overlap the shorter mobile card */
+    .ms-creative--b .ms-photo { bottom: 54px; }[data-crf="more-solutions"] .ms-grid-bd { width: 168px; height: 168px; }[data-crf="more-solutions"] .ms-uihead { font-size: 12px; padding: 10px 14px; }[data-crf="more-solutions"] .ms-uibody { padding: 0 14px 10px; }[data-crf="more-solutions"] .ms-uirow,
+[data-crf="more-solutions"] .ms-introw { font-size: 12px; }[data-crf="more-solutions"] .ms-introw { padding: 11px 14px; }[data-crf="more-solutions"] .ms-logo { width: 80px; font-size: 13px; }[data-crf="more-solutions"] .ms-title { font-size: clamp(24px, 7vw, 28px); }[data-crf="more-solutions"] .ms-text { margin-top: 36px; }
+  }
+</style>
+<div data-crf="more-solutions">
+<!-- The two-up split + left-aligned headline follow the SOURCE — not a
+     hardcoded house rule (composition is intentionally per-section). -->
+<section class="ms-section" data-screen-label="Showcase · More ways to automate">
+  <div class="ms-wrap">
+
+    <h2 class="ms-head" data-reveal style="--d:0s">Two Sides of One Boundary</h2>
+
+    <div class="ms-grid">
+
+      <!-- ── LEFT column: Agent operations ───────────────────────── -->
+      <div class="ms-col ms-col--a">
+        <div class="ms-creative ms-creative--a">
+          <div class="ms-grid-bd ms-grid-bd--1" data-reveal style="--d:.12s" aria-hidden="true">
+            <svg viewBox="0 0 232 232" fill="none">
+              <ellipse cx="116" cy="116" rx="104" ry="62" transform="rotate(-24 116 116)" stroke="currentColor" stroke-width="1.2"/>
+              <circle cx="196" cy="74" r="4.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="ms-grid-bd ms-grid-bd--2" data-reveal style="--d:.18s" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 0 Q 14 10 24 12 Q 14 14 12 24 Q 10 14 0 12 Q 10 10 12 0 Z" fill="currentColor"/>
+            </svg>
+          </div>
+
+          <div class="ms-uicard" data-reveal style="--d:.24s" aria-hidden="true">
+            <div class="ms-uihead">Orchestrator &middot; LLM</div>
+            <div class="ms-uibody">
+              <div class="ms-uirow ms-uirow--label">Routes &amp; selects tool</div>
+              <div class="ms-uirow">
+                <span>Human approvers</span>
+                <span class="ms-avatars">
+                  <img src="../assets/avatars/avatar-david.jpg" alt="" />
+                  <img src="../assets/avatars/avatar-olivia.jpg" alt="" />
+                  <img src="../assets/avatars/avatar-priya.jpg" alt="" />
+                </span>
+              </div>
+              <div class="ms-uirow">
+                <span>Answer synthesis</span>
+                <span class="ms-chart"><i data-lucide="trending-up" class="ms-i"></i></span>
+              </div>
+            </div>
+          </div>
+
+          <figure class="ms-photo" data-reveal style="--d:.30s" aria-hidden="true">
+            <img src="../assets/avatars/avatar-jason.jpg" alt="" />
+          </figure>
+        </div>
+
+        <div class="ms-text">
+          <h3 class="ms-title" data-reveal style="--d:.36s">The Language Zone</h3>
+          <p class="ms-body" data-reveal style="--d:.42s">The LLM owns intent, routing, tool selection and the answer it synthesizes. It decides what to do &mdash; it never decides a number.</p>
+          <a class="ms-cta" href="#" data-reveal style="--d:.48s">How orchestration works</a>
+        </div>
+      </div>
+
+      <!-- ── RIGHT column: Integrations (mirrored) ───────────────── -->
+      <div class="ms-col ms-col--b">
+        <div class="ms-creative ms-creative--b">
+          <div class="ms-grid-bd ms-grid-bd--1" data-reveal style="--d:.26s" aria-hidden="true">
+            <svg viewBox="0 0 232 232" fill="none">
+              <ellipse cx="116" cy="116" rx="102" ry="58" transform="rotate(22 116 116)" stroke="currentColor" stroke-width="1.5" stroke-dasharray="1.5 8" stroke-linecap="round"/>
+              <circle cx="40" cy="150" r="4.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="ms-grid-bd ms-grid-bd--2" data-reveal style="--d:.32s" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 0 Q 14 10 24 12 Q 14 14 12 24 Q 10 14 0 12 Q 10 10 12 0 Z" fill="currentColor"/>
+            </svg>
+          </div>
+
+          <div class="ms-uicard" data-reveal style="--d:.38s" aria-hidden="true">
+            <div class="ms-uihead">Deterministic core &middot; Python</div>
+            <!-- placeholder partner wordmarks — swap for real SVGs -->
+            <div class="ms-introw">
+              <span class="ms-bookmark"><i data-lucide="bookmark" class="ms-i"></i></span>
+              <span class="ms-logo" style="letter-spacing:.04em">Billing</span>
+              <span class="ms-introw-desc">Rent, CAM, diesel &amp; solar allocation</span>
+            </div>
+            <div class="ms-introw">
+              <span class="ms-bookmark"><i data-lucide="bookmark" class="ms-i"></i></span>
+              <span class="ms-logo">Compliance</span>
+              <span class="ms-introw-desc">GST, TDS, net-to-bank &mdash; pure Python</span>
+            </div>
+            <div class="ms-introw">
+              <span class="ms-bookmark"><i data-lucide="bookmark" class="ms-i"></i></span>
+              <span class="ms-logo" style="letter-spacing:.04em">Scheduler</span>
+              <span class="ms-introw-desc">12 APScheduler jobs, policy-gated</span>
+            </div>
+          </div>
+
+          <figure class="ms-photo" data-reveal style="--d:.44s" aria-hidden="true">
+            <img src="../assets/avatars/avatar-emily.jpg" alt="" />
+          </figure>
+        </div>
+
+        <div class="ms-text">
+          <h3 class="ms-title" data-reveal style="--d:.50s">The Deterministic Core</h3>
+          <p class="ms-body" data-reveal style="--d:.56s">Every figure, statutory deadline and state transition lives in tested Python. The model calls it &mdash; it cannot overrule it.</p>
+          <a class="ms-cta" href="#" data-reveal style="--d:.62s">Inside the compute layer</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+</div>
+<script>
+(function(){
+var __crf_more_solutions = document.querySelector('[data-crf="more-solutions"]');
+if(!__crf_more_solutions) return;
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = __crf_more_solutions.querySelector('.ms-section');
+
+  if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }   // guarded
+
+  if (!sec) return;
+
+  function reveal() {
+    sec.querySelectorAll('[data-reveal]').forEach(function (n) { n.classList.add('in-view'); });
+  }
+
+  if (reduce) { reveal(); return; }
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) {
+        if (en.isIntersecting) { reveal(); io.disconnect(); }
+      });
+    }, { threshold: 0.15 });
+    io.observe(sec);
+  } else {
+    reveal();
+  }
+})();
+})();
+</script>
+
+
+<!-- ════ BAND 4 · VALIDATION GATES (stat-band) ════ -->
+<style>
+[data-crf="stat-band"], [data-crf="stat-band"] * { box-sizing: border-box; }[data-crf="stat-band"],
+[data-crf="stat-band"] {
+    margin: 0; padding: 0; background: var(--cr-bg-grey-50);
+    font-family: var(--cr-font-body); color: var(--cr-ink-flat);
+    -webkit-font-smoothing: antialiased;
+  }[data-crf="stat-band"] .section {
+    padding: 120px 100px;
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }[data-crf="stat-band"] /* ── Top block ─────────────────────────────────────────────────
+     Eyebrow sits alone on the top-left. Below it,
+[data-crf="stat-band"] the headline (left)
+     and the supporting copy + button (right) share one row — so the
+     right column top-aligns with the HEADLINE,
+[data-crf="stat-band"] not the eyebrow. ──── */
+  .top {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    column-gap: 80px;
+    margin-bottom: 80px;
+  }[data-crf="stat-band"] .eyebrow {
+    grid-column: 1; grid-row: 1;
+    font-family: "Inter", sans-serif; font-weight: 600; font-size: 13px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--cr-fg-3);
+    margin: 0 0 24px;
+  }[data-crf="stat-band"] .headline {
+    grid-column: 1; grid-row: 2;
+    font-family: "Urbanist", sans-serif; font-weight: 700;
+    font-size: 52px; line-height: 1.12; letter-spacing: -0.02em;
+    color: var(--cr-ink-flat); margin: 0; max-width: 600px;
+  }[data-crf="stat-band"] .aside {
+    /* row 2 / right column → its top edge lines up with the headline */
+    grid-column: 2; grid-row: 2;
+    align-self: start; justify-self: end; max-width: 440px;
+  }[data-crf="stat-band"] .aside p {
+    font-family: "Inter", sans-serif; font-weight: 400; font-size: 16px;
+    line-height: 1.7; color: var(--cr-fg-2); margin: 0 0 28px;
+  }[data-crf="stat-band"] /* Outlined pill in the brand action colour — blue border + blue text,
+[data-crf="stat-band"] transparent fill; hover fills blue with white text. → per CTA rule. */
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 26px;
+    background: transparent; color: var(--cr-brand);
+    border: 1px solid var(--cr-brand); border-radius: 500px; cursor: pointer;
+    font-family: "Inter", sans-serif; font-weight: 500; font-size: 15px;
+    transition: background .15s ease, color .15s ease, border-color .15s ease, transform .15s ease;
+  }[data-crf="stat-band"] .btn-outline:hover { background: var(--cr-brand); color: #fff; border-color: var(--cr-brand); }[data-crf="stat-band"] .btn-outline:active { transform: scale(.97); }[data-crf="stat-band"] /* ── Stat band ─────────────────────────────────────────────────
+     A row of columns,
+[data-crf="stat-band"] each preceded by a tall vertical hairline. ── */
+  .stats {
+    --num: 80px;                 /* one knob drives the whole proportion */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);   /* brand default: 3 columns */
+  }[data-crf="stat-band"] .stats.cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+    --num: 64px;                 /* smaller so 4 columns never crowd */
+  }[data-crf="stat-band"] .stat {
+    /* Per-instance accent — set --accent inline (or via a class) on each
+       .stat. It is MEANT to vary per page; falls back to ink when unset.
+       Never indigo. See the demo markup below. */
+    border-left: 1px solid var(--cr-line);   /* divider before every column, incl. the first */
+    padding: 56px 24px 56px 32px;     /* generous top/bottom → the rule reads as a tall line */
+  }[data-crf="stat-band"] .stat-num {
+    font-family: "Urbanist", sans-serif; font-weight: 700;
+    font-size: var(--num); line-height: 1; letter-spacing: -0.03em;
+    color: var(--accent, var(--cr-ink-flat));
+    display: flex; align-items: baseline; gap: 0;
+  }[data-crf="stat-band"] /* word/symbol that sits beside the number — sized off --num so the
+     proportion holds at every breakpoint,
+[data-crf="stat-band"] never overlaps the neighbor.
+     Colour inherits the number's accent. */
+  .stat-unit {
+    font-family: "Urbanist", sans-serif; font-weight: 700;
+    font-size: calc(var(--num) * 0.38);
+    letter-spacing: -0.02em;
+    margin-left: 4px;            /* symbols (%, ×) sit tight against the number */
+  }[data-crf="stat-band"] .stat-unit.word { margin-left: 12px; }[data-crf="stat-band"] /* word units (weeks,
+[data-crf="stat-band"] FTE) get a real space */
+  .stat-cap {
+    font-family: "Inter", sans-serif; font-weight: 400;
+    font-size: clamp(13px, calc(var(--num) * 0.18), 16px);
+    line-height: 1.45; color: var(--cr-fg-3);
+    margin-top: 18px; max-width: 220px;   /* keeps the caption inside its column */
+  }[data-crf="stat-band"] /* ── Responsive — deliberate per-device behavior ───────────────── */
+
+  /* Tablet: top block stacks (copy + button drop below the headline,
+[data-crf="stat-band"] left-aligned); stat band → 2 columns; numbers step down. */
+  @media (max-width: 1024px) {
+    .section { padding: 80px 60px; }
+    .top { grid-template-columns: 1fr; gap: 32px; margin-bottom: 56px; }
+    .headline { font-size: 40px; }
+    .aside { justify-self: start; max-width: 560px; }
+    .stats { grid-template-columns: repeat(2, 1fr); --num: 64px; }
+    .stats.cols-4 { grid-template-columns: repeat(2, 1fr); }
+    .stat { padding: 44px 20px 44px 28px; }
+  }[data-crf="stat-band"] /* Mobile: single-column stack; vertical dividers become a full-width
+     top border (vertical rules read wrong when stacked); type tightens. */
+  @media (max-width: 680px) {
+    .section { padding: 48px 20px; }
+    .headline { font-size: 30px; line-height: 1.15; }
+    .stats,
+    .stats.cols-4 { grid-template-columns: 1fr; --num: 48px; }
+    .stat {
+      border-left: 0;
+      border-top: 1px solid var(--cr-line);
+      padding: 36px 0;
+    }
+    .stat:first-child { border-top: 0; }   /* dividers sit between stats, not above the first */
+    .stat-cap { max-width: none; }
+  }
+</style>
+<div data-crf="stat-band">
+<section class="section" data-screen-label="Stat band">
+  <!-- TOP BLOCK -->
+  <div class="top">
+    <p class="eyebrow">The Proof</p>
+    <h2 class="headline">Validated, Not Asserted.<br/>Every Figure. Every Deploy.</h2>
+    <div class="aside">
+      <p>PRISM ships behind CI gates &mdash; routing, tool-accuracy, safety and refusal suites run on every change. Each figure is deterministic and unit-testable in isolation, so the model is never the source of truth for a rupee.</p>
+      <button class="btn-outline">Read the architecture <span>&rarr;</span></button>
+    </div>
+  </div>
+
+  <!-- STAT BAND — default 3 columns (brand-preferred).
+       Each .stat sets its own --accent inline; these are demo values and are
+       MEANT to differ per page (don't reuse the same palette every time).
+       Use brand blue / semantic green / amber etc. — never indigo.
+       For a 4-column band, add the `cols-4` class to .stats and a 4th .stat,
+       e.g.  <div class="stat" style="--accent:#1E6E6E"><div class="stat-num">5<span class="stat-unit word">FTE</span></div>
+              <div class="stat-cap">of manual capacity automated per deployment</div></div> -->
+  <div class="stats">
+    <div class="stat" style="--accent:var(--cr-brand)">
+      <div class="stat-num">93<span class="stat-unit">%</span></div>
+      <div class="stat-cap">eval-suite pass across 48 routing, tool &amp; refusal cases</div>
+    </div>
+    <div class="stat" style="--accent:var(--cr-success)">
+      <div class="stat-num">100<span class="stat-unit">%</span></div>
+      <div class="stat-cap">safety-gate pass &mdash; zero tolerance, every deploy</div>
+    </div>
+    <div class="stat" style="--accent:var(--cr-amber)">
+      <div class="stat-num">12<span class="stat-unit word">jobs</span></div>
+      <div class="stat-cap">deterministic APScheduler jobs on a clock &middot; 0 LLM writes</div>
+    </div>
+  </div>
+</section>
+</div>
+
+
+
+<!-- ════ BAND 5 · BEFORE / AFTER (compare-table) ════ -->
+<style>
+[data-crf="compare-table"] .row { opacity: 1 !important; transform: none !important; }[data-crf="compare-table"], [data-crf="compare-table"] * { box-sizing: border-box; }[data-crf="compare-table"],
+[data-crf="compare-table"] {
+    margin: 0; padding: 0; background: #FFFFFF;
+    font-family: var(--cr-font-body); color: var(--cr-ink-flat);
+    -webkit-font-smoothing: antialiased;
+  }[data-crf="compare-table"] .section {
+    padding: 120px 100px;
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }[data-crf="compare-table"] .header { text-align: center; margin-bottom: 64px; }[data-crf="compare-table"] .header h2 {
+    font-family: "Urbanist", sans-serif; font-weight: 700;
+    font-size: 48px; line-height: 1.1; letter-spacing: -0.02em;
+    color: var(--cr-ink-flat); margin: 0 0 20px;
+  }[data-crf="compare-table"] .header p {
+    font-family: "Inter", sans-serif; font-weight: 400;
+    font-size: 16px; line-height: 1.6; color: var(--cr-fg-2);
+    margin: 0 auto; max-width: 560px;
+  }[data-crf="compare-table"] .compare-scroll { overflow-x: visible; }[data-crf="compare-table"] .compare {
+    --cols-grid:    1.6fr 1fr 1fr;
+    --priority-col: 3;
+    --priority-bg:  var(--cr-bg-grey-50);
+    --check-bg:     var(--cr-brand);
+    --zebra-bg:     #FAF7F1;
+    --line:         var(--cr-line);
+    --pillar-extend: 40px;
+    display: grid;
+    grid-template-columns: var(--cols-grid);
+    position: relative;
+    padding: var(--pillar-extend) 0;
+    max-width: var(--cr-content-max); margin: 0 auto;
+    isolation: isolate;
+  }[data-crf="compare-table"] .priority-bg {
+    position: absolute;
+    top: 0; bottom: 0;
+    background: var(--priority-bg);
+    border-radius: 24px;
+    z-index: -1;
+  }[data-crf="compare-table"] .row {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    align-items: center;
+  }[data-crf="compare-table"] .cell {
+    padding: 20px 24px;
+  }[data-crf="compare-table"] .row.head .cell { padding-top: 28px; padding-bottom: 28px; }[data-crf="compare-table"] .row.head .label {
+    font-family: "Urbanist", sans-serif; font-weight: 500; font-size: 18px;
+    color: var(--cr-fg-2);
+  }[data-crf="compare-table"] .row.head .plan {
+    font-family: "Urbanist", sans-serif; font-weight: 700; font-size: 24px;
+    letter-spacing: -0.01em; color: var(--cr-ink-flat);
+    text-align: center;
+  }[data-crf="compare-table"] .cell.label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: "Urbanist", sans-serif; font-weight: 500; font-size: 16px;
+    color: var(--cr-ink-flat);
+  }[data-crf="compare-table"] .cell.label svg {
+    width: 18px; height: 18px; stroke-width: 1;
+    color: var(--cr-fg-muted); flex-shrink: 0;
+  }[data-crf="compare-table"] .tip {
+    position: relative;
+    display: inline-flex; align-items: center; justify-content: center;
+    outline: none;
+  }[data-crf="compare-table"] .tip:hover svg,
+[data-crf="compare-table"] .tip:focus-visible svg { color: var(--cr-ink-flat); }[data-crf="compare-table"] .tip::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 100%; left: 50%;
+    margin-bottom: 12px;
+    transform: translateX(-50%);
+    background: var(--cr-ink-flat); color: #FFFFFF;
+    font-family: "Inter", sans-serif; font-weight: 500; font-size: 12px;
+    line-height: 1.4;
+    padding: 8px 12px;
+    border-radius: 8px;
+    width: max-content;
+    max-width: 240px;
+    white-space: normal;
+    text-align: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .15s ease;
+    z-index: 10;
+  }[data-crf="compare-table"] .tip::before {
+    content: "";
+    position: absolute;
+    bottom: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--cr-ink-flat);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .15s ease;
+    z-index: 10;
+  }[data-crf="compare-table"] .tip:hover::after,
+[data-crf="compare-table"] .tip:hover::before,
+[data-crf="compare-table"] .tip:focus-visible::after,
+[data-crf="compare-table"] .tip:focus-visible::before { opacity: 1; }[data-crf="compare-table"] .row:not(.head) .cell:not(.label) { text-align: center; }[data-crf="compare-table"] .check {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--check-bg);
+    color: #FFFFFF;
+  }[data-crf="compare-table"] .check svg { width: 14px; height: 14px; stroke-width: 2.5; }[data-crf="compare-table"] .dash {
+    color: var(--cr-fg-muted);
+    font-family: "Inter", sans-serif; font-size: 18px; font-weight: 400;
+  }[data-crf="compare-table"] .cell.text {
+    font-family: "Inter", sans-serif; font-weight: 500; font-size: 15px;
+    color: var(--cr-ink-flat); line-height: 1.45;
+  }[data-crf="compare-table"] .compare.divided .row:not(.head) .cell {
+    border-top: 1px solid var(--line);
+  }[data-crf="compare-table"] .compare.zebra .row:nth-child(even of .row:not(.head)) .cell:not(.priority-cell) {
+    background: var(--zebra-bg);
+  }[data-crf="compare-table"] .row {
+    opacity: 0;
+    transform: translateY(12px);
+  }[data-crf="compare-table"] .section.in-view .row {
+    animation: compare-table-kf-row-in .5s ease forwards;
+    animation-delay: var(--delay, 0ms);
+  }
+  @keyframes compare-table-kf-row-in {
+    to { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {[data-crf="compare-table"] .row { opacity: 1; transform: none; animation: none; }[data-crf="compare-table"] .section.in-view .row { animation: none; }
+  }[data-crf="compare-table"] @media (max-width: 1024px) {
+    .section { padding: 80px 60px; }
+    .header { margin-bottom: 48px; }
+    .header h2 { font-size: 40px; }
+    .row.head .plan { font-size: 20px; }
+    .cell { padding: 18px 18px; }
+  }
+  @media (max-width: 640px) {
+    .section { padding: 56px 20px; }
+    .header { margin-bottom: 40px; }
+    .header h2 { font-size: 28px; line-height: 1.18; }
+    .header p { font-size: 15px; }
+    .compare-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 0 -20px;
+      padding: 0 20px 8px;
+    }
+    .compare {
+      min-width: 680px;
+      --pillar-extend: 28px;
+    }
+    .row.head .plan { font-size: 18px; }
+    .row.head .label { font-size: 14px; }
+    .cell { padding: 16px 14px; }
+    .cell.label { font-size: 14px; }
+  }
+</style>
+<div data-crf="compare-table">
+<section class="section" data-screen-label="Compare table">
+  <header class="header">
+    <h2>From the Spreadsheet Era to a Hybrid.</h2>
+    <p>The same monthly revenue cycle, run two ways. PRISM keeps every statutory and monetary figure on a deterministic, auditable path.</p>
+  </header>
+
+  <div class="compare-scroll">
+    <div class="compare" id="compare"
+         style="--priority-col: 3; --priority-bg: var(--cr-bg-grey-50); --check-bg: var(--cr-brand); --cols-grid: 1.6fr 1fr 1fr;">
+      <div class="priority-bg" aria-hidden="true"></div>
+
+      <div class="row head">
+        <div class="cell label">Concern</div>
+        <div class="cell plan">Spreadsheet era</div>
+        <div class="cell plan">PRISM (hybrid)</div>
+      </div>
+
+      <div class="row">
+        <div class="cell label"><span>Billing math</span></div>
+        <div class="cell text">Re-keyed per row in Excel</div>
+        <div class="cell text">Deterministic billing services + jobs</div>
+      </div>
+
+      <div class="row">
+        <div class="cell label"><span>Compliance figures</span></div>
+        <div class="cell text">Hand-computed GST / TDS</div>
+        <div class="cell text">Pure-Python engine; LLM forbidden</div>
+      </div>
+
+      <div class="row">
+        <div class="cell label"><span>Reminders &amp; escalation</span></div>
+        <div class="cell text">Manual chasing, ad hoc</div>
+        <div class="cell text">12 APScheduler jobs, policy-gated</div>
+      </div>
+
+      <div class="row">
+        <div class="cell label"><span>Status semantics</span></div>
+        <div class="cell text">Per-person convention</div>
+        <div class="cell text">Single-source status sets in code</div>
+      </div>
+
+      <div class="row">
+        <div class="cell label"><span>Data lookup &amp; Q&amp;A</span></div>
+        <div class="cell text">Read the sheets manually</div>
+        <div class="cell text">Read-only LLM over master-data tools</div>
+      </div>
+
+      <div class="row">
+        <div class="cell label"><span>Audit trail</span></div>
+        <div class="cell"><span class="dash">&mdash;</span></div>
+        <div class="cell"><span class="check"><i data-lucide="check"></i></span></div>
+      </div>
+
+      <div class="row">
+        <div class="cell label"><span>Failure mode</span></div>
+        <div class="cell text">Silent human error</div>
+        <div class="cell text">Fail loud: structured errors, rollback</div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+<script>
+(function(){
+var __crf_compare_table = document.querySelector('[data-crf="compare-table"]');
+if(!__crf_compare_table) return;
+lucide.createIcons();
+
+  const section    = __crf_compare_table.querySelector('.section');
+  const compare    = document.getElementById('compare');
+  const priorityBg = compare.querySelector('.priority-bg');
+  const rows       = section.querySelectorAll('.row');
+
+  const priorityCol = parseInt(
+    getComputedStyle(compare).getPropertyValue('--priority-col'), 10
+  ) || 3;
+  rows.forEach(row => {
+    const cell = row.children[priorityCol - 1];
+    if (cell) cell.classList.add('priority-cell');
+  });
+
+  function placePriorityBg() {
+    const firstRow = rows[0];
+    if (!firstRow) return;
+    const cell = firstRow.children[priorityCol - 1];
+    if (!cell) return;
+    const compareRect = compare.getBoundingClientRect();
+    const cellRect    = cell.getBoundingClientRect();
+    priorityBg.style.left  = (cellRect.left  - compareRect.left) + 'px';
+    priorityBg.style.width = cellRect.width + 'px';
+  }
+  placePriorityBg();
+  window.addEventListener('resize', placePriorityBg);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(placePriorityBg);
+  }
+
+  rows.forEach((r, i) => r.style.setProperty('--delay', (i * 50) + 'ms'));
+
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in-view');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    io.observe(section);
+  } else {
+    section.classList.add('in-view');
+  }
+})();
+</script>
+
+
+
+
+<!-- ════ BAND 6 · OPERATING PRINCIPLES (value-stats) ════ -->
+<style>
+[data-crf="value-stats"] .vs-section,
+[data-crf="value-stats"] .vs-section * { box-sizing: border-box; }[data-crf="value-stats"] .vs-section {
+    background: var(--cr-bg);
+    padding: 104px 100px;
+    font-family: var(--cr-font-body);
+    color: var(--cr-fg);
+  }[data-crf="value-stats"] .vs-wrap {
+    max-width: var(--cr-content-max); margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+    column-gap: 56px;
+    align-items: stretch;                  /* left column stretches to bento height */
+  }[data-crf="value-stats"] /* ─── LEFT column ─────────────────────────────────────────────── */
+  .vs-left { display: flex; flex-direction: column; min-width: 0; }[data-crf="value-stats"] .vs-eyebrow {
+    display: inline-flex; align-items: center; gap: 7px; align-self: flex-start;
+    background: var(--cr-bg-grey-100);
+    border-radius: var(--cr-radius-pill);
+    padding: 6px 13px 6px 11px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 13px;
+    color: var(--cr-fg);
+  }[data-crf="value-stats"] .vs-eyebrow i { width: 15px; height: 15px; color: var(--cr-brand); stroke-width: 2; }[data-crf="value-stats"] .vs-head {
+    margin: 22px 0 0;
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(33px, 3.6vw, 44px); line-height: 1.12; letter-spacing: -0.02em;
+    color: var(--cr-fg);
+  }[data-crf="value-stats"] .vs-sub {
+    margin: 22px 0 0; max-width: 24em;
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: 18px; line-height: 1.5;
+    color: var(--cr-fg-2);                  /* dark clause */
+  }[data-crf="value-stats"] .vs-sub .vs-muted { color: var(--cr-fg-3); }[data-crf="value-stats"] /* grey clause */
+
+  .vs-link {
+    margin-top: 22px; align-self: flex-start;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 15px;
+    color: var(--cr-brand); text-decoration: none;
+  }[data-crf="value-stats"] .vs-link .vs-arr { transition: transform .2s ease; }[data-crf="value-stats"] .vs-link:hover .vs-arr { transform: translate(3px, -3px); }[data-crf="value-stats"] /* nudges up-right (the source's ↗ direction) */
+
+  /* bottom cluster — pinned to the base on desktop,
+[data-crf="value-stats"] a fixed gap when stacked */
+  .vs-foot { margin-top: auto; padding-top: 56px; }[data-crf="value-stats"] .vs-foot-txt {
+    margin: 0 0 16px;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 14px; line-height: 1.55;
+    color: var(--cr-fg-3); max-width: 30em;
+  }[data-crf="value-stats"] .vs-foot-txt strong { font-weight: 600; color: var(--cr-fg); }[data-crf="value-stats"] .vs-rated { display: flex; align-items: center; gap: 12px; }[data-crf="value-stats"] .vs-avatars { position: relative; width: 96px; height: 28px; flex: none; }[data-crf="value-stats"] /* positioned overlap — no negative margins */
+  .vs-avatars img {
+    position: absolute; top: 0; width: 28px; height: 28px;
+    border-radius: 50%; border: 2px solid var(--cr-bg); object-fit: cover; object-position: center 28%;
+  }[data-crf="value-stats"] .vs-rated-txt { font-family: var(--cr-font-body); font-size: 14px; color: var(--cr-fg-3); }[data-crf="value-stats"] /* ─── RIGHT bento ─────────────────────────────────────────────── */
+  .vs-bento {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: minmax(248px, auto) minmax(204px, auto);   /* top card taller (source rhythm) */
+    gap: 18px;
+  }[data-crf="value-stats"] .vs-card {
+    display: flex; flex-direction: column; justify-content: space-between;
+    min-width: 0;
+    background: var(--cr-bg-grey-100);
+    border-radius: var(--cr-radius-xl);
+    padding: 28px 30px;
+  }[data-crf="value-stats"] .vs-card--wide { grid-column: 1 / -1; }[data-crf="value-stats"] .vs-card-top {
+    display: flex; align-items: center; gap: 9px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 15px;
+    color: var(--cr-fg-2);
+  }[data-crf="value-stats"] .vs-card-top i { width: 18px; height: 18px; color: var(--cr-brand); stroke-width: 2; flex: none; }[data-crf="value-stats"] .vs-num {
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(44px, 4.6vw, 58px); line-height: 1; letter-spacing: -0.02em;
+    color: var(--cr-ink);
+  }[data-crf="value-stats"] .vs-cap {
+    margin: 12px 0 0;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 15px; line-height: 1.4;
+    color: var(--cr-fg-3);
+  }[data-crf="value-stats"] /* ─── reveal (anti-race,
+[data-crf="value-stats"] fires once; no-JS shows all) ─────────── */
+  .has-js .vs-section [data-reveal] { opacity: 0; transform: translateY(18px); }.has-js [data-crf="value-stats"] .vs-section [data-reveal].in-view {
+    animation: value-stats-kf-vsRise .7s cubic-bezier(.16,1,.3,1) forwards; animation-delay: var(--d, 0s);
+  }
+  @keyframes value-stats-kf-vsRise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {.has-js [data-crf="value-stats"] .vs-section [data-reveal],
+.has-js [data-crf="value-stats"] .vs-section [data-reveal].in-view { opacity: 1; transform: none; animation: none; }
+  }[data-crf="value-stats"] /* ─── responsive ──────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .vs-section { padding: 80px 56px; }
+    .vs-wrap { grid-template-columns: minmax(0, 1fr); row-gap: 48px; }
+    .vs-foot { margin-top: 0; padding-top: 8px; }
+    .vs-bento { grid-template-rows: minmax(220px, auto) minmax(190px, auto); }
+  }
+  @media (max-width: 560px) {[data-crf="value-stats"] .vs-section { padding: 60px 24px; }[data-crf="value-stats"] .vs-bento { grid-template-columns: 1fr; grid-template-rows: none; gap: 14px; }[data-crf="value-stats"] .vs-card--wide { grid-column: auto; }[data-crf="value-stats"] .vs-card { min-height: 188px; padding: 24px; }
+  }
+</style>
+<div data-crf="value-stats">
+<section class="vs-section" data-screen-label="Value prop · Proof stats">
+  <div class="vs-wrap">
+
+    <!-- ── LEFT ───────────────────────────────────────────────── -->
+    <div class="vs-left">
+      <div class="vs-eyebrow" data-reveal style="--d:0s">
+        <i data-lucide="shield-check"></i><span>Operating principles</span>
+      </div>
+      <h2 class="vs-head" data-reveal style="--d:.06s">Read-Only<br>by Construction</h2>
+      <p class="vs-sub" data-reveal style="--d:.12s"><span class="vs-muted">The live agent looks up and reports</span> &mdash; a default-DENY allowlist strips every write tool before the model is built.</p>
+      <a class="vs-link" href="#" data-reveal style="--d:.18s">See the safety model <span class="vs-arr">&rarr;</span></a>
+
+      <div class="vs-foot" data-reveal style="--d:.24s">
+        <p class="vs-foot-txt"><strong>Statutory determinism</strong> &mdash; GST, TDS and net-to-bank are computed in tested Python, never inferred by the model.</p>
+        <div class="vs-rated">
+          <div class="vs-avatars">
+            <img src="../assets/avatars/leader-2.jpg" alt="" style="left:0" decoding="async" />
+            <img src="../assets/avatars/team-1.jpg" alt="" style="left:17px" decoding="async" />
+            <img src="../assets/avatars/team-jessica.jpg" alt="" style="left:34px" decoding="async" />
+            <img src="../assets/avatars/team-dami.jpg" alt="" style="left:51px" decoding="async" />
+            <img src="../assets/avatars/avatar-olivia.jpg" alt="" style="left:68px" decoding="async" />
+          </div>
+          <span class="vs-rated-txt">&mdash; live at Madhuban Group</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT bento ────────────────────────────────────────── -->
+    <div class="vs-bento">
+
+      <div class="vs-card vs-card--wide" data-reveal style="--d:.1s">
+        <div class="vs-card-top"><i data-lucide="lock"></i><span>Write tools</span></div>
+        <div>
+          <div class="vs-num" data-to="0" data-decimals="0" data-suffix="">0</div>
+          <p class="vs-cap">LLM-initiated writes in production</p>
+        </div>
+      </div>
+
+      <div class="vs-card" data-reveal style="--d:.18s">
+        <div class="vs-card-top"><i data-lucide="table"></i><span>Tenant master</span></div>
+        <div>
+          <div class="vs-num" data-to="37" data-decimals="0" data-suffix="">37</div>
+          <p class="vs-cap">Columns matched verbatim</p>
+        </div>
+      </div>
+
+      <div class="vs-card" data-reveal style="--d:.26s">
+        <div class="vs-card-top"><i data-lucide="building-2"></i><span>Entities</span></div>
+        <div>
+          <div class="vs-num" data-to="3" data-decimals="0" data-suffix="">3</div>
+          <p class="vs-cap">Billed in one monthly cycle</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+</div>
+<script>
+(function(){
+var __crf_value_stats = document.querySelector('[data-crf="value-stats"]');
+if(!__crf_value_stats) return;
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = __crf_value_stats.querySelector('.vs-section');
+  if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
+  if (!sec) return;
+
+  var nums = Array.prototype.slice.call(sec.querySelectorAll('.vs-num'));
+
+  function fmt(v, dec, suf) { return v.toFixed(dec) + suf; }
+  function countUp(el) {
+    var to = parseFloat(el.getAttribute('data-to'));
+    var dec = parseInt(el.getAttribute('data-decimals'), 10) || 0;
+    var suf = el.getAttribute('data-suffix') || '';
+    var dur = 1200, t0 = null;
+    function step(ts) {
+      if (t0 === null) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);          // easeOutCubic
+      el.textContent = fmt(to * eased, dec, suf);
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = fmt(to, dec, suf);     // land exactly on target
+    }
+    requestAnimationFrame(step);
+  }
+
+  function revealOnly() {
+    sec.querySelectorAll('[data-reveal]').forEach(function (el) { el.classList.add('in-view'); });
+  }
+
+  // reduced-motion or no IntersectionObserver → show everything + final numbers (no count)
+  if (reduce || !('IntersectionObserver' in window)) { revealOnly(); return; }
+
+  // pre-set to 0 so the count starts clean, then count up + reveal on first view
+  nums.forEach(function (el) {
+    var dec = parseInt(el.getAttribute('data-decimals'), 10) || 0;
+    el.textContent = fmt(0, dec, el.getAttribute('data-suffix') || '');
+  });
+  var io = new IntersectionObserver(function (ents) {
+    ents.forEach(function (en) {
+      if (en.isIntersecting) {
+        revealOnly();
+        nums.forEach(countUp);
+        io.disconnect();
+      }
+    });
+  }, { threshold: 0.25 });
+  io.observe(sec);
+})();
+})();
+</script>
+
+
+<!-- ════ BAND 7 · CTA (cta-banner) ════ -->
+<style>
+[data-crf="cta-banner"], [data-crf="cta-banner"] * { box-sizing: border-box; }[data-crf="cta-banner"],
+[data-crf="cta-banner"] {
+    margin: 0; padding: 0; background: var(--cr-bg-grey-50);
+    font-family: var(--cr-font-body); color: var(--cr-ink-flat);
+    -webkit-font-smoothing: antialiased;
+  }[data-crf="cta-banner"] /* The section is the white/cream band; the *card* sits inside the page
+     gutter. Add the class .bleed on .banner to make it span the full
+     viewport width with no surrounding margin. */
+  .section {
+    padding: 80px 100px;
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }[data-crf="cta-banner"] .section.bleed { padding: 0; max-width: none; }[data-crf="cta-banner"] .banner {
+    position: relative; overflow: hidden;
+    border-radius: 24px;
+    /* Solid Ink surface from the brand — no indigo cast */
+    background: var(--cr-ink-flat);
+    /* Subtle white dot grid — the recurring CR "system" motif */
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,0.06) 1px, transparent 0);
+    background-size: 18px 18px;
+    color: #fff;
+    padding: 120px 60px;
+    text-align: center;
+  }[data-crf="cta-banner"] .section.bleed .banner { border-radius: 0; padding: 140px 60px; }[data-crf="cta-banner"] /* Two-line headline — first line strong,
+[data-crf="cta-banner"] second line muted */
+  .h-strong,
+[data-crf="cta-banner"] .h-muted {
+    font-family: "Urbanist", sans-serif; font-weight: 700;
+    font-size: 56px; line-height: 1.1; letter-spacing: -0.02em;
+    margin: 0;
+  }[data-crf="cta-banner"] .h-strong { color: #fff; }[data-crf="cta-banner"] .h-muted { color: var(--cr-fg-3); margin-top: 4px; }[data-crf="cta-banner"] .actions {
+    margin-top: 56px;
+    display: inline-flex; gap: 16px; align-items: center;
+    position: relative;
+  }[data-crf="cta-banner"] /* Primary button — pill with an icon chip on the left,
+[data-crf="cta-banner"] brand blue */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 6px 24px 6px 6px;
+    background: var(--cr-brand); color: #fff;
+    border: 0; border-radius: 500px; cursor: pointer;
+    font-family: "Inter", sans-serif; font-weight: 500; font-size: 16px;
+    transition: background .15s ease, transform .15s ease;
+  }[data-crf="cta-banner"] .btn-primary:hover { background: var(--cr-brand-700); }[data-crf="cta-banner"] .btn-primary:active { transform: scale(.97); }[data-crf="cta-banner"] .btn-primary .chip {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }[data-crf="cta-banner"] .btn-primary .chip svg { width: 16px; height: 16px; stroke-width: 1.5; color: #fff; }[data-crf="cta-banner"] /* Secondary button — ghost pill,
+[data-crf="cta-banner"] white text,
+[data-crf="cta-banner"] hairline border */
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 28px;
+    background: transparent; color: #fff;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 500px; cursor: pointer;
+    font-family: "Inter", sans-serif; font-weight: 500; font-size: 16px;
+    transition: border-color .15s ease, background .15s ease, transform .15s ease;
+  }[data-crf="cta-banner"] .btn-ghost:hover { border-color: #fff; background: rgba(255,255,255,0.04); }[data-crf="cta-banner"] .btn-ghost:active { transform: scale(.97); }[data-crf="cta-banner"] /* ── Responsive ───────────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .section { padding: 60px 40px; }
+    .banner { padding: 96px 40px; }
+    .h-strong, .h-muted { font-size: 44px; }
+  }
+  @media (max-width: 640px) {[data-crf="cta-banner"] .section { padding: 40px 20px; }[data-crf="cta-banner"] .banner { padding: 72px 24px; border-radius: 20px; }[data-crf="cta-banner"] .h-strong,
+[data-crf="cta-banner"] .h-muted { font-size: 30px; line-height: 1.15; }[data-crf="cta-banner"] .actions { flex-direction: column; width: 100%; margin-top: 40px; gap: 12px; }[data-crf="cta-banner"] .btn-primary,
+[data-crf="cta-banner"] .btn-ghost { width: 100%; justify-content: center; }
+  }
+</style>
+<div data-crf="cta-banner">
+<section class="section" data-screen-label="CTA banner">
+  <div class="banner">
+    <h2 class="h-strong">Bring This Pattern To Your Vertical.</h2>
+    <h2 class="h-muted">Agentic Interface. Deterministic Core.</h2>
+
+    <div class="actions">
+      <button class="btn-primary">
+        <span class="chip"><i data-lucide="sparkles"></i></span>
+        Talk to an architect
+      </button>
+      <button class="btn-ghost">
+        Read the case study <i data-lucide="arrow-right" style="width:16px;height:16px;stroke-width:1.5"></i>
+      </button>
+    </div>
+  </div>
+</section>
+</div>
+<script>
+(function(){
+var __crf_cta_banner = document.querySelector('[data-crf="cta-banner"]');
+if(!__crf_cta_banner) return;
+lucide.createIcons();
+})();
+</script>
+
+
+<!-- ════ BAND 8 · FOOTER (footer-orbit) ════ -->
+<style>
+[data-crf="footer-orbit"] .cr-fo {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, #0D0D14 0%, #0A0A10 100%);
+    font-family: var(--cr-font-body);
+  }[data-crf="footer-orbit"] /* ── Full-bleed dark band → centered content well ───────── */
+  .fo-shell {
+    position: relative;
+    z-index: 1;
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+    padding: clamp(40px, 5vw, 72px) clamp(24px, 5vw, 64px) 0;
+  }[data-crf="footer-orbit"] /* ── CTA card ───────────────────────────────────────────── */
+  .fo-cta {
+    position: relative;
+    border: 1px solid var(--cr-line-dark);
+    border-radius: 24px;
+    background: linear-gradient(180deg, #16161E 0%, #121218 100%);
+    padding: clamp(28px, 4vw, 52px);
+    display: grid;
+    grid-template-columns: 1.08fr 0.92fr;
+    gap: 32px;
+    align-items: center;
+    overflow: hidden;
+  }[data-crf="footer-orbit"] .fo-cta-left { min-width: 0; }[data-crf="footer-orbit"] .fo-title {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(32px, 3.8vw, 48px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    color: #fff;
+  }[data-crf="footer-orbit"] .fo-sub {
+    margin: 16px 0 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--cr-fg-muted);
+    max-width: 400px;
+  }[data-crf="footer-orbit"] /* Form row */
+  .fo-form {
+    margin-top: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }[data-crf="footer-orbit"] .fo-input-wrap {
+    position: relative;
+    flex: 1 1 240px;
+    min-width: 0;
+  }[data-crf="footer-orbit"] .fo-input-wrap .fo-mail {
+    position: absolute;
+    left: 16px; top: 50%;
+    transform: translateY(-50%);
+    width: 17px; height: 17px;
+    color: var(--cr-fg-muted);
+    pointer-events: none;
+  }[data-crf="footer-orbit"] .fo-input {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: var(--cr-font-body);
+    font-size: 15px;
+    color: #fff;
+    padding: 14px 18px 14px 44px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--cr-line-dark);
+    border-radius: var(--cr-radius-pill);
+    outline: none;
+    transition: border-color .18s ease, background .18s ease;
+  }[data-crf="footer-orbit"] .fo-input::placeholder { color: var(--cr-fg-muted); }[data-crf="footer-orbit"] .fo-input:focus {
+    border-color: rgba(255,255,255,0.32);
+    background: rgba(255,255,255,0.06);
+  }[data-crf="footer-orbit"] .fo-signup {
+    flex: 0 0 auto;
+    font-family: var(--cr-font-display);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--cr-ink);
+    background: #fff;
+    border: none;
+    border-radius: var(--cr-radius-pill);
+    padding: 14px 26px;
+    cursor: pointer;
+    transition: background .18s ease, transform .18s ease;
+  }[data-crf="footer-orbit"] .fo-signup:hover { background: #E9E9E9; }[data-crf="footer-orbit"] .fo-signup:focus-visible { outline: 2px solid var(--cr-brand); outline-offset: 3px; }[data-crf="footer-orbit"] /* ── Orbit motif ────────────────────────────────────────── */
+  .fo-orbit {
+    position: relative;
+    justify-self: center;
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: 1 / 0.86;
+  }[data-crf="footer-orbit"] /* radial cool navy depth (gradient fill — no blur,
+[data-crf="footer-orbit"] no shadow) */
+  .fo-orbit-glow {
+    position: absolute;
+    width: 78%; aspect-ratio: 1;
+    left: 50%; top: 56%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle,
+      rgba(20, 157, 255, 0.30) 0%,
+      rgba(20, 35, 58, 0.20) 40%,
+      rgba(11, 27, 48, 0) 72%);
+    pointer-events: none;
+  }[data-crf="footer-orbit"] .fo-ring {
+    position: absolute;
+    left: 50%; top: 56%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.05);
+    pointer-events: none;
+    transform-origin: center;
+  }[data-crf="footer-orbit"] .fo-ring.r1 { width: 38%; aspect-ratio: 1; border-color: rgba(255,255,255,0.14); }[data-crf="footer-orbit"] .fo-ring.r2 { width: 60%; aspect-ratio: 1; border-color: rgba(255,255,255,0.10); }[data-crf="footer-orbit"] .fo-ring.r3 { width: 82%; aspect-ratio: 1; border-color: rgba(255,255,255,0.07); }[data-crf="footer-orbit"] .fo-ring.r4 { width: 104%; aspect-ratio: 1; border-color: rgba(255,255,255,0.045); }[data-crf="footer-orbit"] /* central globe */
+  .fo-globe {
+    position: absolute;
+    left: 50%; top: 56%;
+    transform: translate(-50%, -50%);
+    width: 72px; height: 72px;
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+  }[data-crf="footer-orbit"] .fo-globe svg { width: 72px; height: 72px; stroke-width: 1.4; }[data-crf="footer-orbit"] /* floating app tiles — FROSTED-GLASS colour chips: a layered translucent
+     gradient fill + a rim-light ::before sheen + a colour-matched glass border.
+     Reads as glass on the dark surface with NO backdrop-filter blur (per the
+     locked no-blur charter). */
+  .fo-tile {
+    position: absolute;
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(150deg,
+      rgba(255,255,255,0.18) 0%,
+      rgba(255,255,255,0.08) 50%,
+      rgba(255,255,255,0.035) 100%);
+    border: 1px solid rgba(255,255,255,0.18);
+    display: flex; align-items: center; justify-content: center;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+  }[data-crf="footer-orbit"] .fo-tile::before {                 /* glass rim light — top-left sheen */
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(158deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0) 48%);
+    pointer-events: none;
+  }[data-crf="footer-orbit"] .fo-tile svg { width: 21px; height: 21px; stroke-width: 2; position: relative; }[data-crf="footer-orbit"] /* placement matched to the source close-up: blue top-right,
+[data-crf="footer-orbit"] teal upper-
+     centre,
+[data-crf="footer-orbit"] green left-mid,
+[data-crf="footer-orbit"] amber right-mid. Border colour matches the icon
+     (a colour-tinted glass edge) using the --cr-data token hexes — on-brand
+     blue/teal/green/amber only,
+[data-crf="footer-orbit"] never violet/pink. */
+  .fo-tile.t1 { left: 76%; top: 24%; border-color: rgba(20,157,255,0.55); }[data-crf="footer-orbit"] /* blue  --cr-data-1 */
+  .fo-tile.t2 { left: 46%; top: 34%; border-color: rgba(30,110,110,0.60); }[data-crf="footer-orbit"] /* teal  --cr-data-2 */
+  .fo-tile.t3 { left: 22%; top: 62%; border-color: rgba(55,174,97,0.55); }[data-crf="footer-orbit"] /* green --cr-data-3 */
+  .fo-tile.t4 { left: 80%; top: 55%; border-color: rgba(220,166,77,0.55); }[data-crf="footer-orbit"] /* amber --cr-data-4 */
+  .fo-tile.t1 svg { color: var(--cr-data-1); }[data-crf="footer-orbit"] /* blue  */
+  .fo-tile.t2 svg { color: var(--cr-data-2); }[data-crf="footer-orbit"] /* teal  */
+  .fo-tile.t3 svg { color: var(--cr-data-3); }[data-crf="footer-orbit"] /* green */
+  .fo-tile.t4 svg { color: var(--cr-data-4); }[data-crf="footer-orbit"] /* amber */
+
+  /* ── Footer main ────────────────────────────────────────── */
+  .fo-main {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    padding: clamp(48px, 6vw, 80px) 0 clamp(56px, 7vw, 96px);
+  }[data-crf="footer-orbit"] .fo-brand-logo { height: 26px; width: auto; display: block; }[data-crf="footer-orbit"] .fo-copy {
+    margin: 22px 0 0;
+    font-size: 13px;
+    color: var(--cr-fg-muted);
+  }[data-crf="footer-orbit"] .fo-cols {
+    display: flex;
+    gap: clamp(48px, 8vw, 110px);
+  }[data-crf="footer-orbit"] .fo-col-head {
+    margin: 0 0 18px;
+    font-family: var(--cr-font-display);
+    font-weight: 600;
+    font-size: 16px;
+    color: #fff;
+  }[data-crf="footer-orbit"] .fo-col a {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 14px;
+    color: var(--cr-fg-muted);
+    text-decoration: none;
+    padding: 7px 0;
+    transition: color .18s ease;
+  }[data-crf="footer-orbit"] .fo-col a:hover,
+[data-crf="footer-orbit"] .fo-col a:focus-visible { color: #fff; }[data-crf="footer-orbit"] .fo-col a svg { width: 16px; height: 16px; flex: 0 0 auto; }[data-crf="footer-orbit"] /* ── Giant wordmark ─────────────────────────────────────── */
+  .fo-wordmark {
+    position: absolute;
+    left: 50%;
+    bottom: -0.18em;
+    transform: translateX(-50%);
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 800;
+    font-size: clamp(120px, 22vw, 300px);
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    color: rgba(255,255,255,0.035);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }[data-crf="footer-orbit"] /* ── Scroll-reveal (default-VISIBLE) ────────────────────── */
+  .cr-fo.has-js .reveal { opacity: 0; transform: translateY(16px); }[data-crf="footer-orbit"] .cr-fo.has-js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }[data-crf="footer-orbit"] /* rings expand outward from the globe */
+  .cr-fo.has-js .fo-ring.anim { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }[data-crf="footer-orbit"] .cr-fo.has-js .fo-ring.anim.in {
+    opacity: 1; transform: translate(-50%, -50%) scale(1);
+    transition: opacity .7s ease, transform .8s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }[data-crf="footer-orbit"] .cr-fo.has-js .fo-tile.anim { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }[data-crf="footer-orbit"] .cr-fo.has-js .fo-tile.anim.in {
+    opacity: 1; transform: translate(-50%, -50%) scale(1);
+    transition: opacity .5s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  @media (prefers-reduced-motion: reduce) {[data-crf="footer-orbit"] .cr-fo.has-js .reveal,
+[data-crf="footer-orbit"] .cr-fo.has-js .fo-ring.anim,
+[data-crf="footer-orbit"] .cr-fo.has-js .fo-tile.anim { opacity: 1; transform: translate(-50%, -50%) scale(1); transition: none; }[data-crf="footer-orbit"] .cr-fo.has-js .reveal { transform: none; }
+  }[data-crf="footer-orbit"] /* ── Responsive ─────────────────────────────────────────── */
+  @media (max-width: 879px) {
+    .fo-cta { grid-template-columns: 1fr; gap: 8px; }
+    .fo-orbit { max-width: 340px; margin-top: 12px; }
+    .fo-sub { max-width: none; }
+  }
+  @media (max-width: 759px) {[data-crf="footer-orbit"] .fo-main { grid-template-columns: 1fr; gap: 44px; }
+  }
+  @media (max-width: 460px) {[data-crf="footer-orbit"] .fo-form { flex-direction: column; align-items: stretch; }[data-crf="footer-orbit"] .fo-signup { width: 100%; }[data-crf="footer-orbit"] .fo-cols { gap: 48px; }
+  }
+</style>
+<div data-crf="footer-orbit">
+<section class="cr-fo" data-screen-label="Footer · orbit (newsletter CTA)">
+  <div class="fo-shell">
+
+    <!-- ── Newsletter CTA card ───────────────────────────── -->
+    <div class="fo-cta">
+      <div class="fo-cta-left">
+        <h2 class="fo-title reveal" style="--d:0ms">Subscribe to our newsletter</h2>
+        <p class="fo-sub reveal" style="--d:80ms">One email a month on what we&rsquo;re shipping on FosterX &mdash; hybrid agentic patterns, what holds in production, and the safety work behind it. No fluff.</p>
+
+        <form class="fo-form reveal" style="--d:160ms" novalidate>
+          <span class="fo-input-wrap">
+            <i class="fo-mail" data-lucide="mail"></i>
+            <input class="fo-input" type="email" name="email"
+                   placeholder="name@company.com" aria-label="Email address">
+          </span>
+          <button type="submit" class="fo-signup">Sign up</button>
+        </form>
+      </div>
+
+      <!-- Orbit motif -->
+      <div class="fo-orbit" aria-hidden="true">
+        <div class="fo-orbit-glow"></div>
+        <div class="fo-ring r4 anim" style="--d:360ms"></div>
+        <div class="fo-ring r3 anim" style="--d:280ms"></div>
+        <div class="fo-ring r2 anim" style="--d:200ms"></div>
+        <div class="fo-ring r1 anim" style="--d:120ms"></div>
+        <div class="fo-globe"><i data-lucide="globe"></i></div>
+        <div class="fo-tile t1 anim" style="--d:300ms"><i data-lucide="sparkles"></i></div>
+        <div class="fo-tile t2 anim" style="--d:360ms"><i data-lucide="bot"></i></div>
+        <div class="fo-tile t3 anim" style="--d:420ms"><i data-lucide="zap"></i></div>
+        <div class="fo-tile t4 anim" style="--d:480ms"><i data-lucide="file-text"></i></div>
+      </div>
+    </div>
+
+    <!-- ── Footer main ───────────────────────────────────── -->
+    <div class="fo-main">
+      <div class="fo-brand">
+        <img class="fo-brand-logo reveal" style="--d:80ms"
+             src="../assets/logo-white.svg" alt="Example Brand">
+        <p class="fo-copy reveal" style="--d:160ms">&copy; Copyright 2026 Example Brand, Inc. All rights reserved.</p>
+      </div>
+
+      <div class="fo-cols">
+        <nav class="fo-col reveal" style="--d:240ms" aria-label="Useful links">
+          <p class="fo-col-head">Useful links</p>
+          <a href="#">Careers</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Privacy Policy</a>
+        </nav>
+
+        <nav class="fo-col reveal" style="--d:320ms" aria-label="Follow us">
+          <p class="fo-col-head">Follow us</p>
+          <a href="#">
+            <svg viewBox="0 0 24 24" fill="#1DA1F2" aria-hidden="true"><path d="M23.953 4.57a10 10 0 0 1-2.825.775 4.958 4.958 0 0 0 2.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 0 0-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 0 0-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 0 1-2.228-.616v.06a4.923 4.923 0 0 0 3.946 4.827 4.996 4.996 0 0 1-2.212.085 4.937 4.937 0 0 0 4.604 3.417 9.868 9.868 0 0 1-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 0 0 7.557 2.209c9.054 0 13.999-7.496 13.999-13.986 0-.21 0-.42-.015-.63A9.936 9.936 0 0 0 24 4.59z"/></svg>
+            Twitter
+          </a>
+          <a href="#">
+            <svg viewBox="0 0 24 24" fill="#0A66C2" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            LinkedIn
+          </a>
+          <a href="#">
+            <svg viewBox="0 0 24 24" fill="#FF0000" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            YouTube
+          </a>
+        </nav>
+      </div>
+    </div>
+
+  </div><!-- /.fo-shell -->
+
+  <!-- Giant faint wordmark — spans the full-bleed band, clipped at its edges -->
+  <p class="fo-wordmark" aria-hidden="true">example-brand</p>
+</section>
+</div>
+<script>
+(function(){
+var __crf_footer_orbit = document.querySelector('[data-crf="footer-orbit"]');
+if(!__crf_footer_orbit) return;
+(function () {
+    if (window.lucide) lucide.createIcons();
+
+    var sec = __crf_footer_orbit.querySelector('.cr-fo');
+    if (!sec || !('IntersectionObserver' in window)) return;
+    sec.classList.add('has-js');
+
+    var done = false;
+    function revealAll() {
+      if (done) return;
+      done = true;
+      sec.querySelectorAll('.reveal, .fo-ring.anim, .fo-tile.anim')
+         .forEach(function (el) { el.classList.add('in'); });
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        revealAll();
+        io.disconnect();
+      });
+    }, { threshold: 0.06 });
+    io.observe(sec);
+
+    // Safety net: some snapshot/headless contexts never fire IO — never leave
+    // the footer gated blank. Reveal after a short delay regardless.
+    setTimeout(revealAll, 1200);
+  })();
+})();
+</script>
+
+
+</main>
+</body>
+</html>

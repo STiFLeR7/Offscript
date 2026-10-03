@@ -1,0 +1,17 @@
+schema_version: "1.0"
+kind: asset
+identity:
+  id: "brand:acme::tokens"
+  title: "Acme Tokens"
+ownership:
+  owner: "acme-brand-authority"
+scope:
+  class: brand
+  identity: "acme"
+governance:
+  authority: adapted-local
+  lineage:
+    derives_from: "canonical::token-base"
+semantics:
+  consumes:
+    - "concept:brand-color-role"

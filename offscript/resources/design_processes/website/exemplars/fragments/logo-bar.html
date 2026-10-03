@@ -1,0 +1,31 @@
+<!-- CURATED EXEMPLAR — archetype: logo-bar. Authored on the house .cr-* system (v2 re-theme); rhythm referenced from Website-offscript-v2/fragments/logo-strip.html. Match the rhythm/discipline; do NOT clone. -->
+<section id="logo-bar" class="cr-band-warm cr-section--tight cr-section" aria-label="Trusted by">
+  <style>
+    /* doc-scoped: trust-caption + logo-row layout ONLY. Type, surface, hairline
+       come from the house sheet (colors_and_type.css). Logos are mono wordmarks
+       (no <img>) — one weight, one tone, per the logo-bar discipline (≤7). */
+    #logo-bar .lb-inner { display: flex; flex-direction: column; align-items: center; gap: var(--cr-space-8); }
+    #logo-bar .lb-cap { text-align: center; }
+    #logo-bar .lb-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+      gap: var(--cr-space-12) var(--cr-space-15); width: 100%; }
+    /* uniform mono wordmark — display face, single muted tone, single weight */
+    #logo-bar .lb-logo { font-family: var(--cr-font-display); font-weight: 700; font-size: 22px;
+      letter-spacing: -0.02em; color: var(--cr-fg-3); white-space: nowrap; opacity: .85; }
+    #logo-bar .lb-reveal { animation: lbRise .6s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--d, 0s); }
+    @keyframes lbRise { from { transform: translateY(12px); } to { transform: none; } }
+    @media (prefers-reduced-motion: reduce) { #logo-bar .lb-reveal { animation: none; } }
+    @media (max-width: 640px) { #logo-bar .lb-row { gap: var(--cr-space-8) var(--cr-space-10); } #logo-bar .lb-logo { font-size: 18px; } }
+  </style>
+
+  <div class="cr-container lb-inner">
+    <p class="cr-caption lb-cap lb-reveal" style="--d:.02s">Trusted by operations teams at</p>
+    <div class="lb-row lb-reveal" style="--d:.08s">
+      <span class="lb-logo">Northwind</span>
+      <span class="lb-logo">Meridian</span>
+      <span class="lb-logo">Portline</span>
+      <span class="lb-logo">TalentBridge</span>
+      <span class="lb-logo">Vertex&nbsp;Labs</span>
+      <span class="lb-logo">Lumina</span>
+    </div>
+  </div>
+</section>

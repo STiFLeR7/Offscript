@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Integration grid</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Integration grid            from component-integration-grid.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  The v2 section authored under the v3 editorial-restraint
+                direction. DOM, the reveal script, the `anim` hooks and every
+                behavioural contract are byte-compatible with the frozen
+                original (DR-22, the Pilot Constraint). The v2 file sits beside
+                this one in `_v2/`.
+
+  THE CLAIM     **A mark with a sentence beside it is a capability claim; a
+                mark alone is only a count.** The profile is explicit that this
+                exists for a reader checking whether their own system is
+                covered — so the four columns are read one at a time, and
+                nothing in the band may pull the eye across them. Every
+                decision below serves that: one ink, one weight, one ramp step
+                per role, and a hairline that says "the sentence starts here".
+
+  ENVIRONMENT   NONE — and the assigned environment is DECLINED on purpose.
+                There IS an abstract creative background here: the band was a
+                two-stop dark wash, and that wash is retired to the flat dark
+                token. What does not follow is a photograph. The profile
+                records `Media presence none` for this section, and the surface
+                is a wall of wordmarks with a sentence under each — type end to
+                end, with no type-free region to split off. Putting an
+                environment behind it would break the two hard constraints at
+                once (type on a photograph, a photograph behind wordmarks), and
+                no split exists that does not change the composition. The two
+                finished logo walls in this library (`logo-strip`,
+                `logo-marquee`) reached the same answer for the same reason.
+
+  ACCENT        ZERO, and that is the decision rather than an omission. v2 gave
+                the headline's second clause a brand hue, which on a wall of
+                marks reads as one mark being endorsed over the others. The
+                emphasis is now carried by the sentence structure alone. A logo
+                wall that spends colour turns a set of claims into scenery.
+
+  TYPE          Four wordmarks that carried four weights, four sizes, four
+                trackings and two case transforms collapse to one weight, one
+                ramp step and one tracking. They then separate the way a real
+                logo wall separates — by their own wording and their own
+                glyphs. The supporting line stays on the body step, which the
+                ramp deliberately never moves: the reading floor is the reading
+                floor at every width.
+
+  STROKE        The dotted rule becomes the system stroke: one width, one
+                colour, solid. A dotted hairline is a texture, and the only
+                thing that rule has to do is mark where the mark ends and the
+                claim begins.
+
+  RESPONSIVE    The original's breakpoints (1024 / 640), unchanged. `clamp()`
+                is absent and stays absent — the pack steps the ramp at its own
+                breakpoints, so a per-section type breakpoint is a second ramp
+                laid on top of the first. Reduced motion keeps the guard at the
+                specificity the trigger uses.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-bg-dark);
+    font-family: var(--cr-font-body); color: var(--cr-text-inverse);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── The band ────────────────────────────────────────────────────────
+     v2's surface was a two-stop linear wash between two ink steps that now
+     resolve to the SAME value — a gradient with nothing left to traverse.
+     It is the flat dark token, which is what it was already rendering as. */
+  .section {
+    background: var(--cr-bg-dark);
+    padding: var(--cr-space-2xl) var(--cr-page-gutter);   /* full-bleed band; the pack's one gutter */
+  }
+  /* Content runs edge-to-edge (no cap) — the grid fills the full width */
+  .inner { max-width: none; margin: 0 auto; }
+
+  /* ── Centred display statement ──────────────────────────────────────
+     The head→grid gap is the CONTENT role of the rhythm: the point where the
+     band stops stating and starts listing. */
+  .head { text-align: center; max-width: 880px; margin: 0 auto var(--cr-rhythm-content); }
+  .headline {
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-inverse);
+    margin: 0 0 var(--cr-rhythm-cluster);      /* heading → supporting copy */
+  }
+  /* ZERO ACCENT. v2 coloured this clause with the brand hue; on a wall of four
+     marks that reads as one of them being singled out. Same ink as the clause
+     before it — the sentence already carries the emphasis. */
+  .accent { color: var(--cr-text-inverse); }
+  /* Supporting line stays on the BODY step — the ramp does not move it, at any
+     width, because that step IS the reading floor. */
+  .sub {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-neutral-500);
+    margin: 0 auto; max-width: 600px;
+  }
+
+  /* ── 4-up integration columns ───────────────────────────────────────
+     The track count is the composition and is left exactly as authored. */
+  .grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--cr-space-m);
+  }
+  .col { min-width: 0; }
+
+  /* Logo lockups — PLACEHOLDER wordmarks (swap for real SVG lockups).
+     v2 gave each mark its own weight, size, tracking and case so the text
+     could imitate the real logotype. That is four typographic systems inside
+     one band. One weight, one step, one tracking: the marks separate by their
+     own wording, which is what a real wall of marks does anyway. The fixed
+     height is untouched so every rule below still aligns. */
+  .logo {
+    height: 34px; display: flex; align-items: center;
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-h6);
+    letter-spacing: var(--cr-tracking-heading);
+    line-height: var(--cr-leading-heading);
+    color: var(--cr-text-inverse); white-space: nowrap;
+  }
+  .lg-sap, .lg-sf, .lg-or, .lg-zo { text-transform: none; }
+
+  /* The system stroke. A dotted hairline is a texture; this line has one job,
+     which is to say the mark has ended and the claim has started. */
+  .rule {
+    border-top: var(--cr-stroke) solid var(--cr-line-dark);
+    margin: var(--cr-space-s) 0;
+  }
+
+  .desc {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-neutral-500);
+    margin: 0 0 var(--cr-space-s); max-width: 250px;
+  }
+
+  /* The only control in the band, and it is a text link — so it separates from
+     the sentence above it by INK, not by a hue. */
+  .link {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-neutral-500);
+    text-decoration: none;
+    transition: color .16s ease;
+  }
+  .link .arr { transition: transform .16s ease; }
+  .link:hover { color: var(--cr-text-inverse); }
+  .link:hover .arr { transform: translateX(4px); }
+  .link:focus-visible {
+    outline: 2px solid var(--cr-focus-ring-accent);
+    outline-offset: 3px;
+    color: var(--cr-text-inverse);
+  }
+
+  /* ── Stagger reveal — unchanged in kind ─────────────────────────────── */
+  .has-js .anim {
+    opacity: 0; transform: translateY(22px);
+    transition: opacity .65s cubic-bezier(.2,.7,.2,1) var(--d, 0ms),
+                transform .65s cubic-bezier(.2,.7,.2,1) var(--d, 0ms);
+  }
+  .section.reveal .anim { opacity: 1; transform: none; }
+  /* The guard names the same hook the trigger names and carries the weight to
+     win it — a reveal under a reduce preference must snap, not fade. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .anim { opacity: 1 !important; transform: none !important; transition: none; }
+  }
+
+  /* ── Responsive — the ORIGINAL's breakpoints; type steps on the ramp ── */
+  @media (max-width: 1024px) {
+    .section { padding: var(--cr-space-xl) var(--cr-page-gutter); }
+    .head { margin-bottom: var(--cr-space-xl); max-width: 680px; }
+    .headline { font-size: var(--cr-text-h4); }
+    .sub { max-width: 520px; }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: var(--cr-space-m); }
+    .desc { max-width: none; }
+  }
+  @media (max-width: 640px) {
+    /* No body step is authored here. The pack's ramp walks the headline down
+       its own ladder and deliberately leaves the supporting line where it is,
+       because a phone is exactly where the reading floor matters most. */
+    .section { padding: var(--cr-space-m) var(--cr-page-gutter); }
+    .head { margin-bottom: var(--cr-space-m); }
+    .headline { font-size: var(--cr-text-h5); }
+    .grid { grid-template-columns: 1fr; gap: var(--cr-space-m); }
+  }
+</style>
+</head>
+<body>
+
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. There is no `directed` line: the Pilot Constraint was not
+     asked to yield anywhere in this section. The four-track grid, the head's
+     cap, the fixed lockup height and each column's measure are untouched, so
+     they do not appear — the band kept its geometry and changed its skin.
+  .accent   | font-size              | type-ramp
+  .accent   | line-height            | type-ramp
+  .arr      | font-size              | type-ramp
+  .arr      | line-height            | type-ramp
+  .desc     | line-height            | type-ramp
+  .desc     | margin-bottom          | spacing-scale
+  .grid     | column-gap             | spacing-scale
+  .grid     | row-gap                | spacing-scale
+  .head     | margin-bottom          | spacing-scale
+  .head     | margin-left            | spacing-scale
+  .head     | margin-right           | spacing-scale
+  .headline | font-size              | type-ramp
+  .headline | line-height            | type-ramp
+  .headline | margin-bottom          | spacing-scale
+  .link     | column-gap             | spacing-scale
+  .link     | font-size              | type-ramp
+  .link     | line-height            | type-ramp
+  .link     | row-gap                | spacing-scale
+  .logo     | font-size              | type-ramp
+  .logo     | line-height            | type-ramp
+  .sub      | font-size              | type-ramp
+  .sub      | line-height            | type-ramp
+-->
+
+<section class="section" data-screen-label="Integration grid"
+         data-archetype="feature-comparison" data-hierarchy="technical" data-intent="educate"
+         data-register="technical" data-signature="architectural-whitespace" data-density="high">
+  <div class="inner">
+    <div class="head">
+      <h2 class="headline anim" style="--d:0ms">We Work Inside <span class="accent">Your Stack.</span></h2>
+      <p class="sub anim" style="--d:90ms">No rip-and-replace — our agents plug into the systems you already run and start removing routine work in weeks.</p>
+    </div>
+
+    <div class="grid">
+      <!-- Logos are placeholder wordmarks — swap for real SVG lockups -->
+      <article class="col anim" style="--d:230ms">
+        <div class="logo lg-sap">SAP</div>
+        <div class="rule"></div>
+        <p class="desc">Drop agents into your SAP workflows — no rip-and-replace, no new license tier.</p>
+        <a class="link" href="#">See integration <span class="arr">&rarr;</span></a>
+      </article>
+
+      <article class="col anim" style="--d:330ms">
+        <div class="logo lg-sf">Salesforce</div>
+        <div class="rule"></div>
+        <p class="desc">Keep Salesforce accurate and current, hands-free — every record, every day.</p>
+        <a class="link" href="#">See integration <span class="arr">&rarr;</span></a>
+      </article>
+
+      <article class="col anim" style="--d:430ms">
+        <div class="logo lg-or">Oracle</div>
+        <div class="rule"></div>
+        <p class="desc">Scale Oracle operations without adding a single seat of headcount.</p>
+        <a class="link" href="#">See integration <span class="arr">&rarr;</span></a>
+      </article>
+
+      <article class="col anim" style="--d:530ms">
+        <div class="logo lg-zo">Zoho</div>
+        <div class="rule"></div>
+        <p class="desc">Automate the busywork across your Zoho stack, end to end.</p>
+        <a class="link" href="#">See integration <span class="arr">&rarr;</span></a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var section = document.querySelector(".section");
+    if (!section) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { section.classList.add("reveal"); io.disconnect(); }
+      });
+    }, { threshold: 0.2 });
+    io.observe(section);
+  })();
+</script>
+</body>
+</html>

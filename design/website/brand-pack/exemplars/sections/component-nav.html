@@ -1,0 +1,39 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Nav header</title>
+<link rel="stylesheet" href="card.css">
+<style>
+  body { padding: 0; margin: 0; background: var(--cr-ink-cool); }
+  .nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 100px;
+    background: var(--cr-ink-cool);
+    height: 116px; box-sizing: border-box;
+    width: 1440px;
+  }
+  .nav-logo { height: 44px; display: block; }
+  .nav-links {
+    display: flex; gap: 64px; align-items: center;
+    font-family: "Urbanist", Inter, sans-serif;
+    font-weight: 500; font-size: 20px; color: #fff;
+    letter-spacing: -0.01em;
+  }
+  .nav-link { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+  .nav-link svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2; fill: none; opacity: .9; }
+  .nav-cta {
+    background: #fff; color: var(--cr-ink-cool);
+    font-family: "Urbanist", Inter, sans-serif; font-weight: 700; font-size: 18px;
+    padding: 16px 32px; border-radius: 500px; border: 0; cursor: pointer;
+    letter-spacing: -0.01em;
+  }
+</style><link rel="stylesheet" href="../_frozen-v2-tokens.css"></head><body>
+<div class="nav">
+  <img class="nav-logo" src="../assets/logo-white.svg" alt="Example Brand">
+  <div class="nav-links">
+    <span class="nav-link">AI <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <span class="nav-link">Industry <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <span class="nav-link">FosterX <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <span class="nav-link">About us</span>
+    <span class="nav-link">Resources <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+  </div>
+  <button class="nav-cta">Let's talk</button>
+</div>
+</body></html>

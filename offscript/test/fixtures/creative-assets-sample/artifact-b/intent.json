@@ -1,0 +1,12 @@
+{
+  "id": "approval-chain-status",
+  "contractVersion": 1,
+  "digest": "sha256:3333333333333333333333333333333333333333333333333333333333333c",
+  "belief": "Every approval step is visible end to end, with status shown at a glance.",
+  "feature": "automation",
+  "ratio": "16:9",
+  "camera": "product",
+  "mustInclude": ["approval chain", "status", "workflow"],
+  "contentProvenance": "human",
+  "section": "feature"
+}

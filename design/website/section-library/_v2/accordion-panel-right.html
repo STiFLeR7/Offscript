@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Feature accordion</title>
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background: #FFFFFF;
+    font-family: var(--cr-font-body); color: var(--cr-ink-flat);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .section {
+    padding: 120px 100px;
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }
+  /* Grid: title in row 1 (left col only). Accordion + creative share row 2
+     and are vertically center-aligned with each other in that row — the
+     creative (taller via min-height) defines the row height; the accordion
+     floats centered within it. Title is alone in row 1 so `align-items:
+     center` doesn't shift it. */
+  .wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 80px;
+    row-gap: 56px;
+    align-items: center;
+  }
+  .headline { grid-column: 1; grid-row: 1; }
+  .list     { grid-column: 1; grid-row: 2; }
+  .right    { grid-column: 2; grid-row: 2; }
+
+  /* ── LEFT — headline + accordion ───────────────────────────────── */
+  .headline {
+    font-family: "Urbanist", sans-serif; font-weight: 700;
+    font-size: 44px; line-height: 1.15; letter-spacing: -0.02em;
+    color: var(--cr-ink-flat); margin: 0; max-width: 480px;
+  }
+
+  /* No top hairline on the accordion — rules sit between items only. */
+  .item { border-bottom: 1px solid var(--cr-line); }
+
+  .q {
+    width: 100%; display: block; padding: 22px 0;
+    background: transparent; border: 0; cursor: pointer;
+    font: inherit; color: inherit; text-align: left;
+  }
+  .qt {
+    font-family: "Urbanist", sans-serif; font-weight: 600;
+    font-size: 22px; letter-spacing: -0.01em; line-height: 1.35;
+    color: var(--cr-fg-muted);                /* inactive = muted grey */
+    transition: color .2s ease;
+  }
+  .item:hover .qt { color: var(--cr-ink-flat); }
+  .item.open .qt  { color: var(--cr-ink-flat); }
+
+  /* Body reveal via grid-row 0fr → 1fr (same trick as the FAQ split). */
+  .a {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .35s ease;
+  }
+  .a-inner { overflow: hidden; min-height: 0; }
+  .item.open .a { grid-template-rows: 1fr; }
+
+  .a-body {
+    padding: 0 80px 22px 0;
+    font-family: "Inter", sans-serif; font-weight: 400;
+    font-size: 16px; line-height: 1.65; color: var(--cr-fg-2);
+    opacity: 0; transform: translateY(-4px);
+    transition: opacity .35s ease .05s, transform .35s ease .05s;
+  }
+  .item.open .a-body { opacity: 1; transform: none; }
+
+  /* ── RIGHT — CR creative panel (recipe from `creative-panel-recipe`) ──
+     Layer 1: brand 3-stop gradient base (per-item palette via `--right-1/2/3`).
+     Layer 2: grain overlay (`mix-blend-mode: overlay` on the dark gradient).
+     Layer 3: white orbit rings (recurring CR "system" motif).
+     Layer 4: tone wash — directional dark gradient for corner depth.
+     The white UI card is placed inside as an absolutely-positioned child. */
+  .right { position: relative; }
+
+  .creative-frame {
+    position: sticky; top: 40px;
+    overflow: hidden;
+    border-radius: 18px;
+    min-height: 540px;
+    /* Layer 1 — brand 3-stop gradient. Palette is per-item (JS sets these). */
+    background: linear-gradient(135deg,
+      var(--right-1, var(--cr-brand-700)) 0%,
+      var(--right-2, #0F2A2E) 70%,
+      var(--right-3, var(--cr-ink-cool)) 100%);
+  }
+
+  /* Layer 2 — grain overlay, overlay-blended on the dark gradient. */
+  .creative-frame::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: url("../../brand-pack/assets/imagery/textures/texture-grain.png");
+    background-size: cover;
+    mix-blend-mode: overlay;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  /* Layer 4 — tone wash. Darkens one corner for directional depth. */
+  .creative-frame::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(105deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0) 50%);
+    pointer-events: none;
+  }
+
+  /* Layer 3 — orbit rings, large + offset so only an arc shows inside;
+     overflow:hidden on the frame clips the rest. White-with-alpha because
+     the panel is dark. */
+  .creative-frame .orbit {
+    position: absolute;
+    border: 1px solid rgba(255,255,255,0.20);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .creative-frame .orbit.o1 { right: -240px; top: -180px; width: 780px; height: 780px; }
+  .creative-frame .orbit.o2 { right: -160px; top: -100px; width: 600px; height: 600px; opacity: .6; }
+
+  /* White UI card — anchored to a corner of the creative panel; the
+     diagonally-opposite corner of the card carries the border-radius and
+     the other three corners stay square (per user rule: e.g. anchor-bl
+     => only the TR corner is rounded). Anchor is per-item via an
+     `.anchor-tl/tr/bl/br` modifier — JS swaps the class on item change. */
+  .creative {
+    position: absolute; z-index: 1;
+    background: #FFFFFF;
+    border: 1px solid var(--cr-line);
+    padding: 24px 20px;
+    overflow: hidden;
+    /* Inset + radius knobs (scaled per breakpoint via var overrides). */
+    --inset-small:   0;      /* card flush with the two panel-corner edges (no gap) */
+    --inset-large:   96px;   /* breathing room from the opposite edges */
+    --corner-radius: 24px;   /* the diagonally-opposite, rounded corner */
+    border-radius: 0;
+  }
+
+  /* Bottom-right anchor → only the TOP-LEFT corner is rounded. */
+  .creative.anchor-br {
+    top:    var(--inset-large); left:   var(--inset-large);
+    right:  var(--inset-small); bottom: var(--inset-small);
+    border-top-left-radius: var(--corner-radius);
+  }
+  /* Bottom-left anchor → only the TOP-RIGHT corner is rounded. */
+  .creative.anchor-bl {
+    top:    var(--inset-large); right:  var(--inset-large);
+    left:   var(--inset-small); bottom: var(--inset-small);
+    border-top-right-radius: var(--corner-radius);
+  }
+  /* Top-right anchor → only the BOTTOM-LEFT corner is rounded. */
+  .creative.anchor-tr {
+    bottom: var(--inset-large); left:   var(--inset-large);
+    right:  var(--inset-small); top:    var(--inset-small);
+    border-bottom-left-radius: var(--corner-radius);
+  }
+  /* Top-left anchor → only the BOTTOM-RIGHT corner is rounded. */
+  .creative.anchor-tl {
+    bottom: var(--inset-large); right:  var(--inset-large);
+    left:   var(--inset-small); top:    var(--inset-small);
+    border-bottom-right-radius: var(--corner-radius);
+  }
+  /* Rows stack right-aligned with varying widths (matches reference).
+     Each row is its own rounded pill. */
+  .mock {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+    transition: opacity .2s ease, transform .2s ease;
+  }
+  .mock.is-changing { opacity: 0; transform: translateY(6px); }
+
+  .mock-title {
+    font-family: "Inter", sans-serif; font-weight: 600; font-size: 12px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--cr-fg-muted);
+    margin: 4px 0 14px; align-self: flex-end;
+  }
+
+  /* Pill row: leading dot (--accent) + label. Active row gets an accent
+     tint + ink + Inter 600 — quietly distinct, brand-blue not required. */
+  .row {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 8px 16px 8px 12px;
+    background: var(--cr-bg-grey-100); border-radius: 500px;
+    color: var(--cr-fg-2);
+    font-family: "Inter", sans-serif; font-size: 13px; font-weight: 500;
+    white-space: nowrap;
+    transition: background .2s ease, color .2s ease;
+  }
+  .row .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent, var(--cr-brand));
+    flex-shrink: 0;
+  }
+  .row.active {
+    background: color-mix(in srgb, var(--accent, var(--cr-brand)) 10%, #FFFFFF);
+    color: var(--cr-ink-flat); font-weight: 600;
+  }
+
+  /* ── Responsive — deliberate per-device behaviour ───────────────── */
+
+  /* Tablet: stack. Headline → accordion → creative flow vertically; the
+     sticky frame becomes a normal block; orbits + card insets shrink
+     (anchor + radius rules stay in control via the var overrides). */
+  @media (max-width: 1024px) {
+    .section { padding: 80px 60px; }
+    .wrap { grid-template-columns: 1fr; column-gap: 0; row-gap: 40px; }
+    .headline, .list, .right { grid-column: 1; grid-row: auto; }
+    .headline { font-size: 36px; }
+    .creative-frame { position: static; min-height: 480px; }
+    .creative { --inset-small: 0; --inset-large: 64px; }
+    .creative-frame .orbit.o1 { right: -200px; top: -160px; width: 620px; height: 620px; }
+    .creative-frame .orbit.o2 { right: -140px; top: -80px; width: 480px; height: 480px; }
+  }
+
+  /* Mobile: single column, tighter type, smaller orbits, tightest insets +
+     a smaller diagonal corner-radius. */
+  @media (max-width: 640px) {
+    .section { padding: 56px 20px; }
+    .wrap { row-gap: 32px; }
+    .headline { font-size: 28px; line-height: 1.18; }
+    .qt { font-size: 18px; }
+    .a-body { font-size: 15px; padding-right: 0; }
+    .creative-frame { min-height: 400px; border-radius: 14px; }
+    .creative {
+      --inset-small: 0;
+      --inset-large: 40px;
+      --corner-radius: 18px;
+      padding: 18px 14px;
+    }
+    .creative-frame .orbit.o1 { right: -140px; top: -100px; width: 420px; height: 420px; }
+    .creative-frame .orbit.o2 { right: -100px; top: -50px; width: 320px; height: 320px; }
+    .row { padding: 8px 14px 8px 10px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="section" data-screen-label="Feature accordion">
+  <div class="wrap">
+    <!-- Title sits in row 1 (left column only). -->
+    <h2 class="headline">How Autonomous Agents<br/>Earn Their Keep.</h2>
+
+    <!-- Accordion fills the left column of row 2 — its top aligns with the
+         creative on the right (NOT with the title above). -->
+    <div class="list" id="list"></div>
+
+    <!-- Right column / row 2: a brand-coloured creative panel (case-carousel
+         technique — brand backdrop + grain overlay + orbit ring) holding the
+         white UI card inside. Fully contained — no bleed. The whole frame
+         is sticky on desktop so the card stays beside the active item. -->
+    <div class="right">
+      <div class="creative-frame">
+        <div class="orbit o1" aria-hidden="true"></div>
+        <div class="orbit o2" aria-hidden="true"></div>
+        <!-- The white UI card is anchored to one corner of the panel via
+             `.anchor-tl/tr/bl/br`. The anchor is chosen ONCE per section
+             instance and stays constant across all items so the user's eye
+             doesn't chase the card on item change (creative-panel-recipe →
+             "Stable chrome across states"). Only the diagonally-opposite
+             corner of the card carries border-radius. -->
+        <div class="creative anchor-br">
+          <div class="mock" id="mock"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Per-item demo data. Per the creative-panel-recipe + configurable-section-
+  // accents standing rules, each item carries:
+  //   - accent: brand action colour for the active row / pill dots (never indigo).
+  //   - right: a 3-stop brand gradient palette pushed into --right-1/2/3 on the
+  //     creative-frame when this item becomes active. Same naming + pattern as
+  //     `component-tabbed-showcase.html`.
+  const ITEMS = [
+    {
+      key: 'audit',
+      accent: 'var(--cr-brand)',
+      right: ['var(--cr-brand-700)', 'color-mix(in srgb, var(--cr-teal-900) 70%, black)', 'var(--cr-ink-cool)'],     // brand navy
+      q: "Find the workflow that's draining your margin",
+      a: "We start with a no-cost process audit and identify the high-friction, high-cost manual tasks — data entry, triage, compliance — absorbing up to 40% of your team's time.",
+      mockTitle: "Audit shortlist",
+      rows: [
+        { icon: 'shield-check', label: 'Compliance reporting' },
+        { icon: 'file-text',    label: 'Vendor reconciliation' },
+        { icon: 'list-checks',  label: 'Claims triage', active: true },
+        { icon: 'receipt',      label: 'Invoice matching' },
+        { icon: 'message-square', label: 'Status updates' },
+      ],
+    },
+    {
+      key: 'deploy',
+      accent: 'var(--cr-success)',
+      right: ['var(--cr-success-700)', 'color-mix(in srgb, var(--cr-success-700) 70%, black)', 'color-mix(in srgb, var(--cr-success-700) 35%, black)'],     // brand forest
+      q: "Deploy inside your stack, not around it",
+      a: "Agents connect via API or browser automation to SAP, Salesforce, Zoho, Oracle, Epic, Cerner — even custom spreadsheets. No rip-and-replace, no licence shuffle.",
+      mockTitle: "Connected systems",
+      rows: [
+        { icon: 'plug',     label: 'SAP',        meta: 'API · live' },
+        { icon: 'plug',     label: 'Salesforce', meta: 'API · live', active: true },
+        { icon: 'plug',     label: 'Oracle',     meta: 'API · live' },
+        { icon: 'plug',     label: 'Epic',       meta: 'VPC · live' },
+        { icon: 'database', label: 'Snowflake',  meta: 'sink · 15s' },
+      ],
+    },
+    {
+      key: 'confidence',
+      accent: 'var(--cr-amber)',
+      right: ['var(--cr-amber)', 'var(--cr-fg-2)', 'var(--cr-fg)'],     // brand bronze
+      q: "Watch every decision with a confidence score",
+      a: "Every action is logged with a confidence number. Below threshold the agent escalates to a human. Above threshold it acts but flags a sample for review. You see every call.",
+      mockTitle: "Recent decisions",
+      rows: [
+        { icon: 'check-circle', label: 'Approved claim #4827', meta: '0.94' },
+        { icon: 'check-circle', label: 'Approved claim #4828', meta: '0.91', active: true },
+        { icon: 'alert-circle', label: 'Escalated #4826',      meta: '0.62' },
+        { icon: 'check-circle', label: 'Approved claim #4825', meta: '0.89' },
+        { icon: 'x-circle',     label: 'Rejected duplicate',    meta: 'policy' },
+      ],
+    },
+    {
+      key: 'scale',
+      accent: 'var(--cr-brand)',
+      right: ['var(--cr-brand-700)', 'var(--cr-ink-blue-deep)', 'var(--cr-ink-card)'],     // brand deep blue
+      q: "Scale outcomes, not headcount",
+      a: "Bill on results, not seats. Add capacity by widening the agent's scope — no new hires, no onboarding, no extra salary line.",
+      mockTitle: "Outcomes captured",
+      rows: [
+        { icon: 'trending-down', label: '92% cost removed',     meta: 'YTD',  active: true },
+        { icon: 'trending-up',   label: '11.3× return on agent', meta: 'avg' },
+        { icon: 'rocket',        label: '4 weeks to live',       meta: 'pilot' },
+        { icon: 'users',         label: '5 FTE freed',           meta: 'redeployed' },
+        { icon: 'gauge',         label: '99% uptime',            meta: '30-day' },
+      ],
+    },
+  ];
+
+  const listEl  = document.getElementById('list');
+  const mockEl  = document.getElementById('mock');
+  const frameEl = document.querySelector('.creative-frame');
+
+  // ── Render accordion items ──
+  listEl.innerHTML = ITEMS.map((it, i) => `
+    <div class="item ${i === 0 ? 'open' : ''}" data-key="${it.key}" style="--accent:${it.accent}">
+      <button class="q" aria-expanded="${i === 0}">
+        <span class="qt">${it.q}</span>
+      </button>
+      <div class="a"><div class="a-inner"><div class="a-body">${it.a}</div></div></div>
+    </div>
+  `).join('');
+
+  // ── Render the right-side mock for a given item key ──
+  // Rows are right-aligned pills with just a dot + label (icon/meta from
+  // the data are intentionally not rendered in this revision — kept on the
+  // data so a future revision can re-enable them without re-shaping).
+  const rowsHTMLFor = (it) => it.rows.map(r => `
+    <div class="row ${r.active ? 'active' : ''}">
+      <span class="dot"></span>
+      <span class="label">${r.label}</span>
+    </div>`).join('');
+
+  const paintMock = (it) => {
+    // Push the per-item 3-stop gradient palette into the creative-frame
+    // (creative-panel-recipe — layer 1 / brand gradient base).
+    frameEl.style.setProperty('--right-1', it.right[0]);
+    frameEl.style.setProperty('--right-2', it.right[1]);
+    frameEl.style.setProperty('--right-3', it.right[2]);
+    // NOTE: the card's anchor + diagonal corner-radius are set once on the
+    // .creative element in markup and stay constant across all items in a
+    // section instance — see [[creative-panel-recipe]] "Stable chrome
+    // across states". Only content + gradient palette change per item.
+    mockEl.style.setProperty('--accent', it.accent);
+    mockEl.innerHTML = `<div class="mock-title">${it.mockTitle}</div>${rowsHTMLFor(it)}`;
+  };
+
+  function renderMock(key) {
+    const it = ITEMS.find(x => x.key === key);
+    if (!it) return;
+    mockEl.classList.add('is-changing');
+    setTimeout(() => {
+      paintMock(it);
+      mockEl.classList.remove('is-changing');
+    }, 180);
+  }
+
+  // First-render (skip the fade for the initial paint)
+  paintMock(ITEMS[0]);
+
+  // ── Single-open accordion behaviour ──
+  listEl.addEventListener('click', e => {
+    const btn = e.target.closest('.q');
+    if (!btn) return;
+    const item = btn.parentElement;
+    if (item.classList.contains('open')) return;       // clicking the open item does nothing
+    listEl.querySelectorAll('.item').forEach(el => {
+      el.classList.remove('open');
+      el.querySelector('.q').setAttribute('aria-expanded', 'false');
+    });
+    item.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+    renderMock(item.dataset.key);
+  });
+</script>
+</body>
+</html>

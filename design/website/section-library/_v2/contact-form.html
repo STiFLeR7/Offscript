@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CR — Contact · form</title>
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+<!--
+  COMPONENT: Contact · form
+  COMPOSITION: Pure-white section. TRUE 2-COLUMN layout (62fr / 38fr): left col
+    runs top-to-bottom (eyebrow → massive headline → form → CTA row); right col
+    also runs top-to-bottom (small blurb paragraph → tall decorative panel that
+    fills the remaining height via flex-grow:1). No sub-grid; both columns start
+    at the same top edge and the right panel grows to match the left col height.
+    LEFT COL: a small grey `[ GET IN TOUCH ]` eyebrow → a VERY LARGE Urbanist
+    Bold 700 headline "Contact Us" (clamp 56→88px, −0.03em, line-height 1.0) →
+    a FORM with three 2-column field rows + one full-width textarea, each field
+    pair in a .ctf-row grid (1fr/1fr, 20px gap); fields use white bg + hairline
+    1px --cr-line border (8px radius), brand-blue focus ring; a custom select
+    chevron via background-image SVG; textarea min-height 112px, resize:vertical
+    → CTA ROW: a brand-blue filled pill button ("Book a Demo Call") + a small
+    brand-blue circle button (Lucide arrow-up-right), both on the same flex row.
+    RIGHT COL: a short 16px Inter body blurb (top) → a DARK GRADIENT PANEL
+    (flex-grow:1, min-height 340px, border-radius 20px, overflow:hidden):
+    CR cool navy gradient (#0E1116→#0F2A2E) + grain-texture overlay (15% opacity)
+    + a faint white ORBIT RING (1px white 15% opacity, 480px diameter circle,
+    absolutely centred) + a "Zero commitment" PILL LABEL (top-right, outlined in
+    white 25% opacity, white text) — purely decorative, visual weight balance.
+  INSPIRATION: Marwa "Contact Us" page (travel/tours site) — layout/composition
+    only. Extracted: massive left-aligned display headline (serif regular → CR
+    Urbanist Bold), blurb top-right, 2-col field-row form, rounded tall image on
+    right side, pill label on image, CTA pill + circle icon button pair.
+    Re-skinned to CR: travel fields → B2B ops fields; landscape photo → CR dark
+    gradient panel; dark CTA pill → brand-blue; travel copy → CR voice.
+  MOTION: scroll-reveal entrance (standard). On first viewport hit: left-col
+    eyebrow → headline → form rows → CTA stagger (--d 0/80/160/240/320/400ms).
+    Right-col blurb → panel (--d 80/160ms). IntersectionObserver fires once
+    (threshold 0.06). .has-js default-VISIBLE; prefers-reduced-motion snaps in.
+  RESPONSIVE: 2-col ≥ 860px → 1-col ≤ 859px (right stacks below left; panel
+    gets fixed height 260px); form field rows go 2-col → 1-col ≤ 560px;
+    headline scales; CTA row wraps.
+-->
+<style>
+  .cr-ctf {
+    background: var(--cr-bg);
+    padding: clamp(72px, 8vw, 112px) clamp(24px, 5vw, 80px);
+    font-family: var(--cr-font-body);
+  }
+  .ctf-well {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+  }
+
+  /* ── 2-col grid ─────────────────────────────────────────── */
+  .ctf-grid {
+    display: grid;
+    grid-template-columns: 62fr 38fr;
+    gap: 52px;
+    align-items: start;
+  }
+
+  /* ── Left column ────────────────────────────────────────── */
+  .ctf-left { display: flex; flex-direction: column; min-width: 0; }
+
+  .ctf-eyebrow {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    color: var(--cr-fg-3);
+  }
+  .ctf-headline {
+    margin: 16px 0 36px;
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(56px, 6.5vw, 88px);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--cr-fg);
+  }
+
+  /* ── Form ───────────────────────────────────────────────── */
+  .ctf-form { display: flex; flex-direction: column; gap: 18px; }
+
+  .ctf-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .ctf-field { display: flex; flex-direction: column; gap: 6px; }
+  .ctf-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--cr-fg-2);
+    letter-spacing: 0.01em;
+  }
+  .ctf-input,
+  .ctf-select,
+  .ctf-textarea {
+    font-family: var(--cr-font-body);
+    font-size: 15px;
+    line-height: 1.5;
+    padding: 11px 14px;
+    border: 1.5px solid transparent;
+    border-radius: 12px;
+    background: var(--cr-bg-grey-100);
+    color: var(--cr-fg);
+    outline: none;
+    transition: border-color .18s ease;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .ctf-input::placeholder,
+  .ctf-textarea::placeholder { color: var(--cr-fg-3); }
+  .ctf-input:focus,
+  .ctf-textarea:focus {
+    border-color: var(--cr-brand);
+    background: var(--cr-bg);
+  }
+  .ctf-select:focus {
+    border-color: var(--cr-brand);
+    /* chevron flips up when dropdown is open */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23626262' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 15 12 9 18 15'%3E%3C/polyline%3E%3C/svg%3E");
+  }
+
+  .ctf-select {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    padding-right: 38px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23626262' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+  }
+  .ctf-select option { color: var(--cr-fg); }
+
+  .ctf-textarea {
+    resize: vertical;
+    min-height: 112px;
+  }
+
+  /* CTA row */
+  .ctf-submit-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+  .ctf-submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: var(--cr-brand);
+    color: #fff;
+    border: none;
+    border-radius: var(--cr-radius-pill);
+    font-family: var(--cr-font-display);
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .2s ease;
+    white-space: nowrap;
+  }
+  .ctf-submit-btn:hover, .ctf-submit-btn:focus-visible {
+    background: var(--cr-brand-700);
+  }
+  .ctf-submit-btn:focus-visible {
+    outline: 2px solid var(--cr-brand);
+    outline-offset: 3px;
+  }
+  .ctf-submit-icon {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--cr-brand);
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex: 0 0 auto;
+    color: #fff;
+    transition: background .2s ease;
+  }
+  .ctf-submit-icon:hover, .ctf-submit-icon:focus-visible {
+    background: var(--cr-brand-700);
+  }
+  .ctf-submit-icon:focus-visible {
+    outline: 2px solid var(--cr-brand);
+    outline-offset: 3px;
+  }
+  .ctf-submit-icon svg { width: 18px; height: 18px; stroke-width: 2.2; }
+
+  /* ── Right column ───────────────────────────────────────── */
+  .ctf-right {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-self: stretch; /* match left col height */
+  }
+  .ctf-blurb {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.68;
+    color: var(--cr-fg-2);
+  }
+
+  /* Decorative panel — blur image */
+  .ctf-panel {
+    flex: 1;
+    min-height: 340px;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    background: #b0b8d0 url("../assets/../../brand-pack/assets/imagery/backgrounds/blur-7.png") center / cover no-repeat;
+  }
+  .ctf-panel-grain {
+    position: absolute; inset: 0;
+    background: url("../assets/../../brand-pack/assets/imagery/textures/texture-grain.png") repeat;
+    opacity: 0.18;
+    pointer-events: none;
+  }
+  /* Orbit ring — decorative */
+  .ctf-panel-orbit {
+    position: absolute;
+    width: 500px; height: 500px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .ctf-panel-orbit-2 {
+    position: absolute;
+    width: 300px; height: 300px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  /* Pill label — top-right corner */
+  .ctf-panel-pill {
+    position: absolute;
+    top: 20px; right: 20px;
+    padding: 7px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 500px;
+    font-family: var(--cr-font-body);
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: 0.01em;
+    pointer-events: none;
+  }
+
+  /* ── Scroll-reveal ──────────────────────────────────────── */
+  .cr-ctf.has-js .reveal { opacity: 0; transform: translateY(14px); }
+  .cr-ctf.has-js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cr-ctf.has-js .reveal { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ── Responsive ─────────────────────────────────────────── */
+  @media (max-width: 860px) {
+    .ctf-grid { grid-template-columns: 1fr; gap: 40px; }
+    .ctf-right { align-self: auto; }
+    .ctf-panel { min-height: 260px; flex: none; }
+    .ctf-headline { font-size: clamp(44px, 9vw, 68px); }
+  }
+  @media (max-width: 560px) {
+    .ctf-row { grid-template-columns: 1fr; }
+    .ctf-headline { font-size: clamp(38px, 10vw, 54px); }
+    .ctf-submit-btn { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<section class="cr-ctf" data-screen-label="Contact · form">
+  <div class="ctf-well">
+    <div class="ctf-grid">
+
+      <!-- ── Left column ───────────────────────────────────── -->
+      <div class="ctf-left">
+        <p class="ctf-eyebrow reveal" style="--d:0ms">[ GET IN TOUCH ]</p>
+        <h2 class="ctf-headline reveal" style="--d:80ms">Contact Us</h2>
+
+        <form class="ctf-form" novalidate onsubmit="return false">
+
+          <div class="ctf-row reveal" style="--d:160ms">
+            <div class="ctf-field">
+              <label class="ctf-label" for="ctf-name">Full name</label>
+              <input class="ctf-input" type="text" id="ctf-name" name="name"
+                     placeholder="Your full name" autocomplete="name">
+            </div>
+            <div class="ctf-field">
+              <label class="ctf-label" for="ctf-email">Work email</label>
+              <input class="ctf-input" type="email" id="ctf-email" name="email"
+                     placeholder="name@company.com" autocomplete="email">
+            </div>
+          </div>
+
+          <div class="ctf-row reveal" style="--d:220ms">
+            <div class="ctf-field">
+              <label class="ctf-label" for="ctf-company">Company</label>
+              <input class="ctf-input" type="text" id="ctf-company" name="company"
+                     placeholder="Company Inc." autocomplete="organization">
+            </div>
+            <div class="ctf-field">
+              <label class="ctf-label" for="ctf-role">Your role</label>
+              <input class="ctf-input" type="text" id="ctf-role" name="role"
+                     placeholder="VP of Operations">
+            </div>
+          </div>
+
+          <div class="ctf-row reveal" style="--d:280ms">
+            <div class="ctf-field">
+              <label class="ctf-label" for="ctf-focus">What are you automating?</label>
+              <select class="ctf-select" id="ctf-focus" name="focus">
+                <option value="" disabled selected>Choose a focus area&hellip;</option>
+                <option value="ops">Operations / Back-office</option>
+                <option value="sales">Sales &amp; CRM Automation</option>
+                <option value="docs">Document Processing (DocXter)</option>
+                <option value="erp">SAP / ERP Integration</option>
+                <option value="custom">Custom AI Development</option>
+                <option value="strategy">AI Strategy &amp; Assessment</option>
+              </select>
+            </div>
+            <div class="ctf-field">
+              <label class="ctf-label" for="ctf-teamsize">Team size</label>
+              <select class="ctf-select" id="ctf-teamsize" name="teamsize">
+                <option value="" disabled selected>Select team size&hellip;</option>
+                <option value="1-10">1&ndash;10 people</option>
+                <option value="11-50">11&ndash;50 people</option>
+                <option value="51-200">51&ndash;200 people</option>
+                <option value="201+">201+ people</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="ctf-field reveal" style="--d:340ms">
+            <label class="ctf-label" for="ctf-message">Message / Project context</label>
+            <textarea class="ctf-textarea" id="ctf-message" name="message"
+                      placeholder="Anything you&apos;d like us to know before the call&hellip;"></textarea>
+          </div>
+
+          <div class="ctf-submit-row reveal" style="--d:400ms">
+            <button type="submit" class="ctf-submit-btn">Book a Demo Call</button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- ── Right column ──────────────────────────────────── -->
+      <div class="ctf-right">
+        <p class="ctf-blurb reveal" style="--d:80ms">Tell us what you&rsquo;re automating and we&rsquo;ll set up a focused 30-minute demo within 24 hours. No pitch decks &mdash; we show you the numbers in your stack first.</p>
+
+        <div class="ctf-panel reveal" style="--d:160ms">
+          <div class="ctf-panel-grain"></div>
+          <div class="ctf-panel-orbit"></div>
+          <div class="ctf-panel-orbit-2"></div>
+          <span class="ctf-panel-pill">Zero commitment</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<script>
+  (function () {
+    if (window.lucide) lucide.createIcons();
+
+    var sec = document.querySelector('.cr-ctf');
+    if (!sec || !('IntersectionObserver' in window)) return;
+    sec.classList.add('has-js');
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          sec.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+          io.disconnect();
+        }
+      });
+    }, { threshold: 0.06 });
+
+    io.observe(sec);
+  })();
+</script>
+</body>
+</html>

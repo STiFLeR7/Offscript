@@ -1,0 +1,21 @@
+{
+  "name": "website-governance-sync",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "website-governance-sync": "./src/cli.ts"
+  },
+  "scripts": {
+    "sync": "tsx src/cli.ts",
+    "sync:dry-run": "tsx src/cli.ts --dry-run --report",
+    "sync:validate": "tsx src/cli.ts --validate",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

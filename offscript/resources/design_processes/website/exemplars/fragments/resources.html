@@ -1,0 +1,59 @@
+<!-- CURATED EXEMPLAR — archetype: resources. Authored on the house .cr-* system (v2 re-theme); rhythm referenced from Website-offscript-v2/fragments/resources-insights.html. Match the rhythm/discipline; do NOT clone. -->
+<section id="resources" class="cr-band-warm cr-section" aria-label="Resources and insights">
+  <style>
+    /* doc-scoped: header-with-view-all + 3-card article grid ONLY. Cards, eyebrow,
+       headings, links are house-defined. Each card = category → title → summary → link. */
+    #resources .rs-top { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--cr-space-6); }
+    #resources .rs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--cr-space-6); margin-top: var(--cr-space-10); }
+    #resources .rs-card { display: flex; flex-direction: column; gap: var(--cr-space-3); height: 100%; }
+    /* tonal cap strip stands in for cover art — surface + scale, no image, no shadow */
+    #resources .rs-cap { height: 132px; border-radius: var(--cr-radius-md); margin: calc(var(--cr-space-8) * -1) calc(var(--cr-space-8) * -1) var(--cr-space-2);
+      border-bottom: 1px solid var(--cr-line); }
+    #resources .rs-cap--a { background: var(--cr-brand-100); }
+    #resources .rs-cap--b { background: var(--cr-teal-100); }
+    #resources .rs-cap--c { background: var(--cr-bg-grey-100); }
+    #resources .rs-cat { font-family: var(--cr-font-body); font-weight: 600; font-size: 12px;
+      letter-spacing: .08em; text-transform: uppercase; color: var(--cr-fg-3); }
+    #resources .rs-more { margin-top: auto; }
+    #resources .rs-reveal { animation: rsRise .6s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--d, 0s); }
+    @keyframes rsRise { from { transform: translateY(14px); } to { transform: none; } }
+    @media (prefers-reduced-motion: reduce) { #resources .rs-reveal { animation: none; } }
+    @media (max-width: 900px) { #resources .rs-grid { grid-template-columns: 1fr; } #resources .rs-top { flex-direction: column; align-items: flex-start; } }
+  </style>
+
+  <div class="cr-container">
+    <div class="rs-top rs-reveal" style="--d:.04s">
+      <div class="cr-head">
+        <span class="cr-eyebrow">Resources</span>
+        <h2 class="cr-h-section">The Thinking Behind the Work.</h2>
+      </div>
+      <a class="cr-link" href="#">View all insights <span class="cr-arrow" aria-hidden="true">&rarr;</span></a>
+    </div>
+
+    <div class="rs-grid">
+      <article class="cr-card rs-card rs-reveal" style="--d:.1s">
+        <span class="rs-cap rs-cap--a" aria-hidden="true"></span>
+        <span class="rs-cat">Guide</span>
+        <h3 class="cr-h-card">How to Find Your First Workflow Worth Automating</h3>
+        <p class="cr-p">A five-question test for spotting the highest-cost friction before you build anything.</p>
+        <a class="cr-link rs-more" href="#">Read the guide <span class="cr-arrow" aria-hidden="true">&rarr;</span></a>
+      </article>
+
+      <article class="cr-card rs-card rs-reveal" style="--d:.18s">
+        <span class="rs-cap rs-cap--b" aria-hidden="true"></span>
+        <span class="rs-cat">Field note</span>
+        <h3 class="cr-h-card">What "Human-in-the-Loop" Actually Means in Production</h3>
+        <p class="cr-p">Where to draw the line between what an agent decides and what a person signs off.</p>
+        <a class="cr-link rs-more" href="#">Read the note <span class="cr-arrow" aria-hidden="true">&rarr;</span></a>
+      </article>
+
+      <article class="cr-card rs-card rs-reveal" style="--d:.26s">
+        <span class="rs-cap rs-cap--c" aria-hidden="true"></span>
+        <span class="rs-cat">Report</span>
+        <h3 class="cr-h-card">The 2026 State of Operations Automation</h3>
+        <p class="cr-p">What 400 teams told us about where the hours go &mdash; and what they automated first.</p>
+        <a class="cr-link rs-more" href="#">Get the report <span class="cr-arrow" aria-hidden="true">&rarr;</span></a>
+      </article>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Grid · three-column-equal      from component-feature-trio.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **Three peers, and the equal weighting IS the message.** The
+              profile is explicit: three is the smallest quantity that reads as
+              a set rather than a comparison, and none of the three outranks
+              another. So nothing here may be emphasised — not a card, not a
+              word. The section's whole job is to look like one thing said
+              three times.
+
+  STRUCTURE   Unchanged. Hairline rule · top-left intro · three equal filled
+              cards with the title pinned top and the note pinned bottom. DOM,
+              the single script, every id / `data-*` / `aria-*` and the reveal
+              contract are byte-compatible with the frozen original (DR-22).
+
+  ACCENT      NONE, and that is not an omission. The ceiling is one accent
+              moment per section; it is a ceiling, not a quota. This section
+              has no primary CTA and no leader among the three — spending
+              colour anywhere in it would name a winner the composition
+              explicitly refuses to have. Everything is neutral ink.
+
+  ENVIRONMENT NONE — and this is the one direction I could not carry out.
+              The blanket rule replaces every abstract creative background
+              with an approved environment photograph. This section has no
+              abstract background: the cards are flat fills, the rule is a
+              hairline, and there is no gradient, blur or wash anywhere in the
+              source. It also has nowhere to put one — every surface in the
+              file (`.ft-section`, `.ft-well`, `.ft-intro`, `.ft-card`) carries
+              type, and type never sits on a photograph. `env-valley-deep` is
+              therefore unused here; the hard constraint outranks the
+              assignment table.
+
+  HIERARCHY   Comes from scale, weight and air alone — the heading ramp against
+              the supporting ramp, one weight step, and the section rhythm
+              roles (opening → cluster → content) doing the work the old
+              hand-picked 92 / 132 / 22 px gaps were doing by eye.
+
+  RESPONSIVE  The original's breakpoints (980 / 560), unchanged. Type steps on
+              the pack's own ramp; every `clamp()` is gone — it resolves to
+              sizes nobody authored.
+
+  PREDICATE 3 FAILS HERE, AND NO SPECIMEN OF THIS SECTION CAN PASS IT.
+              Stated rather than hidden, because a failure nobody explains is
+              indistinguishable from one nobody noticed.
+
+              `verify-migration.py` finds script blocks textually, with
+              `<[s]cript\b[^>]*>(.*?)</[s]cript>`. The frozen original's own
+              header comment contains the literal opening tag as PROSE — it
+              describes stripping the inline script for screenshot passes — so
+              the regex opens its capture inside that comment and runs to the
+              first closing tag at the foot of the document. The "script block"
+              it then compares is therefore not the script: it is the comment
+              tail, the stylesheet link, the entire style block and the whole of
+              the markup.
+
+              That makes the predicate unsatisfiable by construction, and the
+              proof needs no specimen at all: run the same extraction over the
+              FROZEN ORIGINAL and over the frozen control it is compared
+              against, and they already disagree — 5942 characters against 5972.
+              The only byte that differs between those two files is the
+              stylesheet href, which the accidental capture happens to swallow.
+              A migrated specimen, which must repoint that href and must replace
+              the style block, cannot come closer.
+
+              The behavioural contract the predicate exists to protect IS held:
+              the inline script in this file is byte-identical to the original's,
+              and predicate 4 confirms every class it drives still exists. The
+              finding is in the harness, not in the file. Predicates 1, 2, 4, 5,
+              6 and 7 all pass.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Example Brand — Feature trio</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+    font-size: var(--cr-text-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .ft-section {
+    background: var(--cr-page-ground);
+    padding: 0 var(--cr-page-gutter) var(--cr-space-2xl);
+  }
+  .ft-well {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+  }
+
+  /* ── Top hairline — the section's only structural mark ─────────────
+     One stroke width exists, and it is a token; the rule never authors its
+     own hairline. */
+  .ft-rule {
+    height: var(--cr-stroke);
+    background: var(--cr-border-default);
+    margin: 0 0 var(--cr-rhythm-opening);
+  }
+
+  /* ── Intro (top-left) ───────────────────────────────────────────────
+     The gap below the intro is the CONTENT role — the argument handing off to
+     the thing it introduces — not a number picked to look right. */
+  .ft-intro { margin-bottom: var(--cr-rhythm-content); }
+  .ft-title {
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+    max-width: var(--cr-measure-title);
+    margin: 0;
+  }
+  /* Heading → supporting copy is ONE thought: the cluster role. */
+  .ft-sub {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    max-width: var(--cr-measure-body);
+    margin: var(--cr-rhythm-cluster) 0 0;
+  }
+
+  /* ── 3-up grid — equal by construction, and that is the section ─────── */
+  .ft-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--cr-space-s);
+  }
+  /* The fill is the separation — no stroke, no depth. The quiet cream step
+     against the page ground is the whole differentiation, and three of them
+     at the same value is the peer relationship stated in surface. */
+  .ft-card {
+    min-width: 0;                       /* let grid cells size equally */
+    min-height: 162px;                  /* the source silhouette, untouched */
+    background: var(--cr-surface-5);
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-s);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;     /* title top / note bottom */
+  }
+  .ft-card-title {
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h6);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+    margin: 0;
+  }
+  /* The v2 note was capped at 185px to hold a 2 / 1 / 2 line rhythm that was
+     a consequence of the old size, not a decision. On the ramp the note reads
+     in one line inside the card, so the cap is released to the reading measure
+     rather than re-tuned to reproduce an accident. */
+  .ft-card-note {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    margin: 0;
+    max-width: var(--cr-measure-body);
+  }
+
+  /* ── Entrance reveal (opt-in; defaults visible for clean stills) ──── */
+  html.js-reveal .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+                transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  html.js-reveal .reveal.in { opacity: 1; transform: none; }
+  html.js-reveal .ft-sub { transition-delay: 0.06s; }
+  html.js-reveal .ft-grid .ft-card:nth-child(1) { transition-delay: 0.10s; }
+  html.js-reveal .ft-grid .ft-card:nth-child(2) { transition-delay: 0.18s; }
+  html.js-reveal .ft-grid .ft-card:nth-child(3) { transition-delay: 0.26s; }
+  /* Matched to the trigger's specificity — a guard that loses the cascade is
+     not a guard. */
+  @media (prefers-reduced-motion: reduce) {
+    html.js-reveal .reveal,
+    html.js-reveal .reveal.in {
+      opacity: 1 !important; transform: none !important; transition: none !important;
+    }
+  }
+
+  /* ── Responsive — the ORIGINAL's breakpoints; type steps on the ramp ── */
+  @media (max-width: 980px) {
+    .ft-rule { margin-bottom: var(--cr-space-m); }
+    .ft-intro { margin-bottom: var(--cr-rhythm-content); }
+    .ft-grid { grid-template-columns: 1fr; gap: var(--cr-space-xs); }
+    /* stacked: hug content with a fixed title→note gap (space-between would
+       leave an uneven trailing band when content ≈ the card's min-height) */
+    .ft-card { min-height: auto; justify-content: flex-start; gap: var(--cr-space-xs); }
+    .ft-card-note { max-width: none; }
+  }
+  @media (max-width: 560px) {
+    .ft-section { padding: 0 var(--cr-page-gutter) var(--cr-space-xl); }
+    .ft-rule { margin-bottom: var(--cr-space-m); }
+    .ft-intro { margin-bottom: var(--cr-rhythm-content); }
+    .ft-card { padding: var(--cr-space-s); }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. Nothing is marked `directed`: no layout decision was taken.
+     The grid is still three equal columns, the cards still pin title-top and
+     note-bottom, and every line below is a scale realizing itself.
+  .ft-card       | border-radius          | radius-pair
+  .ft-card       | column-gap             | spacing-scale
+  .ft-card       | font-size              | type-ramp
+  .ft-card       | padding-bottom         | spacing-scale
+  .ft-card       | padding-left           | spacing-scale
+  .ft-card       | padding-right          | spacing-scale
+  .ft-card       | padding-top            | spacing-scale
+  .ft-card       | row-gap                | spacing-scale
+  .ft-card-note  | font-size              | type-ramp
+  .ft-card-note  | max-width              | measure
+  .ft-card-title | font-size              | type-ramp
+  .ft-card-title | line-height            | type-ramp
+  .ft-grid       | column-gap             | spacing-scale
+  .ft-grid       | font-size              | type-ramp
+  .ft-grid       | row-gap                | spacing-scale
+  .ft-intro      | font-size              | type-ramp
+  .ft-intro      | margin-bottom          | spacing-scale
+  .ft-sub        | font-size              | type-ramp
+  .ft-sub        | line-height            | type-ramp
+  .ft-sub        | margin-top             | spacing-scale
+  .ft-sub        | max-width              | measure
+  .ft-title      | font-size              | type-ramp
+  .ft-title      | line-height            | type-ramp
+  .ft-title      | max-width              | measure
+  .ft-well       | font-size              | type-ramp
+-->
+  <!-- Feature trio: intro block over a 3-up informational grid. -->
+  <section class="ft-section" data-screen-label="Feature trio — intro + 3-up grid"
+           data-archetype="editorial-stack" data-hierarchy="primary" data-intent="educate"
+           data-register="editorial" data-signature="architectural-whitespace" data-density="low">
+    <div class="ft-well">
+      <div class="ft-rule" aria-hidden="true"></div>
+
+      <header class="ft-intro">
+        <h2 class="ft-title reveal">Scale Personalised Sales Without Growing Your Team.</h2>
+        <p class="ft-sub reveal">Give a dedicated guide to every buyer &mdash; CR Jennie agents are always available. If a human touch is needed, you&rsquo;ll know.</p>
+      </header>
+
+      <div class="ft-grid">
+        <article class="ft-card reveal">
+          <h3 class="ft-card-title">Live 24/7</h3>
+          <p class="ft-card-note">Always available to interact with visitors.</p>
+        </article>
+        <article class="ft-card reveal">
+          <h3 class="ft-card-title">Multilingual</h3>
+          <p class="ft-card-note">Supports 50+ languages.</p>
+        </article>
+        <article class="ft-card reveal">
+          <h3 class="ft-card-title">Tailored for each prospect</h3>
+          <p class="ft-card-note">Adapts every session to the buyer.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    /* Opt in to the reveal only when JS runs — stripping this <script>
+       (screenshot pass) leaves every .reveal at its visible default. */
+    document.documentElement.classList.add('js-reveal');
+    (function () {
+      var well = document.querySelector('.ft-well');
+      if (!well) return;
+      var targets = well.querySelectorAll('.reveal');
+      var io = new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          targets.forEach(function (t) { t.classList.add('in'); });
+          obs.disconnect();
+        });
+      }, { threshold: 0.15 });
+      io.observe(well);
+    })();
+  </script>
+</body>
+</html>

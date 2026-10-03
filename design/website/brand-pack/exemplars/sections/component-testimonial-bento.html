@@ -1,0 +1,407 @@
+<!doctype html>
+<!--
+  Component: Testimonials — bento grid
+  ---------------------------------------------------------------------------
+  COMPOSITION — faithful reproduction of the "People Loved us!" bento. Layout,
+  card-height proportions, the gradient/photo regions and the footer structure
+  are matched exactly; only the brand SKIN changes (CR fonts, CR gradient
+  photos from assets/creative-background, CR copy — no shadows per charter).
+    • Centred header: short bold ink headline + a small muted sub line, then a
+      large whitespace gap.
+    • A 4-COLUMN bento, 2 fixed-height rows with row 2 ≈ 1.7× row 1 (matching
+      the reference's squat-top / tall-bottom rhythm). The two WIDE cards sit
+      on a DIAGONAL:
+        Row 1 (220px):  [ Testimonial · span 2 ][ Testimonial ][ Stat 85% ]
+        Row 2 (368px):  [ Stat 10,000+ ][ Testimonial ][ Feature · span 2 ]
+    • Cell vocabulary — every card LIGHT (the reference has no dark card):
+        – Quote cards (A,B,E): grey quote glyph → quote body → footer pinned to
+          the card bottom: circular real-photo avatar + name + company. Avatars
+          are Unsplash portraits saved locally to assets/avatars/ (face-cropped
+          220px) so the section stays self-contained — swap for the client's own
+          headshots when available.
+        – Stat 85% (C): a CR gradient PHOTO band on top (cool atmospheric blur-7)
+          whose bottom DISSOLVES into the card's white via a white linear fade
+          (`.fade`) — no hard seam — then a big ink number on the white below.
+        – Stat 10,000+ (D): a FULL-BLEED CR gradient photo (cool atmospheric blur-7)
+          with a dark number + caption bottom-left over a soft light scrim for
+          legibility — the reference's colourful "10,000+" card in a CR pastel.
+        – Feature (F): a CR image-creative on top (cool atmospheric blur-7 +
+          soft-light grain + cool scrim, the apa recipe) whose bottom likewise
+          DISSOLVES into the white body via a `.fade` (no seam) → heading +
+          body → a ghost circular → button bottom-right (literal glyph, no CDN).
+    All three image cards now read COOL (blur-7) — the brand-legal cool atmospheric.
+    The reference's warm pink/peach cards are deliberately NOT reproduced; brand law
+    keeps the cool preference. (Per-card variety awaits a regenerated cool blur set.)
+    • NO shadow — cards separate by a faint 1px hairline on a #FAFAFA page.
+  MOTION: cards stagger-fade + rise on first viewport hit (IntersectionObserver,
+    fires once, per-cell --d) and the two stat numbers COUNT UP on entry
+    (ease-out cubic, comma-formatted, tabular-nums; rendered text is the final
+    value so no-JS shows "85%" / "10,000+"). Only hover = the feature card's →
+    button (a real control; arrow nudges 4px). prefers-reduced-motion snaps in
+    + sets numbers final; content visible without JS (reveal scoped to .has-js).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Testimonials — bento grid</title>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css">
+<script>document.documentElement.className = 'has-js';</script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-bg-grey-50);              /* var(--cr-bg-warm) — cards float on a faint grey */
+    font-family: var(--cr-font-body); color: var(--cr-ink);
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  }
+
+  .tm { padding: 104px 80px; max-width: var(--cr-content-max); margin: 0 auto; }
+  .tm-wrap { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ── Header ─────────────────────────────────────────────────── */
+  .tm-head { text-align: center; margin: 0 auto 92px; max-width: 620px; }
+  .tm-title {
+    margin: 0 0 12px;
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(28px, 3.4vw, 36px); line-height: 1.2; letter-spacing: -0.02em;
+    color: var(--cr-fg);
+  }
+  .tm-sub {
+    margin: 0 auto; max-width: 440px;
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: 14.5px; line-height: 1.55; color: var(--cr-fg-3);
+  }
+
+  /* ── Bento grid (fixed-height rows; row 2 ≈ 1.7× row 1) ─────── */
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: minmax(238px, auto) minmax(400px, auto);  /* row 2 ≈ 1.7× row 1; grows, never clips */
+    gap: 16px;   /* tight card-to-card gap (reference grid) inside the wide well */
+  }
+  .c-a { grid-column: 1 / span 2; grid-row: 1; }   /* wide testimonial */
+  .c-b { grid-column: 3;          grid-row: 1; }   /* testimonial      */
+  .c-c { grid-column: 4;          grid-row: 1; }   /* stat 85%         */
+  .c-d { grid-column: 1;          grid-row: 2; }   /* stat 10,000+     */
+  .c-e { grid-column: 2;          grid-row: 2; }   /* testimonial      */
+  .c-f { grid-column: 3 / span 2; grid-row: 2; }   /* feature card     */
+
+  .cell {
+    position: relative;
+    background: var(--cr-bg);
+    border: 1px solid var(--cr-bg-grey-200);       /* faint hairline — near-borderless, no shadow */
+    border-radius: var(--cr-radius-lg);            /* 20px */
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  /* ── Quote testimonial card ─────────────────────────────────── */
+  .cell--quote { display: flex; flex-direction: column; padding: 30px 30px 28px; }
+  .qmark {
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: 40px; line-height: 0.6; color: #BFC2C8;     /* neutral grey glyph, as the reference */
+    margin: 2px 0 12px;
+  }
+  .q-body {
+    margin: 0;
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: 15px; line-height: 1.6; color: var(--cr-fg-2);
+  }
+  .c-a .q-body { font-size: 15.5px; max-width: 430px; }
+  .tm-foot {
+    margin-top: auto; padding-top: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .avatar {
+    flex-shrink: 0; width: 38px; height: 38px; border-radius: 50%;
+    object-fit: cover; display: block;
+    background: var(--cr-brand-100);   /* tint shows only if the photo fails to load */
+  }
+  .who-name {
+    font-family: var(--cr-font-body); font-weight: 600;
+    font-size: 14px; line-height: 1.3; color: var(--cr-fg);
+  }
+  .who-co {
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: 13px; line-height: 1.3; color: var(--cr-fg-3);
+  }
+
+  /* ── Shared stat number ─────────────────────────────────────── */
+  .stat-num {
+    font-family: var(--cr-font-display); font-weight: 700;
+    line-height: 1; letter-spacing: -0.02em;
+    color: var(--cr-fg); font-variant-numeric: tabular-nums;
+  }
+  .stat-cap {
+    margin-top: 9px;
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: 13px; line-height: 1.45; color: var(--cr-fg-3);
+  }
+
+  /* ── Stat card C: gradient photo band on top, number below ──── */
+  .cell--stat { display: flex; flex-direction: column; }
+  .stat-band {
+    height: 132px; flex-shrink: 0; position: relative; overflow: hidden;
+    background: var(--cr-bg-tint) var(--cr-img, none) center / cover no-repeat;
+  }
+  .stat-band .grain {
+    position: absolute; inset: 0; pointer-events: none;
+    background: url("../assets/texture-grain.png") center / cover;
+    mix-blend-mode: soft-light; opacity: 0.12;
+  }
+  /* dissolve the gradient into the white card body — no hard seam */
+  .stat-band .fade {
+    position: absolute; left: 0; right: 0; bottom: -1px; height: 70%;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, var(--cr-bg) 92%);
+  }
+  .stat-foot {
+    flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 22px 26px 26px;
+  }
+  .cell--stat .stat-num { font-size: clamp(32px, 3vw, 40px); }
+
+  /* ── Stat card D: full-bleed gradient photo, number bottom-left ─ */
+  .cell--imgfull {
+    position: relative;
+    background: var(--cr-bg-tint) var(--cr-img, none) center / cover no-repeat;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 30px;
+  }
+  .cell--imgfull .grain {
+    position: absolute; inset: 0; pointer-events: none;
+    background: url("../assets/texture-grain.png") center / cover;
+    mix-blend-mode: soft-light; opacity: 0.12;
+  }
+  .cell--imgfull .scrim {            /* lifts dark text off the gradient, bottom-left */
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(to top right,
+                rgba(255,255,255,0.62) 0%, rgba(255,255,255,0.12) 46%, rgba(255,255,255,0) 70%);
+  }
+  .cell--imgfull .stat-body { position: relative; z-index: 1; }
+  .cell--imgfull .stat-num { font-size: clamp(38px, 4vw, 50px); }
+  .cell--imgfull .stat-cap { color: var(--cr-fg-2); max-width: 200px; }
+
+  /* ── Feature card F: image-creative + heading + → button ────── */
+  .cell--feature { display: flex; flex-direction: column; }
+  .feat-img {
+    position: relative; flex-shrink: 0; height: 200px;
+    background: var(--cr-bg-tint) var(--cr-img, none) center / cover no-repeat;
+    overflow: hidden;
+  }
+  .feat-img .grain {
+    position: absolute; inset: 0; pointer-events: none;
+    background: url("../assets/texture-grain.png") center / cover;
+    mix-blend-mode: soft-light; opacity: 0.10;
+  }
+  .feat-img .scrim {
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(150deg, rgba(246,249,253,0.30) 0%, rgba(246,249,253,0.52) 100%);
+  }
+  /* dissolve the image into the white card body — no hard seam */
+  .feat-img .fade {
+    position: absolute; left: 0; right: 0; bottom: -1px; height: 55%;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, var(--cr-bg) 94%);
+  }
+  .feat-body {
+    flex: 1; display: flex; flex-direction: column;
+    padding: 28px 30px 28px;
+  }
+  .feat-h {
+    margin: 0 0 9px;
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: 21px; line-height: 1.25; letter-spacing: -0.01em; color: var(--cr-fg);
+  }
+  .feat-p {
+    margin: 0;
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: 13.5px; line-height: 1.55; color: var(--cr-fg-3); max-width: 340px;
+  }
+  .arrow-btn {
+    margin-top: auto; align-self: flex-end;
+    width: 46px; height: 46px; border-radius: 50%;
+    border: 1px solid var(--cr-bg-grey-200); background: var(--cr-bg);
+    color: var(--cr-fg); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 19px; line-height: 1;
+    transition: border-color .2s ease, color .2s ease;
+  }
+  .arrow-btn .ar { display: inline-block; transition: transform .2s ease; }
+  .arrow-btn:hover, .arrow-btn:focus-visible {
+    border-color: var(--cr-brand); color: var(--cr-brand); outline: none;
+  }
+  .arrow-btn:hover .ar, .arrow-btn:focus-visible .ar { transform: translateX(4px); }
+
+  /* ── Scroll-reveal (scoped to JS; visible without it) ───────── */
+  .has-js [data-reveal] { opacity: 0; transform: translateY(20px); }
+  .has-js [data-reveal].in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease var(--d, 0ms), transform .6s ease var(--d, 0ms);
+  }
+
+  /* ── Responsive ─────────────────────────────────────────────── */
+  @media (max-width: 960px) {
+    .tm { padding: 80px 48px; }
+    .tm-head { margin-bottom: 64px; }
+    .bento { grid-template-columns: repeat(2, 1fr); grid-template-rows: none; }
+    .c-a, .c-b, .c-c, .c-d, .c-e, .c-f { grid-column: auto; grid-row: auto; min-height: 230px; }
+    .c-a, .c-f { grid-column: 1 / span 2; }          /* wide cards stay full-width */
+    .stat-band { height: 116px; }
+    .feat-img { height: 184px; }
+  }
+  @media (max-width: 600px) {
+    .tm { padding: 56px 20px; }
+    .tm-head { margin-bottom: 44px; }
+    .bento { grid-template-columns: 1fr; gap: 16px; }
+    .c-a, .c-f { grid-column: auto; }
+    .c-a, .c-b, .c-c, .c-d, .c-e, .c-f { min-height: 0; }
+    .cell--imgfull { min-height: 188px; }
+    .stat-band { height: 104px; }
+    .feat-img { height: 168px; }
+    .c-a .q-body, .feat-p { max-width: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js [data-reveal] { opacity: 1 !important; transform: none !important; }
+    .has-js [data-reveal].in { transition: none; }
+    .arrow-btn, .arrow-btn .ar { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="tm" data-screen-label="Testimonials — bento grid">
+  <div class="tm-wrap">
+
+    <header class="tm-head" data-reveal style="--d:0ms">
+      <h2 class="tm-title">Trusted in Production, Not in Demos.</h2>
+      <p class="tm-sub">Across BFSI, healthcare and logistics — here's what changed once Example Brand agents went live.</p>
+    </header>
+
+    <div class="bento">
+
+      <!-- A — wide testimonial -->
+      <article class="cell cell--quote c-a" data-reveal style="--d:0ms">
+        <div class="qmark" aria-hidden="true">&ldquo;</div>
+        <p class="q-body">Example Brand dropped agents into our existing stack and cleared the invoice backlog in weeks — no rip-and-replace, no new headcount.</p>
+        <footer class="tm-foot">
+          <img class="avatar" src="../assets/avatars/avatar-daniel.jpg" alt="" width="38" height="38" loading="lazy">
+          <span>
+            <span class="who-name">Daniel Okafor</span><br>
+            <span class="who-co">VP Operations, Meridian Bank</span>
+          </span>
+        </footer>
+      </article>
+
+      <!-- B — compact testimonial -->
+      <article class="cell cell--quote c-b" data-reveal style="--d:80ms">
+        <div class="qmark" aria-hidden="true">&ldquo;</div>
+        <p class="q-body">It paid for itself in the first quarter — and freed our team from the busywork.</p>
+        <footer class="tm-foot">
+          <img class="avatar" src="../assets/avatars/avatar-carol.jpg" alt="" width="38" height="38" loading="lazy">
+          <span>
+            <span class="who-name">Carol Nardelli</span><br>
+            <span class="who-co">CFO, Volta Logistics</span>
+          </span>
+        </footer>
+      </article>
+
+      <!-- C — stat (gradient photo band on top) -->
+      <div class="cell cell--stat c-c" data-reveal style="--d:160ms">
+        <div class="stat-band" style="--cr-img:url('../assets/creative-background/blur-7.png')" aria-hidden="true">
+          <div class="grain"></div>
+          <div class="fade"></div>
+        </div>
+        <div class="stat-foot">
+          <div class="stat-num count" data-target="85" data-suffix="%">85%</div>
+          <div class="stat-cap">Exceptions resolved without a human.</div>
+        </div>
+      </div>
+
+      <!-- D — stat (full-bleed gradient photo, dark number) -->
+      <div class="cell cell--imgfull c-d" data-reveal style="--cr-img:url('../assets/creative-background/web/blur-7.jpg'); --d:120ms">
+        <div class="grain" aria-hidden="true"></div>
+        <div class="scrim" aria-hidden="true"></div>
+        <div class="stat-body">
+          <div class="stat-num count" data-target="10000" data-suffix="+">10,000+</div>
+          <div class="stat-cap">Hours of manual work removed every month.</div>
+        </div>
+      </div>
+
+      <!-- E — tall testimonial -->
+      <article class="cell cell--quote c-e" data-reveal style="--d:200ms">
+        <div class="qmark" aria-hidden="true">&ldquo;</div>
+        <p class="q-body">We piloted in four weeks and never looked back. Example Brand reads the task, not the screen, so it keeps working when our systems change — it's become the way our ops team runs.</p>
+        <footer class="tm-foot">
+          <img class="avatar" src="../assets/avatars/avatar-martha.jpg" alt="" width="38" height="38" loading="lazy">
+          <span>
+            <span class="who-name">Martha Reyes</span><br>
+            <span class="who-co">Head of Ops, Unicell Health</span>
+          </span>
+        </footer>
+      </article>
+
+      <!-- F — feature card -->
+      <article class="cell cell--feature c-f" data-reveal style="--d:280ms">
+        <div class="feat-img" style="--cr-img:url('../assets/creative-background/blur-7.png')" aria-hidden="true">
+          <div class="grain"></div>
+          <div class="scrim"></div>
+          <div class="fade"></div>
+        </div>
+        <div class="feat-body">
+          <h3 class="feat-h">Enterprise-Grade Security and Privacy</h3>
+          <p class="feat-p">Your data stays in your environment — deployed inside your VPC, never trained on. SOC&nbsp;2 and HIPAA available on request.</p>
+          <button class="arrow-btn" type="button" aria-label="Read how Example Brand secures your data">
+            <span class="ar">&rarr;</span>
+          </button>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hasIO  = 'IntersectionObserver' in window;
+  const canAnimate = !reduce && hasIO;
+
+  // Count-up (ease-out cubic), comma-formatted. Rendered text is already the
+  // final value, so no-JS / reduced-motion need no override.
+  function countUp(el) {
+    const target = parseFloat(el.dataset.target);
+    const suffix = el.dataset.suffix || '';
+    const dur = 1500; let start = null;
+    function tick(ts) {
+      if (start === null) start = ts;
+      const p = Math.min((ts - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(eased * target).toLocaleString() + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+      else el.textContent = target.toLocaleString() + suffix;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  const counts = document.querySelectorAll('.count');
+  if (canAnimate) counts.forEach(c => { c.textContent = '0' + (c.dataset.suffix || ''); });
+
+  const reveals = document.querySelectorAll('[data-reveal]');
+  if (!canAnimate) {
+    reveals.forEach(el => el.classList.add('in'));        // snap in; numbers stay final
+  } else {
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach(en => {
+        if (!en.isIntersecting) return;
+        en.target.classList.add('in');
+        en.target.querySelectorAll('.count').forEach(countUp);
+        obs.unobserve(en.target);
+      });
+    }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+    reveals.forEach(el => io.observe(el));
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "id": "vendor-compliance-glance",
+  "contractVersion": 1,
+  "digest": "sha256:812ac19ca043f84099e4b0c52eeac970b79933049a4afd797e16e1188262f366",
+  "belief": "every vendor's SOC 2 and compliance verification status is one glance away",
+  "feature": "security",
+  "ratio": "4:3",
+  "camera": "component",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

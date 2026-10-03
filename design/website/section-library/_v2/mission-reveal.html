@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Mission — scroll reveal</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — Mission · scroll-reveal statement   component-mission-reveal.html
+  ════════════════════════════════════════════════════════════════════════
+  COMPOSITION  A single big mission statement on PURE WHITE (the source's cream
+               is dropped per the brief). A centred ~920px column of LEFT-aligned
+               Urbanist editorial text — two short CR-voice paragraphs — is the
+               sole focal point of the viewport.
+
+  INSPIRATION  Lattice's "You can't afford underperformance…" scroll-reveal
+               mission section. The WORD-BY-WORD grey→dark reveal driven by scroll,
+               the centred left-aligned column, and the two-paragraph structure
+               are reproduced; colour / cream bg / copy re-skinned to CR.
+
+  RE-SKIN      Lattice → Example Brand; HR-people-platform → APA / autonomous ops.
+               MONOCHROME (no accent word — the source has none): one ink colour,
+               the reveal is pure OPACITY (faded `--cr-ink` @ .16 → full). Cream
+               bg → pure white (brief). Voice: outcome-led, no hype / exclamation.
+
+  MOTION       (user choice) "Reveal on scroll" — the section is TALL (220vh) with
+               a STICKY inner pinned for the middle ~120vh; as you scroll through,
+               a soft REVEAL FRONT moves word-by-word through both paragraphs,
+               ramping each word from light grey (.16 opacity) to full ink. The
+               last word lands at ~88% progress so the finished statement DWELLS
+               pinned for a beat before scrolling away.
+               • Progress is read off the TALL `.ms-section` rect (NOT the pinned
+                 sticky, whose top is ~constant 0): `p = -rect.top / (H - innerH)`.
+               • rAF-throttled scroll; words are HARD-CODED spans (no runtime-split
+                 flash). NO-JS SAFE: the faded state is `.has-js`-scoped, so without
+                 JS every word is full ink (readable). `prefers-reduced-motion`
+                 (and the no-JS path) render full-contrast — covering the transient
+                 low-opacity state. `window.__msUpdate(p)` is exposed for QA.
+
+  CONSTRAINTS  NO `overflow:hidden/clip/auto` on the section or any ancestor — it
+               silently breaks `position:sticky`. No shadow, no blur, no border
+               (charter): the statement carries the whole band.
+
+  RESPONSIVE   The column caps at 920px and centres; text scales `clamp(26→52px)`;
+               sticky padding tightens; the 220vh runway holds (vh-relative) so the
+               reveal pacing is consistent at every width.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<style>
+  .ms-section, .ms-section * { box-sizing: border-box; }
+  .ms-section {
+    background: var(--cr-bg);            /* pure white */
+    height: 220vh;                       /* tall scroll runway (NO overflow here or on ancestors) */
+    font-family: var(--cr-font-body);
+  }
+  .ms-sticky {
+    position: sticky; top: 0;
+    height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 40px;
+  }
+  .ms-text { max-width: 920px; width: 100%; }
+  .ms-para {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 600;
+    font-size: clamp(26px, 3.9vw, 52px);
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    color: var(--cr-ink);                /* the reveal is pure opacity over this one ink */
+  }
+  .ms-para + .ms-para { margin-top: 0.9em; }
+  .ms-w { transition: opacity .12s linear; }     /* tiny smoothing between rAF frames */
+
+  /* faded INITIAL state — scoped to .has-js so without JS every word is full ink */
+  .has-js .ms-section .ms-w { opacity: 0.16; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .ms-section .ms-w { opacity: 1; }     /* JS also forces 1; this is the CSS guarantee */
+  }
+
+  @media (max-width: 600px) {
+    .ms-section { height: 200vh; }
+    .ms-sticky { padding: 0 24px; align-items: flex-start; padding-top: 22vh; }
+  }
+</style>
+</head>
+<body>
+
+<section class="ms-section" data-screen-label="Mission · scroll reveal">
+  <div class="ms-sticky">
+    <div class="ms-text">
+      <p class="ms-para"><span class="ms-w">You</span> <span class="ms-w">can't</span> <span class="ms-w">afford</span> <span class="ms-w">backlogs</span> <span class="ms-w">or</span> <span class="ms-w">busywork</span> <span class="ms-w">&mdash;</span> <span class="ms-w">we</span> <span class="ms-w">built</span> <span class="ms-w">Example Brand</span> <span class="ms-w">to</span> <span class="ms-w">put</span> <span class="ms-w">operational</span> <span class="ms-w">excellence</span> <span class="ms-w">inside</span> <span class="ms-w">the</span> <span class="ms-w">systems</span> <span class="ms-w">you</span> <span class="ms-w">already</span> <span class="ms-w">run.</span></p>
+      <p class="ms-para"><span class="ms-w">Our</span> <span class="ms-w">autonomous</span> <span class="ms-w">agents</span> <span class="ms-w">absorb</span> <span class="ms-w">the</span> <span class="ms-w">routine</span> <span class="ms-w">work,</span> <span class="ms-w">catch</span> <span class="ms-w">every</span> <span class="ms-w">exception,</span> <span class="ms-w">and</span> <span class="ms-w">hand</span> <span class="ms-w">your</span> <span class="ms-w">people</span> <span class="ms-w">back</span> <span class="ms-w">the</span> <span class="ms-w">hours</span> <span class="ms-w">that</span> <span class="ms-w">demand</span> <span class="ms-w">real</span> <span class="ms-w">judgment.</span></p>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var section = document.querySelector('.ms-section');
+  if (!section) return;
+  var words = Array.prototype.slice.call(section.querySelectorAll('.ms-w'));
+  var N = words.length;
+  var MIN = 0.16, FADE = 5, END = 0.88;        // front softness (words) + finish progress
+
+  function update(p) {
+    var eff = p / END; eff = eff < 0 ? 0 : (eff > 1 ? 1 : eff);
+    var front = eff * (N + FADE);              // +FADE buffer so the last word reaches full
+    for (var i = 0; i < N; i++) {
+      var o = (front - i) / FADE;
+      o = o < 0 ? 0 : (o > 1 ? 1 : o);
+      words[i].style.opacity = (MIN + (1 - MIN) * o).toFixed(3);
+    }
+  }
+  window.__msUpdate = update;                  // QA hook for a forced-progress still
+
+  if (reduce) { words.forEach(function (w) { w.style.opacity = 1; }); return; }
+
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(function () {
+      var rect = section.getBoundingClientRect();             // TALL section, not the sticky
+      var denom = section.offsetHeight - window.innerHeight;
+      update(denom > 0 ? (-rect.top / denom) : 0);
+      ticking = false;
+    });
+  }
+  update(0);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+})();
+</script>
+
+</body>
+</html>

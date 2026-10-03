@@ -1,0 +1,98 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../_card.css">
+<style>
+  /* ─────────────────────────────────────────────────────────────────────
+     DATA VIZ · TABLE  (doc-scoped .viz-* — pure HTML/CSS, no JS)
+     A grid-aligned comparison table. Governing RULES live in README-DATA-VIZ.md;
+     the notes below are this idiom's MECHANICS only (doc-scoped).
+
+     What it's for (Rulebook §8): the LAST resort in the selection hierarchy — reach for it
+     when the comparison is QUALITATIVE (criteria × options that don't reduce to a single
+     magnitude), so no bar/line/donut applies. It should read as typeset, not a pasted
+     spreadsheet: hairline rules, system type, generous padding, one emphasised column.
+
+     Colour (Rulebook §4): a table encodes nothing geometrically — it has no data marks, so
+     §4's "marks are never navy" doesn't bite. The subject column header is the system's dark
+     display ink (type) and its cells carry a quiet tonal sky FILL (a surface emphasis, not a
+     mark). Everything else is hairlines + dark/graphite text.
+     ───────────────────────────────────────────────────────────────────── */
+  .viz-table       { display:grid; grid-template-columns:1.5fr 1fr 1fr 1.1fr; }
+  .viz-table > div { padding:4.5mm 5mm; border-top:1px solid var(--cr-keyline); }
+  .viz-table-head  { border-top:0 !important; font:600 var(--fs-eyebrow)/1.35 var(--font-body); letter-spacing:var(--tracking-eyebrow); text-transform:uppercase; color:var(--cr-graphite); align-self:end; }
+  .viz-table-rowh  { font:500 var(--fs-body)/1.4 var(--font-body); color:var(--cr-charcoal); }
+  .viz-table-cell  { font:400 var(--fs-body)/1.45 var(--font-body); color:var(--cr-graphite); }
+  .viz-table-subjh { color:var(--cr-ink); border-top:0 !important; font:600 var(--fs-h4)/1.2 var(--font-display); letter-spacing:var(--tracking-display); text-transform:none; align-self:end; }   /* subject header = display type */
+  .viz-table-subj  { color:var(--cr-charcoal); font-weight:500; background:var(--cr-tone-sky); }   /* subject cells = quiet tonal fill (surface, not a mark) */
+
+  /* preview-page chrome */
+  .viz-demo  { max-width:178mm; display:flex; flex-direction:column; gap:42px; }
+  .viz-caveat{ font:400 13px/1.55 var(--font-body); color:var(--cr-graphite); max-width:178mm; margin-top:26px; }
+</style>
+</head>
+<body style="background:#FFFFFF">
+<div class="viz-demo">
+
+  <!-- (1) Full-width · four columns, the Example Brand column emphasised -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">1 · Full width · criteria × three options, subject column emphasised</div>
+    <div class="viz-table">
+      <div class="viz-table-head">&nbsp;</div>
+      <div class="viz-table-head">Traditional automation</div>
+      <div class="viz-table-head">Off-the-shelf AI</div>
+      <div class="viz-table-subjh">Example Brand engagement</div>
+
+      <div class="viz-table-rowh">Handles exceptions</div>
+      <div class="viz-table-cell">Stops at the first one</div>
+      <div class="viz-table-cell">Sometimes, unpredictably</div>
+      <div class="viz-table-subj">Designed in, with guardrails</div>
+
+      <div class="viz-table-rowh">Works with your systems</div>
+      <div class="viz-table-cell">Brittle, point-to-point</div>
+      <div class="viz-table-cell">Needs you to wire it up</div>
+      <div class="viz-table-subj">Integrated end to end</div>
+
+      <div class="viz-table-rowh">Tied to a business metric</div>
+      <div class="viz-table-cell">Rarely</div>
+      <div class="viz-table-cell">Left to you</div>
+      <div class="viz-table-subj">Accountable from day one</div>
+
+      <div class="viz-table-rowh">Who owns the outcome</div>
+      <div class="viz-table-cell">The IT backlog</div>
+      <div class="viz-table-cell">The vendor's roadmap</div>
+      <div class="viz-table-subj">One embedded team, with you</div>
+    </div>
+  </div>
+
+  <!-- (2) Compact · three columns (one option vs. the subject) -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">2 · Compact · three columns — the grid just drops a column</div>
+    <div class="viz-table" style="grid-template-columns:1.5fr 1fr 1.1fr; max-width:150mm">
+      <div class="viz-table-head">&nbsp;</div>
+      <div class="viz-table-head">Spreadsheet macros</div>
+      <div class="viz-table-subjh">Example Brand engagement</div>
+
+      <div class="viz-table-rowh">Adapts to new formats</div>
+      <div class="viz-table-cell">Breaks on change</div>
+      <div class="viz-table-subj">Learns the pattern</div>
+
+      <div class="viz-table-rowh">Scales past one team</div>
+      <div class="viz-table-cell">Copy-pasted by hand</div>
+      <div class="viz-table-subj">Rolled as a playbook</div>
+
+      <div class="viz-table-rowh">Owns the outcome</div>
+      <div class="viz-table-cell">Whoever built it</div>
+      <div class="viz-table-subj">One embedded team</div>
+    </div>
+  </div>
+
+  <div class="viz-caveat">
+    <strong>Table</strong> · a grid-aligned comparison — the <strong>last resort</strong> in the §8
+    selection hierarchy, for a <strong>qualitative</strong> criteria × options matrix that doesn't reduce
+    to a magnitude (so no bar/line/donut fits). <strong>Governing rules: the Data-Viz Rulebook</strong>
+    (<code>README-DATA-VIZ.md</code> — §8 selection). It reads as <strong>typeset</strong>: hairline
+    rules, system type, one emphasised <strong>subject</strong> column (display-ink header, quiet tonal
+    sky cell fill — a surface emphasis, not a data mark, so §4 doesn't bite). <strong>Pure HTML/CSS, no
+    JavaScript.</strong> Doc-scoped (never in <code>colors_and_type.css</code>). Copy is illustrative.
+  </div>
+
+</div>
+</body></html>

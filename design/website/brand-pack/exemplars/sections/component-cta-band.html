@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CTA · Headline band + atmospheric glow + accent bar</title>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css">
+<!--
+  COMPONENT   — CTA band: oversized headline + service rail + accent bar
+  COMPOSITION — (inspiration 1, "Cleaning That Works Around You") A single large
+                rounded dark panel. Editorial headline pinned top-LEFT
+                (2 hard-broken lines, tight leading) + a short supporting line
+                under it; a right-aligned, uppercase service/link rail sitting
+                mid-RIGHT; and a full-width BRIGHT accent bar inset across the
+                BOTTOM — question on the left, pill action on the right.
+                Composition is varied per section — text-left + rail-right +
+                bottom-bar is followed because the inspiration dictates it; the
+                catalog does NOT hardcode a left/right split.
+  BACKGROUND  — Atmospheric blue-glow-on-black (user-supplied reference): a soft
+                radial glow blooming from the bottom-left and fading to near-black
+                at the top corners — the CR "cool & night-lit, navy→blue→soft cyan"
+                imagery vibe. Reproduced here in CSS (brand-blue family) so it is
+                resolution-independent and needs no asset. TO USE THE EXACT IMAGE:
+                drop it in assets/creative-background/ and replace the .cta-panel
+                background-image with:
+                  url("../assets/creative-background/cta-glow.jpg") center 78%/cover
+                The dark top corners keep the headline + rail legible with no
+                text-shadow; the grain overlay matches the film grain in the ref.
+                A brand-blue DOT-MATRIX cluster (value-noise, no word) is layered
+                OVER the glow on a <canvas> — minimal + concentrated toward the
+                bottom-right corner (presence ebbs out from BR), light dots that
+                read on both the dark surface and the blue glow.
+  BAR COLOUR  — The inspiration's accent bar is a bright WARM block popping off a
+                dark panel. CR's only warm note is the cream (#F8F8F8), and the
+                rule is "the blue CTA pill is never the colour of its surface;
+                blue is the thing you click." So the bar is flat warm cream and
+                the action stays a brand-blue pill — faithful warmth, correct
+                convention. A hairline border defines its edge where it crosses
+                the brightest part of the glow (borders, not shadow — the charter).
+  CHARTER     — No shadows / elevation anywhere: surfaces separate by CONTRAST +
+                borders. Grain tiles at native size. Hover only on real controls
+                (rail links, pill).
+  MOTION      — Living dots + cursor: the overlaid dot-matrix twinkles (per-dot
+                sine) + a slow diagonal brightness wave drifts across, and dots
+                brighten/grow within ~150px of the cursor (smoothed pointer, radial
+                falloff). Content also stagger-fades up on scroll-in (has-js +
+                IntersectionObserver, --d delays 0/110/220/300ms). prefers-reduced-
+                motion → static dots + content snaps in. Renders without JS (hidden
+                state scoped to .has-js).
+  Standalone: links ../colors_and_type.css only; own <style>; no shared CSS.
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-bg-grey-50);            /* var(--cr-bg-warm) — lets the panel float */
+    font-family: var(--cr-font-body); color: var(--cr-ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Page band — closer padding; panel sits inside the gutter */
+  .section {
+    padding: 80px 100px;
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }
+
+  /* ── The rounded dark panel — atmospheric blue glow ────────────────── */
+  .cta-panel {
+    position: relative; overflow: hidden; isolation: isolate;
+    border-radius: 32px;
+    min-height: clamp(500px, 50vw, 580px);
+    /* Blue-glow-on-black, blooming from the bottom-left (see header note —
+       swap this line for url(...) to use the exact supplied image). */
+    background-color: var(--cr-ink-card);
+    background-image: radial-gradient(142% 132% at 34% 114%,
+      #EFF7FF 0%,
+      #CDE8FF 5%,
+      #8FCBFF 12%,
+      #2BA3FF 22%,
+      #0E7BE6 32%,
+      #0A50B8 43%,
+      #0A2A78 54%,
+      #0B1142 66%,
+      #08092A 80%,
+      var(--cr-ink-card) 100%);
+  }
+  /* Dot-matrix cluster canvas — layered over the glow (z0) */
+  #dotfield {
+    position: absolute; inset: 0; z-index: 0;
+    display: block; pointer-events: none;
+  }
+  /* Soft top-left scrim — insurance for headline/body contrast where the glow
+     rises on the left. Kept light; the gradient is already dark up there. (z2) */
+  .scrim {
+    position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    background: linear-gradient(102deg,
+      rgba(5,4,16,0.52) 0%, rgba(5,4,16,0.16) 30%, rgba(5,4,16,0) 54%);
+  }
+  /* Grain overlay — matches the film grain in the reference; native tile. (z3) */
+  .cta-panel::after {
+    content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+    background: url("../assets/texture-grain.png");
+    opacity: 0.10;
+  }
+
+  .cta-inner {
+    position: relative; z-index: 4;
+    display: flex; flex-direction: column;
+    min-height: clamp(500px, 50vw, 580px);
+    padding: 56px;
+  }
+
+  /* ── Upper region — headline/body (left) + service rail (right) ────── */
+  .cta-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 48px; flex: 1 1 auto;
+  }
+  .cta-head { min-width: 0; max-width: 600px; }
+
+  /* Editorial headline — Urbanist Bold (700), refined scale, TWO hard-broken
+     lines (setup line + a short "Around You." closer). */
+  .cta-h {
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(31px, 4.2vw, 45px);
+    line-height: 1.07; letter-spacing: -0.025em;
+    color: #fff; margin: 0;
+  }
+  .cta-sub {
+    font-family: var(--cr-font-body);
+    font-weight: 400; font-size: 16px; line-height: 1.55;
+    color: rgba(255,255,255,0.72);
+    margin: 22px 0 0; max-width: 408px;
+  }
+
+  /* Right-aligned, uppercase service rail — reads as nav links */
+  .cta-rail {
+    flex-shrink: 0; align-self: center;
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: 16px; text-align: right;
+  }
+  .cta-rail a {
+    font-family: var(--cr-font-body);
+    font-weight: 600; font-size: 14px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: rgba(255,255,255,0.86);
+    text-decoration: none; cursor: pointer; white-space: nowrap;
+    transition: color .16s ease, transform .2s ease;
+  }
+  .cta-rail a:hover { color: var(--cr-brand-300); transform: translateX(-4px); }
+
+  /* ── Accent bar — flat warm-cream block inset across the bottom ─────── */
+  .cta-bar {
+    margin-top: 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 24px;
+    background: var(--cr-bg-warm);               /* var(--cr-bg-grey-50) — pops on the dark panel */
+    border: 1px solid rgba(255,255,255,0.55);    /* hairline edge over the bright glow (border, not shadow) */
+    border-radius: 20px;
+    padding: 25px 27px 25px 35px;
+  }
+  .cta-q {
+    font-family: var(--cr-font-display);
+    font-weight: 700; font-size: clamp(18px, 1.7vw, 22px);
+    line-height: 1.2; letter-spacing: -0.015em;
+    color: var(--cr-ink); margin: 0;
+  }
+  /* Blue pill — the single action; pops against the cream bar */
+  .cta-pill {
+    display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0;
+    background: var(--cr-brand); color: #fff;
+    border: 0; border-radius: var(--cr-radius-pill); cursor: pointer; text-decoration: none;
+    padding: 16px 30px;
+    font-family: var(--cr-font-display);
+    font-weight: 700; font-size: 16px; letter-spacing: -0.01em;
+    transition: background .16s ease, transform .12s ease;
+  }
+  .cta-pill .arrow { display: inline-block; transition: transform .16s ease; }
+  .cta-pill:hover { background: var(--cr-brand-700); }
+  .cta-pill:hover .arrow { transform: translateX(4px); }
+  .cta-pill:active { transform: scale(.97); }
+
+  /* ── Scroll-in reveal (staggered; visible without JS) ──────────────── */
+  .has-js .anim {
+    opacity: 0; transform: translateY(26px);
+    transition: opacity .7s cubic-bezier(.2,.7,.2,1) var(--d, 0ms),
+                transform .7s cubic-bezier(.2,.7,.2,1) var(--d, 0ms);
+  }
+  .cta-panel.reveal .anim { opacity: 1; transform: none; }
+
+  /* ── Responsive ────────────────────────────────────────────────────── */
+  @media (max-width: 1100px) {
+    .section { padding: 60px 40px; }
+    .cta-inner { padding: 44px; }
+    .cta-top { gap: 32px; }
+    .cta-rail { gap: 14px; }
+  }
+  @media (max-width: 760px) {
+    .section { padding: 40px 18px; }
+    .cta-panel, .cta-inner { min-height: 0; }
+    .cta-inner { padding: 36px 26px; }
+    .cta-top { flex-direction: column; align-items: flex-start; gap: 30px; }
+    .cta-sub { max-width: 100%; }
+    .cta-rail {
+      align-self: stretch; align-items: flex-start; text-align: left; gap: 12px;
+    }
+    .cta-rail a:hover { transform: translateX(4px); }
+    .cta-bar {
+      margin-top: 38px; flex-direction: column; align-items: stretch;
+      gap: 20px; padding: 28px 24px;
+    }
+    .cta-pill { justify-content: center; }
+  }
+  @media (max-width: 440px) {
+    .cta-h { font-size: 27px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .anim { opacity: 1 !important; transform: none !important; transition: none; }
+    .cta-rail a, .cta-pill, .cta-pill .arrow { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="section" data-screen-label="CTA · Headline band + atmospheric glow + accent bar">
+  <div class="cta-panel" id="panel">
+    <canvas id="dotfield" aria-hidden="true"></canvas>
+    <div class="scrim" aria-hidden="true"></div>
+
+    <div class="cta-inner">
+
+      <!-- Upper region: headline + body (left) · service rail (right) -->
+      <div class="cta-top">
+        <div class="cta-head">
+          <h2 class="cta-h anim" style="--d:0ms">Automation That Works<br>Around You.</h2>
+          <p class="cta-sub anim" style="--d:110ms">
+            We put production agents into the systems you already run — so your
+            team stops doing the work that should run itself.
+          </p>
+        </div>
+
+        <nav class="cta-rail anim" style="--d:220ms" aria-label="Capabilities">
+          <a>Process Automation</a>
+          <a>Document Intelligence</a>
+          <a>Sales Outreach</a>
+          <a>AI Strategy</a>
+        </nav>
+      </div>
+
+      <!-- Accent bar: question (left) + blue pill action (right) -->
+      <div class="cta-bar anim" style="--d:300ms">
+        <p class="cta-q">Got A Workflow Worth Automating?</p>
+        <a class="cta-pill" href="#">Book a Demo Call <span class="arrow" aria-hidden="true">&rarr;</span></a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  /* ── Dot-matrix cluster — layered OVER the glow ───────────────────────
+     Regular LED-style grid; per-cell presence + brightness from two-octave
+     value-noise thresholding (clusters + empty gaps), MINIMIZED and concentrated
+     toward the bottom-right corner (presence ebbs out from BR). Light dots so
+     they read on both the dark surface and the blue glow. */
+  (function () {
+    var panel  = document.getElementById('panel');
+    var canvas = document.getElementById('dotfield');
+    var ctx    = canvas.getContext('2d');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var SPACING = 18, THRESH = 0.72, DOT_MIN = 0.8, DOT_MAX = 2.3;
+    var W = 0, H = 0, dpr = 1, dots = [];
+    var ptr = { x: -9999, y: -9999, tx: -9999, ty: -9999, active: false };
+
+    function buildNoise(cols, rows) {
+      function lattice(rx, ry) {
+        var g = [];
+        for (var i = 0; i <= rx + 1; i++) { g[i] = []; for (var j = 0; j <= ry + 1; j++) g[i][j] = Math.random(); }
+        return g;
+      }
+      var rxA = Math.max(2, Math.round(cols / 9)), ryA = Math.max(2, Math.round(rows / 6));
+      var rxB = rxA * 2, ryB = ryA * 2;
+      var A = lattice(rxA, ryA), B = lattice(rxB, ryB);
+      function sample(g, fx, fy) {
+        var x0 = Math.floor(fx), y0 = Math.floor(fy);
+        var xf = fx - x0, yf = fy - y0;
+        var sx = xf * xf * (3 - 2 * xf), sy = yf * yf * (3 - 2 * yf);
+        var top = g[x0][y0] + (g[x0 + 1][y0] - g[x0][y0]) * sx;
+        var bot = g[x0][y0 + 1] + (g[x0 + 1][y0 + 1] - g[x0][y0 + 1]) * sx;
+        return top + (bot - top) * sy;
+      }
+      return function (nx, ny) {
+        return sample(A, nx * rxA, ny * ryA) * 0.7 + sample(B, nx * rxB, ny * ryB) * 0.3;
+      };
+    }
+
+    function build() {
+      var rect = panel.getBoundingClientRect();
+      W = rect.width; H = rect.height;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var cols = Math.ceil(W / SPACING) + 1, rows = Math.ceil(H / SPACING) + 1;
+      var noise = buildNoise(cols, rows);
+      dots = [];
+      for (var c = 0; c < cols; c++) for (var r = 0; r < rows; r++) {
+        var x = c * SPACING, y = r * SPACING;
+        if (x > W + 2 || y > H + 2) continue;
+        var nx = x / W, ny = y / H;
+        var dxc = 1 - nx, dyc = 1 - ny;
+        var fall = 1 - Math.sqrt(dxc * dxc + dyc * dyc) / 1.05;   // presence ebbs out from the bottom-right corner
+        if (fall <= 0) continue;                                  // outside the BR region → no dots
+        var d = noise(nx, ny) * 0.5 + fall;                       // position dominates; noise adds cluster texture
+        if (d < THRESH) continue;                                 // carves gaps within the BR region
+        var intensity = Math.min(1, (d - THRESH) / (1.5 - THRESH));
+        dots.push({ x: x, y: y, base: 0.30 + intensity * 0.70, r: DOT_MIN + intensity * (DOT_MAX - DOT_MIN),
+                    ph: Math.random() * 6.2832, tw: 0.10 + Math.random() * 0.20 });
+      }
+    }
+
+    function draw(t) {
+      ctx.clearRect(0, 0, W, H);
+      ptr.x += (ptr.tx - ptr.x) * 0.12; ptr.y += (ptr.ty - ptr.y) * 0.12;
+      var R = 150, R2 = R * R;
+      for (var i = 0; i < dots.length; i++) {
+        var dt = dots[i], b = dt.base, rr = dt.r;
+        if (!reduce) {
+          b += Math.sin(t * 0.0016 + dt.ph) * dt.tw;                  // per-dot twinkle
+          b += Math.sin(t * 0.0006 + (dt.x + dt.y) * 0.012) * 0.06;   // slow diagonal drift wave
+        }
+        if (ptr.active) {
+          var dx = dt.x - ptr.x, dy = dt.y - ptr.y, dd = dx * dx + dy * dy;
+          if (dd < R2) { var f = 1 - Math.sqrt(dd) / R; b += f * 0.9; rr += f * 1.6; }
+        }
+        if (b <= 0.04) continue; if (b > 1) b = 1;
+        // light dots — pale blue (dim) → near-white (bright); read on dark + glow
+        var rC = Math.round(150 + 95 * b);   // 150→245
+        var gC = Math.round(200 + 50 * b);   // 200→250
+        ctx.fillStyle = 'rgba(' + rC + ',' + gC + ',255,' + (0.16 + 0.56 * b).toFixed(3) + ')';
+        ctx.beginPath(); ctx.arc(dt.x, dt.y, rr, 0, 6.2832); ctx.fill();
+      }
+    }
+
+    var raf = null;
+    function loop(t) { draw(t); raf = requestAnimationFrame(loop); }
+    function start() {
+      build();
+      if (raf) cancelAnimationFrame(raf);
+      if (reduce) { draw(0); return; }
+      raf = requestAnimationFrame(loop);
+    }
+    panel.addEventListener('pointermove', function (e) {
+      var rect = panel.getBoundingClientRect();
+      ptr.tx = e.clientX - rect.left; ptr.ty = e.clientY - rect.top;
+      if (ptr.x < -1000) { ptr.x = ptr.tx; ptr.y = ptr.ty; }
+      ptr.active = true;
+    });
+    panel.addEventListener('pointerleave', function () { ptr.active = false; ptr.tx = -9999; ptr.ty = -9999; });
+    var rt = null;
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(start, 180); });
+    start();
+
+    /* Staggered scroll-in reveal — matches the catalog has-js/--d pattern. */
+    if (!('IntersectionObserver' in window)) { panel.classList.add('reveal'); }
+    else {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) { if (en.isIntersecting) { panel.classList.add('reveal'); io.disconnect(); } });
+      }, { threshold: 0.15 });
+      io.observe(panel);
+    }
+  })();
+</script>
+</body>
+</html>

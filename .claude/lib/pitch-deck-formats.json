@@ -1,0 +1,58 @@
+{
+  "_about": "Format registry for the /design-init pitch-deck branch (SP-track: pitch-deck-spec / pitch-deck-build / pitch-deck-review). Pitch-deck graduated out of the collateral branch into its own first-class track (2026-05-20). One entry: pitch-deck. The pitch-deck branch reads only this file; the .track dotfile holds `pitch-deck`. There is no shipped layout kit — the build GENERATES each slide's layout (1920x1080) from the slide_archetypes vocabulary below + the S6P direction + imagegen references, skinned entirely from the project's Design.md §2 tokens (the client's design system). This mirrors how the landing-page branch's frontend-build generates layout from the direction rather than porting a fixed kit.",
+  "version": 1,
+  "formats": {
+    "pitch-deck": {
+      "label": "Pitch deck",
+      "summary": "A 16:9 slide deck — sales deck / investor deck. A narrative arc rather than a distilled sheet.",
+      "deliverable": "self-contained HTML+CSS file (stacked 16:9 slides, arrow-key nav) + per-slide PNGs; the editable HTML is the deliverable. A landscape PDF (one page per slide) is OPTIONAL and never auto-created — S9P asks the designer whether to render it.",
+      "ui_kit": "deck",
+      "ui_kit_note": "`ui_kit` is the build-MODE selector (deck) — NOT a path to a shipped kit (there is none). The build authors each `.slide` at the 1920x1080 canvas below and generates the archetype layouts named in `slide_archetypes` from the `archetype_notes` geometry + the S6P direction + imagegen references, skinned from Design.md §2.",
+      "slide": {
+        "name": "slide",
+        "aspect": "16:9",
+        "size_px": { "w": 1920, "h": 1080, "_note": "the fixed slide canvas — the build authors every .slide at this size" },
+        "print_format": "A4",
+        "print_orientation": "landscape"
+      },
+      "units": { "name": "slide", "min": 8, "max": 15, "default": 10 },
+      "slide_archetypes": ["TitleSlide", "AgendaSlide", "StorylineSlide", "ManifestoSlide", "ColumnsSlide", "MetricSlide", "InsightStatSlide", "GrowthChartSlide", "ComparisonMatrixSlide", "WhyUsMosaicSlide", "TimelineCardsSlide", "RoadmapSlide", "PricingTiersSlide", "ProductMockupSlide", "ContactCardSlide", "CTASlide"],
+      "archetype_notes": {
+        "TitleSlide": "the deck's cover — the hero (cover) surface or the dark surface, the headline claim + a one-line standfirst + the brand mark; headline <= 2 lines",
+        "AgendaSlide": "left photo/colour strip + a numbered table-of-contents (4-ish rows) on the dark surface",
+        "StorylineSlide": "an eyebrow rule across the top + one huge declarative chapter title on the dark surface — the section pivot",
+        "ManifestoSlide": "a section header + a 4-up 'operating principles' row, hairline-divided, on the dark surface",
+        "ColumnsSlide": "eyebrow + display headline + standfirst + a 2- or 3-up hairline-divided column layout on the light surface — the workhorse 'one beat' content slide (also covers 'industries we serve', 'product detail', generic beats)",
+        "MetricSlide": "one oversized number + a caption on the right + a 2-up sub-stat row below — the proof beat, one big stat per slide",
+        "InsightStatSlide": "a big 'only X%' claim on the left, a dot-grid coverage viz on the right, two sub-stats below — the market-insight beat",
+        "GrowthChartSlide": "a headline + caption over a bar/line growth chart",
+        "ComparisonMatrixSlide": "a full them-vs-us matrix across N rows x N columns on the dark surface",
+        "WhyUsMosaicSlide": "a bento/mosaic grid of 'why us' tiles",
+        "TimelineCardsSlide": "a horizontal sequence of stage cards",
+        "RoadmapSlide": "a 4-quarter horizontal timeline — a node per quarter, a stage title + blurb + a 3-item checklist under each",
+        "PricingTiersSlide": "2-3 pricing-tier columns on the dark surface",
+        "ProductMockupSlide": "copy on the left + offset device-frame product mockups on the right (the device internals are graphic content, exempt from the min-text floor — render them small/as imagery)",
+        "ContactCardSlide": "a contact card + a giant section watermark word, on the hero (cover) surface — a close/contact beat",
+        "CTASlide": "the close — a short 'how it works' list + a CTA button + a footer, on the dark surface"
+      },
+      "metrics": { "pad": 80, "header_top": 80, "heading_top": 200, "standfirst_top": 340, "content_top": 540, "bottom_reserve": 96, "section_gap": 48, "heading_body_gap": 24, "title_max_lines": 2 },
+      "min_text_px": 20,
+      "min_text_px_note": "20px at the 1920-wide canvas ≈ legible from the back of a room. Auto-exempt: anything inside a graphic-content region — charts (.chart / .chart-card / .data-viz: axis labels, legend, data callouts, the chart's own metric), device/screenshot mockups (.device / .device-frame / .mockup: the UI screenshot's internals), SVG <text>, and any wrapper explicitly marked with `class=\"cr-graphic\"` or `data-graphic`. render-deliverable.py's `_MEASURE_JS` filters those out of `min_font_px` and `below_min_text`; every other text element must be >= 20px.",
+      "render": "html+png (pdf on request at S9P; S8P measures with --no-pdf, no file)",
+      "output_dir": ".claude/pipeline/pitch-deck/",
+      "build_path": "Design/Hand-off/Pitch-deck/<slug>-pitch-deck/<slug>.html",
+      "deliverable_path": "Design/Hand-off/Pitch-deck/<slug>-pitch-deck/<slug>.html",
+      "optional_pdf_path": "Design/Hand-off/Pitch-deck/<slug>-pitch-deck/<slug>.pdf",
+      "hard_constraints": [
+        "every slide's content fits within 1920x1080 — nothing overflows the slide edge",
+        "no two text elements overlap",
+        "print-to-PDF (A4 landscape) produces exactly one page per slide",
+        "minimum rendered body text size >= 20px (legible from the back of a room); graphic-content text — chart axes/legends/data callouts, device-mockup internals, SVG <text>, and anything wrapped in .cr-graphic / [data-graphic] — is auto-exempt by the measurement script",
+        "title slide headline <= 2 lines",
+        "all colours resolve to a Design.md §2 token — off-palette = FAIL",
+        "HTML+CSS only — no React/Vue/Tailwind/JS framework, no build step; the ONLY JS allowed is keyboard/click slide navigation (and a tiny inline data-viz seed like the dot-grid, if an archetype uses one)",
+        "fonts: only what Design.md §2 declares (Google-Fonts-or-parent-only, max 2 families)"
+      ]
+    }
+  }
+}

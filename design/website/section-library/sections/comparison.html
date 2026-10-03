@@ -1,0 +1,165 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Comparison column</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Comparison column (atom)      from component-comparison.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  An ATOM PREVIEW, not a band — the same shape `stat-tiles`
+                turned out to be. The v2 file is twenty-three lines with no
+                stylesheet of its own: every value is an inline `style`
+                attribute, and the only sheet it links besides the token file
+                is `card.css`, the harness the atom previews inside. That
+                link is kept and repointed; the file it names does not exist
+                anywhere in the repo, so BOTH the control and this specimen
+                resolve it to nothing and the preview shape comes from the
+                stylesheet below rather than from the harness.
+
+  THE CLAIM     **One column of a comparison, not a comparison.** The profile
+                is explicit that alone this is an assertion wearing the
+                costume of a comparison — it exists so a matrix can be
+                ASSEMBLED from several donors instead of taken whole from
+                one. So the specimen composes exactly two things: a factor
+                column that names the axes, and one answer column that
+                responds to them line for line. The parallel is the whole
+                idea, and it is why both columns take the same vertical
+                rhythm and the same text step.
+
+  STRUCTURE     Unchanged. One card, two columns, seven rows each, head over
+                six values. DOM order, element types and depth are
+                byte-compatible with the frozen original (DR-22). Inline
+                `style` attributes are presentation, not contract, so they
+                move into the sheet — which is the whole migration on a file
+                that had no sheet.
+
+  ENVIRONMENT   **None, and deliberately.** There is no abstract background
+                here to retire: the card is a flat raised surface and the
+                answer column a flat quiet step, and every one of the
+                fourteen boxes in this atom holds words end to end. A
+                photograph behind them would be type on a photograph, which
+                the direction refuses. There is no plate in this atom that
+                carries no type, so nothing is invented to satisfy the rule.
+
+  ACCENT        None spent. v2 set the answer column's head in brand blue on
+                a blue tint — a hue that MEASURES at 2.1:1 as text and is
+                never legible at that size. The differentiation is by SURFACE
+                instead: the factor column sits on the card, the answer
+                column on the quiet step above it. That is the direction's
+                own mechanism and it survives being printed in one colour,
+                which the blue did not.
+
+  SCALE         Both heads and all twelve values land on the supporting step
+                — the size the atom already used for its heads. A column
+                whose factors and answers are set at different sizes stops
+                reading across, and reading across is the only thing this
+                atom does. Weight carries the head, not size.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/sections/card.css"><link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<style>
+  html, body {
+    margin: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* The atom's own container. `card.css` would have supplied the card
+     surface its markup implies; it is absent, so the preview shape is
+     declared here — the raised white step on the cream page, the pair's
+     card radius, and one hairline. */
+  .cm-card {
+    background: var(--cr-bg-raised);
+    border-radius: var(--cr-radius-card);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    padding: var(--cr-space-s);
+    display: inline-flex;
+  }
+
+  /* The two columns share ONE vertical rhythm — the same gap, the same
+     text step — because the comparison is read across the pair. The rows
+     do not align tick-for-tick and were never going to: the answer column
+     is 200px wide and several answers run to two lines, which is the
+     atom's own geometry and not this pass's to move. Widths are its
+     identity; the rhythm is what the migration owns. */
+  .cm-col {
+    width: 188px;
+    padding: var(--cr-space-s) 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--cr-space-s);
+  }
+  .cm-col--answer {
+    width: 200px;
+    padding: var(--cr-space-s);
+    background: var(--cr-surface-5);
+    border-radius: var(--cr-radius-card);
+  }
+
+  .cm-head {
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+
+  /* The factor names are the quieter of the two inks — they ask the
+     question, the answers make the claim. */
+  .cm-factor {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  .cm-value {
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-primary);
+  }
+</style>
+</head><body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. There is no `directed` line and no width line: the
+     card's inline-flex shape, both column widths and both paddings are
+     carried over at their original values, so the only dimensions that
+     move are the row rhythm onto the closed scale, the two radii onto the
+     pair, and the value text onto the ramp with a leading it never had.
+  .cm-card   | border-radius          | radius-pair
+  .cm-col    | border-radius          | radius-pair
+  .cm-col    | column-gap             | spacing-scale
+  .cm-col    | row-gap                | spacing-scale
+  .cm-factor | font-size              | type-ramp
+  .cm-factor | line-height            | type-ramp
+  .cm-head   | line-height            | type-ramp
+  .cm-value  | font-size              | type-ramp
+  .cm-value  | line-height            | type-ramp
+-->
+<div class="cm-card"
+     data-archetype="feature-comparison" data-hierarchy="technical" data-intent="compare"
+     data-register="technical" data-signature="architectural-whitespace" data-density="high">
+  <div class="cm-col">
+    <div class="cm-head">Factors</div>
+    <div class="cm-factor">Time to first result</div>
+    <div class="cm-factor">Who does the work</div>
+    <div class="cm-factor">Cost model</div>
+    <div class="cm-factor">Risk if underperforms</div>
+    <div class="cm-factor">Integration requirement</div>
+    <div class="cm-factor">What you get at the end</div>
+  </div>
+  <div class="cm-col cm-col--answer">
+    <div class="cm-head">Example Brand APA</div>
+    <div class="cm-value">Live in 4 weeks</div>
+    <div class="cm-value">We build and deploy</div>
+    <div class="cm-value">Pay for results, not licenses</div>
+    <div class="cm-value">We work until it hits target</div>
+    <div class="cm-value">Works on your existing stack</div>
+    <div class="cm-value">Working agent in production</div>
+  </div>
+</div>
+</body></html>

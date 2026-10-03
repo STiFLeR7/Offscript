@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CR · Stat tiles — measure group (atom)</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Stat tiles (atom)              from component-stat-tiles.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  An ATOM PREVIEW, not a band. The v2 file is eighteen lines
+                with no stylesheet of its own — every value is an inline
+                `style` attribute, and the only sheet it links besides the
+                token file is `card.css`, the harness the atom previews
+                inside. That link is kept and repointed; the file it names
+                does not exist anywhere in the repo, so BOTH the control and
+                this specimen resolve it to nothing and the preview shape
+                comes from the stylesheet below rather than from the harness.
+
+  THE CLAIM     **The smallest honest unit of evidence.** Three measures,
+                one scale, no heading — the atom contributes a measure group
+                to a band that already has a subject and a rhythm of its own.
+                Its profile carries no Envelope archetype for exactly that
+                reason; `proof-layout` is the row that matches what it does
+                (structure-led, single-focus, linear, contained, a small
+                inline creative) once tile three carries a photograph.
+
+  STRUCTURE     Unchanged. One row, three fixed tiles, each a numeral over a
+                label, plus one decorative ring inside the third. DOM order,
+                element types and depth are byte-compatible with the frozen
+                original (DR-22). Inline `style` attributes are presentation,
+                not contract, so they move into the sheet — which is the whole
+                migration on a file that had no sheet.
+
+  ENVIRONMENT   `env-ridges-distant`, on tile three. v2 painted that tile with
+                a two-stop gradient multiplied against a grain bitmap — an
+                abstract creative background, which the blanket rule retires
+                in favour of an approved environment carrying the texture
+                stack. The tile holds type at BOTH ends, so the type does not
+                sit on the photograph: numeral and label each take their own
+                opaque band, and the environment reads as an aperture between
+                them. Remove the photograph and not one word changes
+                legibility. The ring drawn over it — a 600px circle in a
+                translucent white hairline — is the abstract idiom the same
+                rule retires, and it goes with the gradient.
+
+                Tiles one and two are NOT re-anchored to match. They carry no
+                photograph and no directive; the rule forces one change on one
+                tile, and moving the other two would be a redesign.
+
+  SCALE         The numeral steps from the v2 display size to the ramp's H2.
+                H1 is the same number v2 used and it does not fit: "3 Days"
+                measures wider than a 240px tile's text column, so at H1 the
+                set either overflows its own box or clips. H2 is the largest
+                rung the tile can hold whole, and a measure the tile cannot
+                show is not a measure.
+
+  ACCENT        None spent. The set differentiates by SURFACE — two quiet
+                tiles and one photographic — which is the direction's own
+                mechanism, and a hue on one number in a group of three would
+                say that measure counts more when nothing claims it does.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/sections/card.css">
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<style>
+  html, body {
+    margin: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+  }
+  .st-row, .st-row * { box-sizing: border-box; }
+
+  /* The atom's own container. `card.css` would have supplied `.row` / `.gap-6`;
+     it is absent, so the preview shape is declared here — on the closed spacing
+     scale, at the micro step the rest of the library uses between cells. */
+  .st-row {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: var(--cr-space-xs);
+    padding: var(--cr-space-s);
+  }
+
+  /* Tile geometry is the atom's identity and is not this pass's to move: 240 by
+     280, the pair radius, and the numeral-over-label lockup held apart. */
+  .st-tile {
+    width: 240px;
+    height: 280px;
+    border-radius: var(--cr-radius-card);
+    background: var(--cr-surface-5);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Padding sits on the CHILDREN, not on the tile. On tiles one and two that is
+     invisible; on tile three it is what lets each text block carry its own
+     opaque band edge-to-edge while the photograph fills the tile behind. One
+     rule, one lockup, three tiles. */
+  .st-num {
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h2);
+    line-height: 1;
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+    padding: var(--cr-space-s) var(--cr-space-s) 0;
+  }
+  .st-cap {
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    padding: 0 var(--cr-space-s) var(--cr-space-s);
+  }
+
+  /* THE STANDARD CREATIVE TREATMENT, replacing v2's gradient-over-grain tile.
+     ONE background stack, three layers, in this order: grain on top, grunge
+     under it, the environment underneath both. It has to be one stack — a blend
+     mode composites against what is beneath it in the SAME background, so
+     moving the grain onto a pseudo-element resolves `overlay` against
+     transparency and renders the texture at full strength as grey static. The
+     URLs are written out rather than reached through a `--cr-env-*` custom
+     property, because a `url()` inside a custom property resolves against the
+     CONSUMING document and fails silently. */
+  .st-tile--env {
+    background-color: var(--cr-bg-dark);
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-ridges-distant.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 50% 50%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+  }
+  /* The two opaque bands. Each is full-bleed across the tile, so no word in
+     either draws its contrast from the picture between them. */
+  .st-tile--env .st-num,
+  .st-tile--env .st-cap {
+    background: var(--cr-bg-dark);
+    color: var(--cr-text-inverse);
+  }
+
+  /* The decorative ring is retired with the gradient it was drawn on. */
+  .st-ring { display: none; }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. Note that padding appears on BOTH `.st-tile` and its two
+     children: the tile gives its inset up (to zero) and the children take it,
+     which is the one move that lets tile three's text blocks carry their own
+     opaque band edge-to-edge over the photograph.
+
+     ONE `directed` line, and it is the harness rather than the design. The
+     tile's min-height moves from a resolved zero to `auto` because the row
+     becomes a flex container and the tiles become flex items. It is not a
+     size decision — nothing about the tile's 240 by 280 changes — but the
+     Pilot Constraint has no other reason for it, and `card.css`, which would
+     have declared `.row` as the flex row its class name names, does not exist
+     anywhere in the repo. The specimen declares the preview shape its own
+     markup already claims, and says so here rather than passing it through.
+  .row     | column-gap             | spacing-scale
+  .row     | padding-bottom         | spacing-scale
+  .row     | padding-left           | spacing-scale
+  .row     | padding-right          | spacing-scale
+  .row     | padding-top            | spacing-scale
+  .row     | row-gap                | spacing-scale
+  .st-cap  | font-size              | type-ramp
+  .st-cap  | line-height            | type-ramp
+  .st-cap  | padding-bottom         | spacing-scale
+  .st-cap  | padding-left           | spacing-scale
+  .st-cap  | padding-right          | spacing-scale
+  .st-num  | font-size              | type-ramp
+  .st-num  | line-height            | type-ramp
+  .st-num  | padding-left           | spacing-scale
+  .st-num  | padding-right          | spacing-scale
+  .st-num  | padding-top            | spacing-scale
+  .st-tile | min-height             | directed
+  .st-tile | padding-bottom         | spacing-scale
+  .st-tile | padding-left           | spacing-scale
+  .st-tile | padding-right          | spacing-scale
+  .st-tile | padding-top            | spacing-scale
+-->
+<div class="row gap-6 st-row"
+     data-archetype="proof-layout" data-hierarchy="proof" data-intent="prove"
+     data-register="confident" data-signature="large-statistic" data-density="medium">
+  <div class="st-tile">
+    <div class="st-num">3 Days</div>
+    <div class="st-cap">Payback</div>
+  </div>
+  <div class="st-tile">
+    <div class="st-num">5 FTE</div>
+    <div class="st-cap">Automated</div>
+  </div>
+  <div class="st-tile st-tile--env">
+    <div class="st-ring"></div>
+    <div class="st-num">92%</div>
+    <div class="st-cap">Cost Removal</div>
+  </div>
+</div>
+</body>
+</html>

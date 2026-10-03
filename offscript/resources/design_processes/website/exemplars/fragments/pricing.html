@@ -1,0 +1,81 @@
+<!-- CURATED EXEMPLAR — archetype: pricing. Authored on the house .cr-* system (v2 re-theme); rhythm referenced from Website-offscript-v2/fragments/pricing-packages.html. Match the rhythm/discipline; do NOT clone. -->
+<section id="pricing" class="cr-band-warm cr-section" aria-label="Pricing">
+  <style>
+    /* doc-scoped: 3-tier grid + the "most popular" highlight + feature list ONLY.
+       Cards, headings, buttons, num-display are house-defined. Single recommended
+       cue (the middle tier); checks are inline house .cr-ico glyphs. */
+    #pricing .pr-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--cr-space-6);
+      align-items: start; margin-top: var(--cr-space-12); }
+    #pricing .pr-card { display: flex; flex-direction: column; gap: var(--cr-space-5); height: 100%; }
+    /* recommended tier — accent ring + lift via scale, never shadow */
+    #pricing .pr-card--top { border-color: var(--cr-brand); }
+    #pricing .pr-badge { align-self: flex-start; display: inline-flex; align-items: center; gap: 7px;
+      padding: 5px 12px; border-radius: var(--cr-radius-pill); background: var(--cr-brand-100);
+      color: var(--cr-brand-700); font-family: var(--cr-font-body); font-weight: 600; font-size: 12px;
+      letter-spacing: .04em; text-transform: uppercase; }
+    #pricing .pr-price { display: flex; align-items: baseline; gap: 6px; }
+    #pricing .pr-per { font-family: var(--cr-font-body); font-size: 15px; color: var(--cr-fg-3); }
+    #pricing .pr-feats { display: flex; flex-direction: column; gap: var(--cr-space-3);
+      padding-top: var(--cr-space-5); border-top: 1px solid var(--cr-line); margin-top: auto; }
+    #pricing .pr-feat { display: flex; align-items: flex-start; gap: var(--cr-space-3); }
+    #pricing .pr-feat svg { width: 18px; height: 18px; stroke: var(--cr-brand); stroke-width: 2.4;
+      fill: none; stroke-linecap: round; stroke-linejoin: round; flex: none; margin-top: 3px; }
+    #pricing .pr-cta { margin-top: var(--cr-space-2); }
+    #pricing .pr-cta .cr-btn { width: 100%; }
+    #pricing .pr-note { text-align: center; margin-top: var(--cr-space-8); }
+    #pricing .pr-reveal { animation: prRise .65s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--d, 0s); }
+    @keyframes prRise { from { transform: translateY(16px); } to { transform: none; } }
+    @media (prefers-reduced-motion: reduce) { #pricing .pr-reveal { animation: none; } }
+    @media (max-width: 900px) { #pricing .pr-grid { grid-template-columns: 1fr; } }
+  </style>
+
+  <div class="cr-container">
+    <div class="cr-head cr-head--center pr-reveal" style="--d:.04s">
+      <span class="cr-eyebrow">Pricing</span>
+      <h2 class="cr-h-section">Start Where You Are. Scale When It Pays Off.</h2>
+      <p class="cr-p-lede">Every plan includes the audit, a live agent, and the guardrails. You only move up when the volume earns it.</p>
+    </div>
+
+    <div class="pr-grid">
+      <article class="cr-card pr-card pr-reveal" style="--d:.1s">
+        <h3 class="cr-h-card">Starter</h3>
+        <div class="pr-price"><span class="cr-num-display">$0</span><span class="pr-per">/ for one workflow</span></div>
+        <p class="cr-p">Prove it on a single process. The audit, one live agent, and the numbers — at no cost.</p>
+        <div class="pr-feats">
+          <span class="pr-feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="cr-p">One automated workflow</span></span>
+          <span class="pr-feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="cr-p">Free process audit</span></span>
+          <span class="pr-feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="cr-p">Email support</span></span>
+        </div>
+        <div class="pr-cta"><a class="cr-btn cr-btn-secondary" href="#">Start free</a></div>
+      </article>
+
+      <article class="cr-card pr-card pr-card--top pr-reveal" style="--d:.18s">
+        <span class="pr-badge">Most popular</span>
+        <h3 class="cr-h-card">Growth</h3>
+        <div class="pr-price"><span class="cr-num-display">$2k</span><span class="pr-per">/ month</span></div>
+        <p class="cr-p">Run a taskforce across the processes that move the needle, with human-in-the-loop control.</p>
+        <div class="pr-feats">
+          <span class="pr-feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="cr-p">Up to 10 live workflows</span></span>
+          <span class="pr-feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="cr-p">Connect your full stack</span></span>
+          <span class="pr-feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="cr-p">Escalation rules you define</span></span>
+          <span class="pr-feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="cr-p">Priority support</span></span>
+        </div>
+        <div class="pr-cta"><a class="cr-btn cr-btn-primary" href="#">Choose Growth <span class="cr-arrow" aria-hidden="true">&rarr;</span></a></div>
+      </article>
+
+      <article class="cr-card pr-card pr-reveal" style="--d:.26s">
+        <h3 class="cr-h-card">Enterprise</h3>
+        <div class="pr-price"><span class="cr-num-display">Custom</span></div>
+        <p class="cr-p">For org-wide rollout, dedicated environments, and the controls your security team needs.</p>
+        <div class="pr-feats">
+          <span class="pr-feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="cr-p">Unlimited workflows</span></span>
+          <span class="pr-feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="cr-p">SSO, audit logs, SLAs</span></span>
+          <span class="pr-feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="cr-p">Dedicated solutions team</span></span>
+        </div>
+        <div class="pr-cta"><a class="cr-btn cr-btn-secondary" href="#">Talk to sales</a></div>
+      </article>
+    </div>
+
+    <p class="cr-caption pr-note">Prices in USD. Annual billing saves 20%. No card required to start.</p>
+  </div>
+</section>

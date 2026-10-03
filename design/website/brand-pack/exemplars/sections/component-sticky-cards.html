@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sticky cards</title>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<noscript><style>.item { opacity: 1 !important; transform: none !important; }</style></noscript>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background: #FFFFFF;
+    font-family: var(--cr-font-body); color: var(--cr-ink-flat);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .section {
+    padding: 120px 100px;
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }
+
+  /* ── Section header (sits at top, OUTSIDE the scroll interaction)
+     Per the user: section title + body live above the wrap so they
+     scroll normally with the page; the sticky aside below contains
+     only the per-card nav. */
+  .section-header {
+    margin-bottom: 80px;
+    max-width: 720px;
+  }
+  .section-header .eyebrow {
+    font-family: "Inter", sans-serif;
+    font-weight: 600; font-size: 13px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--cr-fg-3);
+    margin: 0 0 24px;
+  }
+  .section-header .headline {
+    font-family: "Urbanist", sans-serif;
+    font-weight: 700; font-size: 48px;
+    line-height: 1.1; letter-spacing: -0.02em;
+    color: var(--cr-ink-flat);
+    margin: 0 0 20px;
+  }
+  .section-header .intro {
+    font-family: "Inter", sans-serif;
+    font-weight: 400; font-size: 16px;
+    line-height: 1.6;
+    color: var(--cr-fg-2);
+    margin: 0;
+    max-width: 560px;
+  }
+
+  /* ── 2-column grid: sticky aside + cards stack ──────────────────
+     `align-items: start` is required for the sticky aside; otherwise
+     CSS Grid stretches all items to the row height, which silently
+     breaks `position: sticky`. */
+  .wrap {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    column-gap: 80px;
+    align-items: start;
+  }
+
+  /* ── Left aside (sticky) ────────────────────────────────────────
+     The aside sticks **vertically centred in the viewport** during the
+     scroll, then bottom-aligns with the last item at section end.
+
+     Mechanic: `top: calc(50vh - <half the aside's height>)` puts the
+     aside's vertical centre at viewport centre. Native sticky still
+     handles the "stops at containing block's bottom" behaviour — when
+     the wrap's bottom edge reaches the aside's bottom, sticky disengages
+     and the aside bottom-aligns with the wrap (= bottom of the last
+     item). The `--aside-half` CSS var is set in JS from
+     `aside.offsetHeight / 2` so the calc tracks the real height
+     (re-measured on resize + after fonts load). */
+  .aside {
+    position: sticky;
+    top: calc(50vh - var(--aside-half, 75px));
+    align-self: start;
+  }
+
+  /* Vertical nav — one item per card. Each item has its own left
+     border (default grey, active brand blue); the borders stack to
+     form a continuous rail. */
+  .nav { display: flex; flex-direction: column; }
+  .nav-item {
+    display: flex; align-items: baseline; gap: 16px;
+    padding: 12px 20px;
+    border-left: 2px solid var(--cr-line);
+    color: var(--cr-fg-muted);
+    text-decoration: none;
+    font-family: "Urbanist", sans-serif;
+    font-weight: 600; font-size: 16px;
+    transition: color .2s ease, border-color .2s ease;
+  }
+  .nav-item:hover { color: var(--cr-ink-flat); }
+  .nav-item.active {
+    color: var(--cr-ink-flat);
+    border-left-color: var(--cr-brand);
+  }
+  .nav-item .num {
+    font-family: "Inter", sans-serif;
+    font-weight: 600; font-size: 12px;
+    letter-spacing: 0.04em;
+    opacity: 0.5;
+    min-width: 24px;
+    transition: opacity .2s ease, color .2s ease;
+  }
+  .nav-item.active .num { opacity: 1; color: var(--cr-brand); }
+
+  /* ── Right cards ──────────────────────────────────────────────
+     Per the user: creative and text-block are SEPARATE elements —
+     no unified "card" with shadow wrapping them. The .item wrapper
+     groups them for layout + id + entrance animation only; it has
+     no visual styling. */
+  .cards {
+    display: flex; flex-direction: column;
+    gap: 80px;             /* generous breathing room between items */
+  }
+
+  .item {
+    display: flex; flex-direction: column;
+    gap: 32px;             /* gap between creative and its text-block */
+  }
+
+  /* ── Creative panel — full creative-panel-recipe ──────────────
+     1. Brand 3-stop gradient base (per-item palette via --right-1/2/3).
+     2. Grain overlay via ::before (overlay-blended on dark gradient).
+     3. Two orbit rings (white, large + offset, clipped by panel).
+     4. Tone wash via ::after (directional dark gradient).
+     NO shadow on the creative (per user) — the brand gradient is
+     what gives it presence, not a lift. */
+  .creative {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    border-radius: 24px;
+    background: linear-gradient(135deg,
+      var(--right-1, var(--cr-brand-700)) 0%,
+      var(--right-2, #0F2A2E) 70%,
+      var(--right-3, var(--cr-ink-cool)) 100%);
+  }
+  .creative::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: url("../assets/texture-grain.png");
+    background-size: cover;
+    mix-blend-mode: overlay;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  .creative::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(105deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0) 50%);
+    pointer-events: none;
+  }
+  .orbit {
+    position: absolute;
+    border: 1px solid rgba(255,255,255,0.20);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .orbit.o1 { right: -240px; top: -180px; width: 720px; height: 720px; }
+  .orbit.o2 { right: -160px; top: -100px; width: 540px; height: 540px; opacity: 0.6; }
+
+  /* Mock UI — a white floating card centred inside the creative panel. */
+  .mock {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    background: #FFFFFF;
+    border-radius: 14px;
+    border: 1px solid var(--cr-line);
+    padding: 24px;
+    width: calc(100% - 96px);
+    max-width: 460px;
+    z-index: 1;
+  }
+  .mock-title {
+    font-family: "Urbanist", sans-serif;
+    font-weight: 700; font-size: 15px;
+    color: var(--cr-ink-flat);
+    margin: 0 0 16px;
+  }
+  .mock-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    background: var(--cr-bg-grey-100);
+    color: var(--cr-fg-2);
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .mock-row.is-active {
+    background: var(--cr-brand-100);
+    color: var(--cr-ink-flat);
+    font-weight: 600;
+  }
+  .mock-row .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--dot, var(--cr-brand));
+    flex-shrink: 0;
+  }
+  .mock-row .label { flex: 1; min-width: 0; }
+  .mock-row .meta { font-size: 11px; color: var(--cr-fg-muted); font-weight: 500; }
+  .mock-row.is-active .meta { color: var(--cr-fg-2); }
+
+  .mock-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .mock-tile {
+    aspect-ratio: 1;
+    background: var(--cr-bg-grey-100);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--cr-fg-3);
+  }
+  .mock-tile svg { width: 22px; height: 22px; stroke-width: 1.5; }
+  .mock-foot {
+    margin-top: 14px;
+    font-family: "Inter", sans-serif;
+    font-size: 11px;
+    color: var(--cr-fg-3);
+    font-weight: 500;
+  }
+
+  /* Text block (below the creative) — sits flat on the section bg,
+     no card wrapper / no padding around it (the .item gap handles
+     the space between creative and this block). */
+  .text-block h3 {
+    font-family: "Urbanist", sans-serif;
+    font-weight: 700; font-size: 28px;
+    line-height: 1.2; letter-spacing: -0.02em;
+    color: var(--cr-ink-flat);
+    margin: 0 0 16px;
+  }
+  .text-block p {
+    font-family: "Inter", sans-serif;
+    font-weight: 400; font-size: 16px;
+    line-height: 1.6;
+    color: var(--cr-fg-2);
+    margin: 0;
+    max-width: 540px;
+  }
+
+  /* ── Entrance — fade-in on first viewport hit ─────────────────
+     Items start hidden in base CSS; `.in-view` (added by the
+     IntersectionObserver) triggers a staggered CSS animation. */
+  .item {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  .section.in-view .item {
+    animation: item-in .55s ease forwards;
+    animation-delay: var(--delay, 0ms);
+  }
+  @keyframes item-in {
+    to { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .item { opacity: 1; transform: none; animation: none; }
+    .section.in-view .item { animation: none; }
+  }
+
+  /* ── Responsive ────────────────────────────────────────────── */
+
+  /* Tablet — narrow the aside + tighten the type. */
+  @media (max-width: 1024px) {
+    .section { padding: 80px 60px; }
+    .section-header { margin-bottom: 64px; }
+    .section-header .headline { font-size: 40px; }
+    .wrap { grid-template-columns: 240px 1fr; column-gap: 48px; }
+    .cards { gap: 64px; }
+    .item { gap: 28px; }
+    .creative { aspect-ratio: 16 / 9; }
+    .text-block h3 { font-size: 24px; }
+  }
+
+  /* Mobile — the sticky aside is REMOVED entirely (per user).
+     The cards section is otherwise unchanged: same stack, same per-item
+     creative + text-block. Items take the full section width. */
+  @media (max-width: 640px) {
+    .section { padding: 56px 20px; }
+    .section-header { margin-bottom: 48px; }
+    .section-header .headline { font-size: 30px; }
+    .section-header .intro { font-size: 15px; }
+    .wrap { grid-template-columns: 1fr; column-gap: 0; }
+    .aside { display: none; }
+    .cards { gap: 48px; }
+    .item { gap: 20px; }
+    .creative { border-radius: 18px; }
+    .text-block h3 { font-size: 22px; }
+    .text-block p { font-size: 15px; }
+    .mock { width: calc(100% - 48px); padding: 18px; }
+    .mock-title { font-size: 14px; }
+    .mock-row { font-size: 12px; padding: 8px 10px; }
+    .mock-tile svg { width: 18px; height: 18px; }
+    .orbit.o1 { right: -160px; top: -120px; width: 480px; height: 480px; }
+    .orbit.o2 { right: -100px; top: -60px; width: 320px; height: 320px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="section" data-screen-label="Sticky cards">
+
+  <!-- Section header — sits OUTSIDE the scroll-interaction wrap below.
+       Title + body scroll normally with the page; only the nav inside
+       the aside below sticks. -->
+  <header class="section-header">
+    <p class="eyebrow">How It Works</p>
+    <h2 class="headline">Three Things Our Agents Earn Their Keep On.</h2>
+    <p class="intro">From audit to autonomous, here's how an agent earns its place in your stack — billed on outcomes, not seats.</p>
+  </header>
+
+  <!-- Scroll-interaction zone: sticky aside (nav only) + items. -->
+  <div class="wrap">
+    <aside class="aside">
+      <nav class="nav">
+        <a class="nav-item active" href="#card-1"><span class="num">01</span><span class="lbl">Find the workflow</span></a>
+        <a class="nav-item"        href="#card-2"><span class="num">02</span><span class="lbl">Deploy in your stack</span></a>
+        <a class="nav-item"        href="#card-3"><span class="num">03</span><span class="lbl">Watch every decision</span></a>
+      </nav>
+    </aside>
+
+    <div class="cards">
+      <!-- Item 1 — Navy gradient (brand blue accent).
+           Creative and text-block are SEPARATE elements; the .item wrapper
+           only groups them for the entrance animation + id target. -->
+      <article class="item">
+        <div class="creative" id="card-1" style="--right-1:var(--cr-brand-700); --right-2:#0F2A2E; --right-3:var(--cr-ink-cool)">
+          <div class="orbit o1"></div>
+          <div class="orbit o2"></div>
+          <div class="mock">
+            <p class="mock-title">Workflow audit</p>
+            <div class="mock-row"           style="--dot:var(--cr-brand)"><span class="dot"></span><span class="label">Claims triage</span><span class="meta">4.2 hrs/day</span></div>
+            <div class="mock-row is-active" style="--dot:var(--cr-brand)"><span class="dot"></span><span class="label">Vendor reconciliation</span><span class="meta">6.1 hrs/day</span></div>
+            <div class="mock-row"           style="--dot:var(--cr-success)"><span class="dot"></span><span class="label">Invoice matching</span><span class="meta">3.8 hrs/day</span></div>
+            <div class="mock-row"           style="--dot:var(--cr-amber)"><span class="dot"></span><span class="label">Compliance reporting</span><span class="meta">2.4 hrs/day</span></div>
+          </div>
+        </div>
+        <div class="text-block">
+          <h3>Find the workflow that's draining your margin.</h3>
+          <p>We start with a no-cost process audit and identify the high-friction, high-cost manual tasks absorbing up to 40% of your team's time.</p>
+        </div>
+      </article>
+
+      <!-- Item 2 — Forest gradient -->
+      <article class="item">
+        <div class="creative" id="card-2" style="--right-1:#1F8A5B; --right-2:#0E4A33; --right-3:#03261A">
+          <div class="orbit o1"></div>
+          <div class="orbit o2"></div>
+          <div class="mock">
+            <p class="mock-title">Connected systems</p>
+            <div class="mock-grid">
+              <div class="mock-tile"><i data-lucide="database"></i></div>
+              <div class="mock-tile"><i data-lucide="cloud"></i></div>
+              <div class="mock-tile"><i data-lucide="plug"></i></div>
+              <div class="mock-tile"><i data-lucide="mail"></i></div>
+              <div class="mock-tile"><i data-lucide="file-text"></i></div>
+              <div class="mock-tile"><i data-lucide="message-square"></i></div>
+            </div>
+            <p class="mock-foot">6 connected · 0 down</p>
+          </div>
+        </div>
+        <div class="text-block">
+          <h3>Deploy inside your stack, not around it.</h3>
+          <p>Agents connect via API or browser automation to SAP, Salesforce, Oracle, Epic, Cerner — even custom spreadsheets. No rip-and-replace, no licence shuffle.</p>
+        </div>
+      </article>
+
+      <!-- Item 3 — Bronze gradient -->
+      <article class="item">
+        <div class="creative" id="card-3" style="--right-1:var(--cr-amber); --right-2:var(--cr-fg-2); --right-3:var(--cr-fg)">
+          <div class="orbit o1"></div>
+          <div class="orbit o2"></div>
+          <div class="mock">
+            <p class="mock-title">Recent decisions</p>
+            <div class="mock-row"           style="--dot:var(--cr-success)"><span class="dot"></span><span class="label">Approved claim #4827</span><span class="meta">0.94</span></div>
+            <div class="mock-row is-active" style="--dot:var(--cr-success)"><span class="dot"></span><span class="label">Approved claim #4828</span><span class="meta">0.91</span></div>
+            <div class="mock-row"           style="--dot:var(--cr-amber)"><span class="dot"></span><span class="label">Escalated #4826</span><span class="meta">0.62</span></div>
+            <div class="mock-row"           style="--dot:var(--cr-success)"><span class="dot"></span><span class="label">Approved claim #4825</span><span class="meta">0.89</span></div>
+          </div>
+        </div>
+        <div class="text-block">
+          <h3>Watch every decision with a confidence score.</h3>
+          <p>Every action is logged with a confidence number. Below threshold the agent escalates to a human. Above threshold it acts but flags a sample for review.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<script>
+  lucide.createIcons();
+
+  const section   = document.querySelector('.section');
+  const aside     = section.querySelector('.aside');
+  const items     = section.querySelectorAll('.item');
+  const creatives = section.querySelectorAll('.creative');
+  const navItems  = section.querySelectorAll('.nav-item');
+
+  // Per-item entrance stagger (80ms between items).
+  items.forEach((it, i) => it.style.setProperty('--delay', (i * 80) + 'ms'));
+
+  // Centre-vertical sticky offset — write half the aside's height into
+  // `--aside-half`. CSS uses `top: calc(50vh - var(--aside-half))` so the
+  // aside's vertical centre sits at viewport centre while sticky. Re-run
+  // on resize and after the brand fonts load (which shifts nav height).
+  function updateAsideHalf() {
+    if (!aside) return;
+    aside.style.setProperty('--aside-half', (aside.offsetHeight / 2) + 'px');
+  }
+  updateAsideHalf();
+  window.addEventListener('resize', updateAsideHalf);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(updateAsideHalf);
+  }
+
+  if ('IntersectionObserver' in window) {
+    // 1) Section entrance — fade items in on first viewport hit.
+    const sectionIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          section.classList.add('in-view');
+          sectionIO.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    sectionIO.observe(section);
+
+    // 2) Active-nav tracker — whichever .creative is in the viewport's
+    // mid-band becomes the active nav item. The id lives on .creative
+    // (not .item) because the creative is more compact and gives a
+    // cleaner mid-band signal. Inset rootMargin focuses on the centre.
+    const navIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const id = '#' + e.target.id;
+        navItems.forEach(n =>
+          n.classList.toggle('active', n.getAttribute('href') === id));
+      });
+    }, { rootMargin: '-30% 0px -45% 0px' });
+    creatives.forEach(c => navIO.observe(c));
+  } else {
+    section.classList.add('in-view');
+  }
+
+  // Click a nav item → smooth-scroll to the matching card.
+  navItems.forEach(n => {
+    n.addEventListener('click', e => {
+      e.preventDefault();
+      const target = section.querySelector(n.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+</body>
+</html>

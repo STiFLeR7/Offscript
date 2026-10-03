@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Case study carousel</title>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background: var(--cr-bg-grey-50);
+    font-family: var(--cr-font-body); color: var(--cr-ink-flat);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .section {
+    padding: 100px 100px 80px;
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }
+
+  /* ── Top row ──────────────────────────────────────────────── */
+  .top {
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 40px; align-items: start;
+    margin-bottom: 32px;
+  }
+  .headline {
+    font-family: "Urbanist", sans-serif; font-weight: 700;
+    font-size: 44px; line-height: 1.15; letter-spacing: -0.02em;
+    color: var(--cr-ink-flat); margin: 0; max-width: 720px;
+  }
+  .nav {
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  /* Prev/Next — pill icon buttons that match the brand button system */
+  .nav button {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff; color: var(--cr-ink-flat);
+    border: 1px solid var(--cr-line); border-radius: 500px;
+    padding: 12px 22px; cursor: pointer;
+    font-family: "Inter", sans-serif; font-weight: 500; font-size: 15px;
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  .nav button:hover { border-color: var(--cr-ink-flat); }
+  .nav button:active { transform: scale(.96); }
+  .nav button svg { width: 16px; height: 16px; stroke-width: 1.5; }
+  .nav button.prev svg { transform: rotate(180deg); }
+
+  /* CTA — primary pill, brand blue, arrow in the label */
+  .cta {
+    margin-top: 0; margin-bottom: 80px;
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--cr-brand); color: #fff;
+    border: 0; border-radius: 500px;
+    padding: 14px 26px; cursor: pointer;
+    font-family: "Inter", sans-serif; font-weight: 500; font-size: 16px;
+    transition: transform .15s ease, background .15s ease;
+  }
+  .cta:hover { background: var(--cr-brand-700); }
+  .cta:active { transform: scale(.97); }
+
+  /* ── Carousel ─────────────────────────────────────────────── */
+  .viewport {
+    overflow: hidden;
+    /* Bleed slightly off the right to suggest the next card — done with an
+       explicit over-width, not a negative margin (design charter). */
+    width: calc(100% + 200px);
+  }
+  .track {
+    display: flex; gap: 32px;
+    transition: transform .6s cubic-bezier(.22,.61,.36,1);
+    will-change: transform;
+  }
+  .track.no-anim { transition: none; }
+
+  .slide {
+    flex: 0 0 1100px;
+    position: relative;
+    border-radius: 18px; overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background-size: cover; background-position: center;
+  }
+
+  /* The decorative "photo" — we don't have client photography, so each
+     slide gets a layered brand-coloured backdrop. Replace with a real
+     <img>/<picture> when assets land. */
+  .photo {
+    position: absolute; inset: 0;
+    background-image: url("../assets/texture-grain.png"), var(--photo);
+    background-size: cover, cover;
+    background-blend-mode: overlay, normal;
+  }
+  .photo::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(105deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.0) 50%);
+  }
+  .photo .orbit {
+    position: absolute; right: -300px; top: -200px;
+    width: 900px; height: 900px;
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 50%; pointer-events: none;
+  }
+
+  /* White info card overlaid bottom-left */
+  .info {
+    position: absolute; left: 60px; bottom: 60px;
+    width: 440px;
+    background: #fff; border-radius: 14px;
+    border: 1px solid var(--cr-line);
+    display: flex; flex-direction: column;
+  }
+  .info-body {
+    padding: 32px 32px 28px;
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .logo {
+    height: 36px; display: inline-flex; align-items: center; gap: 8px;
+    font-family: "Urbanist", sans-serif; font-weight: 800; font-size: 18px;
+    letter-spacing: -0.02em; color: var(--accent, var(--cr-brand));
+  }
+  .logo .mark {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--accent, var(--cr-brand)); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800;
+  }
+  .info h3 {
+    font-family: "Urbanist", sans-serif; font-weight: 700;
+    font-size: 22px; line-height: 1.25; letter-spacing: -0.01em;
+    color: var(--cr-ink-flat); margin: 0;
+  }
+  .divider { height: 1px; background: var(--cr-bg-grey-100); }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .stat .l {
+    font-family: "Inter", sans-serif; font-size: 13px; font-weight: 500;
+    color: var(--cr-fg-3); line-height: 1.3;
+  }
+  .stat .v {
+    margin-top: 6px;
+    font-family: "Urbanist", sans-serif; font-weight: 700;
+    font-size: 28px; letter-spacing: -0.02em; color: var(--cr-ink-flat);
+  }
+  .read {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: "Urbanist", sans-serif; font-weight: 700; font-size: 14px;
+    color: var(--cr-ink-flat); text-decoration: none; cursor: pointer;
+    border-bottom: 0; padding-top: 4px;
+  }
+  .read u { text-decoration: underline; text-underline-offset: 4px; }
+  .read svg { width: 16px; height: 16px; stroke-width: 1.5; color: var(--accent, var(--cr-brand)); }
+
+  /* Auto-advance progress bar — full-width, flush at the bottom edge
+     of the outer carousel slide (over the photo). No padding around it. */
+  .progress {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 3px;
+    background: rgba(255,255,255,0.20);
+    overflow: hidden;
+  }
+  .progress .fill {
+    height: 100%; width: 0%;
+    background: var(--accent, var(--cr-brand));
+  }
+  .progress.running .fill {
+    animation: fill var(--dur, 6s) linear forwards;
+  }
+  @keyframes fill { from { width: 0% } to { width: 100% } }
+
+  /* ── Responsive ───────────────────────────────────────────── */
+  @media (max-width: 1200px) {
+    .section { padding: 80px 60px 60px; }
+    .viewport { width: calc(100% + 120px); }
+    .slide { flex-basis: 880px; }
+    .info { width: 380px; left: 40px; bottom: 60px; }
+    .info-body { padding: 28px; }
+  }
+  @media (max-width: 900px) {
+    .section { padding: 64px 40px 48px; }
+    .headline { font-size: 36px; }
+    .viewport { width: calc(100% + 60px); }
+    .slide { flex-basis: 680px; }
+    .info { width: 320px; left: 32px; }
+    .info-body { padding: 24px; gap: 14px; }
+    .stat .v { font-size: 22px; }
+    .info h3 { font-size: 18px; }
+  }
+  @media (max-width: 640px) {
+    .section { padding: 48px 20px 32px; }
+    .top { grid-template-columns: 1fr; gap: 24px; }
+    .nav { justify-content: flex-start; }
+    .headline { font-size: 28px; }
+    .cta { margin-bottom: 48px; }
+    .viewport { width: calc(100% + 20px); }
+    .slide { flex-basis: calc(100vw - 40px); aspect-ratio: 4 / 5; }
+    .info { width: calc(100% - 40px); left: 20px; bottom: 32px; }
+    .info-body { padding: 22px; gap: 14px; }
+    .stats { gap: 16px; }
+    .stat .v { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="section" data-screen-label="Case study carousel">
+  <div class="top">
+    <h2 class="headline">We help our partners win again<br/>and again and again…</h2>
+    <div class="nav">
+      <button class="prev" id="prev"><i data-lucide="arrow-right"></i> Prev</button>
+      <button class="next" id="next">Next <i data-lucide="arrow-right"></i></button>
+    </div>
+  </div>
+  <button class="cta">Read more case studies <span>→</span></button>
+
+  <div class="viewport">
+    <div class="track" id="track"></div>
+  </div>
+</section>
+
+<script>
+  // ── Data: 5 case studies. Photo is a layered brand gradient since we
+  //         don't have real client photography in the project; replace
+  //         with a real CDN image url under .photoSrc when available. ──
+  const STUDIES = [
+    {
+      mark: "B", name: "Brookline Bank",
+      accent: "var(--cr-brand)",
+      photo: "linear-gradient(135deg, var(--cr-brand-700) 0%, color-mix(in srgb, var(--cr-teal-900) 70%, black) 70%, var(--cr-ink-cool) 100%)",
+      title: "Brookline cuts claims-triage cycle time by 78% in eight weeks.",
+      stats: [["Cycle time", "−78%"], ["Auto-resolution", "92%"]],
+      cta: "Read Brookline's story",
+    },
+    {
+      mark: "M", name: "Meridian Health",
+      accent: "var(--cr-success)",
+      photo: "linear-gradient(135deg, var(--cr-success) 0%, var(--cr-success-700) 60%, color-mix(in srgb, var(--cr-success-700) 60%, black) 100%)",
+      title: "Meridian reclaims 5 clinician hours a day with Dr.Scribe.",
+      stats: [["Hours back", "5/day"], ["Documentation accuracy", "99%"]],
+      cta: "Read Meridian's story",
+    },
+    {
+      mark: "K", name: "Kestrel Logistics",
+      accent: "var(--cr-amber)",
+      photo: "linear-gradient(135deg, var(--cr-amber) 0%, var(--cr-amber-700) 60%, var(--cr-fg) 100%)",
+      title: "Kestrel turns three days of procurement into three hours.",
+      stats: [["Procurement time", "−92%"], ["On-time delivery", "+14%"]],
+      cta: "Read Kestrel's story",
+    },
+    {
+      mark: "A", name: "Alvora Staffing",
+      accent: "var(--cr-teal)",
+      photo: "linear-gradient(135deg, var(--cr-ink-violet) 0%, var(--cr-teal) 60%, var(--cr-teal-900) 100%)",
+      title: "Alvora screens 12× more candidates with the same recruiting team.",
+      stats: [["Throughput", "12×"], ["Quality-of-hire", "+22%"]],
+      cta: "Read Alvora's story",
+    },
+    {
+      mark: "N", name: "Northwind SaaS",
+      accent: "var(--cr-brand-700)",
+      photo: "linear-gradient(135deg, var(--cr-teal-400) 0%, var(--cr-brand) 60%, var(--cr-ink-card) 100%)",
+      title: "Northwind replaces five SDR seats with one Jennie agent.",
+      stats: [["SDR seats saved", "5"], ["Reply rate", "14.6%"]],
+      cta: "Read Northwind's story",
+    },
+  ];
+
+  const AUTO_MS = 6000;
+  const trackEl = document.getElementById('track');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+
+  // Render — we render N + 1 slides for a buffered loop
+  function slideHTML(s) {
+    return `
+      <article class="slide" style="--accent:${s.accent}">
+        <div class="photo" style="--photo:${s.photo}">
+          <div class="orbit"></div>
+        </div>
+        <div class="info">
+          <div class="info-body">
+            <div class="logo"><span class="mark">${s.mark}</span>${s.name}</div>
+            <h3>${s.title}</h3>
+            <div class="divider"></div>
+            <div class="stats">
+              ${s.stats.map(([l, v]) => `<div class="stat"><div class="l">${l}</div><div class="v">${v}</div></div>`).join('')}
+            </div>
+            <a class="read"><u>${s.cta}</u><i data-lucide="arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="progress"><div class="fill"></div></div>
+      </article>`;
+  }
+
+  function render() {
+    trackEl.innerHTML = STUDIES.map(slideHTML).join('');
+    lucide.createIcons();
+  }
+  render();
+
+  // Carousel mechanics — infinite, by DOM rotation
+  let busy = false;
+  let timer = null;
+  const SLIDE_W = () => trackEl.firstElementChild.getBoundingClientRect().width + 32; // + gap
+
+  function startTimer() {
+    clearTimer();
+    const first = trackEl.firstElementChild;
+    if (!first) return;
+    const bar = first.querySelector('.progress');
+    bar.style.setProperty('--dur', (AUTO_MS / 1000) + 's');
+    // Force reflow so the animation restarts
+    bar.classList.remove('running'); void bar.offsetWidth; bar.classList.add('running');
+    timer = setTimeout(() => next(), AUTO_MS);
+  }
+  function clearTimer() {
+    if (timer) { clearTimeout(timer); timer = null; }
+    trackEl.querySelectorAll('.progress').forEach(b => b.classList.remove('running'));
+  }
+
+  function next() {
+    if (busy) return;
+    busy = true;
+    clearTimer();
+    trackEl.style.transform = `translateX(${-SLIDE_W()}px)`;
+    trackEl.addEventListener('transitionend', function done() {
+      trackEl.removeEventListener('transitionend', done);
+      // Snap: move first child to the end, reset transform without animation
+      trackEl.classList.add('no-anim');
+      trackEl.appendChild(trackEl.firstElementChild);
+      trackEl.style.transform = 'translateX(0)';
+      void trackEl.offsetWidth;
+      trackEl.classList.remove('no-anim');
+      busy = false;
+      startTimer();
+    }, { once: true });
+  }
+
+  function prev() {
+    if (busy) return;
+    busy = true;
+    clearTimer();
+    // Move last child to front so we can animate from -SLIDE_W back to 0
+    trackEl.classList.add('no-anim');
+    trackEl.insertBefore(trackEl.lastElementChild, trackEl.firstElementChild);
+    trackEl.style.transform = `translateX(${-SLIDE_W()}px)`;
+    void trackEl.offsetWidth;
+    trackEl.classList.remove('no-anim');
+    requestAnimationFrame(() => {
+      trackEl.style.transform = 'translateX(0)';
+    });
+    trackEl.addEventListener('transitionend', function done() {
+      trackEl.removeEventListener('transitionend', done);
+      busy = false;
+      startTimer();
+    }, { once: true });
+  }
+
+  nextBtn.addEventListener('click', next);
+  prevBtn.addEventListener('click', prev);
+
+  // Pause on hover, resume on leave
+  trackEl.addEventListener('mouseenter', clearTimer);
+  trackEl.addEventListener('mouseleave', startTimer);
+
+  startTimer();
+  window.addEventListener('resize', () => { /* SLIDE_W reads live each call */ });
+</script>
+</body>
+</html>

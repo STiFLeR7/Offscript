@@ -1,0 +1,8 @@
+{
+  "id": "sprint7-pending-intent",
+  "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "belief": "unapproved artifacts never reach consumption regardless of digest validity",
+  "feature": "automation",
+  "mustInclude": ["pending review"],
+  "section": "feature"
+}

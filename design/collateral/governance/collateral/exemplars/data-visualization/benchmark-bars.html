@@ -1,0 +1,211 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../_card.css">
+<style>
+  /* ─────────────────────────────────────────────────────────────────────
+     DATA VIZ · BENCHMARK BARS  (doc-scoped .viz-* — pure HTML/CSS, no JS)
+     Horizontal subject-vs-reference comparison, from data-visualization/stat-1.jpg.
+     Governing RULES live in README-DATA-VIZ.md; the notes below are this idiom's
+     MECHANICS only (one shipped idiom, doc-scoped — never in colors_and_type.css).
+
+     Colour mapping (the Rulebook §4 default — tonal/accent/gradient marks, never dark;
+     set by the component's .tone-*):
+       · LEAD bar (subject)   = a same-hue gradient of the tonal accent var(--accent), deep → lighter
+       · tonal var(--surface) = the inert TRACK → the reference / baseline bar (same hue, flat & light)
+       · numerals reuse .cr-stat-value; hairlines = var(--cr-keyline); no shadows
+     The bars are plain <div>s whose width:% IS the value — nothing computes at runtime.
+     ───────────────────────────────────────────────────────────────────── */
+
+  /* One comparison group. Two grid rows: row 1 = the title (over the chart column
+     only), row 2 = the bars (col 1) and the optional pulled-out metric (col 2). */
+  .viz-benchmark         { display: grid; grid-template-columns: 1fr; column-gap: 12mm; row-gap: 0; align-items: start; }
+  .viz-benchmark--metric { grid-template-columns: 1fr 40mm; }          /* + a pulled-out headline metric */
+  .viz-benchmark + .viz-benchmark { margin-top: 14mm; }                /* stacked groups */
+
+  /* Group title + ONE continuous hairline that runs the FULL row width (spans both
+     columns). The title sits left of it; the bars and the pulled-out metric both sit
+     below it. (User-directed: a single stroke through the whole row — NOT two broken
+     segments.) color:inherit → charcoal on white, white on navy (no hardcoded dark-on-navy). */
+  .viz-title { grid-column: 1 / -1; grid-row: 1;
+               font: 600 var(--fs-h4)/1.3 var(--font-display); letter-spacing: var(--tracking-display);
+               color: inherit; padding-bottom: 3mm; margin-bottom: 6mm; border-bottom: 1px solid var(--cr-keyline); }
+
+  /* Chart column: the stacked bar rows */
+  .viz-bars   { grid-column: 1; grid-row: 2; }
+  .viz-bar-row{ display: flex; flex-direction: column; gap: 2.5mm; }
+  .viz-bar-row + .viz-bar-row { margin-top: 6mm; }
+  .viz-bar    { height: 10px; border-radius: var(--radius-pill); min-width: 6px; }   /* width:% set inline = the magnitude */
+  /* LEAD (subject) — a QUIET same-hue gradient of the tonal accent, deep at the base →
+     a gentle lift toward the tip (never dark). Per the Data-Viz Rulebook §4: the gradient
+     stays quiet (small delta) so the value EDGE never washes out — the tip holds ~65% accent,
+     which reads crisply on white. Solid var(--accent) fallback for engines without color-mix. */
+  .viz-bar--ink   { background: var(--accent, var(--cr-tone-periwinkle-accent));
+                    background: linear-gradient(270deg,
+                                  var(--accent, var(--cr-tone-periwinkle-accent)) 0%,
+                                  color-mix(in srgb, var(--accent, var(--cr-tone-periwinkle-accent)) 65%, #fff) 100%); }
+  .viz-bar--track { background: var(--surface, var(--cr-tone-periwinkle)); }  /* REFERENCE — flat light tonal track, same hue (set by .tone-*) */
+
+  /* Pulled-out headline metric (optional): numeral + caption, sitting under the single
+     full-row rule and top-aligned with the bars (no separate stroke — the row rule serves it). */
+  .viz-metric { grid-column: 2; grid-row: 2; min-width: 0; align-self: start; }
+  .viz-metric .cr-stat-value { font-size: 46px; line-height: 1; }      /* doc-scoped numeral size for this idiom */
+  .viz-metric .cr-stat-sub   { margin-top: 3mm; }
+
+  /* Scoped DARK inversion (navy .cr-band--dark / .cr-page--dark). Per Rulebook §4
+     ("invert the marks on a dark ground so they stay legible"): the LEAD becomes a LIGHT
+     tonal-accent gradient (raw accent is too low-contrast on navy) — still its hue, still
+     never a flat fill, tip the lightest so the value edge reads on dark. The inert track
+     flips to a faint white; hairlines → faint; captions → muted stone. All confined under
+     .viz-benchmark so nothing else is touched. */
+  .cr-band--dark .viz-title,      .cr-page--dark .viz-title      { border-color: var(--cr-keyline-dark); }
+  .cr-band--dark .viz-bar--ink,   .cr-page--dark .viz-bar--ink   { background: var(--fg-inverse);
+                    background: linear-gradient(270deg,
+                                  color-mix(in srgb, var(--accent, var(--cr-tone-periwinkle-accent)) 55%, #fff) 0%,
+                                  color-mix(in srgb, var(--accent, var(--cr-tone-periwinkle-accent)) 30%, #fff) 100%); }
+  .cr-band--dark .viz-bar--track, .cr-page--dark .viz-bar--track { background: rgba(255,255,255,0.22); }
+  .cr-band--dark .viz-benchmark .cr-stat-value, .cr-page--dark .viz-benchmark .cr-stat-value { color: var(--fg-inverse); }
+  .cr-band--dark .viz-benchmark .cr-stat-sub,   .cr-page--dark .viz-benchmark .cr-stat-sub   { color: var(--cr-stone); }
+
+  /* preview-page chrome */
+  .viz-demo  { max-width: 178mm; display: flex; flex-direction: column; gap: 30px; }
+  .viz-caveat{ font: 400 13px/1.55 var(--font-body); color: var(--cr-graphite); max-width: 178mm; margin-top: 26px; }
+</style>
+</head>
+<body style="background:#FFFFFF">
+<div class="viz-demo">
+
+  <!-- (1) Single group · subject vs. reference + pulled-out headline metric -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">1 · Single comparison · subject vs. reference + pulled-out metric</div>
+    <div class="viz-benchmark viz-benchmark--metric tone-sky">
+      <div class="viz-title">Document intake pipeline</div>
+      <div class="viz-bars">
+        <div class="viz-bar-row">
+          <div class="viz-bar viz-bar--ink" style="width:100%"></div>
+          <div class="cr-stat-sub">With an agentic taskforce</div>
+        </div>
+        <div class="viz-bar-row">
+          <div class="viz-bar viz-bar--track" style="width:50%"></div>
+          <div class="cr-stat-sub">Manual baseline (reference)</div>
+        </div>
+      </div>
+      <div class="viz-metric">
+        <div class="cr-stat-value">~2<span class="unit">×</span></div>
+        <div class="cr-stat-sub">documents processed per hour</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- (2) Bars only · no pulled-out metric (the bars carry the comparison alone) -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">2 · Bars only · no pulled-out metric</div>
+    <div class="viz-benchmark tone-periwinkle">
+      <div class="viz-title">Throughput per analyst</div>
+      <div class="viz-bars">
+        <div class="viz-bar-row">
+          <div class="viz-bar viz-bar--ink" style="width:100%"></div>
+          <div class="cr-stat-sub">Agentic taskforce</div>
+        </div>
+        <div class="viz-bar-row">
+          <div class="viz-bar viz-bar--track" style="width:33%"></div>
+          <div class="cr-stat-sub">Manual baseline (reference)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- (3) Two stacked groups + metrics · the full stat-1 recomposition, in-brand -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">3 · Two stacked comparison groups · the full reference recomposition</div>
+    <div class="tone-sage">
+      <div class="viz-benchmark viz-benchmark--metric">
+        <div class="viz-title">Invoice reconciliation</div>
+        <div class="viz-bars">
+          <div class="viz-bar-row">
+            <div class="viz-bar viz-bar--ink" style="width:100%"></div>
+            <div class="cr-stat-sub">With an agentic taskforce</div>
+          </div>
+          <div class="viz-bar-row">
+            <div class="viz-bar viz-bar--track" style="width:41%"></div>
+            <div class="cr-stat-sub">Manual baseline (reference)</div>
+          </div>
+        </div>
+        <div class="viz-metric">
+          <div class="cr-stat-value">~2.4<span class="unit">×</span></div>
+          <div class="cr-stat-sub">invoices cleared per hour</div>
+        </div>
+      </div>
+      <div class="viz-benchmark viz-benchmark--metric">
+        <div class="viz-title">Exception triage queue</div>
+        <div class="viz-bars">
+          <div class="viz-bar-row">
+            <div class="viz-bar viz-bar--ink" style="width:100%"></div>
+            <div class="cr-stat-sub">With an agentic taskforce</div>
+          </div>
+          <div class="viz-bar-row">
+            <div class="viz-bar viz-bar--track" style="width:56%"></div>
+            <div class="cr-stat-sub">Manual baseline (reference)</div>
+          </div>
+        </div>
+        <div class="viz-metric">
+          <div class="cr-stat-value">~1.8<span class="unit">×</span></div>
+          <div class="cr-stat-sub">cases resolved per shift</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- (4) Whole component on navy (.cr-band--dark) · lead lightens to stay legible (§4 invert-on-dark) -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">4 · Whole component on navy · lead lightens to stay legible on the dark ground, track flips faint, captions to stone</div>
+    <div class="cr-band cr-band--dark">
+      <div class="viz-benchmark viz-benchmark--metric tone-sky">
+        <div class="viz-title">Invoice reconciliation</div>
+        <div class="viz-bars">
+          <div class="viz-bar-row">
+            <div class="viz-bar viz-bar--ink" style="width:100%"></div>
+            <div class="cr-stat-sub">With an agentic taskforce</div>
+          </div>
+          <div class="viz-bar-row">
+            <div class="viz-bar viz-bar--track" style="width:41%"></div>
+            <div class="cr-stat-sub">Manual baseline (reference)</div>
+          </div>
+        </div>
+        <div class="viz-metric">
+          <div class="cr-stat-value">~2.4<span class="unit">×</span></div>
+          <div class="cr-stat-sub">invoices cleared per hour</div>
+        </div>
+      </div>
+      <div class="viz-benchmark viz-benchmark--metric tone-sky">
+        <div class="viz-title">Exception triage queue</div>
+        <div class="viz-bars">
+          <div class="viz-bar-row">
+            <div class="viz-bar viz-bar--ink" style="width:100%"></div>
+            <div class="cr-stat-sub">With an agentic taskforce</div>
+          </div>
+          <div class="viz-bar-row">
+            <div class="viz-bar viz-bar--track" style="width:56%"></div>
+            <div class="cr-stat-sub">Manual baseline (reference)</div>
+          </div>
+        </div>
+        <div class="viz-metric">
+          <div class="cr-stat-value">~1.8<span class="unit">×</span></div>
+          <div class="cr-stat-sub">cases resolved per shift</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="viz-caveat">
+    <strong>Benchmark bars</strong> · a horizontal subject-vs-reference comparison. <strong>Governing rules live
+    in the Data-Viz Rulebook</strong> (<code>README-DATA-VIZ.md</code> — Level-2 → benchmark comparison §7–§8,
+    scale §5, integrity §6, styling/colour §4); the notes here are this idiom's <strong>mechanics</strong> only.
+    The <strong>lead</strong> bar is a quiet same-hue gradient of the tonal accent (<code>var(--accent)</code>),
+    the inert <strong>reference / baseline</strong> bar the flat light <code>var(--surface)</code> of the same hue
+    — both from one <code>.tone-*</code>. Bars are plain <code>&lt;div&gt;</code>s sized by an inline
+    <code>width:%</code> — <strong>pure HTML/CSS, no JavaScript, no charting library</strong>. On navy
+    (<code>.cr-band--dark</code> / <code>.cr-page--dark</code>) a scoped inversion lightens the lead and flips the
+    track faint, captions to stone — confined under <code>.viz-benchmark</code>. Charts stay
+    <strong>doc-scoped</strong> (not in <code>colors_and_type.css</code>). Figures are illustrative placeholders.
+  </div>
+
+</div>
+</body></html>

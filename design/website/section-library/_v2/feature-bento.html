@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<!--
+  component-feature-bento.html
+  Composition: centred header + 3-col OPEN bento — cards float directly on grey section
+  band (no outer frame/tray), tall integration card (L), three stacked metric cards (C:
+  systems-connected / big-% stat / shortcuts), tall ROI stat card (R).
+  Inspiration: product-features-bento (orange icon/accent → CR #149DFF; outer frame removed
+  per user direction — open bento).
+  Motion: CSS keyframe stagger (header → bento at 140ms); fill:both, virtual-time-budget for
+  headless stills.
+  Rows: middle col flex-column; stat card flex:1 so all 3 cols match height via grid stretch.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CR – Feature Bento</title>
+  <link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--cr-bg-grey-100);
+      font-family: var(--cr-font-body);
+      color: var(--cr-fg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    @keyframes cr-up {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* ─── Section ─────────────────────────────────────────────── */
+    .fb {
+      padding: 80px 100px;
+      background: var(--cr-bg-grey-100);
+    }
+
+    .fb-well {
+      max-width: var(--cr-content-max);
+      margin: 0 auto;
+    }
+
+    /* ─── Header ──────────────────────────────────────────────── */
+    .fb-head {
+      text-align: center;
+      margin-bottom: 48px;
+      animation: cr-up .6s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .fb-head .cr-h-eyebrow { margin-bottom: 12px; }
+
+    .fb-head-title {
+      font-family: var(--cr-font-display);
+      font-weight: 700;
+      font-size: 44px;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      color: var(--cr-fg);
+      margin-bottom: 16px;
+    }
+
+    .fb-head-sub {
+      font-family: var(--cr-font-body);
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--cr-fg-3);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* ─── Open bento grid — no outer wrapper ─────────────────── */
+    .bento {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      align-items: stretch;
+      animation: cr-up .6s cubic-bezier(.16,1,.3,1) both;
+      animation-delay: .13s;
+    }
+
+    /* ─── Base card ───────────────────────────────────────────── */
+    .bc {
+      background: var(--cr-bg);
+      border: 1px solid var(--cr-line);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    /* ─── Col 1: Workflow Automation ──────────────────────────── */
+    .bc-integration {
+      padding: 24px 24px 20px;
+      display: flex;
+      flex-direction: column;
+      min-height: 400px;
+    }
+
+    /* Ghost skeleton deco — workflow UI wireframe behind icon */
+    .deco {
+      position: relative;
+      height: 88px;
+      margin-bottom: 20px;
+      flex-shrink: 0;
+    }
+
+    .deco-rects {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: 1fr 0.4fr;
+      grid-template-rows: repeat(3, 1fr);
+      gap: 7px;
+    }
+
+    .deco-rects em {
+      display: block;
+      background: var(--cr-fg);
+      border-radius: 4px;
+      font-style: normal;
+      opacity: .09;
+    }
+
+    .deco-rects em:nth-child(2n) { opacity: .055; }
+
+    .feat-icon {
+      position: absolute;
+      top: 0; left: 0;
+      width: 46px; height: 46px;
+      background: var(--cr-brand);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      z-index: 2;
+    }
+
+    .feat-icon [data-lucide] { stroke-width: 1.5; }
+
+    .bc-integration h3 {
+      font-family: var(--cr-font-display);
+      font-weight: 700;
+      font-size: 22px;
+      line-height: 1.3;
+      color: var(--cr-fg);
+      margin-bottom: 10px;
+    }
+
+    .bc-integration > p {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--cr-fg-2);
+      flex: 1;
+    }
+
+    .bc-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--cr-line);
+    }
+
+    .cfg-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border: 1px solid var(--cr-line);
+      border-radius: 500px;
+      background: transparent;
+      font-family: var(--cr-font-body);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--cr-fg-2);
+      cursor: pointer;
+      transition: border-color .15s;
+    }
+
+    .cfg-btn:hover { border-color: var(--cr-fg-3); }
+    .cfg-btn [data-lucide] { stroke-width: 1.5; }
+
+    .toggle-pill {
+      width: 40px; height: 22px;
+      background: var(--cr-brand);
+      border-radius: 11px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .toggle-pill::after {
+      content: '';
+      position: absolute;
+      right: 3px; top: 3px;
+      width: 16px; height: 16px;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    /* ─── Col 2: Middle column ────────────────────────────────── */
+    .col-mid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .ctitle {
+      font-family: var(--cr-font-display);
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 1.3;
+      color: var(--cr-fg);
+    }
+
+    .csub {
+      font-size: 13px;
+      color: var(--cr-fg-3);
+      margin-top: 3px;
+    }
+
+    /* 2a — Systems Connected */
+    .bc-trackers {
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+    }
+
+    .lchip {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--cr-font-body);
+      font-weight: 800;
+      font-size: 9px;
+      color: #fff;
+      border: 2px solid var(--cr-bg);
+      margin-left: -7px;
+      flex-shrink: 0;
+    }
+
+    .lchip:first-child { margin-left: 0; }
+
+    .lc-sf   { background: #1798C1; }
+    .lc-sap  { background: #1B6AC9; }
+    .lc-zoho { background: #E62E2E; }
+    .lc-ora  { background: #C74634; }
+
+    /* 2b — Process Efficiency */
+    .bc-stat {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .stat-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+
+    .stat-accent {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--cr-brand);
+    }
+
+    .bc-stat .csub { margin-bottom: 16px; }
+
+    .big-pct {
+      font-family: var(--cr-font-display);
+      font-weight: 800;
+      font-size: 68px;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--cr-fg);
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .stat-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px solid var(--cr-line);
+      margin-top: 12px;
+    }
+
+    .stat-fl { font-size: 13px; color: var(--cr-fg-3); }
+    .stat-fr { font-size: 13px; font-weight: 700; color: var(--cr-fg); }
+
+    /* 2c — Agent Shortcuts */
+    .bc-keys {
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .keys-icon {
+      width: 40px; height: 40px;
+      background: var(--cr-brand);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .keys-icon [data-lucide] { stroke-width: 1.5; }
+
+    .keys-text { flex: 1; min-width: 0; }
+    .keys-text .ctitle { font-size: 14px; }
+
+    .key-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .kbadge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px; height: 28px;
+      padding: 0 6px;
+      background: var(--cr-bg);
+      border: 1px solid var(--cr-line);
+      border-radius: 6px;
+      font-family: var(--cr-font-body);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--cr-fg);
+    }
+
+    .ksep { font-size: 12px; color: var(--cr-fg-3); }
+
+    .kdot {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px; height: 28px;
+      background: var(--cr-brand);
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* ─── Col 3: ROI stat ─────────────────────────────────────── */
+    .bc-roi {
+      padding: 28px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      min-height: 400px;
+    }
+
+    .roi-top {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      overflow: hidden;
+    }
+
+    .dot-mat {
+      position: absolute;
+      top: 0; right: 0;
+      width: 120px; height: 120px;
+      background-image: radial-gradient(circle, #C8C8C8 1.5px, transparent 1.5px);
+      background-size: 11px 11px;
+      pointer-events: none;
+    }
+
+    .roi-num {
+      font-family: var(--cr-font-display);
+      font-weight: 800;
+      font-size: 92px;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--cr-fg);
+      position: relative;
+      z-index: 1;
+    }
+
+    .roi-body { }
+
+    .roi-body h3 {
+      font-family: var(--cr-font-display);
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--cr-fg);
+      margin-bottom: 8px;
+    }
+
+    .roi-body p {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--cr-fg-2);
+    }
+
+    /* ─── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 1080px) {
+      .fb { padding: 64px 48px; }
+    }
+
+    @media (max-width: 840px) {
+      .fb { padding: 56px 24px; }
+      .fb-head-title { font-size: 36px; }
+
+      .bento {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+        gap: 12px;
+      }
+
+      .bc-integration { grid-column: 1; grid-row: 1 / 3; min-height: auto; }
+      .col-mid        { grid-column: 2; grid-row: 1; }
+
+      .bc-roi {
+        grid-column: 1 / 3;
+        grid-row: 3;
+        flex-direction: row;
+        align-items: center;
+        gap: 32px;
+        min-height: auto;
+        padding: 24px 28px;
+      }
+
+      .roi-top { flex: 0 0 auto; overflow: visible; }
+      .roi-num { font-size: 64px; }
+    }
+
+    @media (max-width: 600px) {
+      .fb { padding: 48px 16px; }
+      .fb-head-title { font-size: 30px; }
+      .fb-head-sub { font-size: 16px; }
+
+      .bento {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        gap: 12px;
+      }
+
+      .bc-integration { grid-column: 1; grid-row: auto; min-height: auto; }
+      .col-mid        { grid-column: 1; grid-row: auto; }
+      .bc-roi {
+        grid-column: 1; grid-row: auto;
+        flex-direction: column;
+        min-height: auto;
+      }
+      .roi-top  { flex: 1; overflow: hidden; }
+      .roi-num  { font-size: 64px; }
+      .big-pct  { font-size: 52px; }
+      .key-row  { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <section class="fb" data-screen-label="Feature Bento">
+    <div class="fb-well">
+
+      <!-- Header -->
+      <div class="fb-head">
+        <p class="cr-h-eyebrow">Capabilities</p>
+        <h2 class="fb-head-title">What Our Agents Deliver</h2>
+        <p class="fb-head-sub">From intake to resolution — every workflow handled,
+          every exception caught, every decision backed by data.</p>
+      </div>
+
+      <!-- Open bento — 3 cols directly on section bg -->
+      <div class="bento">
+
+        <!-- Col 1: Workflow Automation -->
+        <div class="bc bc-integration">
+          <div class="deco">
+            <div class="deco-rects">
+              <em></em><em></em>
+              <em></em><em></em>
+              <em></em><em></em>
+            </div>
+            <div class="feat-icon">
+              <i data-lucide="zap" width="20" height="20"></i>
+            </div>
+          </div>
+          <h3>Workflow Automation</h3>
+          <p>Connect your existing stack — SAP, Salesforce, Zoho — and let CR agents absorb routine work. Go live in four weeks, no rip-and-replace required.</p>
+          <div class="bc-footer">
+            <button class="cfg-btn">
+              <i data-lucide="settings" width="14" height="14"></i>
+              Configure
+            </button>
+            <div class="toggle-pill"></div>
+          </div>
+        </div>
+
+        <!-- Col 2: 3 stacked cards -->
+        <div class="col-mid">
+
+          <div class="bc bc-trackers">
+            <div>
+              <div class="ctitle">Systems Connected</div>
+              <div class="csub">06 Active Integrations</div>
+            </div>
+            <div class="logo-row">
+              <div class="lchip lc-sf">SF</div>
+              <div class="lchip lc-sap">SAP</div>
+              <div class="lchip lc-zoho">Z</div>
+              <div class="lchip lc-ora">ORA</div>
+            </div>
+          </div>
+
+          <div class="bc bc-stat">
+            <div class="stat-hd">
+              <div class="ctitle">Process Efficiency</div>
+              <span class="stat-accent">Range Ratio</span>
+            </div>
+            <div class="csub">Productivity Analytics</div>
+            <div class="big-pct">80%</div>
+            <div class="stat-foot">
+              <span class="stat-fl">of routine work automated</span>
+              <span class="stat-fr">Monthly Average</span>
+            </div>
+          </div>
+
+          <div class="bc bc-keys">
+            <div class="keys-icon">
+              <i data-lucide="keyboard" width="18" height="18"></i>
+            </div>
+            <div class="keys-text">
+              <div class="ctitle">Agent Shortcuts</div>
+              <div class="csub">Trigger any agent from your command palette.</div>
+            </div>
+            <div class="key-row">
+              <span class="kbadge">&#8984;</span>
+              <span class="ksep">+</span>
+              <span class="kbadge">&#8997;</span>
+              <span class="ksep">+</span>
+              <span class="kdot">A</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Col 3: ROI stat -->
+        <div class="bc bc-roi">
+          <div class="roi-top">
+            <div class="dot-mat"></div>
+            <div class="roi-num">11×</div>
+          </div>
+          <div class="roi-body">
+            <h3>ROI in Production</h3>
+            <p>Average return on automation investment, measured 90 days post-deployment.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

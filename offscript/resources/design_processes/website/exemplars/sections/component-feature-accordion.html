@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Feature accordion</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body); color: var(--cr-text-secondary);
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Surface, section padding and the well are the pack's — SECTION_LAYOUT §16. */
+  /* THE TITLE OWNS ITS OWN ROW, AT THE TITLE MEASURE. In the v2 arrangement the
+     headline sat inside column 1, so its cap was the column — a 750px measure
+     inside a ~610px track is not a measure, it is a coincidence. It now spans
+     both tracks and is capped by the measure itself, which is the only way the
+     750 is real.
+
+     The two tracks below are NOT equal. The pointer list is a column of short
+     rows; the creative is a framed artifact that has to be legible. Equal halves
+     starve the artifact and leave the list padded with air, so the split favours
+     the creative — 42.5 / 57.5 — which is the "reasonable ratio" the composition
+     actually wants rather than the symmetry the grid defaulted to. */
+  .wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    column-gap: var(--cr-space-xl);
+    row-gap: var(--cr-space-m);
+    align-items: center;
+  }
+  /* `min-width: 0` on both tracks, and the measure capped by the container as
+     well as by itself. A grid item defaults to `min-width: auto`, so intrinsic
+     content overrides the track — `minmax(0, …)` fixes the TRACK and not the
+     ITEM, which is why the creative column blew 189px past the viewport while
+     the grid arithmetic looked correct. And a 750px measure spanning both tracks
+     is wider than a phone, so it takes whichever of the two is smaller. */
+  .headline {
+    grid-column: 1 / -1; grid-row: 1; margin: 0;
+    max-width: min(var(--cr-measure-title), 100%);
+  }
+  .list  { grid-column: 1; grid-row: 2; min-width: 0; }
+  /* The creative column CLIPS. The frame's own `overflow: hidden` does not
+     contain the decorative rings once the frame stops being their containing
+     block, and a ring escaping at the widest viewport is a document-level
+     horizontal scroll — the one defect the direction never tolerates. Clipping
+     at the column is what a bleed inside a band means anyway. */
+  .right { grid-column: 2; grid-row: 2; position: relative; min-width: 0; overflow: clip; }
+
+  /* THE CLOSED ROWS HOLD THE WHOLE SCOPE WHILE ONE THING IS OPEN, so the
+     closed state has to read as present rather than as absent. It takes the
+     secondary ink and the open one takes primary — the difference is a step on
+     the two-value text ramp, not a colour change. */
+  .item { border-bottom: var(--cr-stroke) solid var(--cr-border-default); }
+  .q {
+    width: 100%; display: block; padding: var(--cr-space-s) 0;
+    background: transparent; border: 0; cursor: pointer;
+    font: inherit; color: inherit; text-align: left;
+  }
+  .qt {
+    font-family: var(--cr-font-display); font-weight: 500;
+    font-size: var(--cr-text-h6);
+    letter-spacing: var(--cr-tracking-heading);
+    line-height: var(--cr-leading-heading);
+    color: var(--cr-text-secondary);
+    transition: color .2s ease;
+  }
+  .item:hover .qt,
+  .item.open .qt { color: var(--cr-text-primary); }
+  .a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s ease; }
+  .a-inner { overflow: hidden; min-height: 0; }
+  .item.open .a { grid-template-rows: 1fr; }
+  .a-body {
+    padding: 0 var(--cr-space-xl) var(--cr-space-s) 0;
+    max-width: var(--cr-measure-body);
+    font-size: var(--cr-text-body); line-height: var(--cr-leading-body); color: var(--cr-text-secondary);
+    opacity: 0; transform: translateY(-4px);
+    transition: opacity .35s ease .05s, transform .35s ease .05s;
+  }
+  .item.open .a-body { opacity: 1; transform: none; }
+
+  /* THE FRAME WAS A GRADIENT. A three-stop dark blend under a directional tone
+     wash is depth and decoration in one element; the direction has one surface
+     per band and no gradient mixing, and no depth of any kind. It becomes a
+     quiet surface holding the artifact — the artifact is the subject. */
+  .creative-frame {
+    /* Bound to the column. Without this the frame took its intrinsic width from
+       the artifact inside it and ran past the track — the clip on `.right` was
+       hiding that rather than fixing it. */
+    width: 100%;
+    position: sticky; top: var(--cr-space-m);
+    overflow: hidden;
+    border-radius: var(--cr-radius-card);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    aspect-ratio: 1 / 1;   /* approved square crop — the ratio governs, not a height floor */
+
+  }
+  /* THE PHOTOGRAPH IS THE SURFACE, AND THE PACK OWNS ITS ATMOSPHERE.
+     A section SELECTS an environment — it never supplies a URL — and the
+     selection binds the asset to its measured focus, because "which asset" is
+     meaningless without "which part of it" at a 3:2 source under a cropping
+     ratio. The local grain layer that stood in for this is removed: the pack's
+     own treatment builds noise, film and grunge above the photograph in the one
+     fixed composition order for a photographic base. */
+  /* The tone wash is gone: depth simulation on a surface with none to simulate. */
+  .creative-frame .orbit {
+    position: absolute;
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .creative-frame .orbit.o1 { right: -240px; top: -180px; width: 780px; height: 780px; }
+  .creative-frame .orbit.o2 { right: -160px; top: -100px; width: 600px; height: 600px; }
+
+  /* The card is flush with two panel edges and inset from the other two; the
+     diagonally-opposite corner carries the radius and the other three stay
+     square. Anchor is per-item, swapped by JS — layout, carried over verbatim. */
+  .creative {
+    position: absolute; z-index: 1;
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    padding: var(--cr-space-s);
+    overflow: hidden;
+    --inset-small:   0;
+    --inset-large:   96px;
+    --corner-radius: var(--cr-radius-card);
+    border-radius: 0;
+  }
+  .creative.anchor-br {
+    top: var(--inset-large); left: var(--inset-large);
+    right: var(--inset-small); bottom: var(--inset-small);
+    border-top-left-radius: var(--corner-radius);
+  }
+  .creative.anchor-bl {
+    top: var(--inset-large); right: var(--inset-large);
+    left: var(--inset-small); bottom: var(--inset-small);
+    border-top-right-radius: var(--corner-radius);
+  }
+  .creative.anchor-tr {
+    bottom: var(--inset-large); left: var(--inset-large);
+    right: var(--inset-small); top: var(--inset-small);
+    border-bottom-left-radius: var(--corner-radius);
+  }
+  .creative.anchor-tl {
+    bottom: var(--inset-large); right: var(--inset-large);
+    left: var(--inset-small); top: var(--inset-small);
+    border-bottom-right-radius: var(--corner-radius);
+  }
+
+  .mock {
+    display: flex; flex-direction: column; align-items: flex-end; gap: var(--cr-space-xs);
+    transition: opacity .2s ease, transform .2s ease;
+  }
+  .mock.is-changing { opacity: 0; transform: translateY(6px); }
+  .mock-title {
+    margin: 0 0 var(--cr-space-xs); align-self: flex-end;
+    font-size: var(--cr-text-supporting); font-weight: 400;
+    letter-spacing: 0; text-transform: none; color: var(--cr-text-secondary);
+  }
+
+  /* THE ROWS WERE PILLS WITH A COLOURED LIGHT IN EACH. The pill is retired for
+     controls and these are not controls; the light was an accent spent once per
+     row, which is an accent spent nowhere. Control radius, the quiet surface
+     step, and the system's one square mark in ink. */
+  .row {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs);
+    background: var(--cr-bg-tint);
+    border-radius: var(--cr-radius-control);
+    color: var(--cr-text-secondary);
+    white-space: nowrap;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    transition: background .2s ease, color .2s ease;
+  }
+  .row .dot {
+    width: var(--cr-marker-size); height: var(--cr-marker-size);
+    border-radius: var(--cr-marker-radius);
+    background: var(--cr-text-secondary);
+    flex-shrink: 0;
+  }
+  .row.active {
+    background: var(--cr-bg-raised);
+    color: var(--cr-text-primary); font-weight: 500;
+  }
+  .row.active .dot { background: var(--cr-text-primary); }
+
+  /* Responsive: the original's breakpoints and reflow. Type steps with the
+     pack's ramp; section padding steps with `.cr-band`. */
+  @media (max-width: 1024px) {
+    .wrap { grid-template-columns: 1fr; column-gap: 0; row-gap: var(--cr-space-m); }
+    .headline, .list, .right { grid-column: 1; grid-row: auto; }
+    /* `relative`, NOT `static`. The v2 file released the sticky by going
+       static, which also removed the frame as a containing block — so the
+       absolutely-positioned orbits resolved against `.right` instead and
+       escaped the frame's `overflow: hidden` entirely, overflowing the
+       document at tablet and mobile. `relative` releases the sticky just
+       as well and keeps the clip. Pre-existing in v2; surfaced by the
+       overflow check, which only ever fires at the narrow viewports. */
+    .creative-frame { position: relative; }   /* the ratio holds at every viewport */
+    .creative { --inset-small: 0; --inset-large: 64px; }
+    .creative-frame .orbit.o1 { right: -200px; top: -160px; width: 620px; height: 620px; }
+    .creative-frame .orbit.o2 { right: -140px; top: -80px; width: 480px; height: 480px; }
+  }
+  @media (max-width: 640px) {
+    .wrap { row-gap: var(--cr-space-s); }
+    .a-body { padding-right: 0; }
+
+    /* A 343px square cannot hold a six-row artifact: the card clipped it, and
+       clipped content is lost content. The crop takes the PORTRAIT step of the
+       same vocabulary at this width — still an approved ratio, and a taller crop
+       is what a narrow viewport wants. The v2 file changed proportion here too;
+       it just did it with an arbitrary height floor instead of a ratio. */
+    .creative-frame { aspect-ratio: 3 / 4; }
+    .creative { --inset-small: 0; --inset-large: 40px; padding: var(--cr-space-xs); }
+    .creative-frame .orbit.o1 { right: -140px; top: -100px; width: 420px; height: 420px; }
+    .creative-frame .orbit.o2 { right: -100px; top: -50px; width: 320px; height: 320px; }
+  }
+
+  /* THE RINGS ARE GONE. Decorative circles drawn over a creative are exactly the
+     abstract ornament this pass replaces with photography — and a photograph does
+     not need a diagram on top of it. They are real elements the DOM freeze keeps,
+     so they are made inert rather than deleted. */
+  .orbit { display: none !important; }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line
+     here that moved nothing. Retrofitted from measurement for the pilot
+     ten; declared before authoring from Phase 1 onward.
+  .a-body         | font-size              | type-ramp
+  .a-body         | line-height            | type-ramp
+  .a-body         | max-width              | measure
+  .a-body         | padding-bottom         | spacing-scale
+  .creative-frame | aspect-ratio           | ratio-vocabulary
+  .creative-frame | border-bottom-width    | stroke
+  .creative-frame | border-left-width      | stroke
+  .creative-frame | border-radius          | radius-pair
+  .creative-frame | border-right-width     | stroke
+  .creative-frame | border-top-width       | stroke
+  .creative-frame | min-height             | ratio-vocabulary
+  .headline       | font-size              | type-ramp
+  .headline       | line-height            | type-ramp
+  .headline       | max-width              | measure
+  .label          | font-size              | type-ramp
+  .label          | line-height            | type-ramp
+  .mock           | column-gap             | spacing-scale
+  .mock           | row-gap                | spacing-scale
+  .mock-title     | font-size              | type-ramp
+  .mock-title     | margin-bottom          | spacing-scale
+  .mock-title     | margin-top             | spacing-scale
+  .qt             | font-size              | type-ramp
+  .qt             | line-height            | type-ramp
+  .row            | border-radius          | radius-pair
+  .row            | column-gap             | spacing-scale
+  .row            | font-size              | type-ramp
+  .row            | line-height            | type-ramp
+  .row            | padding-bottom         | spacing-scale
+  .row            | padding-left           | spacing-scale
+  .row            | padding-right          | spacing-scale
+  .row            | padding-top            | spacing-scale
+  .row            | row-gap                | spacing-scale
+  .wrap           | grid-template-columns  | directed
+  .wrap           | max-width              | measure
+  .wrap           | padding-left           | spacing-scale
+  .wrap           | padding-right          | spacing-scale
+  .wrap           | row-gap                | spacing-scale
+  br              | font-size              | type-ramp
+  br              | line-height            | type-ramp
+-->
+
+
+<section class="section cr-band" data-archetype="editorial-split" data-hierarchy="secondary"
+         data-intent="educate" data-register="instructional" data-signature="architectural-whitespace"
+         data-density="medium" data-screen-label="Feature accordion">
+  <div class="wrap cr-well">
+    <!-- Title sits in row 1 (left column only). -->
+    <h2 class="headline cr-h-section">How Autonomous Agents<br/>Earn Their Keep.</h2>
+
+    <!-- Accordion fills the left column of row 2 — its top aligns with the
+         creative on the right (NOT with the title above). -->
+    <!-- The four items SHIP. Content that only exists once a script has run is
+         not retrievable, and retrieval is what this library is for. (DR-58.) -->
+    <div class="list" id="list">
+      <div class="item open" data-key="audit" style="--accent:var(--cr-brand)">
+        <button class="q" aria-expanded="true">
+          <span class="qt">Find the workflow that's draining your margin</span>
+        </button>
+        <div class="a"><div class="a-inner"><div class="a-body">We start with a no-cost process audit and identify the high-friction, high-cost manual tasks — data entry, triage, compliance — absorbing up to 40% of your team's time.</div></div></div>
+      </div>
+      <div class="item" data-key="deploy" style="--accent:var(--cr-success)">
+        <button class="q" aria-expanded="false">
+          <span class="qt">Deploy inside your stack, not around it</span>
+        </button>
+        <div class="a"><div class="a-inner"><div class="a-body">Agents connect via API or browser automation to SAP, Salesforce, Zoho, Oracle, Epic, Cerner — even custom spreadsheets. No rip-and-replace, no licence shuffle.</div></div></div>
+      </div>
+      <div class="item" data-key="confidence" style="--accent:var(--cr-amber)">
+        <button class="q" aria-expanded="false">
+          <span class="qt">Watch every decision with a confidence score</span>
+        </button>
+        <div class="a"><div class="a-inner"><div class="a-body">Every action is logged with a confidence number. Below threshold the agent escalates to a human. Above threshold it acts but flags a sample for review. You see every call.</div></div></div>
+      </div>
+      <div class="item" data-key="scale" style="--accent:var(--cr-brand)">
+        <button class="q" aria-expanded="false">
+          <span class="qt">Scale outcomes, not headcount</span>
+        </button>
+        <div class="a"><div class="a-inner"><div class="a-body">Bill on results, not seats. Add capacity by widening the agent's scope — no new hires, no onboarding, no extra salary line.</div></div></div>
+      </div>
+    </div>
+
+    <!-- Right column / row 2: a brand-coloured creative panel (case-carousel
+         technique — brand backdrop + grain overlay + orbit ring) holding the
+         white UI card inside. Fully contained — no bleed. The whole frame
+         is sticky on desktop so the card stays beside the active item. -->
+    <div class="right">
+      <!-- ANCHOR is declared; PRESENCE is not, and the omission is measured rather than
+           an oversight. COMPOSE.md §A2.2 binds both to the archetype, and no specimen in
+           the library declared either. The anchor vocabulary has no CSS behind it — it is
+           a pure declaration and costs nothing. `cr-presence-*` is a WIDTH, so declaring
+           it is inert in a specimen and not inert in a page: applied here it narrowed the
+           creative in composition and pushed 10px labels onto a busier part of the
+           photograph, three new AA failures. A vocabulary that cannot be declared without
+           changing layout is a finding about the vocabulary. (LIBRARY-AUDIT.md C-3.) -->
+      <div class="creative-frame cr-creative cr-env-dawn-haze cr-anchor-left"
+           style="--right-1:var(--cr-brand-700); --right-2:color-mix(in srgb, var(--cr-teal-900) 70%, black); --right-3:var(--cr-ink-cool)">
+        <div class="orbit o1" aria-hidden="true"></div>
+        <div class="orbit o2" aria-hidden="true"></div>
+        <!-- The white UI card is anchored to one corner of the panel via
+             `.anchor-tl/tr/bl/br`. The anchor is chosen ONCE per section
+             instance and stays constant across all items so the user's eye
+             doesn't chase the card on item change (creative-panel-recipe →
+             "Stable chrome across states"). Only the diagonally-opposite
+             corner of the card carries border-radius. -->
+        <div class="creative anchor-br">
+          <!-- The OPENING state ships. The other three are alternates the script
+               swaps in; shipping them all would add three sibling panels the
+               original never had, and a structural change is not what DR-58
+               exempts — the exemption is for content a script was only printing. -->
+          <div class="mock" id="mock" style="--accent:var(--cr-brand)">
+            <div class="mock-title">Audit shortlist</div>
+            <div class="row">
+              <span class="dot"></span>
+              <span class="label">Compliance reporting</span>
+            </div>
+            <div class="row">
+              <span class="dot"></span>
+              <span class="label">Vendor reconciliation</span>
+            </div>
+            <div class="row active">
+              <span class="dot"></span>
+              <span class="label">Claims triage</span>
+            </div>
+            <div class="row">
+              <span class="dot"></span>
+              <span class="label">Invoice matching</span>
+            </div>
+            <div class="row">
+              <span class="dot"></span>
+              <span class="label">Status updates</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Per-item demo data. Per the creative-panel-recipe + configurable-section-
+  // accents standing rules, each item carries:
+  //   - accent: brand action colour for the active row / pill dots (never indigo).
+  //   - right: a 3-stop brand gradient palette pushed into --right-1/2/3 on the
+  //     creative-frame when this item becomes active. Same naming + pattern as
+  //     `component-tabbed-showcase.html`.
+  // The CONTENT ships in the markup above. What stays here is the per-item
+  // frame palette — presentation values an author never edits, and the only
+  // thing a static panel cannot carry for its own sibling's frame.
+  // The OPENING state's content is in the markup above. What lives here is the
+  // three ALTERNATE states the script swaps in, plus every state's frame palette —
+  // the one presentation value markup cannot carry for a sibling's frame.
+  const STATE = {
+    audit: { accent: 'var(--cr-brand)',
+      right: ['var(--cr-brand-700)', 'color-mix(in srgb, var(--cr-teal-900) 70%, black)', 'var(--cr-ink-cool)'],
+      mockTitle: 'Audit shortlist',
+      rows: [ { label: 'Compliance reporting' }, { label: 'Vendor reconciliation' },
+              { label: 'Claims triage', active: true }, { label: 'Invoice matching' },
+              { label: 'Status updates' } ] },
+    deploy: { accent: 'var(--cr-success)',
+      right: ['var(--cr-success-700)', 'color-mix(in srgb, var(--cr-success-700) 70%, black)', 'color-mix(in srgb, var(--cr-success-700) 35%, black)'],
+      mockTitle: 'Connected systems',
+      rows: [ { label: 'SAP' }, { label: 'Salesforce', active: true }, { label: 'Oracle' },
+              { label: 'Epic' }, { label: 'Snowflake' } ] },
+    confidence: { accent: 'var(--cr-amber)',
+      right: ['var(--cr-amber)', 'var(--cr-fg-2)', 'var(--cr-fg)'],
+      mockTitle: 'Recent decisions',
+      rows: [ { label: 'Approved claim #4827' }, { label: 'Approved claim #4828', active: true },
+              { label: 'Escalated #4826' }, { label: 'Approved claim #4825' },
+              { label: 'Rejected duplicate' } ] },
+    scale: { accent: 'var(--cr-brand)',
+      right: ['var(--cr-brand-700)', 'var(--cr-ink-blue-deep)', 'var(--cr-ink-card)'],
+      mockTitle: 'Outcomes captured',
+      rows: [ { label: '92% cost removed', active: true }, { label: '11.3× return on agent' },
+              { label: '4 weeks to live' }, { label: '5 FTE freed' }, { label: '99% uptime' } ] },
+  };
+
+  const listEl  = document.getElementById('list');
+  const mockEl  = document.getElementById('mock');
+  const frameEl = document.querySelector('.creative-frame');
+
+  // ── Paint an ALTERNATE panel state ──
+  // Never the opening one: that is in the markup, and re-printing it would discard
+  // an author's edit the moment the page loaded. The card's anchor and its diagonal
+  // corner-radius are set once on the .creative element and stay constant across
+  // every state — [[creative-panel-recipe]], "Stable chrome across states".
+  const rowsHTMLFor = (st) => st.rows.map(r => `
+    <div class="row ${r.active ? 'active' : ''}">
+      <span class="dot"></span>
+      <span class="label">${r.label}</span>
+    </div>`).join('');
+
+  const paintMock = (key) => {
+    const st = STATE[key];
+    if (!st) return;
+    frameEl.style.setProperty('--right-1', st.right[0]);
+    frameEl.style.setProperty('--right-2', st.right[1]);
+    frameEl.style.setProperty('--right-3', st.right[2]);
+    mockEl.style.setProperty('--accent', st.accent);
+    mockEl.innerHTML = `<div class="mock-title">${st.mockTitle}</div>${rowsHTMLFor(st)}`;
+  };
+
+  function renderMock(key) {
+    mockEl.classList.add('is-changing');
+    setTimeout(() => {
+      paintMock(key);
+      mockEl.classList.remove('is-changing');
+    }, 180);
+  }
+
+
+  // ── Single-open accordion behaviour ──
+  listEl.addEventListener('click', e => {
+    const btn = e.target.closest('.q');
+    if (!btn) return;
+    const item = btn.parentElement;
+    if (item.classList.contains('open')) return;       // clicking the open item does nothing
+    listEl.querySelectorAll('.item').forEach(el => {
+      el.classList.remove('open');
+      el.querySelector('.q').setAttribute('aria-expanded', 'false');
+    });
+    item.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+    renderMock(item.dataset.key);
+  });
+</script>
+</body>
+</html>

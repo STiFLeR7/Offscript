@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Latest insights            from component-latest-insights.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  A resources / journal teaser: a header row with one CTA
+                cluster over three equal article cards that sit directly on
+                the band with no card surface of their own.
+
+  THE CLAIM     **Three pieces, offered.** Its authority comes from the
+                restraint of the selection, not from volume — which is why
+                the profile calls it supporting and editorial rather than
+                proof. Everything here serves that: no card box, no rule, no
+                hue, and one control.
+
+  STRUCTURE     Unchanged. Header, then a three-column grid of three link
+                cards, each chips over a frame over a title over a
+                description. DOM order, element types and depth are
+                byte-compatible with the frozen original (DR-22). Card one's
+                two glyph chips are still in the markup, exactly where the
+                original put them; they are made inert rather than deleted,
+                for the reason recorded under IMAGERY.
+
+  ENVIRONMENT   NONE — no abstract background. Nothing in this section is a
+                gradient, a plate, a glow or a wash. The band is one flat
+                governed surface and every creative frame holds a real
+                editorial photograph that is the SUBJECT of its card, not a
+                backdrop for it. There is nothing here the blanket rule
+                retires, so nothing is substituted; an environment was
+                available for this file and is deliberately unused. Inventing
+                a plate in order to spend it would be the redesign the Pilot
+                Constraint forbids.
+
+  IMAGERY       All three frames KEPT. insight-1 / insight-2 / insight-3 are
+                article cover photographs — the profile records the section as
+                REQUIRING real article imagery, and two of the three are also
+                photographs of people at work, which the rule protects on its
+                own account. Only their directory moved; the basenames are
+                the same files. The two translucent glyph chips the source
+                floated over the first of them are retired — see the note in
+                the sheet; the photograph is the subject and now has the frame
+                to itself.
+
+  RATIO         The frame steps from 7:5 (1.400) to 4:3 — the nearest rung of
+                the approved crop vocabulary, and the only change that makes a
+                photographic frame in this library measurable against the same
+                four proportions as every other. The picture crops; nothing
+                stretches.
+
+  ACCENT        ONE, and it is the primary control. The header CTA was TWO
+                filled knobs in the same hue, which reads as two claims on the
+                eye where there is one action: the pill takes the accent and
+                the arrow knob steps down to an outlined control beside it. On
+                hover the pill's fill descends to the 800 step, so its label
+                inverts — dark ink on that step measures 1.9:1 and would be an
+                AA failure the moment a pointer touched it.
+
+  TYPE          Category and date are supporting text and are typeset as
+                supporting text: no uppercase, no tracking. A category is a
+                filing label, not an eyebrow, and setting it like one gave
+                three small headlines to a card that already has one.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CR · Latest insights</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* The band is one flat governed surface — the quiet cream step, which is
+     what an editorial teaser sits on when the page around it is the ground. */
+  .ins-section {
+    background: var(--cr-surface-5);
+    padding: var(--cr-space-xl) var(--cr-page-gutter);
+  }
+  .ins-well {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+  }
+
+  /* ── Header ──────────────────────────────────────────────────────── */
+  .ins-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--cr-space-s);
+    flex-wrap: wrap;
+    margin-bottom: var(--cr-space-m);
+  }
+  .ins-title {
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h2);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+    margin: 0;
+  }
+  .ins-cta { display: flex; align-items: center; gap: var(--cr-space-xs); }
+
+  /* THE ONE ACCENT MOMENT. Orange is a spark on the single primary control,
+     never a wash — the section's own band stays neutral. */
+  .ins-pill {
+    display: inline-flex;
+    align-items: center;
+    height: 52px;
+    padding: 0 var(--cr-space-s);
+    border: var(--cr-stroke) solid transparent;
+    border-radius: var(--cr-radius-control);
+    background: var(--cr-accent-orange);
+    color: var(--cr-on-accent-light);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  /* The fill descends to the 800 step on hover, so the label MUST invert:
+     primary ink on that step measures 1.9:1. */
+  .ins-pill:hover {
+    background: var(--cr-accent-orange-800);
+    color: var(--cr-text-inverse);
+  }
+  /* The arrow knob is the same action, so it does not get a second accent.
+     It steps down to an outlined control and keeps the true circle. */
+  .ins-knob {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: 50%;
+    background: var(--cr-surface-1);
+    color: var(--cr-text-primary);
+    text-decoration: none;
+    flex: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+  .ins-knob:hover {
+    background: var(--cr-surface-5);
+    border-color: var(--cr-border-strong);
+  }
+  .ins-knob svg {
+    width: 20px; height: 20px;
+    stroke-width: var(--cr-icon-stroke-md);
+    transition: transform 0.2s ease;
+  }
+  .ins-knob:hover svg { transform: translate(2px, -2px); }
+
+  /* ── Grid ────────────────────────────────────────────────────────── */
+  .ins-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--cr-space-s);
+  }
+  .ins-card {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+  }
+  .ins-chips { display: flex; gap: var(--cr-space-xs); margin-bottom: var(--cr-space-xs); }
+
+  /* A category is a filing label — supporting text, set as supporting text.
+     No uppercase, no tracking: the card already has a headline. */
+  .ins-chip {
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-control);
+    padding: var(--cr-space-xs);
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: 1;
+    color: var(--cr-text-secondary);
+    white-space: nowrap;
+  }
+  .ins-chip--cat { color: var(--cr-text-primary); }
+
+  /* The creative frame. 4/3 is the approved rung nearest the 7:5 it declared;
+     the photograph crops to it and is never stretched to fit. */
+  .ins-media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--cr-radius-card);
+    overflow: hidden;
+    background: var(--cr-surface-5);
+  }
+  .ins-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .ins-card:hover .ins-media img { transform: scale(1.04); }
+
+  /* CARD ONE'S FLOATING GLYPHS ARE RETIRED. They are `aria-hidden`, they carry
+     no information, and no reader learns anything from them — they exist
+     because the layout this section was copied from put two translucent chips
+     on its first card. That is decoration laid over a photograph, which is
+     the idiom this pass removes, and the only two treatments available were
+     both worse than removing them: translucent means the chip draws its
+     contrast from whatever the picture is doing underneath, and opaque means
+     two blank white squares sitting on a room full of people.
+
+     They are frozen DOM, so they are made INERT rather than deleted. The
+     photograph underneath is the subject of the card and now has the frame to
+     itself, which is the whole reason a real article image was worth keeping.
+     Precedent: tabs-panel-below. */
+  .ins-overlays {
+    display: none;
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    flex-direction: column;
+    gap: var(--cr-space-xs);
+  }
+  .ins-glyph {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--cr-radius-control);
+    background: var(--cr-surface-1);
+    place-items: center;
+    color: var(--cr-text-secondary);
+  }
+  .ins-glyph svg { width: 18px; height: 18px; stroke-width: var(--cr-icon-stroke-sm); }
+
+  .ins-card-title {
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-h6);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+    margin: var(--cr-space-s) 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ins-card:hover .ins-card-title { text-decoration: underline; text-underline-offset: 3px; }
+  .ins-card-desc {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    margin: var(--cr-space-xs) 0 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ── Entrance reveal (opt-in; defaults visible for clean stills) ──── */
+  html.js-reveal .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+                transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  html.js-reveal .reveal.in { opacity: 1; transform: none; }
+  html.js-reveal .ins-grid .ins-card:nth-child(1) { transition-delay: 0.08s; }
+  html.js-reveal .ins-grid .ins-card:nth-child(2) { transition-delay: 0.16s; }
+  html.js-reveal .ins-grid .ins-card:nth-child(3) { transition-delay: 0.24s; }
+  /* The guard matches the trigger's specificity, so the reveal SNAPS to its
+     final state rather than being re-hidden by a weaker rule. */
+  @media (prefers-reduced-motion: reduce) {
+    html.js-reveal .reveal {
+      opacity: 1 !important; transform: none !important; transition: none !important;
+    }
+    .ins-media img, .ins-knob svg { transition: none !important; }
+  }
+
+  /* ── Responsive ──────────────────────────────────────────────────── */
+  /* NO per-section type breakpoint. The pack steps the ramp at its own
+     breakpoints; a second set of sizes on top of it is two ramps arguing. */
+  @media (max-width: 980px) {
+    .ins-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .ins-section { padding: var(--cr-space-m) var(--cr-page-gutter); }
+    .ins-head { margin-bottom: var(--cr-space-s); gap: var(--cr-space-xs); }
+    .ins-grid { grid-template-columns: 1fr; gap: var(--cr-space-s); }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. Three notes on what is NOT a spacing line.
+
+     The frame's aspect-ratio line is the crop vocabulary, not a size decision:
+     7:5 renders 1.400 and no approved ratio is within tolerance of it, so the
+     frame steps to the nearest rung that exists and the picture crops to it.
+
+     The pill's border-width lines are the accent budget expressed as geometry. The
+     pill and the knob beside it were the same fill, which is two claims on the
+     eye for one action; the pill keeps the accent and takes a transparent
+     hairline so it sits on the same box model as the outlined control it now
+     stands next to, which is where the stroke comes from.
+
+     ONE `directed` line, and it is the only one. `svg` min-height moves from
+     `auto` to a resolved zero because card one's two floating glyph chips are
+     RETIRED — made inert, not deleted, since they are frozen DOM. It is not a
+     size decision; nothing about either icon's drawn size changed. The
+     register row behind it is in the sheet: the chips are aria-hidden, carry
+     no information, and are decoration laid over a photograph, which is the
+     idiom this pass removes. Every use of this reason is printed in the run so
+     a reviewer sees how many there are, and this section has one.
+
+     The two stroke-width lines are the icon strokes moving
+     onto the pack's two icon weights. The knob arrow was 2 and the two glyph
+     icons 1.8, neither of which is a weight the system has.
+  .ins-card-desc  | font-size              | type-ramp
+  .ins-card-desc  | margin-top             | spacing-scale
+  .ins-card-title | font-size              | type-ramp
+  .ins-card-title | line-height            | type-ramp
+  .ins-card-title | margin-top             | spacing-scale
+  .ins-chip       | font-size              | type-ramp
+  .ins-chip       | line-height            | type-ramp
+  .ins-chip       | padding-bottom         | spacing-scale
+  .ins-chip       | padding-left           | spacing-scale
+  .ins-chip       | padding-right          | spacing-scale
+  .ins-chip       | padding-top            | spacing-scale
+  .ins-chips      | column-gap             | spacing-scale
+  .ins-chips      | margin-bottom          | spacing-scale
+  .ins-chips      | row-gap                | spacing-scale
+  .ins-grid       | column-gap             | spacing-scale
+  .ins-grid       | row-gap                | spacing-scale
+  .ins-head       | column-gap             | spacing-scale
+  .ins-head       | margin-bottom          | spacing-scale
+  .ins-head       | row-gap                | spacing-scale
+  .ins-media      | aspect-ratio           | ratio-vocabulary
+  .ins-overlays   | column-gap             | spacing-scale
+  .ins-overlays   | row-gap                | spacing-scale
+  .ins-pill       | border-bottom-width    | stroke
+  .ins-pill       | border-left-width      | stroke
+  .ins-pill       | border-radius          | radius-pair
+  .ins-pill       | border-right-width     | stroke
+  .ins-pill       | border-top-width       | stroke
+  .ins-pill       | font-size              | type-ramp
+  .ins-pill       | line-height            | type-ramp
+  .ins-pill       | padding-left           | spacing-scale
+  .ins-pill       | padding-right          | spacing-scale
+  .ins-title      | font-size              | type-ramp
+  .ins-title      | line-height            | type-ramp
+  path            | stroke-width           | stroke
+  svg             | min-height             | directed
+  svg             | stroke-width           | stroke
+-->
+  <!-- Resources / journal: header CTA over a 3-up article grid. -->
+  <section class="ins-section" data-screen-label="Latest insights — 3-up article grid"
+           data-archetype="editorial-stack" data-hierarchy="supporting" data-intent="educate"
+           data-register="editorial" data-signature="editorial-photography" data-density="medium">
+    <div class="ins-well">
+
+      <div class="ins-head reveal">
+        <h2 class="ins-title">Latest Insights</h2>
+        <div class="ins-cta">
+          <a class="ins-pill" href="#">Explore Journal</a>
+          <a class="ins-knob" href="#" aria-label="Explore the Example Brand journal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="ins-grid">
+
+        <a class="ins-card reveal" href="#">
+          <div class="ins-chips">
+            <span class="ins-chip ins-chip--cat">Automation</span>
+            <span class="ins-chip">02 Jun 2026</span>
+          </div>
+          <div class="ins-media">
+            <img src="../../brand-pack/assets/imagery/insights/insight-1.jpg" alt="An operations team working across laptops in a warm shared workspace" decoding="sync" />
+            <div class="ins-overlays" aria-hidden="true">
+              <span class="ins-glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></span>
+              <span class="ins-glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span>
+            </div>
+          </div>
+          <h3 class="ins-card-title">What agents take off your plate</h3>
+          <p class="ins-card-desc">Most teams automate single tasks. The larger gain is removing the handoffs between them, where time and accuracy quietly leak.</p>
+        </a>
+
+        <a class="ins-card reveal" href="#">
+          <div class="ins-chips">
+            <span class="ins-chip ins-chip--cat">Case Study</span>
+            <span class="ins-chip">28 May 2026</span>
+          </div>
+          <div class="ins-media">
+            <img src="../../brand-pack/assets/imagery/insights/insight-2.jpg" alt="Two operations leaders reviewing results beside a laptop and printed reports" decoding="sync" />
+          </div>
+          <h3 class="ins-card-title">How Meridian cut invoice cycle time by 60%</h3>
+          <p class="ins-card-desc">A four-week pilot moved approvals, matching, and exceptions onto agents that run beside the existing ERP.</p>
+        </a>
+
+        <a class="ins-card reveal" href="#">
+          <div class="ins-chips">
+            <span class="ins-chip ins-chip--cat">AI Strategy</span>
+            <span class="ins-chip">23 May 2026</span>
+          </div>
+          <div class="ins-media">
+            <img src="../../brand-pack/assets/imagery/insights/insight-3.jpg" alt="A team reviewing a strategy presentation in a meeting room" decoding="sync" />
+          </div>
+          <h3 class="ins-card-title">Where to begin with one workflow</h3>
+          <p class="ins-card-desc">A practical sequence for choosing the first workflow to automate before the platform decisions pile up.</p>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <script>
+    /* Opt in to the reveal only when JS runs — stripping this <script>
+       (screenshot pass) leaves every .reveal at its visible default. */
+    document.documentElement.classList.add('js-reveal');
+    (function () {
+      var well = document.querySelector('.ins-well');
+      if (!well) return;
+      var targets = well.querySelectorAll('.reveal');
+      var io = new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          targets.forEach(function (t) { t.classList.add('in'); });
+          obs.disconnect();
+        });
+      }, { threshold: 0.12 });
+      io.observe(well);
+    })();
+  </script>
+</body>
+</html>

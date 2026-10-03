@@ -1,0 +1,23 @@
+node_modules/
+dist/
+fixtures/**/output/
+coverage/
+*.log
+.DS_Store
+.idea/
+.vscode/
+*.tsbuildinfo
+
+# Claude Design input bundles + Offscript outputs — large per-brand client artifacts,
+# regenerable from Claude Design; kept local, never committed.
+*.zip
+/projects/
+/output/
+.staging/
+
+# Repository Builder derived artifacts — regenerable, non-authoritative (Phase 1
+# segregation). Never committed; rebuilt deterministically from authored truth.
+.knowledge-build/
+.knowledge-build.staging-*/
+.knowledge-build.old-*/
+

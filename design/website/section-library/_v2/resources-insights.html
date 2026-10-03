@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CR — Resources · insights grid</title>
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+<!--
+  COMPONENT: Resources / Insights — header + 3-card blog grid
+  COMPOSITION: pure-white section. A 2-COLUMN HEADER (left = eyebrow + a 2-line
+    Urbanist headline; right, aligned to the 3rd card column = a ~4-line lede +
+    an outlined PILL CTA, both TOP-aligned) over a 3-COLUMN grid of BORDERLESS
+    cards (no card box — thumbnail + text sit on white; ~36px gutters, wider than
+    the bento rule because the cards have no background to separate them). Each
+    card = a rounded ~5:3 THUMBNAIL + meta row (CATEGORY • DATE) + a 1-line
+    truncated title + a 2-line clamped excerpt + a "Read Now →" affordance.
+  THUMBNAILS — all three cards share the GRADIENT LOCKUP vocabulary (per user
+    direction after initial build review): a blurred creative-background panel
+    with a centred white LOCKUP card on top. All three currently share the
+    brand-legal cool atmospheric (blur-7) — the off-brand warm/pink/lavender blurs
+    were quarantined per brand law; per-panel colour-temperature variety awaits a
+    regenerated cool blur set (see ALIGNMENT.md). They differ by lockup content:
+      ① PRODUCT     → blur-7 (cool) + white lockup:
+                      "example-brand | DocXter" logo row + thin rule + tagline
+                      "AI answers from your docs" + "Now in Early Access" badge.
+      ② INTEGRATIONS→ blur-7 (cool) + white lockup:
+                      CR logo | APA → ↓ → "SAP" → "Native Connector".
+      ③ RELIABILITY → blur-7 (cool blue/teal) + white lockup:
+                      big stat "92%" + rule + "Ops Cost Removed" + source note.
+    All three share `.tg-card` CSS; the gradient lives on `.thumb-inner` so the
+    hover zoom scales the whole panel. `container-type:inline-size` + `cqw` units
+    keep every lockup proportional with the card across breakpoints.
+  INSPIRATION: a SaaS "Insights" resources section (2-col header + 3 borderless
+    blog cards with screenshot / gradient-announcement / diagram thumbnails).
+    Layout/composition only; re-skinned to the CR kit — pure white (source's
+    faint off-white + dotted column guides dropped per the brief), fonts →
+    Urbanist/Inter, ad-tech topics → CR agent-ops insights in CR voice.
+  MOTION: "reveal + card hover" (user choice). On first viewport hit the header
+    halves then the 3 cards fade + rise in sequence (--d 0/80/160/240/320ms,
+    IntersectionObserver, fires once). Each card is one <a> link — hover/focus
+    scales its thumbnail-inner (gradient included, so the whole illustration
+    zooms) and nudges the "Read Now →" arrow. Gated on `.has-js` so all content
+    is visible without JS; `prefers-reduced-motion` snaps in. Lucide icons (CDN)
+    are used inside the thumbnails + the read-now arrow — these are real icons,
+    not a brand logo, so loading Lucide here is correct.
+  RESPONSIVE: 3-col → 1-col at ≤860px (header stacks; cards go straight to one
+    column — skipping a 2-col step that would orphan the 3rd card; the larger
+    single-column thumbnails give the mini-UIs more room). Type/padding tighten
+    at ≤560px.
+-->
+<style>
+  .cr-res {
+    background: var(--cr-bg);
+    padding: clamp(72px, 9vw, 120px) clamp(20px, 5vw, 64px);
+    font-family: var(--cr-font-body);
+    color: var(--cr-fg);
+  }
+  .res-well { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ── Header (2-col) ─────────────────────────────────────── */
+  .res-head {
+    display: grid;
+    grid-template-columns: 1fr minmax(300px, 380px);
+    gap: 40px 56px;
+    align-items: start;
+  }
+  .res-head-l { min-width: 0; }
+  .eyebrow {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cr-fg-2);
+  }
+  .res-title {
+    margin: 18px 0 0;
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--cr-fg);
+    max-width: 720px;
+  }
+  .res-head-r { display: flex; flex-direction: column; align-items: flex-start; }
+  .res-lede {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--cr-fg);
+  }
+  .res-pill {
+    margin-top: 24px;
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 22px;
+    border: 1px solid var(--cr-line);
+    border-radius: var(--cr-radius-pill);
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--cr-fg);
+    background: var(--cr-bg);
+    text-decoration: none;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .res-pill:hover, .res-pill:focus-visible { border-color: var(--cr-fg-3); background: var(--cr-bg-grey-50); }
+  .res-pill:focus-visible { outline: 2px solid var(--cr-brand); outline-offset: 2px; }
+
+  /* ── Card grid ──────────────────────────────────────────── */
+  .res-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 36px;
+    margin-top: 64px;
+  }
+  .rcard { display: flex; flex-direction: column; text-decoration: none; color: inherit; min-width: 0; }
+  .rcard:focus-visible { outline: 2px solid var(--cr-brand); outline-offset: 5px; border-radius: 6px; }
+
+  .thumb {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 5 / 3;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--cr-bg-grey-100);
+    container-type: inline-size;
+  }
+  .thumb-inner {
+    position: absolute;
+    inset: 0;
+    transition: transform .5s cubic-bezier(.2,.7,.2,1);
+  }
+  .rcard:hover .thumb-inner,
+  .rcard:focus-visible .thumb-inner { transform: scale(1.04); }
+
+  .meta {
+    margin-top: 18px;
+    font-family: var(--cr-font-body);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--cr-fg-3);
+  }
+  .meta .dot { margin: 0 8px; color: var(--cr-fg-muted); }
+  .ctitle {
+    margin-top: 11px;
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--cr-fg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .excerpt {
+    margin-top: 8px;
+    font-family: var(--cr-font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--cr-fg-2);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .readnow {
+    margin-top: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--cr-font-display);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--cr-fg);
+  }
+  .readnow .arw { display: inline-flex; transition: transform .25s ease; }
+  .readnow .arw svg { width: 17px; height: 17px; }
+  .rcard:hover .readnow .arw,
+  .rcard:focus-visible .readnow .arw { transform: translateX(4px); }
+
+  /* ── Thumbnails — gradient backgrounds ─────────────────────
+     All three cards use a blurred gradient panel (different blur
+     asset + colour) with a centred white LOCKUP card on top.
+     The gradient lives on .thumb-inner so the hover zoom scales
+     the whole illustration consistently across all three cards. */
+  .t-warm .thumb-inner {
+    background: #c8a080 url("../assets/../../brand-pack/assets/imagery/backgrounds/blur-7.png") center/cover no-repeat;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .t-grad .thumb-inner {
+    background: var(--cr-bg-tint) url("../assets/../../brand-pack/assets/imagery/backgrounds/blur-7.png") center/cover no-repeat;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .t-cool .thumb-inner {
+    background: #8aaec8 url("../assets/../../brand-pack/assets/imagery/backgrounds/blur-7.png") center/cover no-repeat;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* White lockup card (shared) */
+  .tg-card {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 4cqw;
+    padding: 6cqw 8cqw;
+    display: flex; flex-direction: column; align-items: center; gap: 2.4cqw;
+  }
+  .tg-logo { display: flex; align-items: center; gap: 2cqw; }
+  .tg-logo img { height: 4.4cqw; width: auto; display: block; }
+  .tg-div { color: var(--cr-line); font-size: 5cqw; font-weight: 300; }
+  .tg-apa { font-family: var(--cr-font-display); font-weight: 700; font-size: 4.2cqw; color: var(--cr-fg); }
+  .tg-arrow { color: var(--cr-brand); width: 4.6cqw; height: 4.6cqw; }
+  .tg-partner { font-family: var(--cr-font-display); font-weight: 800; font-size: 7cqw; letter-spacing: 0.02em; color: #1a3e72; }
+  .tg-cap { font-size: 2.7cqw; color: #7a7a7a; letter-spacing: 0.02em; }
+  /* ① product lockup extras */
+  .tg-rule { width: 28px; height: 1px; background: var(--cr-line); }
+  .tg-tagline { font-size: 2.8cqw; color: #5a5a5a; text-align: center; }
+  .tg-badge { font-size: 2.2cqw; font-weight: 600; color: var(--cr-brand); letter-spacing: 0.04em; }
+  /* ③ stat card extras */
+  .tg-stat-num { font-family: var(--cr-font-display); font-weight: 800; font-size: 13cqw; letter-spacing: -0.03em; color: var(--cr-fg); line-height: 1; }
+  .tg-stat-label { font-family: var(--cr-font-display); font-weight: 700; font-size: 3.8cqw; color: var(--cr-fg); }
+  .tg-stat-sub { font-size: 2.4cqw; color: var(--cr-fg-muted); text-align: center; }
+
+  /* ── Scroll-reveal (gated on .has-js; visible without JS) ── */
+  .cr-res.has-js .reveal { opacity: 0; transform: translateY(18px); }
+  .cr-res.has-js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cr-res.has-js .reveal { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ── Responsive ─────────────────────────────────────────── */
+  @media (max-width: 860px) {
+    .res-head { grid-template-columns: 1fr; gap: 26px; }
+    .res-title { max-width: none; }
+    .res-grid { grid-template-columns: 1fr; gap: 44px; margin-top: 48px; }
+  }
+  @media (max-width: 560px) {
+    .res-title { font-size: clamp(28px, 8vw, 36px); }
+    .res-title .hb { display: none; }   /* let the headline wrap naturally on mobile */
+    .ctitle { font-size: 20px; }
+    .res-grid { gap: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="cr-res" data-screen-label="Resources · insights grid">
+  <div class="res-well">
+
+    <header class="res-head">
+      <div class="res-head-l reveal" style="--d:0ms">
+        <p class="eyebrow">Insights</p>
+        <h2 class="res-title">Intelligence from the agent-<br class="hb">ops frontier</h2>
+      </div>
+      <div class="res-head-r reveal" style="--d:80ms">
+        <p class="res-lede">Research, case studies, and field notes on running production AI agents — how teams automate operations, hold agents accountable, and turn manual work into measurable outcomes.</p>
+        <a class="res-pill" href="#">Explore Insights</a>
+      </div>
+    </header>
+
+    <div class="res-grid">
+
+      <!-- ① PRODUCT — cool atmospheric (blur-7) + DocXter lockup (t-warm tint retained for a future varied set) -->
+      <a class="rcard reveal" href="#" style="--d:160ms">
+        <div class="thumb t-warm">
+          <div class="thumb-inner">
+            <div class="tg-card">
+              <div class="tg-logo"><img src="../assets/../../brand-pack/assets/logo/logo-color.svg" alt="Example Brand"><span class="tg-div">|</span><span class="tg-apa">DocXter</span></div>
+              <div class="tg-rule"></div>
+              <div class="tg-tagline">AI answers from your docs</div>
+              <div class="tg-badge">Now in Early Access</div>
+            </div>
+          </div>
+        </div>
+        <div class="meta">Product<span class="dot">•</span>Mar 10, 2026</div>
+        <div class="ctitle">Introducing CR-DocXter: Answers Pulled Straight From Your Documents</div>
+        <div class="excerpt">We're opening early access to CR-DocXter — a drop-in agent that reads your PDFs, contracts, and tickets and answers in plain language, with a citation for every claim.</div>
+        <span class="readnow">Read Now <span class="arw"><i data-lucide="arrow-right"></i></span></span>
+      </a>
+
+      <!-- ② INTEGRATIONS — gradient lockup thumbnail -->
+      <a class="rcard reveal" href="#" style="--d:240ms">
+        <div class="thumb t-grad">
+          <div class="thumb-inner">
+            <div class="tg-card">
+              <div class="tg-logo"><img src="../assets/../../brand-pack/assets/logo/logo-color.svg" alt=""><span class="tg-div">|</span><span class="tg-apa">APA</span></div>
+              <i data-lucide="arrow-down" class="tg-arrow"></i>
+              <div class="tg-partner">SAP</div>
+              <div class="tg-cap">Native Connector</div>
+            </div>
+          </div>
+        </div>
+        <div class="meta">Integrations<span class="dot">•</span>Feb 2, 2026</div>
+        <div class="ctitle">APA Now Runs Natively Inside SAP — No Middleware, No Rip-and-Replace</div>
+        <div class="excerpt">Example Brand ships native connectors for SAP and Salesforce — agents now read and write to your systems of record directly, with a full audit trail on every action.</div>
+        <span class="readnow">Read Now <span class="arw"><i data-lucide="arrow-right"></i></span></span>
+      </a>
+
+      <!-- ③ RELIABILITY — cool gradient (blur-7) + stat card -->
+      <a class="rcard reveal" href="#" style="--d:320ms">
+        <div class="thumb t-cool">
+          <div class="thumb-inner">
+            <div class="tg-card">
+              <div class="tg-stat-num">92%</div>
+              <div class="tg-rule"></div>
+              <div class="tg-stat-label">Ops Cost Removed</div>
+              <div class="tg-stat-sub">Median across APA deployments</div>
+            </div>
+          </div>
+        </div>
+        <div class="meta">Reliability<span class="dot">•</span>Mar 10, 2026</div>
+        <div class="ctitle">The Handoff Gap: Where Autonomous Agents Quietly Drop Work</div>
+        <div class="excerpt">As agents take over more of the workflow, a quiet handoff gap opens between systems — costing teams the exact hours automation was meant to save. Here's how to close it.</div>
+        <span class="readnow">Read Now <span class="arw"><i data-lucide="arrow-right"></i></span></span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<script>
+  (function () {
+    var sec = document.querySelector('.cr-res');
+    if (window.lucide) lucide.createIcons();
+    if (!sec || !('IntersectionObserver' in window)) return;
+    sec.classList.add('has-js');
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          sec.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+          io.disconnect();
+        }
+      });
+    }, { threshold: 0.12 });
+    io.observe(sec);
+  })();
+</script>
+</body>
+</html>

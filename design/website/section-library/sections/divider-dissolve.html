@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Divider · pixel dissolve</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Divider · pixel dissolve  from component-divider-dissolve.html
+  ════════════════════════════════════════════════════════════════════════
+  THE DISSOLVE IS THE COMPONENT — KEPT AS MECHANISM, NOT REPLACED.
+
+              `divider-dissolve` IS a dissolve. The meandering grid of ink
+              and ground cells is not decoration laid over a transition; it
+              is the transition, and it is the only thing in the section —
+              there is no copy, no control, nothing for a background to sit
+              behind. A photograph here would not modernize the component,
+              it would delete it.
+
+              Environment used: NONE — the dissolve is the component, not a
+              background sitting behind content. The assigned environment was
+              not spent.
+
+  WHAT ACTUALLY CHANGED: THE TWO TONES BECAME SURFACE TOKENS.
+              The mechanism has two colour decisions and only two — what the
+              ink cells are and what the ground cells are. Both were literal
+              in v2 and both now resolve through the pack:
+
+                i.ink    → --cr-bg-dark      (the contrast band above)
+                i.cream  → --cr-page-ground  (the light band below)
+
+              The no-JS fallback — a hard straight split at 50% — is part of
+              the mechanism, not decoration, so it stays, and it now runs
+              between the same two tokens, which is what keeps the fallback
+              seamless against the same neighbours the cells are.
+
+              The demo's two context blocks take those same two surfaces, so
+              all four boundaries resolve to one token on both sides and the
+              dissolve is the only visible event at the seam.
+
+  FROZEN ARITHMETIC.
+              `--cell: 36px` and `--rows: 6` are not spacing decisions. The
+              frozen script hard-codes `CELL = 36, ROWS = 6` and derives its
+              column count from them, so moving either onto the spacing scale
+              would desynchronise the grid from the script that fills it with
+              nothing to report the break. They stay exactly as authored.
+
+  ACCENT      Zero. A transition is punctuation; it must be the quietest
+              thing between two bands, not a third event competing with them.
+
+  TYPE        The two demo labels lose the tracked-out uppercase treatment —
+              supporting text is never uppercase and never tracked — and step
+              onto the supporting size at the lower of the system's two
+              weights. The dark block carries `.cr-on-dark`, the pack's own
+              dark-surface pairing, so its label re-colours through the ramp
+              rather than through a hand-held translucent white.
+
+  MOTION      The one-time "pixels assemble" reveal is unchanged in kind. The
+              guard is now written at the TRIGGER's own specificity instead of
+              winning on `!important`, so under `prefers-reduced-motion` every
+              cell lands opaque at its final position with no animation at all.
+
+  RESPONSIVE  Untouched — the cell size is constant and the column count falls
+              out of the width, which is the component's own responsive model.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--cr-page-ground); font-family: var(--cr-font-body); }
+
+  /* ── Demo context (NOT part of the component) ─────────────────────────
+     Carries the two surfaces the dissolve hands off between, so the seams
+     can be read. */
+  .dx-ctx { display: grid; place-items: center; padding: var(--cr-space-m) var(--cr-page-gutter); text-align: center; }
+  .dx-ctx--dark  { background: var(--cr-bg-dark); min-height: 200px; }
+  .dx-ctx--light { background: var(--cr-page-ground); min-height: 220px; align-content: center; gap: var(--cr-space-xs); }
+  .dx-lbl {
+    font-family: var(--cr-font-body);
+    font-size: var(--cr-text-supporting);
+    font-weight: 400;
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  /* On the contrast block the label resolves through `.cr-on-dark`, so it is
+     held back by the pairing rather than by a translucent white — opacity on
+     a text element fades the element, not just its ink. */
+  .dx-ctx--dark .dx-lbl  { color: var(--cr-fg); }
+  .dx-ctx--light .dx-lbl { color: var(--cr-text-secondary); }
+
+  /* ── THE DISSOLVE DIVIDER ─────────────────────────────────────────────
+     `--cell` / `--rows` are a contract with the frozen script (CELL = 36,
+     ROWS = 6) — arithmetic, not spacing, and therefore not moved.
+
+     `background-image`, never the `background` shorthand, so the fallback
+     ramp cannot be reset out from under the layer by a later declaration. */
+  .cr-dissolve {
+    --cell: 36px; --rows: 6;
+    position: relative;
+    width: 100%;
+    min-height: calc(var(--cell) * var(--rows));
+    overflow: hidden;
+    /* no-JS fallback: a clean straight ink→ground split, between the same
+       two tokens the cells use, so the seam holds either way */
+    background-color: var(--cr-bg-dark);
+    background-image: linear-gradient(to bottom,
+      var(--cr-bg-dark) 0, var(--cr-bg-dark) 50%,
+      var(--cr-page-ground) 50%, var(--cr-page-ground) 100%);
+  }
+  .cr-dissolve__mix { display: grid; width: 100%; }   /* grid-template-columns + auto-rows set by JS */
+  .cr-dissolve__mix i { display: block; }
+  .cr-dissolve__mix i.ink   { background: var(--cr-bg-dark); }
+  .cr-dissolve__mix i.cream { background: var(--cr-page-ground); }
+
+  /* flip variant: ground above → ink below (for a light→dark transition) */
+  .cr-dissolve--flip {
+    background-color: var(--cr-page-ground);
+    background-image: linear-gradient(to bottom,
+      var(--cr-page-ground) 0, var(--cr-page-ground) 50%,
+      var(--cr-bg-dark) 50%, var(--cr-bg-dark) 100%);
+  }
+
+  /* ── "pixels assemble" reveal (JS-gated, fires once) ──────────────────── */
+  .has-js .cr-dissolve.anim .cr-dissolve__mix i { opacity: 0; }
+  .has-js .cr-dissolve.anim.in .cr-dissolve__mix i {
+    animation: cellIn .42s cubic-bezier(.22, .61, .36, 1) both;
+    animation-delay: var(--d, 0ms);
+  }
+  @keyframes cellIn { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
+
+  /* Both trigger selectors answered at their own specificity — the guard
+     wins the cascade on merit, and the grid snaps to its finished state. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .cr-dissolve.anim .cr-dissolve__mix i,
+    .has-js .cr-dissolve.anim.in .cr-dissolve__mix i {
+      opacity: 1; transform: none; animation: none;
+    }
+  }
+</style>
+</head>
+
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Drafted from measurement and answered by hand; predicate 6 fails on any
+     change not listed and on any line here that moved nothing.
+  .dx-lbl | font-size              | type-ramp
+  .dx-lbl | line-height            | type-ramp
+-->
+
+  <!-- demo context: a DARK section above -->
+  <div class="dx-ctx dx-ctx--dark cr-on-dark"><span class="dx-lbl">Dark section</span></div>
+
+  <!-- ── THE PIXEL-DISSOLVE DIVIDER ──────────────────────────────────────── -->
+  <div class="cr-dissolve" aria-hidden="true"
+       data-archetype="editorial-stack" data-hierarchy="supporting" data-intent="orient"
+       data-register="immersive" data-signature="architectural-whitespace" data-density="low">
+    <div class="cr-dissolve__mix" id="dissolveMix"></div>
+  </div>
+
+  <!-- demo context: a LIGHT section below -->
+  <div class="dx-ctx dx-ctx--light">
+    <span class="dx-lbl">Light section content</span>
+  </div>
+
+<script>
+  (function () {
+    document.documentElement.classList.add('has-js');
+    var dis = document.querySelector('.cr-dissolve');
+    var mix = document.getElementById('dissolveMix');
+    if (!dis || !mix) return;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var CELL = 36, ROWS = 6;
+
+    function build(animate) {
+      var w = dis.clientWidth || mix.clientWidth;
+      var cols = Math.ceil(w / CELL) + 1;          // +1 so the right edge is covered (clipped by overflow)
+      mix.style.gridTemplateColumns = 'repeat(' + cols + ', ' + CELL + 'px)';
+      mix.style.gridAutoRows = CELL + 'px';
+      mix.textContent = '';
+
+      // boundary per column — a gentle random walk around the middle (steps ±1, pulled back to centre)
+      var mid = ROWS * 0.5, cur = mid, b = [];
+      for (var c = 0; c < cols; c++) {
+        cur += (Math.random() < 0.5 ? -1 : 1) * (Math.random() < 0.55 ? 1 : 0);
+        cur += (mid - cur) * 0.22;
+        cur = Math.max(1.4, Math.min(ROWS - 1.4, cur));
+        b[c] = cur;
+      }
+
+      var frag = document.createDocumentFragment();
+      for (var r = 0; r < ROWS; r++) {
+        for (var c2 = 0; c2 < cols; c2++) {
+          var ink = r < b[c2];
+          if (Math.abs(r - b[c2]) < 1.8 && Math.random() < 0.12) ink = !ink;   // occasional floater
+          var d = document.createElement('i');
+          d.className = ink ? 'ink' : 'cream';
+          if (animate) d.style.setProperty('--d', Math.round(Math.random() * 420) + 'ms');
+          frag.appendChild(d);
+        }
+      }
+      mix.appendChild(frag);
+    }
+
+    var doAnim = !reduce && ('IntersectionObserver' in window);
+    if (doAnim) dis.classList.add('anim');
+    build(doAnim);
+
+    // rebuild on resize (plain — the assemble only plays once, on first view)
+    var t;
+    window.addEventListener('resize', function () {
+      clearTimeout(t);
+      t = setTimeout(function () { dis.classList.remove('anim', 'in'); build(false); }, 180);
+    });
+
+    if (doAnim) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { dis.classList.add('in'); io.disconnect(); } });
+      }, { threshold: 0.25 });
+      io.observe(dis);
+    }
+  })();
+</script>
+</body>
+</html>

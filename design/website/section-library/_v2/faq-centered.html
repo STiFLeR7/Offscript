@@ -1,0 +1,263 @@
+<!doctype html>
+<!--
+  Component: FAQ — centered single column
+  ---------------------------------------------------------------------------
+  COMPOSITION (extracted from exactly.ai FAQ — layout/spacing only; their
+  colours + font are ignored, rebuilt in the CR brand kit):
+    • Centred TWO-TONE stacked headline: an ink focal line over a muted-grey
+      supporting line, both at the same display scale (the charter's two-tone
+      colour split — focal in --cr-fg, support in --cr-fg-3, AA-safe ~6:1;
+      never the too-light --cr-fg-muted on a light surface).
+    • A large whitespace gap, then a FULL-WIDTH single column of FAQ rows
+      (centred, ~1080 measure) — NOT the 1.6:1 split of component-faq-split.
+    • Rows are divided by faint DOTTED hairlines (incl. one above the first
+      row) — the distinctive divider of the reference.
+    • Questions stay ink in EVERY state (closed rows are dark too, per the
+      reference); only the toggle reacts — a bare CSS plus that morphs to a
+      minus (no circle, no icon dependency / no Lucide here).
+    • One row open by default; single-open accordion (exactly one open).
+  MOTION: smooth accordion (answer height via grid 0fr→1fr) + scroll-reveal —
+    headline then rows stagger-fade up on first viewport hit (IntersectionObserver,
+    fires once, per-row --d delay). prefers-reduced-motion snaps in. Content is
+    present + readable WITHOUT JS (the collapse + hidden-reveal state are scoped
+    to .has-js; no-JS shows every answer open).
+  Distinct from component-faq-split.html (two-column, +→× circled toggle,
+  grey-until-active questions) and the older component-faq.html.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FAQ — centered single column</title>
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+<script>document.documentElement.className = 'has-js';</script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-bg);
+    font-family: var(--cr-font-body); color: var(--cr-ink);
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  }
+
+  .faq {
+    padding: 120px 100px;
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+    --rule: rgba(14,14,14,0.14);   /* faint dotted divider tone */
+  }
+  .wrap { max-width: var(--cr-content-narrow); margin: 0 auto; }
+
+  /* ── Centred two-tone headline ─────────────────────────────── */
+  .head { text-align: center; margin: 0 0 96px; }
+  .title {
+    margin: 0;
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(34px, 5vw, 52px);
+    line-height: 1.16; letter-spacing: -0.02em;
+  }
+  .title span { display: block; }
+  .t-ink  { color: var(--cr-fg); }
+  .t-mute { color: var(--cr-fg-3); }   /* supporting line — AA-safe ~6:1 on white */
+
+  /* ── List ──────────────────────────────────────────────────── */
+  .list { border-top: 1px dotted var(--rule); }
+  .qa   { border-bottom: 1px dotted var(--rule); }
+
+  /* Question row (a real control → hover is allowed) */
+  .q {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    gap: 40px; padding: 34px 0;
+    background: transparent; border: 0; cursor: pointer;
+    font: inherit; color: inherit; text-align: left;
+  }
+  .qt {
+    font-family: var(--cr-font-display); font-weight: 600;
+    font-size: 21px; line-height: 1.35; letter-spacing: -0.01em;
+    color: var(--cr-fg);   /* questions stay ink in every state */
+  }
+
+  /* Plus → minus morph toggle (pure CSS, no icon) */
+  .toggle {
+    position: relative; flex-shrink: 0;
+    width: 22px; height: 22px;
+    color: var(--cr-fg-3);
+    transition: color .2s ease;
+  }
+  .toggle::before, .toggle::after {
+    content: ""; position: absolute; left: 50%; top: 50%;
+    background: currentColor; border-radius: 2px;
+    transition: transform .32s cubic-bezier(.4,0,.2,1);
+  }
+  .toggle::before { width: 17px; height: 1.6px; transform: translate(-50%,-50%); }              /* horizontal bar */
+  .toggle::after  { width: 1.6px; height: 17px; transform: translate(-50%,-50%); }              /* vertical bar   */
+  .qa.open .toggle::after { transform: translate(-50%,-50%) rotate(90deg); }                    /* spins flat → "−" */
+  .q:hover .toggle, .q:focus-visible .toggle, .qa.open .toggle { color: var(--cr-fg); }
+  .q:focus-visible { outline: none; }
+  .q:focus-visible .qt { text-decoration: underline; text-underline-offset: 4px; }
+
+  /* Answer — height transition via the grid 0fr→1fr trick (scoped to JS) */
+  .a-in   { min-height: 0; }
+  .a-body {
+    margin: 0; padding: 0 80px 34px 0;
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: 16.5px; line-height: 1.7; color: var(--cr-fg-3);
+  }
+  .has-js .a {
+    display: grid; grid-template-rows: 0fr;
+    transition: grid-template-rows .38s ease;
+  }
+  .has-js .a-in   { overflow: hidden; }
+  .has-js .qa.open .a { grid-template-rows: 1fr; }
+  .has-js .a-body {
+    opacity: 0; transform: translateY(-4px);
+    transition: opacity .35s ease .04s, transform .35s ease .04s;
+  }
+  .has-js .qa.open .a-body { opacity: 1; transform: none; }
+
+  /* ── Scroll-reveal (scoped to JS; content visible without it) ─ */
+  .has-js [data-reveal] { opacity: 0; transform: translateY(16px); }
+  .has-js [data-reveal].in {
+    opacity: 1; transform: none;
+    transition: opacity .55s ease var(--d, 0ms), transform .55s ease var(--d, 0ms);
+  }
+
+  /* ── Responsive ────────────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .faq { padding: 88px 60px; }
+    .head { margin-bottom: 72px; }
+    .qt { font-size: 19px; }
+    .a-body { padding-right: 48px; }
+  }
+  @media (max-width: 640px) {
+    .faq { padding: 64px 24px; }
+    .head { margin-bottom: 52px; }
+    .title { font-size: clamp(27px, 8vw, 32px); line-height: 1.2; }
+    .q { padding: 26px 0; gap: 24px; }
+    .qt { font-size: 17px; }
+    .toggle { width: 19px; height: 19px; }
+    .toggle::before { width: 15px; }
+    .toggle::after  { height: 15px; }
+    .a-body { padding: 0 0 26px 0; font-size: 16px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js [data-reveal] { opacity: 1 !important; transform: none !important; }
+    .has-js [data-reveal].in { transition: none; }
+    .toggle::before, .toggle::after, .has-js .a, .has-js .a-body { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="faq" data-screen-label="FAQ — centered single column">
+  <div class="wrap">
+
+    <header class="head" data-reveal style="--d:0ms">
+      <h2 class="title">
+        <span class="t-ink">Still Have Questions?</span>
+        <span class="t-mute">Here's What Teams Ask Most.</span>
+      </h2>
+    </header>
+
+    <div class="list" id="list">
+
+      <!-- open by default -->
+      <div class="qa open" data-reveal style="--d:90ms">
+        <button class="q" aria-expanded="true">
+          <span class="qt">Is our data safe? What's the security model?</span>
+          <span class="toggle" aria-hidden="true"></span>
+        </button>
+        <div class="a"><div class="a-in">
+          <p class="a-body">Your data stays in your environment. We deploy inside your VPC or on-prem, never train on your data, and ship with SOC&nbsp;2 and HIPAA available on request. Every agent action is logged and auditable end to end.</p>
+        </div></div>
+      </div>
+
+      <div class="qa" data-reveal style="--d:150ms">
+        <button class="q" aria-expanded="false">
+          <span class="qt">What happens if the agent makes a mistake?</span>
+          <span class="toggle" aria-hidden="true"></span>
+        </button>
+        <div class="a"><div class="a-in">
+          <p class="a-body">Every action carries a confidence score. Below the threshold the agent escalates to a human; above it, the agent acts but flags a sample for review. You see every decision it makes — nothing happens in the dark.</p>
+        </div></div>
+      </div>
+
+      <div class="qa" data-reveal style="--d:210ms">
+        <button class="q" aria-expanded="false">
+          <span class="qt">Which systems do you integrate with?</span>
+          <span class="toggle" aria-hidden="true"></span>
+        </button>
+        <div class="a"><div class="a-in">
+          <p class="a-body">SAP, Salesforce, Zoho, Oracle, Epic, Cerner, and custom spreadsheets — connected by API or browser automation. We deploy parallel to your current workflow, so there's no rip-and-replace to absorb.</p>
+        </div></div>
+      </div>
+
+      <div class="qa" data-reveal style="--d:270ms">
+        <button class="q" aria-expanded="false">
+          <span class="qt">How fast does a pilot go live?</span>
+          <span class="toggle" aria-hidden="true"></span>
+        </button>
+        <div class="a"><div class="a-in">
+          <p class="a-body">Four weeks. Week&nbsp;1 is a process audit, week&nbsp;2 a signed blueprint, and weeks&nbsp;3–4 run the agent in shadow mode beside your existing workflow. On day&nbsp;30 you cut over or extend.</p>
+        </div></div>
+      </div>
+
+      <div class="qa" data-reveal style="--d:330ms">
+        <button class="q" aria-expanded="false">
+          <span class="qt">How are you billed?</span>
+          <span class="toggle" aria-hidden="true"></span>
+        </button>
+        <div class="a"><div class="a-in">
+          <p class="a-body">On outcomes, not seats. You pay against the measurable result — cost removed, cycle time cut, work automated — so the price tracks the value the agent actually delivers, not the number of licences.</p>
+        </div></div>
+      </div>
+
+      <div class="qa" data-reveal style="--d:390ms">
+        <button class="q" aria-expanded="false">
+          <span class="qt">Do we need to add headcount to run this?</span>
+          <span class="toggle" aria-hidden="true"></span>
+        </button>
+        <div class="a"><div class="a-in">
+          <p class="a-body">No. The agents absorb the routine work your team already owns and escalate only the exceptions that need judgment. Your best people manage the agents instead of the busywork.</p>
+        </div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  // ── Single-open accordion (exactly one open at a time) ──────────
+  const list = document.getElementById('list');
+  list.addEventListener('click', e => {
+    const btn = e.target.closest('.q');
+    if (!btn) return;
+    const item = btn.parentElement;
+    const wasOpen = item.classList.contains('open');
+    list.querySelectorAll('.qa').forEach(el => {
+      el.classList.remove('open');
+      el.querySelector('.q').setAttribute('aria-expanded', 'false');
+    });
+    if (!wasOpen) {
+      item.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  });
+
+  // ── Scroll-reveal: stagger-fade rows in on first viewport hit ───
+  const reveals = document.querySelectorAll('[data-reveal]');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce || !('IntersectionObserver' in window)) {
+    reveals.forEach(el => el.classList.add('in'));
+  } else {
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach(en => {
+        if (en.isIntersecting) { en.target.classList.add('in'); obs.unobserve(en.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    reveals.forEach(el => io.observe(el));
+  }
+</script>
+</body>
+</html>

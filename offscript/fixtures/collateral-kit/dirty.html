@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Dirty A4</title>
+<link rel="stylesheet" href="colors_and_type.css"></head>
+<body><main class="cr-doc">
+  <section class="cr-page" style="border-radius:12px"><!-- square-page-corners FAIL -->
+    <h1 style="font:500 28px/1.3 var(--font-display);color:#7A3CFF">Hello 🚀</h1><!-- retired/off-token color + emoji FAIL -->
+    <p style="font:400 10px/1.4 var(--font-text);color:var(--cr-charcoal)">Tiny body copy.</p><!-- text-size-floor FAIL (10px, not eyebrow) -->
+    <div class="cr-stat-card" style="box-shadow:0 4px 12px rgba(0,0,0,.1)"><!-- flat-no-shadow FAIL -->
+      <span class="cr-stat-num" style="color:var(--cr-electric)">92%</span></div><!-- metrics-in-dark FAIL (accent numeral) -->
+    <div style="background:var(--cr-tone-periwinkle);border-left:4px solid var(--cr-tone-periwinkle-accent);padding:12px">Aside</div><!-- no-callout-box FAIL -->
+    <div class="cr-cols-4">four cols</div><!-- column-count FAIL -->
+  </section>
+</main></body></html>

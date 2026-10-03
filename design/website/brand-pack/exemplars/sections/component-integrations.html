@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Integrations · CTA + bordered logo marquee</title>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css">
+<!--
+  COMPONENT   — Integrations: "works with the tools you use"
+  COMPOSITION — (reference: miter.com integrations section, structure lifted from
+                its markup) A dark FULL-BLEED band — edge to edge, no rounded
+                corners, no surrounding gutter. Centred header column (max ~692):
+                small EYEBROW label → a one-line HEADLINE (32px) → a supporting
+                paragraph → a white pill CTA. Below it, a full-width horizontal
+                MARQUEE of bordered logo cells that auto-scrolls, pauses on hover,
+                and highlights each cell's border on hover; cells link out.
+                Layout reproduced; only the skin changes.
+  SKIN (inspiration rule) — Miter's flat midnight → CR cool navy dark band +
+                grain; coral cell-hover → brand blue; real partner logos →
+                light placeholder WORDMARKS (catalog convention; swap for real
+                SVGs). The CTA keeps Miter's signature WORD-ROLL hover; its
+                decorative diagonal-line hover pattern is dropped (charter bans
+                decorative effects).
+  CHARTER     — No shadows; cells separate by 1px `--cr-line-dark` borders +
+                contrast. Hover only on real controls (CTA, cells). Grain tiles
+                at native size.
+  MOTION      — Marquee auto-scrolls (linear, slow), pauses on hover; per-cell
+                border lifts to brand blue + wordmark brightens on hover. CTA
+                word-roll on hover (words translateY out, duplicates roll in,
+                staggered via --delay) + arrow nudge. Header stagger-fades up on
+                scroll-in (has-js + IntersectionObserver, --d). prefers-reduced-
+                motion → marquee stops, header snaps in. Visible without JS.
+  Standalone: links ../colors_and_type.css only; own <style>; no shared CSS.
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-bg-grey-50);            /* var(--cr-bg-warm) — lets the panel float */
+    font-family: var(--cr-font-body); color: var(--cr-ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .section { padding: 0; max-width: none; margin: 0; }   /* full-bleed band — edge to edge */
+
+  /* ── Dark full-bleed band (no rounded corners — spans edge to edge) ──── */
+  .panel {
+    position: relative; overflow: hidden; isolation: isolate;
+    border-radius: 0;
+    background: linear-gradient(135deg, var(--cr-ink-cool) 0%, var(--cr-ink-cool) 58%, var(--cr-ink-card) 100%);
+    color: #fff;
+    padding: 88px 0 64px;            /* horizontal padding 0 so the marquee spans full width */
+  }
+  .panel::after {                    /* grain — native tile, never background-size */
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: url("../assets/texture-grain.png"); opacity: 0.06;
+  }
+
+  /* ── Header column ─────────────────────────────────────────────────── */
+  .head { position: relative; z-index: 2; max-width: 692px; margin: 0 auto; padding: 0 32px; text-align: center; }
+
+  .eyebrow {
+    font-family: var(--cr-font-body); font-weight: 600; font-size: 13px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: rgba(255,255,255,0.5); margin: 0 0 16px;
+  }
+  .title {
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(26px, 3.2vw, 32px); line-height: 1.2; letter-spacing: -0.02em;
+    color: #fff; margin: 0;
+  }
+  .sub {
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 18px;
+    line-height: 1.45; letter-spacing: 0.01em; color: rgba(255,255,255,0.7);
+    margin: 14px auto 0; max-width: 600px;
+  }
+
+  /* ── CTA — white pill with Miter's word-roll hover ─────────────────── */
+  .cta {
+    display: inline-flex; align-items: center; gap: 9px;
+    margin-top: 32px; padding: 14px 24px;
+    background: #fff; color: var(--cr-ink);
+    border-radius: var(--cr-radius-pill); text-decoration: none; cursor: pointer;
+    font-family: var(--cr-font-display); font-weight: 700; font-size: 15px;
+    letter-spacing: -0.01em; line-height: 1.1;
+    transition: background .2s ease, transform .12s ease;
+  }
+  .cta:hover { background: var(--cr-bg-warm-2); }       /* var(--cr-bg-grey-100) — subtle, colour stays light */
+  .cta:active { transform: scale(.975); }
+
+  /* word-roll: front words slide up & out, identical back words roll in from top */
+  .roll { position: relative; display: inline-flex; gap: 5px; overflow: hidden; }
+  .roll .back { position: absolute; inset: 0; display: inline-flex; gap: 5px; }
+  .roll span span {
+    display: inline-block;
+    transition: transform .4s cubic-bezier(.94,-0.11,.35,.93);
+    transition-delay: var(--delay, 0s);
+  }
+  .roll .front span { transform: translateY(0); }
+  .roll .back span  { transform: translateY(-165%); }
+  .cta:hover .roll .front span { transform: translateY(165%); }
+  .cta:hover .roll .back span  { transform: translateY(0); }
+
+  .cta .arrow { display: inline-block; transition: transform .2s ease; }
+  .cta:hover .arrow { transform: translateX(3px); }
+
+  /* ── Marquee — bordered logo cells ─────────────────────────────────── */
+  .marquee { position: relative; z-index: 2; margin-top: 40px; overflow: hidden; }
+  .track {
+    display: flex; width: max-content;
+    animation: scroll 52s linear infinite;
+  }
+  .marquee:hover .track { animation-play-state: paused; }
+  @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  .cell {
+    flex: 0 0 auto;
+    width: 243px; height: 143px;
+    border: 1px solid var(--cr-line-dark);        /* rgba(255,255,255,0.10) */
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none; cursor: pointer;
+    transition: border-color .3s ease, background-color .3s ease;
+  }
+  .cell:hover { border-color: var(--cr-brand); background: rgba(20,157,255,0.05); }
+  .wm {
+    font-family: var(--cr-font-display); font-weight: 700; font-size: 21px;
+    letter-spacing: -0.01em; color: rgba(255,255,255,0.55);
+    transition: color .3s ease; white-space: nowrap;
+  }
+  .cell:hover .wm { color: #fff; }
+
+  /* ── Scroll-in reveal (header only; visible without JS) ─────────────── */
+  .has-js .anim { opacity: 0; transform: translateY(16px); transition: opacity .6s ease var(--d,0ms), transform .6s ease var(--d,0ms); }
+  .revealed .anim { opacity: 1; transform: none; }
+
+  /* ── Responsive ────────────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .section { padding: 0; }
+    .panel { padding: 64px 0 48px; }
+    .cell { width: 200px; height: 120px; }
+    .wm { font-size: 19px; }
+  }
+  @media (max-width: 560px) {
+    .section { padding: 0; }
+    .panel { padding: 52px 0 40px; }
+    .head { padding: 0 22px; }
+    .sub { font-size: 16px; }
+    .cell { width: 168px; height: 104px; }
+    .wm { font-size: 17px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .track { animation: none; }
+    .has-js .anim { opacity: 1 !important; transform: none !important; transition: none; }
+    .roll span span, .cta .arrow, .cta, .cell, .wm { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="section" data-screen-label="Integrations · CTA + bordered logo marquee">
+  <div class="panel" id="panel">
+
+    <div class="head">
+      <p class="eyebrow anim" style="--d:0ms">Integrations</p>
+      <h2 class="title anim" style="--d:80ms">We Work With The Tools You Already Use.</h2>
+      <p class="sub anim" style="--d:150ms">
+        Your agents plug into the systems you already run — use our off-the-shelf
+        integrations, or build a custom one on our REST API.
+      </p>
+      <a class="cta anim" style="--d:220ms" href="#" aria-label="Explore all integrations">
+        <span class="roll" aria-hidden="true">
+          <span class="front"><span style="--delay:0s">Explore</span> <span style="--delay:.06s">All</span> <span style="--delay:.12s">Integrations</span></span>
+          <span class="back"><span style="--delay:0s">Explore</span> <span style="--delay:.06s">All</span> <span style="--delay:.12s">Integrations</span></span>
+        </span>
+        <span class="arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+
+    <!-- Marquee — set rendered twice for a seamless −50% loop -->
+    <div class="marquee">
+      <div class="track" id="track">
+        <a class="cell" href="#"><span class="wm">SAP</span></a>
+        <a class="cell" href="#"><span class="wm">Salesforce</span></a>
+        <a class="cell" href="#"><span class="wm">Oracle</span></a>
+        <a class="cell" href="#"><span class="wm">NetSuite</span></a>
+        <a class="cell" href="#"><span class="wm">Epic</span></a>
+        <a class="cell" href="#"><span class="wm">Cerner</span></a>
+        <a class="cell" href="#"><span class="wm">Workday</span></a>
+        <a class="cell" href="#"><span class="wm">ServiceNow</span></a>
+        <a class="cell" href="#"><span class="wm">Snowflake</span></a>
+        <a class="cell" href="#"><span class="wm">Zoho</span></a>
+        <!-- duplicate set -->
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">SAP</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Salesforce</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Oracle</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">NetSuite</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Epic</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Cerner</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Workday</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">ServiceNow</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Snowflake</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Zoho</span></a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  (function () {
+    var panel = document.getElementById('panel');
+    if (!panel) return;
+    function reveal() { panel.classList.add('revealed'); }
+    if (!('IntersectionObserver' in window)) { reveal(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { reveal(); io.disconnect(); } });
+    }, { threshold: 0.2 });
+    io.observe(panel);
+  })();
+</script>
+</body>
+</html>

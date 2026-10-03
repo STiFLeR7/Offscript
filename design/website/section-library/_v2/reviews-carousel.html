@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reviews carousel · slider</title>
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<!--
+  COMPONENT   — Reviews carousel: horizontal slider (1 card + peek)
+  COMPOSITION — White section. Header: eyebrow → headline → lede (left-aligned).
+                Below: a slider — .track holds 5 .card elements in a row; each card
+                is a consistent horizontal layout: portrait photo (240×296, left) +
+                text block (right: quote → name/role → grade). Cards are ~68% of the
+                content well so the next card peeks ~30% from the right edge.
+                .track translates by JS on prev/next. Controls (arrows + dots) sit
+                centred below the slider. Footer: ink pill CTA + ghost + note.
+  CARD ANATOMY (identical for every card — consistent UX pattern):
+                ┌────────────────────────────────────────────────────┐
+                │ [Portrait 240×296]  "Quote text …"                 │
+                │                     Name · Role                    │
+                │                     5.0 ★★★★★                    │
+                └────────────────────────────────────────────────────┘
+  MOTION      — CSS transform slide (.45s cubic-bezier) on .track; drag advance
+                on .slider-wrap. prefers-reduced-motion: instant.
+                Header stagger-fades on first viewport hit (IntersectionObserver).
+  CHARTER     — No shadows; 1px --cr-line card border. Hover on controls only.
+  RESPONSIVE  — card 68% → 88% at 980px → 96% at 640px; portrait height 296→220px.
+  Standalone: links ../colors_and_type.css; own <style>; no shared CSS.
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<noscript><style>.anim{opacity:1!important;transform:none!important}</style></noscript>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: var(--cr-font-body); color: var(--cr-ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Section ─────────────────────────────────────────────────────── */
+  .section { padding: 80px var(--cr-page-gutter); background: #fff; }
+  .inner   { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ── Header ──────────────────────────────────────────────────────── */
+  .head { margin-bottom: 40px; }
+  .eyebrow {
+    font-family: var(--cr-font-body); font-weight: 600; font-size: 13px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--cr-fg-3); margin: 0;
+  }
+  .h-title {
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(32px,3.8vw,50px); line-height: 1.08; letter-spacing: -0.022em;
+    color: var(--cr-ink); margin: 12px 0 0;
+  }
+  .h-lede {
+    font-family: var(--cr-font-body); font-size: 17px; line-height: 1.55;
+    color: var(--cr-fg-3); margin: 12px 0 0; max-width: 560px;
+  }
+
+  /* ── Slider wrapper — clips overflow so next card peeks ─────────── */
+  .slider-wrap { overflow: hidden; cursor: grab; margin-left: 0; }
+  .slider-wrap:active { cursor: grabbing; }
+
+  /* ── Track — horizontal row of cards, animated via transform ─────── */
+  .track {
+    display: flex;
+    gap: 24px;
+    transition: transform .45s cubic-bezier(.25,.1,.25,1);
+    will-change: transform;
+  }
+  .track.no-anim { transition: none; }
+
+  /* ── Card — consistent layout for every review ───────────────────── */
+  .card {
+    flex: 0 0 calc(68% - 12px);   /* ~68% of container; next card peeks ~28% */
+    min-width: 0;
+    min-height: clamp(340px, 38vh, 420px);
+    background: #fff;
+    border-radius: 20px;
+    padding: 0;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    user-select: none;
+  }
+
+  /* Atmospheric image panel — left column */
+  .card-logo {
+    flex: 0 0 300px; width: 300px;
+    aspect-ratio: 248 / 304; height: auto;
+    align-self: flex-start;
+    border-radius: 14px; overflow: hidden; position: relative;
+    background-color: #d8e4f0;
+    background-image: var(--bg);
+    background-size: cover; background-position: center;
+  }
+  /* Grain overlay — light film texture like the reference */
+  .card-logo .grain {
+    position: absolute; inset: 0; pointer-events: none; z-index: 1;
+    background-image: url('../assets/../../brand-pack/assets/imagery/textures/texture-grain.png');
+    mix-blend-mode: soft-light; opacity: 0.55;
+  }
+  /* Unique geometric SVG per card */
+  .card-logo .geo {
+    position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    width: 100%; height: 100%; overflow: visible;
+  }
+  .card-logo .geo line,
+  .card-logo .geo path,
+  .card-logo .geo circle,
+  .card-logo .geo ellipse { stroke: white; stroke-width: 1; fill: none; opacity: 0.48; }
+
+  /* Text block — right column */
+  .card-body {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column;
+    padding: 20px;
+  }
+  .card-q {
+    font-family: var(--cr-font-body); font-size: 17px; line-height: 1.65;
+    color: var(--cr-fg); margin: 0; flex: 1;
+  }
+  .card-meta { margin-top: 16px; }
+  .card-name { font-family: var(--cr-font-display); font-weight: 700; font-size: 16px; color: var(--cr-ink); margin: 0; }
+  .card-role { font-family: var(--cr-font-body); font-size: 13px; color: var(--cr-fg-3); margin: 3px 0 0; }
+  .card-grade { display: flex; align-items: center; gap: 9px; margin-top: 12px; }
+  .g-num   { font-family: var(--cr-font-display); font-weight: 700; font-size: 17px; color: var(--cr-ink); font-variant-numeric: tabular-nums; }
+  .stars   { display: inline-flex; gap: 2px; }
+  .stars svg { width: 14px; height: 14px; fill: var(--cr-amber); color: var(--cr-amber); stroke-width: 1.5; }
+
+  /* ── Controls: ghost arrows + counter ───────────────────────────── */
+  .controls { display: flex; align-items: center; gap: 12px; }
+  .nav {
+    width: 40px; height: 40px; border-radius: 50%; flex: 0 0 40px;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; color: var(--cr-ink);
+    border: 1px solid var(--cr-line); cursor: pointer;
+    transition: border-color .18s ease, background .18s ease, transform .1s ease;
+  }
+  .nav:hover  { border-color: var(--cr-fg-3); background: var(--cr-bg-grey-50); }
+  .nav:active { transform: scale(.93); }
+  .nav svg    { width: 16px; height: 16px; stroke-width: 2; }
+  .counter {
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 13px;
+    color: var(--cr-fg-3); letter-spacing: 0.02em; min-width: 42px; text-align: center;
+  }
+  /* hide old dots — counter replaces them */
+  .dots { display: none; }
+
+  /* ── Footer ──────────────────────────────────────────────────────── */
+  .foot { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 56px; }
+  .foot-cta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 13px 24px;
+    border-radius: var(--cr-radius-pill); font-family: var(--cr-font-display); font-weight: 700;
+    font-size: 15px; letter-spacing: -0.01em; line-height: 1.1; text-decoration: none; cursor: pointer;
+    border: 1px solid transparent; transition: background .18s ease, transform .1s ease, border-color .18s ease;
+  }
+  .btn-primary { background: var(--cr-ink); color: #fff; }
+  .btn-primary:hover { background: var(--cr-fg); }
+  .btn-ghost { background: transparent; color: var(--cr-ink); border-color: var(--cr-line); }
+  .btn-ghost:hover { border-color: var(--cr-fg-3); }
+  .btn:active { transform: scale(.975); }
+  .btn .arrow { display: inline-block; transition: transform .18s ease; }
+  .btn-primary:hover .arrow { transform: translateX(4px); }
+  .foot-note { font-family: var(--cr-font-body); font-size: 13px; color: var(--cr-fg-3); text-align: right; max-width: 320px; line-height: 1.55; }
+  .foot-note b { font-family: var(--cr-font-display); font-weight: 700; color: var(--cr-ink); }
+
+  /* ── Entrance ─────────────────────────────────────────────────────── */
+  .has-js .anim {
+    opacity: 0; transform: translateY(14px);
+    transition: opacity .55s ease var(--d,0ms), transform .55s ease var(--d,0ms);
+  }
+  .revealed .anim { opacity: 1; transform: none; }
+
+  /* ── Responsive ──────────────────────────────────────────────────── */
+  @media (max-width: 980px) {
+    .section { padding: 64px 40px; }
+    .card { flex-basis: calc(88% - 12px); }
+    .card-logo { flex: 0 0 200px; width: 200px; }
+    .card-body { padding: 24px; }
+  }
+  @media (max-width: 640px) {
+    .section { padding: 48px 20px; }
+    .card { flex-basis: calc(96% - 12px); flex-direction: column; }
+    .card-logo { flex: none; width: 100%; aspect-ratio: auto; height: 220px; }
+    .card-body { padding: 20px; }
+    .foot { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .foot-note { text-align: left; max-width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .track { transition: none !important; }
+    .nav, .dot, .btn, .btn .arrow { transition: none !important; }
+    .has-js .anim { opacity: 1 !important; transform: none !important; transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="section" data-screen-label="Reviews carousel · horizontal slider">
+  <div class="inner">
+
+    <div class="head">
+      <p class="eyebrow anim" style="--d:0ms">What teams say</p>
+      <h2 class="h-title anim" style="--d:80ms">Reviews From Teams Running Our Agents.</h2>
+      <p class="h-lede anim" style="--d:150ms">Ops leads, controllers and RevOps teams on what changed after their agents went live — billed on outcomes, not seats.</p>
+    </div>
+
+    <div class="slider-wrap anim" id="sliderWrap" style="--d:220ms">
+      <div class="track" id="track">
+
+        <article class="card">
+          <div class="card-logo" style="--bg:url('../assets/creative-background/web/blur-7.jpg')">
+            <div class="grain"></div>
+            <!-- Card 1: large D-curve from right + one horizontal rule -->
+            <svg class="geo" viewBox="0 0 240 296" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 240 40 C 80 40 80 256 240 256"/>
+              <line x1="-20" y1="148" x2="145" y2="148"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <p class="card-q">&#x201C;Invoice reconciliation used to eat six hours a day. The agent took it over in week three &#x2014; now my team only touches the exceptions it flags.&#x201D;</p>
+            <div class="card-meta">
+              <p class="card-name">Olivia Bennett</p>
+              <p class="card-role">Controller · Northwind Logistics</p>
+              <div class="card-grade">
+                <span class="g-num">5.0</span>
+                <span class="stars"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-logo" style="--bg:url('../assets/creative-background/web/blur-7.jpg')">
+            <div class="grain"></div>
+            <!-- Card 2: diagonal + large circle mostly off bottom-left -->
+            <svg class="geo" viewBox="0 0 240 296" xmlns="http://www.w3.org/2000/svg">
+              <line x1="-10" y1="30" x2="250" y2="266"/>
+              <circle cx="44" cy="296" r="150"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <p class="card-q">&#x201C;Claims triage runs like clockwork. I start the morning with a clean queue instead of a backlog of three hundred &#x2014; and every decision is logged with a confidence score.&#x201D;</p>
+            <div class="card-meta">
+              <p class="card-name">Emily Thompson</p>
+              <p class="card-role">VP Operations · Meridian Health</p>
+              <div class="card-grade">
+                <span class="g-num">5.0</span>
+                <span class="stars"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-logo" style="--bg:url('../assets/creative-background/web/blur-7.jpg')">
+            <div class="grain"></div>
+            <!-- Card 3: concentric quarter-arcs from top-left corner -->
+            <svg class="geo" viewBox="0 0 240 296" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 0 110 A 110 110 0 0 1 110 0"/>
+              <path d="M 0 190 A 190 190 0 0 1 190 0"/>
+              <line x1="-10" y1="240" x2="250" y2="240"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <p class="card-q">&#x201C;It plugged straight into our Salesforce and SAP. No rip-and-replace, no licence shuffle &#x2014; and the audit trail is cleaner than what we had before.&#x201D;</p>
+            <div class="card-meta">
+              <p class="card-name">Jason Miller</p>
+              <p class="card-role">Head of RevOps · Tilebridge</p>
+              <div class="card-grade">
+                <span class="g-num">4.6</span>
+                <span class="stars"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star-half"></i></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-logo" style="--bg:url('../assets/creative-background/web/blur-7.jpg')">
+            <div class="grain"></div>
+            <!-- Card 4: counter-diagonal + small off-centre circle -->
+            <svg class="geo" viewBox="0 0 240 296" xmlns="http://www.w3.org/2000/svg">
+              <line x1="-10" y1="270" x2="250" y2="26"/>
+              <circle cx="160" cy="100" r="56"/>
+              <line x1="104" y1="-10" x2="104" y2="310"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <p class="card-q">&#x201C;We saw payback inside the first quarter. The numbers showed up exactly where they said they would &#x2014; on the P&amp;L, not in a dashboard nobody reads.&#x201D;</p>
+            <div class="card-meta">
+              <p class="card-name">Priya Nair</p>
+              <p class="card-role">CFO · Greaves Manufacturing</p>
+              <div class="card-grade">
+                <span class="g-num">5.0</span>
+                <span class="stars"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-logo" style="--bg:url('../assets/creative-background/web/blur-7.jpg')">
+            <div class="grain"></div>
+            <!-- Card 5: wide ellipse + vertical rule -->
+            <svg class="geo" viewBox="0 0 240 296" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="120" cy="296" rx="130" ry="95"/>
+              <line x1="-10" y1="80" x2="250" y2="80"/>
+              <line x1="188" y1="-10" x2="188" y2="310"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <p class="card-q">&#x201C;Vendor onboarding dropped from days to hours. My people finally spend their time on judgment calls instead of data entry.&#x201D;</p>
+            <div class="card-meta">
+              <p class="card-name">David Cole</p>
+              <p class="card-role">Director, Shared Services · Aldermark</p>
+              <div class="card-grade">
+                <span class="g-num">4.8</span>
+                <span class="stars"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star-half"></i></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+    <div class="foot">
+      <div class="foot-cta anim" style="--d:300ms">
+        <a class="btn btn-primary" href="#">Book a Demo Call <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="btn btn-ghost" href="#">Read Case Studies</a>
+      </div>
+      <div class="controls anim" style="--d:340ms">
+        <button class="nav" id="prev" aria-label="Previous"><i data-lucide="arrow-left"></i></button>
+        <span class="counter" id="counter">01 / 05</span>
+        <button class="nav" id="next" aria-label="Next"><i data-lucide="arrow-right"></i></button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  (function () {
+    var section    = document.querySelector('.section');
+    var wrap       = document.getElementById('sliderWrap');
+    var track      = document.getElementById('track');
+    var counterEl  = document.getElementById('counter');
+    var prevBtn    = document.getElementById('prev');
+    var nextBtn    = document.getElementById('next');
+    var cards      = track.querySelectorAll('.card');
+    var n          = cards.length;
+    var GAP        = 24;
+    var cur        = 0;
+    var reduce     = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function pad(v) { return v < 10 ? '0' + v : '' + v; }
+    function updateCounter() {
+      if (counterEl) counterEl.textContent = pad(cur + 1) + ' / ' + pad(n);
+    }
+
+    function slide() {
+      var cardW = cards[0].offsetWidth;
+      var offset = cur * (cardW + GAP);
+      track.style.transform = 'translateX(-' + offset + 'px)';
+      updateCounter();
+    }
+
+    function goTo(idx) {
+      cur = Math.max(0, Math.min(n - 1, ((idx % n) + n) % n));
+      if (reduce) { track.classList.add('no-anim'); slide(); track.classList.remove('no-anim'); }
+      else slide();
+    }
+
+    prevBtn.addEventListener('click', function () { goTo(cur - 1); });
+    nextBtn.addEventListener('click', function () { goTo(cur + 1); });
+
+    /* Drag / swipe */
+    var down = false, sx = 0, moved = false;
+    wrap.addEventListener('pointerdown', function (e) { down = true; sx = e.clientX; moved = false; wrap.setPointerCapture(e.pointerId); });
+    wrap.addEventListener('pointermove', function (e) { if (!down) return; if (Math.abs(e.clientX - sx) > 6) moved = true; });
+    wrap.addEventListener('pointerup', function (e) {
+      if (!down) return; down = false;
+      var dx = e.clientX - sx;
+      if (moved && dx < -45) goTo(cur + 1);
+      else if (moved && dx > 45) goTo(cur - 1);
+    });
+
+    /* Entrance */
+    function reveal() { if (section) section.classList.add('revealed'); }
+    if (!('IntersectionObserver' in window)) { reveal(); }
+    else {
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) { reveal(); io.disconnect(); } });
+      }, { threshold: 0.1 });
+      io.observe(section);
+    }
+    if (window.lucide && typeof window.lucide.createIcons === 'function') lucide.createIcons();
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CTA · Headline band + accent bar</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — CTA band                            from component-cta-band.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **It closes for the ready reader and hands off for the unready one
+              in the same band.** That is the profile's whole argument for this
+              section existing beside the shorter banner, and the onward rail is
+              the half that does the handing off — so the rail stays, and stays
+              quiet enough that it never competes with the ask.
+
+  STRUCTURE   Unchanged. Panel · headline + supporting line (left) · onward rail
+              (right) · a bar across the bottom carrying the question and the one
+              action. DOM, scripts, ids, `data-*`, `aria-*`, `href` and every
+              behavioural hook are byte-compatible with the frozen original
+              (DR-22). The v2 file is beside this one in `_v2/`.
+
+  THE SURFACE v2 carried FOUR abstract creative layers on one panel: a
+              ten-stop radial bloom, a canvas dot-field drawn over it, a corner
+              veil, and a grain tile on a pseudo-element. All four were decoration
+              standing in for a subject. They are replaced by an approved
+              environment, `valley-deep`, focus `64% 45%`, carried as ONE
+              background stack — one stack because a blend mode composites
+              against what is beneath it in the SAME background, so grain on a
+              pseudo-element resolves `overlay` against transparency and renders
+              as grey static. The URLs are written out rather than reached
+              through `--cr-env-*`, because a `url()` inside a custom property
+              resolves against the CONSUMING document and fails silently.
+
+              The dot-field canvas and the veil are frozen DOM driven by a frozen
+              script, so they are made INERT rather than deleted — `display:none`,
+              and their rule bodies gone with them. The script still runs, still
+              measures the panel, still reveals the content; it simply paints into
+              a box nobody sees. Precedent: `tabs-panel-below`.
+
+  DR-46       Every word on this panel used to sit directly on that bloom, with a
+              corner veil added to win the contrast back — which is the exact
+              case DR-46 refuses: *if the type was readable only because
+              something sat on top, the photograph was a surface.* The inner
+              column now justifies to the end, the headline group takes its own
+              opaque dark card, and the bar below it was already opaque. The
+              environment occupies the region above them, which carries no type.
+
+              Remove the photograph and not one word changes legibility.
+
+  THE BAR     The bar is the section's memorable event — a light block cutting
+              across a dark panel — and it stays that. What changes is what makes
+              it light: the raised surface rather than a warm-cream literal, and a
+              hairline that is the pack's own border rather than a white at 55%.
+
+  ACCENT      One moment. The action in the bar. The rail was uppercase, tracked
+              and set at 600 with a brand-blue hover — three separate ways of
+              being loud on the half of the band that exists to be the quiet
+              alternative. It is sentence case, untracked, at the supporting size,
+              and its hover is presence rather than colour. The hover step of the
+              action also takes the inverse label: the deep emphasis step is dark
+              enough that the paired light foreground stops measuring on it.
+
+  RESPONSIVE  The original's breakpoints (1100 / 760 / 440), unchanged. Type steps
+              on the pack's ramp; `clamp()` is gone from type and from the panel
+              floor alike — it resolved to sizes nobody authored. The reduce guard
+              names the reveal's own trigger selector, because a guard that loses
+              the cascade is not a guard.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+    font-size: var(--cr-text-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Page band — the panel sits inside the one alignment edge */
+  .section {
+    padding: var(--cr-space-2xl) var(--cr-page-gutter);
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }
+
+  /* ── The panel — an approved environment, not a generated field ────── */
+  .cta-panel {
+    position: relative; overflow: hidden; isolation: isolate;
+    border-radius: var(--cr-radius-card);
+    min-height: calc(var(--cr-space-3xl) * 4);
+    /* THE STANDARD CREATIVE TREATMENT. One stack, three layers, in this
+       order: grain on top, grunge under it, the environment underneath
+       both. The last position is the asset's measured focus, not a guess. */
+    background-color: var(--cr-bg-dark);
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-valley-deep.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 64% 45%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+  }
+
+  /* The dot-field and the veil are frozen DOM and a frozen script drives the
+     first of them, so they are made inert rather than deleted. */
+  #dotfield { display: none; }
+  .scrim { display: none; }
+
+  /* ── The inner column — justified to the end, which is the DR-46 move ── */
+  .cta-inner {
+    position: relative; z-index: 4;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    min-height: calc(var(--cr-space-3xl) * 4);
+    padding: var(--cr-space-m);
+  }
+
+  /* ── The headline group — its own opaque surface ─────────────────────
+     Nothing here draws its contrast from the picture behind it. */
+  .cta-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: var(--cr-space-m);
+    flex: 0 0 auto;
+    background: var(--cr-bg-dark);
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-m);
+  }
+  .cta-head { min-width: 0; max-width: var(--cr-measure-title); }
+
+  .cta-h {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-inverse);
+  }
+  /* The supporting line is the same ink held back, never the secondary text
+     token — that is a page-ground value and measures ~2.3:1 here. */
+  .cta-sub {
+    margin: var(--cr-space-s) 0 0;
+    max-width: var(--cr-measure-body);
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-inverse);
+    opacity: .74;
+  }
+
+  /* ── The onward rail — the quiet alternative, kept quiet ─────────────── */
+  .cta-rail {
+    flex-shrink: 0; align-self: center;
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: var(--cr-space-xs); text-align: right;
+  }
+  .cta-rail a {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    color: var(--cr-text-inverse);
+    opacity: .74;
+    text-decoration: none; cursor: pointer; white-space: nowrap;
+    transition: opacity .16s ease, transform .2s ease;
+  }
+  .cta-rail a:hover { opacity: 1; transform: translateX(-4px); }
+
+  /* ── The bar — the section's one memorable event ─────────────────────── */
+  .cta-bar {
+    margin-top: var(--cr-space-xs);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: var(--cr-space-s);
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-s) var(--cr-space-m);
+  }
+  .cta-q {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h6);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  /* ── The one accent moment ───────────────────────────────────────────
+     The pill radius is retired for controls (DR-25); this takes the control
+     radius like every other. */
+  .cta-pill {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    flex-shrink: 0;
+    background: var(--cr-accent-orange); color: var(--cr-on-accent-light);
+    border: 0; border-radius: var(--cr-radius-control);
+    cursor: pointer; text-decoration: none;
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    font-family: var(--cr-font-body); font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    letter-spacing: 0;
+    transition: background .16s ease, color .16s ease, transform .12s ease;
+  }
+  .cta-pill .arrow { display: inline-block; transition: transform .16s ease; }
+  .cta-pill:hover { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+  .cta-pill:hover .arrow { transform: translateX(4px); }
+  .cta-pill:active { transform: scale(.97); }
+  .cta-pill:focus-visible {
+    outline: var(--cr-stroke) solid var(--cr-focus-ring);
+    outline-offset: var(--cr-stroke);
+  }
+  .cta-rail a:focus-visible {
+    outline: var(--cr-stroke) solid var(--cr-text-inverse);
+    outline-offset: var(--cr-stroke);
+  }
+
+  /* ── Scroll-in reveal (staggered; visible without JS) ──────────────── */
+  .has-js .anim {
+    opacity: 0; transform: translateY(26px);
+    transition: opacity .7s cubic-bezier(.2,.7,.2,1) var(--d, 0ms),
+                transform .7s cubic-bezier(.2,.7,.2,1) var(--d, 0ms);
+  }
+  .cta-panel.reveal .anim { opacity: 1; transform: none; }
+
+  /* ── Responsive — the ORIGINAL's breakpoints ─────────────────────────── */
+  @media (max-width: 1100px) {
+    .cta-top { gap: var(--cr-space-s); }
+    .cta-rail { gap: var(--cr-space-xs); }
+  }
+  @media (max-width: 760px) {
+    .cta-panel, .cta-inner { min-height: 0; }
+    .cta-inner { padding: var(--cr-space-s); }
+    .cta-top {
+      flex-direction: column; align-items: flex-start;
+      gap: var(--cr-space-s);
+      padding: var(--cr-space-s);
+    }
+    .cta-sub { max-width: 100%; }
+    .cta-rail {
+      align-self: stretch; align-items: flex-start; text-align: left;
+      gap: var(--cr-space-xs);
+    }
+    .cta-rail a:hover { transform: translateX(4px); }
+    .cta-bar {
+      flex-direction: column; align-items: stretch;
+      gap: var(--cr-space-s); padding: var(--cr-space-s);
+    }
+    .cta-pill { justify-content: center; }
+  }
+  @media (max-width: 440px) {
+    .cta-h { font-size: var(--cr-text-h4); }
+  }
+
+  /* Matched to the trigger's specificity — a guard that loses the cascade is
+     not a guard. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .anim,
+    .cta-panel.reveal .anim { opacity: 1; transform: none; transition: none; }
+    .cta-rail a, .cta-pill, .cta-pill .arrow { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. Nothing is `directed`: the panel was already a column, so the
+     DR-46 move needed no layout change, only a surface for the type. The canvas
+     line is a consequence rather than a decision — the frozen script sizes it
+     from the panel's measured box, so it follows the panel floor.
+  .cta-bar   | border-radius          | radius-pair
+  .cta-bar   | column-gap             | spacing-scale
+  .cta-bar   | font-size              | type-ramp
+  .cta-bar   | margin-top             | spacing-scale
+  .cta-bar   | padding-bottom         | spacing-scale
+  .cta-bar   | padding-left           | spacing-scale
+  .cta-bar   | padding-right          | spacing-scale
+  .cta-bar   | padding-top            | spacing-scale
+  .cta-bar   | row-gap                | spacing-scale
+  .cta-h     | font-size              | type-ramp
+  .cta-h     | line-height            | type-ramp
+  .cta-head  | font-size              | type-ramp
+  .cta-head  | max-width              | measure
+  .cta-inner | font-size              | type-ramp
+  .cta-inner | min-height             | spacing-scale
+  .cta-inner | padding-bottom         | spacing-scale
+  .cta-inner | padding-left           | spacing-scale
+  .cta-inner | padding-right          | spacing-scale
+  .cta-inner | padding-top            | spacing-scale
+  .cta-panel | border-radius          | radius-pair
+  .cta-panel | font-size              | type-ramp
+  .cta-panel | min-height             | spacing-scale
+  .cta-pill  | border-radius          | radius-pair
+  .cta-pill  | column-gap             | spacing-scale
+  .cta-pill  | padding-bottom         | spacing-scale
+  .cta-pill  | padding-left           | spacing-scale
+  .cta-pill  | padding-right          | spacing-scale
+  .cta-pill  | padding-top            | spacing-scale
+  .cta-pill  | row-gap                | spacing-scale
+  .cta-q     | font-size              | type-ramp
+  .cta-q     | line-height            | type-ramp
+  .cta-rail  | column-gap             | spacing-scale
+  .cta-rail  | font-size              | type-ramp
+  .cta-rail  | row-gap                | spacing-scale
+  .cta-sub   | line-height            | type-ramp
+  .cta-sub   | margin-top             | spacing-scale
+  .cta-sub   | max-width              | measure
+  .cta-top   | border-radius          | radius-pair
+  .cta-top   | column-gap             | spacing-scale
+  .cta-top   | font-size              | type-ramp
+  .cta-top   | padding-bottom         | spacing-scale
+  .cta-top   | padding-left           | spacing-scale
+  .cta-top   | padding-right          | spacing-scale
+  .cta-top   | padding-top            | spacing-scale
+  .cta-top   | row-gap                | spacing-scale
+  a          | font-size              | type-ramp
+  a          | line-height            | type-ramp
+  br         | font-size              | type-ramp
+  br         | line-height            | type-ramp
+  canvas     | aspect-ratio           | ratio-vocabulary
+  canvas     | font-size              | type-ramp
+-->
+
+<section class="section"
+         data-archetype="editorial-stack" data-hierarchy="closing" data-intent="close"
+         data-register="closing" data-signature="colour-interruption" data-density="medium"
+         data-screen-label="CTA · Headline band + atmospheric glow + accent bar">
+  <div class="cta-panel" id="panel">
+    <canvas id="dotfield" aria-hidden="true"></canvas>
+    <div class="scrim" aria-hidden="true"></div>
+
+    <div class="cta-inner">
+
+      <!-- Upper region: headline + body (left) · service rail (right) -->
+      <div class="cta-top">
+        <div class="cta-head">
+          <h2 class="cta-h anim" style="--d:0ms">Automation That Works<br>Around You.</h2>
+          <p class="cta-sub anim" style="--d:110ms">
+            We put production agents into the systems you already run — so your
+            team stops doing the work that should run itself.
+          </p>
+        </div>
+
+        <nav class="cta-rail anim" style="--d:220ms" aria-label="Capabilities">
+          <a>Process Automation</a>
+          <a>Document Intelligence</a>
+          <a>Sales Outreach</a>
+          <a>AI Strategy</a>
+        </nav>
+      </div>
+
+      <!-- Accent bar: question (left) + blue pill action (right) -->
+      <div class="cta-bar anim" style="--d:300ms">
+        <p class="cta-q">Got A Workflow Worth Automating?</p>
+        <a class="cta-pill" href="#">Book a Demo Call <span class="arrow" aria-hidden="true">&rarr;</span></a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  /* ── Dot-matrix cluster — layered OVER the glow ───────────────────────
+     Regular LED-style grid; per-cell presence + brightness from two-octave
+     value-noise thresholding (clusters + empty gaps), MINIMIZED and concentrated
+     toward the bottom-right corner (presence ebbs out from BR). Light dots so
+     they read on both the dark surface and the blue glow. */
+  (function () {
+    var panel  = document.getElementById('panel');
+    var canvas = document.getElementById('dotfield');
+    var ctx    = canvas.getContext('2d');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var SPACING = 18, THRESH = 0.72, DOT_MIN = 0.8, DOT_MAX = 2.3;
+    var W = 0, H = 0, dpr = 1, dots = [];
+    var ptr = { x: -9999, y: -9999, tx: -9999, ty: -9999, active: false };
+
+    function buildNoise(cols, rows) {
+      function lattice(rx, ry) {
+        var g = [];
+        for (var i = 0; i <= rx + 1; i++) { g[i] = []; for (var j = 0; j <= ry + 1; j++) g[i][j] = Math.random(); }
+        return g;
+      }
+      var rxA = Math.max(2, Math.round(cols / 9)), ryA = Math.max(2, Math.round(rows / 6));
+      var rxB = rxA * 2, ryB = ryA * 2;
+      var A = lattice(rxA, ryA), B = lattice(rxB, ryB);
+      function sample(g, fx, fy) {
+        var x0 = Math.floor(fx), y0 = Math.floor(fy);
+        var xf = fx - x0, yf = fy - y0;
+        var sx = xf * xf * (3 - 2 * xf), sy = yf * yf * (3 - 2 * yf);
+        var top = g[x0][y0] + (g[x0 + 1][y0] - g[x0][y0]) * sx;
+        var bot = g[x0][y0 + 1] + (g[x0 + 1][y0 + 1] - g[x0][y0 + 1]) * sx;
+        return top + (bot - top) * sy;
+      }
+      return function (nx, ny) {
+        return sample(A, nx * rxA, ny * ryA) * 0.7 + sample(B, nx * rxB, ny * ryB) * 0.3;
+      };
+    }
+
+    function build() {
+      var rect = panel.getBoundingClientRect();
+      W = rect.width; H = rect.height;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var cols = Math.ceil(W / SPACING) + 1, rows = Math.ceil(H / SPACING) + 1;
+      var noise = buildNoise(cols, rows);
+      dots = [];
+      for (var c = 0; c < cols; c++) for (var r = 0; r < rows; r++) {
+        var x = c * SPACING, y = r * SPACING;
+        if (x > W + 2 || y > H + 2) continue;
+        var nx = x / W, ny = y / H;
+        var dxc = 1 - nx, dyc = 1 - ny;
+        var fall = 1 - Math.sqrt(dxc * dxc + dyc * dyc) / 1.05;   // presence ebbs out from the bottom-right corner
+        if (fall <= 0) continue;                                  // outside the BR region → no dots
+        var d = noise(nx, ny) * 0.5 + fall;                       // position dominates; noise adds cluster texture
+        if (d < THRESH) continue;                                 // carves gaps within the BR region
+        var intensity = Math.min(1, (d - THRESH) / (1.5 - THRESH));
+        dots.push({ x: x, y: y, base: 0.30 + intensity * 0.70, r: DOT_MIN + intensity * (DOT_MAX - DOT_MIN),
+                    ph: Math.random() * 6.2832, tw: 0.10 + Math.random() * 0.20 });
+      }
+    }
+
+    function draw(t) {
+      ctx.clearRect(0, 0, W, H);
+      ptr.x += (ptr.tx - ptr.x) * 0.12; ptr.y += (ptr.ty - ptr.y) * 0.12;
+      var R = 150, R2 = R * R;
+      for (var i = 0; i < dots.length; i++) {
+        var dt = dots[i], b = dt.base, rr = dt.r;
+        if (!reduce) {
+          b += Math.sin(t * 0.0016 + dt.ph) * dt.tw;                  // per-dot twinkle
+          b += Math.sin(t * 0.0006 + (dt.x + dt.y) * 0.012) * 0.06;   // slow diagonal drift wave
+        }
+        if (ptr.active) {
+          var dx = dt.x - ptr.x, dy = dt.y - ptr.y, dd = dx * dx + dy * dy;
+          if (dd < R2) { var f = 1 - Math.sqrt(dd) / R; b += f * 0.9; rr += f * 1.6; }
+        }
+        if (b <= 0.04) continue; if (b > 1) b = 1;
+        // light dots — pale blue (dim) → near-white (bright); read on dark + glow
+        var rC = Math.round(150 + 95 * b);   // 150→245
+        var gC = Math.round(200 + 50 * b);   // 200→250
+        ctx.fillStyle = 'rgba(' + rC + ',' + gC + ',255,' + (0.16 + 0.56 * b).toFixed(3) + ')';
+        ctx.beginPath(); ctx.arc(dt.x, dt.y, rr, 0, 6.2832); ctx.fill();
+      }
+    }
+
+    var raf = null;
+    function loop(t) { draw(t); raf = requestAnimationFrame(loop); }
+    function start() {
+      build();
+      if (raf) cancelAnimationFrame(raf);
+      if (reduce) { draw(0); return; }
+      raf = requestAnimationFrame(loop);
+    }
+    panel.addEventListener('pointermove', function (e) {
+      var rect = panel.getBoundingClientRect();
+      ptr.tx = e.clientX - rect.left; ptr.ty = e.clientY - rect.top;
+      if (ptr.x < -1000) { ptr.x = ptr.tx; ptr.y = ptr.ty; }
+      ptr.active = true;
+    });
+    panel.addEventListener('pointerleave', function () { ptr.active = false; ptr.tx = -9999; ptr.ty = -9999; });
+    var rt = null;
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(start, 180); });
+    start();
+
+    /* Staggered scroll-in reveal — matches the catalog has-js/--d pattern. */
+    if (!('IntersectionObserver' in window)) { panel.classList.add('reveal'); }
+    else {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) { if (en.isIntersecting) { panel.classList.add('reveal'); io.disconnect(); } });
+      }, { threshold: 0.15 });
+      io.observe(panel);
+    }
+  })();
+</script>
+</body>
+</html>

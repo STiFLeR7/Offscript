@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CTA orbit band</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — CTA orbit band                    from component-cta-orbit.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **The one close whose emphasis is creative rather than
+              typographic.** The profile says so directly — media presence `l`,
+              anchored right, "the treatment is the point" — and it is the only
+              thing separating this section from the two plainer closes beside
+              it. So the right track had to keep carrying a subject. What changed
+              is that the subject is now real.
+
+  STRUCTURE   Unchanged. A two-track band — content left at `minmax(0, 560px)`,
+              the creative right — headline, supporting line, two controls. DOM,
+              scripts, ids, `data-*`, `aria-*` and every behavioural hook are
+              byte-compatible with the frozen original (DR-22). The track
+              proportion is the composition and is left exactly as authored. The
+              v2 file is beside this one in `_v2/`.
+
+  THE SURFACE Two abstract creative layers went: the band's two-hue diagonal
+              ramp, and the concentric ring stack that was standing in for a
+              subject on the right. They are replaced by an approved environment,
+              `cliffside-muted`, focus `50% 42%`, carried as ONE background stack
+              — one stack because a blend mode composites against what is beneath
+              it in the SAME background, so grain on a pseudo-element resolves
+              `overlay` against transparency and renders as grey static. The URLs
+              are written out rather than reached through `--cr-env-*`, because a
+              `url()` inside a custom property resolves against the CONSUMING
+              document and fails silently.
+
+              The rings and the veil are frozen DOM, so they are made INERT
+              rather than deleted — `display:none`, and their rule bodies gone
+              with them. Precedent: `tabs-panel-below`.
+
+  DR-46, AND THE GRID ALREADY HELD THE ANSWER
+              v2 put white type on the ramp and added a left veil to win the
+              contrast back, which is the case DR-46 refuses: *if the type was
+              readable only because something sat on top, the photograph was a
+              surface.* The split this section already declares is the remedy —
+              the content track takes its own opaque dark card, and the
+              environment is seen in the track that carries no type at all. No
+              veil, no ramp, nothing laid over the picture.
+
+              Remove the photograph and not one word changes legibility. That is
+              the test, and it passes by construction rather than by measurement.
+
+  ACCENT      One moment. The strategy call. The second control is a hairline
+              ghost. The knobs were solid white discs carrying a brand-blue
+              glyph — a second and third colour event on the two elements that
+              should read as one affordance each; they are now an outline in the
+              control's own ink, which is what lets the arrow keep its 4px nudge
+              without the disc announcing itself. The hover step of the action
+              takes the inverse label, because the deep emphasis step is dark
+              enough that the paired light foreground stops measuring on it.
+
+  RESPONSIVE  The original's breakpoints (1024 / 640), unchanged. Below 1024 the
+              band is one track, so the card fills it and the environment reads
+              as the frame around it — the same construction, seen edge-on. Type
+              steps on the pack's ramp; `clamp()` never appears.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+    font-size: var(--cr-text-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Page band — the card sits inside the one alignment edge */
+  .section {
+    padding: var(--cr-space-2xl) var(--cr-page-gutter);
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }
+
+  /* ── The band — an approved environment, not a generated ramp ───────── */
+  .banner {
+    position: relative; overflow: hidden;
+    border-radius: var(--cr-radius-card);
+    display: grid;
+    grid-template-columns: minmax(0, 560px) 1fr;
+    align-items: center;
+    min-height: 480px;
+    padding: var(--cr-space-m);
+    /* THE STANDARD CREATIVE TREATMENT. One stack, three layers, in this
+       order: grain on top, grunge under it, the environment underneath
+       both. The last position is the asset's measured focus, not a guess. */
+    background-color: var(--cr-bg-dark);
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-cliffside-muted.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 50% 42%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+  }
+
+  /* The rings and the veil are the abstract decoration this pass removes.
+     They are frozen DOM, so they are made inert rather than deleted. */
+  .orbit { display: none; }
+  .scrim { display: none; }
+
+  /* ── The content track — its own opaque surface ──────────────────────
+     Nothing in here draws its contrast from the picture beside it. */
+  .content {
+    position: relative; z-index: 4;
+    max-width: 560px;
+    background: var(--cr-bg-dark);
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-m);
+  }
+
+  .headline {
+    margin: 0 0 var(--cr-space-s);
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h2);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-inverse);
+  }
+  /* The supporting line is the same ink held back, never the secondary text
+     token — that is a page-ground value and measures ~2.3:1 here. */
+  .sub {
+    margin: 0 0 var(--cr-space-m);
+    max-width: var(--cr-measure-body);
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-inverse);
+    opacity: .74;
+  }
+
+  .actions { display: flex; gap: var(--cr-space-xs); flex-wrap: wrap; }
+
+  /* ── The controls — the pill radius is retired (DR-25) ───────────────── */
+  .btn {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    border-radius: var(--cr-radius-control);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    letter-spacing: 0;
+    cursor: pointer;
+    border: var(--cr-stroke) solid transparent;
+    transition: background .16s ease, border-color .16s ease, color .16s ease, transform .12s ease;
+  }
+  /* The knob is an outline in the control's own ink, so the arrow can keep
+     its nudge without the disc becoming a colour event of its own. */
+  .btn .knob {
+    flex-shrink: 0;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: transparent;
+    border: var(--cr-stroke) solid currentColor;
+    display: flex; align-items: center; justify-content: center;
+    line-height: var(--cr-leading-heading);
+    transition: transform .16s ease;
+  }
+  .btn:hover .knob { transform: translateX(4px); }
+  .btn:active { transform: scale(.97); }
+  .btn:focus-visible {
+    outline: var(--cr-stroke) solid var(--cr-text-inverse);
+    outline-offset: var(--cr-stroke);
+  }
+
+  /* The one accent moment. */
+  .btn-primary { background: var(--cr-accent-orange); color: var(--cr-on-accent-light); }
+  .btn-primary:hover { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+
+  /* The alternative — hairline ghost on the dark card */
+  .btn-ghost {
+    background: transparent; color: var(--cr-text-inverse);
+    border-color: var(--cr-border-default);
+  }
+  .btn-ghost:hover { border-color: var(--cr-text-inverse); }
+
+  /* ── Scroll-reveal ──────────────────────────────────────────────────── */
+  .has-js .anim {
+    opacity: 0; transform: translateY(26px);
+    transition: opacity .7s cubic-bezier(.2,.7,.2,1) var(--d, 0ms),
+                transform .7s cubic-bezier(.2,.7,.2,1) var(--d, 0ms);
+  }
+  .banner.reveal .anim { opacity: 1; transform: none; }
+  /* Matched to the trigger's specificity — a guard that loses the cascade is
+     not a guard. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .anim,
+    .banner.reveal .anim { opacity: 1; transform: none; transition: none; }
+    .btn, .btn .knob { transition: none; }
+  }
+
+  /* ── Responsive — the ORIGINAL's breakpoints ─────────────────────────── */
+  @media (max-width: 1024px) {
+    .banner {
+      grid-template-columns: 1fr; min-height: 0;
+      padding: var(--cr-space-s);
+    }
+  }
+  @media (max-width: 640px) {
+    .banner { padding: var(--cr-space-xs); }
+    .content { max-width: 100%; padding: var(--cr-space-s); }
+    .actions { flex-direction: column; align-items: stretch; }
+    .btn { justify-content: space-between; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. Nothing is `directed`: the two-track split this section
+     already declares is what carried the DR-46 move, so the track proportion and
+     the band floor are untouched and only the surfaces inside them changed.
+  .actions  | column-gap             | spacing-scale
+  .actions  | font-size              | type-ramp
+  .actions  | row-gap                | spacing-scale
+  .banner   | border-radius          | radius-pair
+  .banner   | font-size              | type-ramp
+  .banner   | padding-bottom         | spacing-scale
+  .banner   | padding-left           | spacing-scale
+  .banner   | padding-right          | spacing-scale
+  .banner   | padding-top            | spacing-scale
+  .btn      | border-radius          | radius-pair
+  .btn      | column-gap             | spacing-scale
+  .btn      | padding-bottom         | spacing-scale
+  .btn      | padding-left           | spacing-scale
+  .btn      | padding-right          | spacing-scale
+  .btn      | padding-top            | spacing-scale
+  .btn      | row-gap                | spacing-scale
+  .content  | border-radius          | radius-pair
+  .content  | font-size              | type-ramp
+  .content  | padding-bottom         | spacing-scale
+  .content  | padding-left           | spacing-scale
+  .content  | padding-right          | spacing-scale
+  .content  | padding-top            | spacing-scale
+  .headline | font-size              | type-ramp
+  .headline | line-height            | type-ramp
+  .knob     | border-bottom-width    | stroke
+  .knob     | border-left-width      | stroke
+  .knob     | border-right-width     | stroke
+  .knob     | border-top-width       | stroke
+  .knob     | font-size              | type-ramp
+  .knob     | line-height            | type-ramp
+  .orbit    | font-size              | type-ramp
+  .sub      | font-size              | type-ramp
+  .sub      | line-height            | type-ramp
+  .sub      | max-width              | measure
+  br        | font-size              | type-ramp
+  br        | line-height            | type-ramp
+-->
+
+<section class="section"
+         data-archetype="editorial-split" data-hierarchy="closing" data-intent="close"
+         data-register="immersive" data-signature="editorial-photography" data-density="low"
+         data-screen-label="CTA orbit band">
+  <div class="banner">
+    <!-- Orbit: concentric filled bands bleeding off the right edge -->
+    <div class="orbit" aria-hidden="true">
+      <span class="b1"></span>
+      <span class="b2"></span>
+      <span class="b3"></span>
+      <span class="b4"></span>
+      <span class="b5"></span>
+      <span class="b6"></span>
+      <span class="b7"></span>
+      <span class="core"></span>
+    </div>
+    <div class="scrim" aria-hidden="true"></div>
+
+    <div class="content">
+      <h2 class="headline anim" style="--d:0ms">Plan Your Journey<br>To AI-Native.</h2>
+      <p class="sub anim" style="--d:110ms">
+        Most AI pilots stall before they ship. Ours go live in four weeks, billed
+        on outcomes. Let's scope yours.
+      </p>
+      <div class="actions anim" style="--d:220ms">
+        <button class="btn btn-primary">
+          Book a Strategy Call
+          <span class="knob" aria-hidden="true">&rarr;</span>
+        </button>
+        <button class="btn btn-ghost">
+          Talk To An Architect
+          <span class="knob" aria-hidden="true">&rarr;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var banner = document.querySelector(".banner");
+    if (!banner) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { banner.classList.add("reveal"); io.disconnect(); }
+      });
+    }, { threshold: 0.15 });
+    io.observe(banner);
+  })();
+</script>
+</body>
+</html>

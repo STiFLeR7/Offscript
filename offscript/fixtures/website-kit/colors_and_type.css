@@ -1,0 +1,10 @@
+:root {
+  --cr-bg: #ffffff;
+  --cr-fg: #111111;
+  --cr-accent: #3366ff;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/Inter.woff2') format('woff2');
+}

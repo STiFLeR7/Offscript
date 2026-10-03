@@ -1,0 +1,138 @@
+<!-- CURATED EXEMPLAR — archetype: feature-grid. Distilled from apa-landing.html #cap. Match the rhythm/discipline; do NOT clone. -->
+<section id="features" class="cr-band-ink cr-on-dark cr-section" aria-label="Capabilities">
+  <style>
+    /* Doc-scoped: feature-grid LAYOUT + the in-card mini-creatives only.
+       Surfaces, bands, headings, eyebrow, cards, paragraphs and icons are
+       the example token system (.cr-band-ink / .cr-section / .cr-container /
+       .cr-eyebrow / .cr-h-section / .cr-card / .cr-card-dark / .cr-h-card /
+       .cr-p / .cr-ico) — not re-styled here. */
+
+    /* two big light cards — grid + card-internal stacking */
+    .ft-bigs { display: grid; grid-template-columns: 1fr 1fr; gap: var(--cr-space-6); margin-top: var(--cr-space-15); }
+    .ft-big { display: flex; flex-direction: column; gap: var(--cr-space-3); }
+    /* light-island text correction — white .cr-card surfaces sit inside the dark band,
+       so their title/body opt back out of the .cr-on-dark inverse colours */
+    #features .ft-big .cr-h-card { color: var(--cr-ink); }
+    #features .ft-big .cr-p { color: var(--cr-fg-2); max-width: 420px; }
+
+    /* four small dark cards — grid + card-internal stacking */
+    .ft-smalls { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--cr-space-6); margin-top: var(--cr-space-6); }
+    .ft-small { display: flex; flex-direction: column; gap: var(--cr-space-3); }
+    #features .ft-small .cr-ico { stroke: var(--cr-brand); }   /* brand-stroked tile icon (house .cr-ico = currentColor) */
+
+    /* in-card mini-creative: three app mini-panels (lines + a green confirm) */
+    .ft-apps { margin-top: auto; padding-top: var(--cr-space-4);
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--cr-space-3); }
+    .ft-app { border: 1px solid var(--cr-line); border-radius: var(--cr-radius-md); overflow: hidden;
+      display: flex; flex-direction: column; }
+    .ft-app-bar { display: flex; align-items: center; gap: 7px; padding: 7px 11px;
+      border-bottom: 1px solid var(--cr-line); background: var(--cr-bg-grey-50);
+      font-family: var(--cr-font-display); font-weight: 700; font-size: 12px; color: var(--cr-fg); }
+    .ft-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cr-brand); flex: none; }
+    .ft-app-body { padding: 10px 11px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .ft-line { height: 7px; border-radius: var(--cr-radius-pill); background: var(--cr-bg-grey-100); }
+    .ft-line.w90 { width: 90%; } .ft-line.w70 { width: 70%; } .ft-line.w50 { width: 50%; }
+    .ft-confirm { margin-top: 6px; display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; color: var(--cr-success); }
+    .ft-confirm svg { width: 12px; height: 12px; stroke: var(--cr-success); stroke-width: 2.6;
+      fill: none; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+    /* in-card mini-creative: connected-systems panel */
+    .ft-conn { margin-top: auto; border: 1px solid var(--cr-line); border-radius: var(--cr-radius-md); overflow: hidden; }
+    .ft-conn-head { display: flex; align-items: center; justify-content: space-between; padding: 9px 13px;
+      border-bottom: 1px solid var(--cr-line); background: var(--cr-bg-grey-50);
+      font-family: var(--cr-font-display); font-weight: 700; font-size: 12px; color: var(--cr-fg); }
+    .ft-conn-count { font-weight: 600; font-size: 11px; color: var(--cr-success);
+      background: var(--cr-success-100); padding: 3px 9px; border-radius: var(--cr-radius-pill); }
+    .ft-conn-row { display: flex; align-items: center; justify-content: space-between; gap: var(--cr-space-3);
+      padding: 8px 13px; border-bottom: 1px solid var(--cr-line); font-size: 13px; }
+    .ft-conn-row:last-child { border-bottom: 0; }
+    .ft-conn-sys { color: var(--cr-fg-2); }
+    .ft-conn-sys b { color: var(--cr-fg); font-weight: 600; }
+    .ft-conn-status { display: inline-flex; align-items: center; gap: 6px; font-size: 11px;
+      font-weight: 600; color: var(--cr-fg-3); white-space: nowrap; }
+    .ft-conn-status .ft-dot { background: var(--cr-success); }
+
+    /* motion — transform-only entrance (opacity stays 1 → preview never blank) */
+    .ft-reveal { animation: ftRise .7s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--d, 0s); }
+    @keyframes ftRise { from { transform: translateY(16px); } to { transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .ft-reveal { animation: none; } }
+
+    @media (max-width: 900px) {
+      .ft-bigs { grid-template-columns: 1fr; }
+      .ft-smalls { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+
+  <div class="cr-container">
+    <div class="cr-head ft-reveal" style="--d:.05s">
+      <span class="cr-eyebrow">What the agents do</span>
+      <h2 class="cr-h-section">A Taskforce That Works the Way Your Best People Would &mdash; at <span class="cr-accent">Machine Scale</span>.</h2>
+    </div>
+
+    <div class="ft-bigs">
+      <article class="cr-card ft-big ft-reveal" style="--d:.12s">
+        <h3 class="cr-h-card">Decide and Act Across Systems</h3>
+        <p class="cr-p">Agents reason over live context and take action in the tools you already run &mdash; not one app at a time.</p>
+        <div class="ft-apps" aria-hidden="true">
+          <div class="ft-app">
+            <div class="ft-app-bar"><span class="ft-dot"></span>SAP</div>
+            <div class="ft-app-body">
+              <div class="ft-line w90"></div><div class="ft-line w70"></div>
+              <span class="ft-confirm"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>PO #4821 read</span>
+            </div>
+          </div>
+          <div class="ft-app">
+            <div class="ft-app-bar"><span class="ft-dot"></span>NetSuite</div>
+            <div class="ft-app-body">
+              <div class="ft-line w70"></div><div class="ft-line w50"></div>
+              <span class="ft-confirm"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Invoice posted</span>
+            </div>
+          </div>
+          <div class="ft-app">
+            <div class="ft-app-bar"><span class="ft-dot"></span>Gmail</div>
+            <div class="ft-app-body">
+              <div class="ft-line w90"></div><div class="ft-line w70"></div>
+              <span class="ft-confirm"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Vendor replied</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="cr-card ft-big ft-reveal" style="--d:.2s">
+        <h3 class="cr-h-card">One Agent, Your Whole Stack</h3>
+        <p class="cr-p">It moves between systems to finish the job &mdash; reading, deciding, and writing back wherever the work lives.</p>
+        <div class="ft-conn" aria-hidden="true">
+          <div class="ft-conn-head"><span>Connected systems</span><span class="ft-conn-count">4 live</span></div>
+          <div class="ft-conn-row"><span class="ft-conn-sys"><b>ERP</b> &middot; NetSuite</span><span class="ft-conn-status"><span class="ft-dot"></span>Connected</span></div>
+          <div class="ft-conn-row"><span class="ft-conn-sys"><b>CRM</b> &middot; Salesforce</span><span class="ft-conn-status"><span class="ft-dot"></span>Connected</span></div>
+          <div class="ft-conn-row"><span class="ft-conn-sys"><b>Email</b> &middot; Gmail</span><span class="ft-conn-status"><span class="ft-dot"></span>Connected</span></div>
+          <div class="ft-conn-row"><span class="ft-conn-sys"><b>Sheets</b> &middot; Google</span><span class="ft-conn-status"><span class="ft-dot"></span>Connected</span></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="ft-smalls">
+      <article class="cr-card-dark ft-small ft-reveal" style="--d:.08s">
+        <svg class="cr-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+        <h4 class="cr-h-card">Find the Bottleneck</h4>
+        <p class="cr-p">Spot the highest-cost friction worth automating first.</p>
+      </article>
+      <article class="cr-card-dark ft-small ft-reveal" style="--d:.14s">
+        <svg class="cr-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <h4 class="cr-h-card">Work Continuously</h4>
+        <p class="cr-p">24/7, no queue, no backlog, no Monday pile-up.</p>
+      </article>
+      <article class="cr-card-dark ft-small ft-reveal" style="--d:.2s">
+        <svg class="cr-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>
+        <h4 class="cr-h-card">Escalate When Unsure</h4>
+        <p class="cr-p">Human-in-the-loop guardrails you define and control.</p>
+      </article>
+      <article class="cr-card-dark ft-small ft-reveal" style="--d:.26s">
+        <svg class="cr-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l6-6 4 4 7-7"/><path d="M14 7h6v6"/></svg>
+        <h4 class="cr-h-card">Scale Without Headcount</h4>
+        <p class="cr-p">Add capacity to a process without adding hires.</p>
+      </article>
+    </div>
+  </div>
+</section>

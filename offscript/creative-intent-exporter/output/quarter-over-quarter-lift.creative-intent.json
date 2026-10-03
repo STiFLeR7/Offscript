@@ -1,0 +1,11 @@
+{
+  "id": "quarter-over-quarter-lift",
+  "contractVersion": 1,
+  "digest": "sha256:3864915fe925d3d791480c097ec0b437004cd754eb080b7e19f936dfe5e0bce1",
+  "belief": "this quarter's performance beat last quarter's by a clear, specific margin",
+  "feature": "analytics",
+  "ratio": "4:3",
+  "camera": "component",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

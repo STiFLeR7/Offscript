@@ -1,0 +1,147 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../_card.css">
+<style>
+  /* ─────────────────────────────────────────────────────────────────────
+     DATA VIZ · CLUSTER  (doc-scoped .viz-* — pure HTML/CSS, no JS)
+     Grouped vertical bars — two series across categories. Governing RULES live in
+     README-DATA-VIZ.md; the notes below are this idiom's MECHANICS only (doc-scoped).
+
+     What it's for (Rulebook §7–§8): a Level-3 categorical dataset compared across two
+     series (e.g. before vs. after, by function) → a grouped bar chart (the first-choice
+     idiom in the §8 hierarchy). ZERO baseline always — bars grow from the hairline floor,
+     so length is honestly proportional (Rulebook §5).
+
+     Colour (Rulebook §4 — marks are never navy): the subject series (.viz-cbar--sub) is a
+     quiet same-hue accent gradient var(--accent) (deep at the base → a gentle lift); the
+     reference series (.viz-cbar--ref) is the flat inert tonal var(--surface), same hue.
+     Both from one .tone-*. Direct value labels sit above each bar (§9 — labels over legends).
+
+     ⚠ DEVIATIONS (user-directed, flagged in-file):
+       · The SUBJECT value label matches its bar (color:var(--accent)); the reference label stays
+         neutral. §4 normally keeps labels in dark ink — Rulebook unchanged (SSOT), flagged here.
+       · Specimen 3 is a MULTI-ACCENT variation: each group carries its own .tone-* (a distinct hue
+         family) so the subject bars are NOT all one colour. §4/§9 normally say "subject = accent,
+         rest tonal; no rainbow" — kept restrained (brand tonal accents), the documented exception.
+         Its colour-coded legend is dropped (one legend can't carry per-group colours); the value
+         labels + category labels carry it instead.
+     ───────────────────────────────────────────────────────────────────── */
+  .viz-cluster      { display:flex; align-items:flex-end; gap:8mm; height:62mm; border-bottom:1px solid var(--cr-keyline); padding-top:7mm; }
+  .viz-cluster-grp  { flex:1; display:flex; flex-direction:column; align-items:center; height:100%; }
+  .viz-cbars        { flex:1; width:100%; display:flex; align-items:flex-end; justify-content:center; gap:3mm; }
+  .viz-cbar         { width:13mm; border-radius:3px 3px 0 0; position:relative; min-height:3px; }   /* height:% set inline = the value */
+  .viz-cbar--ref    { background:var(--surface, var(--cr-tone-periwinkle)); }                       /* inert tonal reference */
+  .viz-cbar--sub    { background:var(--accent);                                                     /* §4: subject = accent gradient, never navy */
+                      background:linear-gradient(0deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 55%, #fff) 100%); }
+  .viz-cbar-val     { position:absolute; top:-6mm; left:50%; transform:translateX(-50%); font:600 13px/1 var(--font-display); color:var(--cr-charcoal); }
+  .viz-cbar--sub .viz-cbar-val { color:var(--accent); }   /* ⚠ §4 dev: subject value label matches its bar (accent); reference label stays neutral */
+  .viz-cluster-cat  { margin-top:3.5mm; font:400 13px/1.3 var(--font-body); color:var(--cr-graphite); text-align:center; }
+
+  /* shared legend (subject vs. reference swatches) */
+  .viz-legend       { display:flex; flex-wrap:wrap; gap:9mm; align-items:center; }
+  .viz-legend span  { display:inline-flex; align-items:center; gap:7px; font:600 var(--fs-eyebrow)/1.4 var(--font-body); letter-spacing:var(--tracking-eyebrow); text-transform:uppercase; color:var(--cr-graphite); }
+  .viz-legend i     { width:12px; height:12px; border-radius:var(--radius-sm); flex-shrink:0; }
+  .sw-ref           { background:var(--surface, var(--cr-tone-periwinkle)); }   /* inert tonal */
+  .sw-sub           { background:var(--accent); }                                /* matches the accent subject bars */
+  .viz-flag         { font:400 13px/1.5 var(--font-body); color:var(--cr-graphite); }
+
+  /* preview-page chrome */
+  .viz-demo  { max-width:178mm; display:flex; flex-direction:column; gap:38px; }
+  .viz-caveat{ font:400 13px/1.55 var(--font-body); color:var(--cr-graphite); max-width:178mm; margin-top:26px; }
+</style>
+</head>
+<body style="background:#FFFFFF">
+<div class="viz-demo">
+
+  <!-- (1) Full-width · two series across four functions -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">1 · Full width · two series, four categories, zero baseline</div>
+    <div class="viz-legend" style="margin-bottom:7mm">
+      <span><i class="sw-ref"></i>Manual today</span>
+      <span><i class="sw-sub"></i>With AI integrated</span>
+    </div>
+    <div class="viz-cluster tone-periwinkle">
+      <div class="viz-cluster-grp"><div class="viz-cbars">
+        <div class="viz-cbar viz-cbar--ref" style="height:25%"><span class="viz-cbar-val">30</span></div>
+        <div class="viz-cbar viz-cbar--sub" style="height:79%"><span class="viz-cbar-val">95</span></div>
+      </div><div class="viz-cluster-cat">Finance ops</div></div>
+      <div class="viz-cluster-grp"><div class="viz-cbars">
+        <div class="viz-cbar viz-cbar--ref" style="height:33%"><span class="viz-cbar-val">40</span></div>
+        <div class="viz-cbar viz-cbar--sub" style="height:92%"><span class="viz-cbar-val">110</span></div>
+      </div><div class="viz-cluster-cat">Customer service</div></div>
+      <div class="viz-cluster-grp"><div class="viz-cbars">
+        <div class="viz-cbar viz-cbar--ref" style="height:21%"><span class="viz-cbar-val">25</span></div>
+        <div class="viz-cbar viz-cbar--sub" style="height:58%"><span class="viz-cbar-val">70</span></div>
+      </div><div class="viz-cluster-cat">Sales ops</div></div>
+      <div class="viz-cluster-grp"><div class="viz-cbars">
+        <div class="viz-cbar viz-cbar--ref" style="height:29%"><span class="viz-cbar-val">35</span></div>
+        <div class="viz-cbar viz-cbar--sub" style="height:71%"><span class="viz-cbar-val">85</span></div>
+      </div><div class="viz-cluster-cat">Supply chain</div></div>
+    </div>
+    <p class="viz-flag" style="margin-top:6mm">Tasks per person per week, indexed and illustrative (scale 0–120) — representative for planning, measured against your own baseline.</p>
+  </div>
+
+  <!-- (2) Compact · three categories, a different tone -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">2 · Compact · three categories, a different <code>.tone-*</code></div>
+    <div class="viz-legend" style="margin-bottom:7mm">
+      <span><i class="sw-ref"></i>Before</span>
+      <span><i class="sw-sub"></i>After</span>
+    </div>
+    <div class="viz-cluster tone-sage" style="max-width:120mm">
+      <div class="viz-cluster-grp"><div class="viz-cbars">
+        <div class="viz-cbar viz-cbar--ref" style="height:28%"><span class="viz-cbar-val">28</span></div>
+        <div class="viz-cbar viz-cbar--sub" style="height:90%"><span class="viz-cbar-val">90</span></div>
+      </div><div class="viz-cluster-cat">Claims</div></div>
+      <div class="viz-cluster-grp"><div class="viz-cbars">
+        <div class="viz-cbar viz-cbar--ref" style="height:42%"><span class="viz-cbar-val">42</span></div>
+        <div class="viz-cbar viz-cbar--sub" style="height:76%"><span class="viz-cbar-val">76</span></div>
+      </div><div class="viz-cluster-cat">Onboarding</div></div>
+      <div class="viz-cluster-grp"><div class="viz-cbars">
+        <div class="viz-cbar viz-cbar--ref" style="height:20%"><span class="viz-cbar-val">20</span></div>
+        <div class="viz-cbar viz-cbar--sub" style="height:64%"><span class="viz-cbar-val">64</span></div>
+      </div><div class="viz-cluster-cat">Reporting</div></div>
+    </div>
+    <p class="viz-flag" style="margin-top:6mm">Indexed and illustrative (scale 0–100) — representative for planning.</p>
+  </div>
+
+  <!-- (3) Multi-accent (deviation) · each group its own .tone-*; subject value labels match their bar -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">3 · Multi-accent (⚠ §4/§9 deviation) · each group its own accent — not all subject bars one colour; value labels match their bar</div>
+    <div class="viz-cluster">
+      <div class="viz-cluster-grp tone-periwinkle"><div class="viz-cbars">
+        <div class="viz-cbar viz-cbar--ref" style="height:27%"><span class="viz-cbar-val">32</span></div>
+        <div class="viz-cbar viz-cbar--sub" style="height:80%"><span class="viz-cbar-val">96</span></div>
+      </div><div class="viz-cluster-cat">Underwriting</div></div>
+      <div class="viz-cluster-grp tone-sky"><div class="viz-cbars">
+        <div class="viz-cbar viz-cbar--ref" style="height:38%"><span class="viz-cbar-val">45</span></div>
+        <div class="viz-cbar viz-cbar--sub" style="height:90%"><span class="viz-cbar-val">108</span></div>
+      </div><div class="viz-cluster-cat">Claims</div></div>
+      <div class="viz-cluster-grp tone-sage"><div class="viz-cbars">
+        <div class="viz-cbar viz-cbar--ref" style="height:23%"><span class="viz-cbar-val">28</span></div>
+        <div class="viz-cbar viz-cbar--sub" style="height:60%"><span class="viz-cbar-val">72</span></div>
+      </div><div class="viz-cluster-cat">Servicing</div></div>
+      <div class="viz-cluster-grp tone-lilac"><div class="viz-cbars">
+        <div class="viz-cbar viz-cbar--ref" style="height:32%"><span class="viz-cbar-val">38</span></div>
+        <div class="viz-cbar viz-cbar--sub" style="height:73%"><span class="viz-cbar-val">88</span></div>
+      </div><div class="viz-cluster-cat">Compliance</div></div>
+    </div>
+    <p class="viz-flag" style="margin-top:6mm">Within each group the lighter bar is <em>before</em>, the solid gradient <em>after</em>; each group is its own accent. Tasks per person per week, indexed and illustrative (scale 0–120) — representative for planning. Multi-accent is an intentional, flagged exception to §4/§9 — the Rulebook is unchanged.</p>
+  </div>
+
+  <div class="viz-caveat">
+    <strong>Cluster</strong> · grouped vertical bars for a <strong>two-series categorical</strong>
+    comparison (<strong>Level-3</strong> → bar chart, the §8 first choice). <strong>Governing rules:
+    the Data-Viz Rulebook</strong> (<code>README-DATA-VIZ.md</code> — §5 zero baseline + direct labels,
+    §4 colour, §6 integrity). Bars grow from a <strong>zero baseline</strong> so length is honestly
+    proportional; the subject series is a quiet same-hue <strong>accent gradient</strong>
+    (<code>var(--accent)</code>), the reference the flat inert <code>var(--surface)</code> — both from one
+    <code>.tone-*</code>. <strong>⚠ Deviations (flagged in-file):</strong> subject value labels are coloured
+    to <strong>match their bar</strong> (accent), and <strong>specimen 3</strong> is a restrained
+    <strong>multi-accent</strong> variation (each group its own tone) — §4/§9 normally keep labels dark
+    and the subject series accent over tonal, so the Rulebook stays unchanged (SSOT) and this component
+    carries the exceptions. Heights are an inline <code>height:%</code> — <strong>pure HTML/CSS, no
+    JavaScript.</strong> Doc-scoped (never in <code>colors_and_type.css</code>). Figures are illustrative
+    placeholders.
+  </div>
+
+</div>
+</body></html>

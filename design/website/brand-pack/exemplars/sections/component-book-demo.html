@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Book a Demo · Example Brand</title>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css">
+<!--
+  COMPONENT   — Book a Demo: full-viewport split-panel form
+  INSPIRATION — Eleveight/Framer Gallery: WHITE LEFT (form/meta) + DARK RIGHT (product preview).
+                Left = clean white, minimal, form-focused.
+                Right = dark atmospheric, large floating product-preview frame
+                (browser-chrome mockup of CR's agent dashboard).
+  COMPOSITION — min-height:100vh 2-col grid (45/55 split). LEFT: white bg, CR logo top,
+                headline + lede, clean filled-input form, pill submit. RIGHT: CR dark
+                cool navy gradient + blur-7 atmospheric + grain + orbit + rainbow glow
+                bloom + a browser-frame product mockup (app chrome bar + sidebar + agent
+                list with live status) floating centred in the panel.
+  SKIN        — Left = #fff clean. Right = dark CR brand surface.
+                Inputs: filled #F2F2F2 bg, 10px radius, brand-blue focus ring.
+                Product frame uses glassmorphism-lite: rgba white bg with hairline border.
+  MOTION      — Rainbow glow pulses (4s ease-in-out). Product frame fades up on load.
+                prefers-reduced-motion: static.
+  Standalone: links ../colors_and_type.css only; own <style>; no shared CSS.
+-->
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; font-family: var(--cr-font-body); -webkit-font-smoothing: antialiased; }
+
+  /* ── Full-viewport split: LEFT white / RIGHT dark ────────────────── */
+  .split {
+    display: grid;
+    grid-template-columns: 45fr 55fr;
+    min-height: 100vh;
+  }
+
+  /* ──────────────────────────────────────────────────────────────────
+     LEFT — clean white form panel
+  ───────────────────────────────────────────────────────────────────── */
+  .left {
+    background: #fff;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    padding: 72px 64px;
+  }
+
+  .l-logo { display: flex; align-items: center; gap: 9px; margin-bottom: 44px; }
+  .l-logo img { height: 24px; }
+  .l-logo span {
+    font-family: var(--cr-font-display); font-weight: 700; font-size: 15px;
+    color: var(--cr-ink); letter-spacing: -0.01em;
+  }
+
+  .l-headline {
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(28px,3.2vw,42px); line-height: 1.08; letter-spacing: -0.022em;
+    color: var(--cr-ink); margin: 0 0 10px;
+  }
+  .l-sub {
+    font-family: var(--cr-font-body); font-size: 15px; line-height: 1.6;
+    color: var(--cr-fg-3); margin: 0 0 36px; max-width: 360px;
+  }
+
+  /* Form */
+  .f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field { display: flex; flex-direction: column; margin-bottom: 14px; }
+  .field label {
+    font-family: var(--cr-font-body); font-weight: 600; font-size: 13px;
+    color: var(--cr-fg); margin-bottom: 6px;
+  }
+  .field input, .field textarea {
+    background: var(--cr-bg-grey-100); border: 1.5px solid transparent;
+    border-radius: 10px; padding: 11px 13px;
+    font-family: var(--cr-font-body); font-size: 14px; color: var(--cr-ink);
+    outline: none; resize: none;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .field input::placeholder, .field textarea::placeholder { color: #B2BAC8; }
+  .field input:focus, .field textarea:focus { border-color: var(--cr-brand); background: #fff; }
+  .field textarea { min-height: 80px; }
+
+  .submit-btn {
+    display: block; width: 100%; margin-top: 8px;
+    background: var(--cr-brand); color: #fff;
+    font-family: var(--cr-font-display); font-weight: 700; font-size: 15px;
+    letter-spacing: -0.01em; padding: 14px 24px;
+    border: none; border-radius: var(--cr-radius-pill); cursor: pointer;
+    transition: background .18s ease, transform .1s ease;
+  }
+  .submit-btn:hover { background: var(--cr-brand-700); }
+  .submit-btn:active { transform: scale(.98); }
+
+  .f-note {
+    font-family: var(--cr-font-body); font-size: 13px; color: var(--cr-fg-3);
+    text-align: center; margin-top: 16px;
+  }
+
+  /* ──────────────────────────────────────────────────────────────────
+     RIGHT — dark atmospheric panel with product preview
+  ───────────────────────────────────────────────────────────────────── */
+  .right {
+    position: relative; overflow: hidden;
+    background: linear-gradient(150deg, var(--cr-ink-cool) 0%, var(--cr-ink-cool) 55%, var(--cr-ink-card) 100%);
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 64px 56px;
+  }
+  /* Atmospheric bg */
+  .right::before {
+    content: ""; position: absolute; inset: 0;
+    background: url('../assets/creative-background/web/blur-7.jpg') center/cover no-repeat;
+    opacity: 0.30; mix-blend-mode: screen;
+  }
+  /* Grain */
+  .right::after {
+    content: ""; position: absolute; inset: 0;
+    background-image: url('../assets/texture-grain.png');
+    mix-blend-mode: overlay; opacity: 0.07; pointer-events: none;
+  }
+  /* Rainbow glow */
+  .glow-bloom {
+    position: absolute; width: 480px; height: 480px;
+    top: 55%; left: 45%; transform: translate(-50%,-50%);
+    border-radius: 50%; pointer-events: none; z-index: 0;
+    background: radial-gradient(circle at 40% 40%,
+      rgba(20,157,255,0.26) 0%, rgba(20,157,255,0.14) 25%,
+      rgba(30,110,110,0.10) 45%, rgba(30,110,110,0.05) 62%,
+      transparent 80%
+    );
+    animation: pulse-glow 4s ease-in-out infinite;
+  }
+  @keyframes pulse-glow {
+    0%,100% { transform:translate(-50%,-50%) scale(1);   opacity:1; }
+    50%      { transform:translate(-50%,-50%) scale(1.08); opacity:.78; }
+  }
+  /* Orbit ring */
+  .orbit-ring {
+    position: absolute; border-radius: 50%; pointer-events: none;
+    border: 1px solid rgba(255,255,255,0.06);
+    width: 600px; height: 600px;
+    top: 50%; left: 50%; transform: translate(-50%,-50%);
+  }
+
+  /* Right content */
+  .right-content { position: relative; z-index: 1; width: 100%; max-width: 480px; }
+
+  .r-eyebrow {
+    font-family: var(--cr-font-body); font-weight: 600; font-size: 12px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--cr-brand); margin: 0 0 12px;
+  }
+  .r-headline {
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(22px,2.6vw,32px); line-height: 1.1; letter-spacing: -0.02em;
+    color: #fff; margin: 0 0 32px;
+  }
+
+  /* ── Product preview frame ───────────────────────────────────────── */
+  .product-frame {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px; overflow: hidden;
+    animation: frame-up .7s ease both; animation-delay: 150ms;
+  }
+  @keyframes frame-up {
+    from { opacity:0; transform:translateY(16px); }
+    to   { opacity:1; transform:none; }
+  }
+
+  /* Browser chrome bar */
+  .frame-chrome {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .chrome-dots { display: flex; gap: 5px; }
+  .chrome-dots span {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+  }
+  .chrome-url {
+    flex: 1; text-align: center;
+    font-family: var(--cr-font-body); font-size: 11px;
+    color: rgba(255,255,255,0.30); letter-spacing: 0.02em;
+  }
+
+  /* App layout inside frame */
+  .app-layout {
+    display: grid; grid-template-columns: 140px 1fr;
+    min-height: 300px;
+  }
+  /* App sidebar */
+  .app-sidebar {
+    background: rgba(0,0,0,0.20);
+    border-right: 1px solid rgba(255,255,255,0.06);
+    padding: 16px 0;
+  }
+  .sidebar-logo {
+    display: flex; align-items: center; gap: 7px;
+    padding: 4px 16px 16px;
+    font-family: var(--cr-font-display); font-weight: 700; font-size: 12px;
+    color: rgba(255,255,255,0.80);
+    border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 10px;
+  }
+  .sidebar-logo-dot { width: 18px; height: 18px; background: var(--cr-brand); border-radius: 5px; flex:0 0 18px; }
+  .sidebar-item {
+    padding: 8px 16px;
+    font-family: var(--cr-font-body); font-size: 12px;
+    color: rgba(255,255,255,0.38);
+    cursor: default;
+  }
+  .sidebar-item.active {
+    color: #fff; background: rgba(255,255,255,0.08);
+    border-radius: 8px; margin: 0 8px;
+    padding: 8px; padding-left: 8px;
+  }
+  /* App main area */
+  .app-main { padding: 16px; }
+  .app-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .app-title {
+    font-family: var(--cr-font-display); font-weight: 700; font-size: 13px; color: #fff;
+  }
+  .app-badge {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
+    color: var(--cr-success); background: rgba(55,174,97,0.15);
+    border: 1px solid rgba(55,174,97,0.25); border-radius: 20px; padding: 2px 7px;
+  }
+  /* Agent rows */
+  .agent-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 10px; margin-bottom: 6px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .agent-dot { width: 7px; height: 7px; border-radius: 50%; flex:0 0 7px; }
+  .agent-dot.green  { background: var(--cr-success); }
+  .agent-dot.blue   { background: var(--cr-brand); }
+  .agent-dot.amber  { background: var(--cr-amber); }
+  .agent-name { font-size: 12px; color: rgba(255,255,255,0.80); flex:1; }
+  .agent-stat { font-size: 11px; color: rgba(255,255,255,0.38); white-space: nowrap; }
+  /* Mini chart strip */
+  .chart-strip { display: flex; align-items: flex-end; gap: 2px; height: 28px; margin-top: 14px; }
+  .chart-bar {
+    flex: 1; border-radius: 2px;
+    background: rgba(20,157,255,0.35);
+  }
+  .chart-bar.hi { background: rgba(20,157,255,0.70); }
+
+  /* ── Responsive ──────────────────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .split { grid-template-columns: 1fr; }
+    .left  { padding: 56px 40px; }
+    .right { padding: 56px 40px; min-height: 560px; }
+  }
+  @media (max-width: 560px) {
+    .left, .right { padding: 40px 24px; }
+    .f-row { grid-template-columns: 1fr; }
+    .app-layout { grid-template-columns: 1fr; }
+    .app-sidebar { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .glow-bloom { animation: none; }
+    .product-frame { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="split" data-screen-label="Book a Demo · split-panel form">
+
+  <!-- ── LEFT: clean white form ─────────────────────────────────── -->
+  <div class="left">
+
+    <div class="l-logo">
+      <img src="../assets/logo-color.svg" alt="Example Brand" onerror="this.style.display='none'">
+      <span>Example Brand</span>
+    </div>
+
+    <h2 class="l-headline">Book a Demo Call.</h2>
+    <p class="l-sub">30 minutes. We show you the agent running on workflows like yours — no pitch deck, no commitment.</p>
+
+    <form>
+      <div class="f-row">
+        <div class="field">
+          <label>First Name</label>
+          <input type="text" placeholder="Jane" autocomplete="given-name">
+        </div>
+        <div class="field">
+          <label>Last Name</label>
+          <input type="text" placeholder="Smith" autocomplete="family-name">
+        </div>
+      </div>
+      <div class="field">
+        <label>Company</label>
+        <input type="text" placeholder="Acme Corp" autocomplete="organization">
+      </div>
+      <div class="field">
+        <label>Work Email</label>
+        <input type="email" placeholder="jane@acmecorp.com">
+      </div>
+      <div class="field">
+        <label>What would you like to automate?</label>
+        <textarea placeholder="e.g. invoice reconciliation, claims triage, vendor onboarding…"></textarea>
+      </div>
+      <button type="submit" class="submit-btn">Book My Demo Call &rarr;</button>
+    </form>
+
+    <p class="f-note">30 minutes &middot; no commitment &middot; we show you the numbers first</p>
+  </div>
+
+  <!-- ── RIGHT: dark creative with product preview ──────────────── -->
+  <div class="right">
+    <div class="glow-bloom"></div>
+    <div class="orbit-ring"></div>
+
+    <div class="right-content">
+      <p class="r-eyebrow">Live in your stack</p>
+      <h3 class="r-headline">Your agents, running in production — not in a sandbox.</h3>
+
+      <!-- Product preview frame -->
+      <div class="product-frame">
+        <!-- Browser chrome -->
+        <div class="frame-chrome">
+          <div class="chrome-dots"><span></span><span></span><span></span></div>
+          <span class="chrome-url">app.example-brand.com / agents</span>
+        </div>
+        <!-- App UI -->
+        <div class="app-layout">
+          <!-- Sidebar -->
+          <div class="app-sidebar">
+            <div class="sidebar-logo">
+              <div class="sidebar-logo-dot"></div>
+              Example Brand
+            </div>
+            <div class="sidebar-item active">Agents</div>
+            <div class="sidebar-item">Workflows</div>
+            <div class="sidebar-item">Reports</div>
+            <div class="sidebar-item">Settings</div>
+          </div>
+          <!-- Main -->
+          <div class="app-main">
+            <div class="app-top">
+              <span class="app-title">Active Agents</span>
+              <span class="app-badge">3 Running</span>
+            </div>
+            <div class="agent-row">
+              <span class="agent-dot green"></span>
+              <span class="agent-name">Invoice Reconciliation</span>
+              <span class="agent-stat">1,247 today · 92% auto</span>
+            </div>
+            <div class="agent-row">
+              <span class="agent-dot blue"></span>
+              <span class="agent-name">Claims Triage</span>
+              <span class="agent-stat">384 today · 88% auto</span>
+            </div>
+            <div class="agent-row">
+              <span class="agent-dot amber"></span>
+              <span class="agent-name">Vendor Onboarding</span>
+              <span class="agent-stat">17 today · 79% auto</span>
+            </div>
+            <!-- Chart strip -->
+            <div class="chart-strip">
+              <div class="chart-bar" style="height:40%"></div>
+              <div class="chart-bar" style="height:55%"></div>
+              <div class="chart-bar" style="height:48%"></div>
+              <div class="chart-bar hi" style="height:75%"></div>
+              <div class="chart-bar" style="height:62%"></div>
+              <div class="chart-bar hi" style="height:88%"></div>
+              <div class="chart-bar" style="height:70%"></div>
+              <div class="chart-bar hi" style="height:95%"></div>
+              <div class="chart-bar" style="height:82%"></div>
+              <div class="chart-bar" style="height:68%"></div>
+              <div class="chart-bar hi" style="height:90%"></div>
+              <div class="chart-bar" style="height:74%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

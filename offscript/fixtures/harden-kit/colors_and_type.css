@@ -1,0 +1,10 @@
+:root {
+  --cr-bg: #ffffff;
+  --cr-fg: #111111;
+  --cr-accent: #3366ff;
+  --cr-radius-sm: 4px;
+  --cr-radius-md: 8px;
+  --cr-radius-lg: 16px;
+  --cr-font-body: Inter, system-ui, sans-serif;
+  --cr-font-display: Manrope, Inter, sans-serif;
+}

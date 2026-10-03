@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Contact</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — Contact (page body)                      component-contact.html
+  ════════════════════════════════════════════════════════════════════════
+  COMPOSITION  A contact-page body on PURE WHITE (nav + footer intentionally
+               OMITTED per the brief — this is the contact SECTION only).
+               • TOP block: a GIANT "Contact" headline (Urbanist ExtraBold, hero
+                 scale) → a left intro paragraph (~440px) → TWO ink CONTACT PILLS
+                 (phone + email, icon + text) → a full-width hairline rule.
+               • FORM block: a 2-col split — LEFT a grey helper paragraph |
+                 RIGHT a contact form: a 2-up row (Full Name / Company Name), a
+                 2-up row (Phone Number / E-mail Address), a full-width Comment
+                 textarea, then a Submit button.
+               • Inputs are UNDERLINE-style (bottom border only) with FLOATING
+                 LABELS (the placeholder label lifts to a caption on focus/fill).
+
+  INSPIRATION  A Carter-Ogunsola "Contact" architecture template. The giant
+               headline, intro, pill contact chips, rule, and 2-col helper|form
+               layout with underline inputs are reproduced; colours / cream-ish
+               bg / copy re-skinned to CR (nav + footer dropped per the brief).
+
+  RE-SKIN      Light blue-grey bg → PURE WHITE (brief). Copy → CR voice (ops
+               automation, no hype); `inquiries@example-brand.com`. Icons = Lucide
+               (`phone`, `mail`). The contact pills stay INK (`--cr-ink`, like the
+               source's dark chips); the Submit is the ONE brand-blue action
+               (blue leads every CR action; pops on white) — make it ink to stay
+               fully monochrome if preferred.
+
+  NO SHADOW    No shadow / blur / border boxes (charter). Inputs are single
+               hairlines; the focus underline + the floating label ARE the
+               affordance. Hover/focus live only on the real controls (pills,
+               inputs, Submit).
+
+  MOTION       (user choice) "Reveal + focus states" — on first viewport entry the
+               headline → intro → pills → rule → helper → form rows → Submit fade
+               up STAGGERED (IntersectionObserver, fires once). The form's focus
+               interactions are PURE CSS (no JS): on focus a brand-blue underline
+               DRAWS in (`scaleX`) and the placeholder label LIFTS to a caption
+               (also lifted when the field is filled, via `:not(:placeholder-shown)`)
+               — so the form is fully interactive even without JS. The reveal
+               hidden-state is `.has-js`-scoped (content shows without JS);
+               `prefers-reduced-motion` snaps in. Lucide drawn once.
+
+  RESPONSIVE   Headline scales `clamp(56→150px)`. The 2-col form block stacks
+               (helper over form) ≤900; the 2-up input rows collapse to one column
+               ≤620; pills wrap; padding steps down. Grid children carry
+               `min-width:0`.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  .cf-section, .cf-section * { box-sizing: border-box; }
+  .cf-section {
+    background: var(--cr-bg);
+    padding: 96px 100px 104px;
+    font-family: var(--cr-font-body);
+    color: var(--cr-fg);
+  }
+  .cf-wrap { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ─── top block ───────────────────────────────────────────────── */
+  .cf-title {
+    margin: 0;
+    font-family: var(--cr-font-display); font-weight: 800;
+    font-size: clamp(56px, 11vw, 150px); line-height: 0.98; letter-spacing: -0.03em;
+    color: var(--cr-ink);
+  }
+  .cf-intro {
+    margin: 34px 0 0; max-width: 440px;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 18px; line-height: 1.5;
+    color: var(--cr-fg);
+  }
+  .cf-pills { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 48px; }
+  .cf-pill {
+    display: inline-flex; align-items: center; gap: 11px;
+    background: var(--cr-ink); color: #fff;
+    border-radius: var(--cr-radius-pill); padding: 14px 24px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 15px;
+    text-decoration: none;
+    transition: transform .12s ease, background .2s ease;
+  }
+  .cf-pill i { width: 17px; height: 17px; stroke-width: 1.8; flex: none; }
+  .cf-pill:hover { background: #000; }
+  .cf-pill:active { transform: scale(.98); }
+  .cf-pill:focus-visible { outline: 2px solid var(--cr-brand); outline-offset: 2px; }
+
+  .cf-rule { border: 0; border-top: 1px solid var(--cr-line); margin: 64px 0 56px; }
+
+  /* ─── form block ──────────────────────────────────────────────── */
+  .cf-form-block {
+    display: grid;
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    column-gap: 64px;
+  }
+  .cf-helper {
+    margin: 4px 0 0; max-width: 360px; min-width: 0;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 16px; line-height: 1.6;
+    color: var(--cr-fg-3);
+  }
+
+  .cf-form { min-width: 0; }
+  .cf-row {
+    display: grid; grid-template-columns: 1fr 1fr; column-gap: 48px;
+    margin-bottom: 30px;
+  }
+
+  .cf-field { position: relative; min-width: 0; }
+  .cf-field--full { margin-bottom: 36px; }
+  .cf-input, .cf-textarea {
+    width: 100%; border: none; outline: none; background: none;
+    border-bottom: 1px solid var(--cr-line);
+    font-family: var(--cr-font-body); font-size: 16px; color: var(--cr-fg);
+    padding: 24px 0 11px;
+  }
+  .cf-textarea { resize: vertical; min-height: 96px; line-height: 1.5; }
+  .cf-label {
+    position: absolute; left: 0; top: 24px;
+    font-family: var(--cr-font-body); font-size: 16px; color: var(--cr-fg-3);
+    pointer-events: none; transform-origin: left top;
+    transition: transform .2s ease, color .2s ease;
+  }
+  /* float the label up on focus OR when the field has content */
+  .cf-input:focus + .cf-label,
+  .cf-input:not(:placeholder-shown) + .cf-label,
+  .cf-textarea:focus + .cf-label,
+  .cf-textarea:not(:placeholder-shown) + .cf-label {
+    transform: translateY(-23px) scale(0.8); color: var(--cr-fg-2);
+  }
+  .cf-input:focus + .cf-label, .cf-textarea:focus + .cf-label { color: var(--cr-brand); }
+  /* brand-blue underline draws in on focus */
+  .cf-field::after {
+    content: ""; position: absolute; left: 0; bottom: 0; height: 2px; width: 100%;
+    background: var(--cr-brand); transform: scaleX(0); transform-origin: left;
+    transition: transform .3s cubic-bezier(.16,1,.3,1);
+  }
+  .cf-field:focus-within::after { transform: scaleX(1); }
+
+  .cf-submit {
+    margin-top: 8px;
+    display: inline-flex; align-items: center;
+    background: var(--cr-brand); color: #fff;
+    border: none; border-radius: var(--cr-radius-pill);
+    padding: 14px 34px; cursor: pointer;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 15px;
+    transition: background .2s ease, transform .12s ease;
+  }
+  .cf-submit:hover { background: var(--cr-brand-700); }
+  .cf-submit:active { transform: scale(.97); }
+  .cf-submit:focus-visible { outline: 2px solid var(--cr-brand); outline-offset: 3px; }
+
+  /* ─── reveal (anti-race, fires once; no-JS shows all) ─────────── */
+  .has-js .cf-section [data-reveal] { opacity: 0; transform: translateY(20px); }
+  .has-js .cf-section [data-reveal].in-view {
+    animation: cfRise .65s cubic-bezier(.16,1,.3,1) forwards; animation-delay: var(--d, 0s);
+  }
+  @keyframes cfRise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .cf-section [data-reveal],
+    .has-js .cf-section [data-reveal].in-view { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* ─── responsive ──────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .cf-section { padding: 72px 56px 80px; }
+    .cf-form-block { grid-template-columns: minmax(0, 1fr); row-gap: 40px; }
+    .cf-helper { max-width: 520px; }
+  }
+  @media (max-width: 620px) {
+    .cf-section { padding: 56px 24px 64px; }
+    .cf-row { grid-template-columns: 1fr; row-gap: 30px; column-gap: 0; }
+    .cf-pill { font-size: 14px; padding: 13px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="cf-section" data-screen-label="Contact">
+  <div class="cf-wrap">
+
+    <!-- ── top ────────────────────────────────────────────────── -->
+    <h1 class="cf-title" data-reveal style="--d:0s">Contact</h1>
+    <p class="cf-intro" data-reveal style="--d:.08s">We're interested in the work that's slowing your team down. Tell us where the backlog is, and we'll show you where agents fit.</p>
+
+    <div class="cf-pills" data-reveal style="--d:.14s">
+      <a class="cf-pill" href="tel:+912049001200"><i data-lucide="phone"></i>+91 20 4900 1200</a>
+      <a class="cf-pill" href="mailto:inquiries@example-brand.com"><i data-lucide="mail"></i>inquiries@example-brand.com</a>
+    </div>
+
+    <hr class="cf-rule" data-reveal style="--d:.2s" />
+
+    <!-- ── form ───────────────────────────────────────────────── -->
+    <div class="cf-form-block">
+      <p class="cf-helper" data-reveal style="--d:.24s">If you have a workflow in mind &mdash; or want to see where automation could pay off &mdash; fill out the form below with your contact details and a short description of what your team is dealing with.</p>
+
+      <form class="cf-form" novalidate onsubmit="return false">
+        <div class="cf-row" data-reveal style="--d:.28s">
+          <div class="cf-field">
+            <input class="cf-input" type="text" id="cf-name" placeholder=" " autocomplete="name" />
+            <label class="cf-label" for="cf-name">Full Name</label>
+          </div>
+          <div class="cf-field">
+            <input class="cf-input" type="text" id="cf-company" placeholder=" " autocomplete="organization" />
+            <label class="cf-label" for="cf-company">Company Name</label>
+          </div>
+        </div>
+
+        <div class="cf-row" data-reveal style="--d:.34s">
+          <div class="cf-field">
+            <input class="cf-input" type="tel" id="cf-phone" placeholder=" " autocomplete="tel" />
+            <label class="cf-label" for="cf-phone">Phone Number</label>
+          </div>
+          <div class="cf-field">
+            <input class="cf-input" type="email" id="cf-email" placeholder=" " autocomplete="email" />
+            <label class="cf-label" for="cf-email">E-mail Address</label>
+          </div>
+        </div>
+
+        <div class="cf-field cf-field--full" data-reveal style="--d:.4s">
+          <textarea class="cf-textarea" id="cf-comment" placeholder=" "></textarea>
+          <label class="cf-label" for="cf-comment">Comment (optional)</label>
+        </div>
+
+        <button class="cf-submit" type="submit" data-reveal style="--d:.46s">Submit</button>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.cf-section');
+  if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
+  if (!sec) return;
+
+  function reveal() { sec.querySelectorAll('[data-reveal]').forEach(function (el) { el.classList.add('in-view'); }); }
+  if (reduce) { reveal(); return; }
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) { if (en.isIntersecting) { reveal(); io.disconnect(); } });
+    }, { threshold: 0.08 });
+    io.observe(sec);
+  } else { reveal(); }
+})();
+</script>
+
+</body>
+</html>

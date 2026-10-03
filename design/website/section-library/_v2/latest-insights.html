@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<!--
+  Example Brand — Latest Insights (resources / journal 3-up article grid)
+  ───────────────────────────────────────────────────────────────────────────
+  COMPOSITION (fidelity copy of the shared "Latest Insights" resources section):
+    • Header row on a warm band: big section title LEFT, a CTA cluster RIGHT
+      (text pill + a separate circular arrow knob). space-between, vertically
+      centered. (left/right roles follow the source — not hardcoded.)
+    • Below: THREE equal-width article cards, tight 24px gap, sitting directly on
+      the band (NO card surface / border / shadow — only the image is rounded).
+    • Each card top→bottom: a row of two bordered meta chips (CATEGORY · DATE) →
+      a landscape image (~7:5, rounded, object-fit:cover) → a 1-line title that
+      ellipsizes when long (source card 2 truncates the same way) → a 2-line
+      clamped description. Content volume matched: chips 2-up, title 1 line,
+      desc 2 lines, exactly as source.
+    • Card 1's image carries two faint floating glyph chips (lower-left), as the
+      source does on its first card only.
+  RE-SKIN (brand wins on hue + voice + fonts only; ignore the source's palette):
+    • Source saturated peach band → warmest existing token --cr-bg-warm-2 #F2F2F2
+      (flat band, no in-band gradient). Source ORANGE CTA → CR action = brand
+      blue #149DFF (white text/arrow). Source health-lifestyle photos → CR-domain
+      warm WORK/ops editorial photos (team collab / results / strategy meeting),
+      saved locally to assets/insights/. Article titles kept sentence-case
+      (editorial blog convention, matches source); section title Title Case.
+    • Frosted-glass overlay chips → FLAT translucent white (charter bans blur).
+    • Icons are inline Lucide SVG (arrow-up-right, bar-chart-3, hexagon) so they
+      render without any runtime JS and survive the screenshot-strip.
+  CARDS ARE LINKS → hover IS a real interaction (charter allows it): title→brand
+  blue + a subtle image zoom. No hover on the static chips.
+  MOTION: staggered entrance reveal (header → cards fade-up, 80/160/240ms). Reveal
+  defaults VISIBLE; an inline script opts in via html.js-reveal, so stripping the
+  <script> for screenshots leaves a clean still. Honors prefers-reduced-motion.
+  Inspiration: user-shared "Latest Insights" journal grid (layout only).
+  ───────────────────────────────────────────────────────────────────────────
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Example Brand — Latest Insights</title>
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--cr-bg);
+    font-family: var(--cr-font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .ins-section {
+    background: var(--cr-bg-warm-2);
+    padding: 88px 40px 96px;
+  }
+  .ins-well {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+  }
+
+  /* ── Header ──────────────────────────────────────────────────────── */
+  .ins-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 44px;
+  }
+  .ins-title {
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--cr-fg);
+    margin: 0;
+  }
+  .ins-cta { display: flex; align-items: center; gap: 12px; }
+  .ins-pill {
+    display: inline-flex;
+    align-items: center;
+    height: 52px;
+    padding: 0 28px;
+    border-radius: var(--cr-radius-pill);
+    background: var(--cr-brand);
+    color: #fff;
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: 16px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s ease;
+  }
+  .ins-pill:hover { background: var(--cr-brand-700); }
+  .ins-knob {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--cr-brand);
+    color: #fff;
+    text-decoration: none;
+    flex: none;
+    transition: background 0.2s ease;
+  }
+  .ins-knob:hover { background: var(--cr-brand-700); }
+  .ins-knob svg { width: 20px; height: 20px; transition: transform 0.2s ease; }
+  .ins-knob:hover svg { transform: translate(2px, -2px); }
+
+  /* ── Grid ────────────────────────────────────────────────────────── */
+  .ins-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .ins-card {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+  }
+  .ins-chips { display: flex; gap: 8px; margin-bottom: 14px; }
+  .ins-chip {
+    border: 1px solid var(--cr-line);
+    border-radius: var(--cr-radius-xs);
+    padding: 5px 10px;
+    font-family: var(--cr-font-body);
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--cr-fg-3);
+    white-space: nowrap;
+  }
+  .ins-chip--cat { color: var(--cr-fg); }
+
+  .ins-media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 7 / 5;
+    border-radius: var(--cr-radius-md);
+    overflow: hidden;
+    background: var(--cr-bg-grey-100);
+  }
+  .ins-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .ins-card:hover .ins-media img { transform: scale(1.04); }
+
+  /* card-1 floating glyphs (flat translucent — no blur, per charter) */
+  .ins-overlays {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .ins-glyph {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.82);
+    display: grid;
+    place-items: center;
+    color: var(--cr-fg);
+  }
+  .ins-glyph svg { width: 18px; height: 18px; opacity: 0.7; }
+
+  .ins-card-title {
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--cr-fg);
+    margin: 18px 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ins-card:hover .ins-card-title { text-decoration: underline; text-underline-offset: 3px; }
+  .ins-card-desc {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--cr-fg-2);
+    margin: 10px 0 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ── Entrance reveal (opt-in; defaults visible for clean stills) ──── */
+  html.js-reveal .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+                transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  html.js-reveal .reveal.in { opacity: 1; transform: none; }
+  html.js-reveal .ins-grid .ins-card:nth-child(1) { transition-delay: 0.08s; }
+  html.js-reveal .ins-grid .ins-card:nth-child(2) { transition-delay: 0.16s; }
+  html.js-reveal .ins-grid .ins-card:nth-child(3) { transition-delay: 0.24s; }
+  @media (prefers-reduced-motion: reduce) {
+    html.js-reveal .reveal {
+      opacity: 1 !important; transform: none !important; transition: none !important;
+    }
+    .ins-media img, .ins-knob svg { transition: none !important; }
+  }
+
+  /* ── Responsive ──────────────────────────────────────────────────── */
+  @media (max-width: 980px) {
+    .ins-grid { grid-template-columns: repeat(2, 1fr); }
+    .ins-card-title { font-size: 21px; }   /* fit 1-line titles in narrower 2-up cells */
+  }
+  @media (max-width: 640px) {
+    .ins-section { padding: 64px 24px 72px; }
+    .ins-head { margin-bottom: 30px; gap: 18px; }
+    .ins-grid { grid-template-columns: 1fr; gap: 30px; }
+    .ins-pill { height: 48px; padding: 0 24px; font-size: 15px; }
+    .ins-knob { width: 48px; height: 48px; }
+  }
+</style>
+</head>
+<body>
+  <!-- Resources / journal: header CTA over a 3-up article grid. -->
+  <section class="ins-section" data-screen-label="Latest insights — 3-up article grid">
+    <div class="ins-well">
+
+      <div class="ins-head reveal">
+        <h2 class="ins-title">Latest Insights</h2>
+        <div class="ins-cta">
+          <a class="ins-pill" href="#">Explore Journal</a>
+          <a class="ins-knob" href="#" aria-label="Explore the Example Brand journal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="ins-grid">
+
+        <a class="ins-card reveal" href="#">
+          <div class="ins-chips">
+            <span class="ins-chip ins-chip--cat">Automation</span>
+            <span class="ins-chip">02 Jun 2026</span>
+          </div>
+          <div class="ins-media">
+            <img src="../assets/../../brand-pack/assets/imagery/insights/insight-1.jpg" alt="An operations team working across laptops in a warm shared workspace" decoding="sync" />
+            <div class="ins-overlays" aria-hidden="true">
+              <span class="ins-glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></span>
+              <span class="ins-glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span>
+            </div>
+          </div>
+          <h3 class="ins-card-title">What agents take off your plate</h3>
+          <p class="ins-card-desc">Most teams automate single tasks. The larger gain is removing the handoffs between them, where time and accuracy quietly leak.</p>
+        </a>
+
+        <a class="ins-card reveal" href="#">
+          <div class="ins-chips">
+            <span class="ins-chip ins-chip--cat">Case Study</span>
+            <span class="ins-chip">28 May 2026</span>
+          </div>
+          <div class="ins-media">
+            <img src="../assets/../../brand-pack/assets/imagery/insights/insight-2.jpg" alt="Two operations leaders reviewing results beside a laptop and printed reports" decoding="sync" />
+          </div>
+          <h3 class="ins-card-title">How Meridian cut invoice cycle time by 60%</h3>
+          <p class="ins-card-desc">A four-week pilot moved approvals, matching, and exceptions onto agents that run beside the existing ERP.</p>
+        </a>
+
+        <a class="ins-card reveal" href="#">
+          <div class="ins-chips">
+            <span class="ins-chip ins-chip--cat">AI Strategy</span>
+            <span class="ins-chip">23 May 2026</span>
+          </div>
+          <div class="ins-media">
+            <img src="../assets/../../brand-pack/assets/imagery/insights/insight-3.jpg" alt="A team reviewing a strategy presentation in a meeting room" decoding="sync" />
+          </div>
+          <h3 class="ins-card-title">Where to begin with one workflow</h3>
+          <p class="ins-card-desc">A practical sequence for choosing the first workflow to automate before the platform decisions pile up.</p>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <script>
+    /* Opt in to the reveal only when JS runs — stripping this <script>
+       (screenshot pass) leaves every .reveal at its visible default. */
+    document.documentElement.classList.add('js-reveal');
+    (function () {
+      var well = document.querySelector('.ins-well');
+      if (!well) return;
+      var targets = well.querySelectorAll('.reveal');
+      var io = new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          targets.forEach(function (t) { t.classList.add('in'); });
+          obs.disconnect();
+        });
+      }, { threshold: 0.12 });
+      io.observe(well);
+    })();
+  </script>
+</body>
+</html>

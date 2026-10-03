@@ -1,0 +1,89 @@
+<!-- CURATED EXEMPLAR — archetype: testimonial. Distilled from apa-landing.html #cases. Match the rhythm/discipline; do NOT clone. -->
+<section id="testimonial" class="cr-section cr-band-warm" aria-label="Customer stories">
+  <style>
+    /* doc-scoped: card grid + monogram avatar + outcome stat-tile + trust-row layout + breakpoints ONLY.
+       Surfaces, headings, .cr-quote, .cr-num-display, chips & links are house-defined — never re-styled here. */
+    #testimonial .ts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--cr-space-6);
+      margin-top: var(--cr-space-12); }
+    #testimonial .ts-card { display: flex; flex-direction: column; }   /* .cr-card supplies surface + hairline + padding */
+    #testimonial .ts-whead { display: flex; align-items: center; gap: var(--cr-space-3); }
+    /* monogram avatar — tonal brand circle, no <img>; tone from reference defaults tokens */
+    #testimonial .ts-mono { width: 44px; height: 44px; flex: none; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--cr-brand-100); color: var(--cr-brand-700);
+      font-family: var(--cr-font-display); font-weight: 800; font-size: 16px; }
+    #testimonial .ts-tag { margin-left: auto; }
+    /* outcome footer — two stat tiles + read-story link, divided by a hairline */
+    #testimonial .ts-foot { display: flex; flex-wrap: wrap; align-items: flex-end;
+      gap: var(--cr-space-4) var(--cr-space-10); margin-top: var(--cr-space-8);
+      padding-top: var(--cr-space-6); border-top: 1px solid var(--cr-line); }
+    #testimonial .ts-fig { font-variant-numeric: tabular-nums; }
+    #testimonial .ts-more { margin-left: auto; align-self: flex-end; }
+    @media (max-width: 900px) { #testimonial .ts-grid { grid-template-columns: 1fr; } }
+  </style>
+
+  <div class="cr-container">
+    <div class="cr-head" data-reveal>
+      <span class="cr-eyebrow">Case Studies</span>
+      <h2 class="cr-h-section">Teams Like Yours, Already Live.</h2>
+    </div>
+
+    <div class="ts-grid">
+      <article class="cr-card ts-card" data-reveal style="--d:.05s">
+        <div class="ts-whead">
+          <span class="ts-mono" aria-hidden="true">NC</span>
+          <span class="cr-h-card">Northwind Capital</span>
+          <span class="cr-chip ts-tag"><span class="cr-dot"></span>Financial services</span>
+        </div>
+        <p class="cr-quote ts-quote">Claims-to-payout triage, cleared by an agent taskforce.</p>
+        <div class="ts-foot">
+          <div><span class="cr-num-display ts-fig" style="color:var(--cr-teal)">73%</span><span class="cr-caption">faster cycle time</span></div>
+          <div><span class="cr-num-display ts-fig">5</span><span class="cr-caption">FTE freed</span></div>
+          <a class="cr-link ts-more" href="#cta">Read story <span class="cr-arrow" aria-hidden="true">&rarr;</span></a>
+        </div>
+      </article>
+
+      <article class="cr-card ts-card" data-reveal style="--d:.12s; --accent:var(--cr-success)">
+        <div class="ts-whead">
+          <span class="ts-mono" aria-hidden="true">MH</span>
+          <span class="cr-h-card">Meridian Health</span>
+          <span class="cr-chip ts-tag"><span class="cr-dot"></span>Healthcare</span>
+        </div>
+        <p class="cr-quote ts-quote">Prior-authorization read, decided, and submitted.</p>
+        <div class="ts-foot">
+          <div><span class="cr-num-display ts-fig">3 wks</span><span class="cr-caption">to live</span></div>
+          <div><span class="cr-num-display ts-fig" style="color:var(--cr-teal)">99.6%</span><span class="cr-caption">accuracy</span></div>
+          <a class="cr-link ts-more" href="#cta">Read story <span class="cr-arrow" aria-hidden="true">&rarr;</span></a>
+        </div>
+      </article>
+
+      <article class="cr-card ts-card" data-reveal style="--d:.19s; --accent:var(--cr-teal)">
+        <div class="ts-whead">
+          <span class="ts-mono" aria-hidden="true">TB</span>
+          <span class="cr-h-card">TalentBridge</span>
+          <span class="cr-chip ts-tag"><span class="cr-dot"></span>Staffing</span>
+        </div>
+        <p class="cr-quote ts-quote">Candidate screening and scheduling, on autopilot.</p>
+        <div class="ts-foot">
+          <div><span class="cr-num-display ts-fig" style="color:var(--cr-teal)">4.2&times;</span><span class="cr-caption">throughput</span></div>
+          <div><span class="cr-num-display ts-fig">60%</span><span class="cr-caption">lower cost-per-hire</span></div>
+          <a class="cr-link ts-more" href="#cta">Read story <span class="cr-arrow" aria-hidden="true">&rarr;</span></a>
+        </div>
+      </article>
+
+      <article class="cr-card ts-card" data-reveal style="--d:.26s; --accent:var(--cr-amber)">
+        <div class="ts-whead">
+          <span class="ts-mono" aria-hidden="true">PL</span>
+          <span class="cr-h-card">Portline Logistics</span>
+          <span class="cr-chip ts-tag"><span class="cr-dot"></span>Supply chain</span>
+        </div>
+        <p class="cr-quote ts-quote">Invoice and PO reconciliation, matched and resolved.</p>
+        <div class="ts-foot">
+          <div><span class="cr-num-display ts-fig" style="color:var(--cr-teal)">$750K</span><span class="cr-caption">saved / yr</span></div>
+          <div><span class="cr-num-display ts-fig">0</span><span class="cr-caption">added headcount</span></div>
+          <a class="cr-link ts-more" href="#cta">Read story <span class="cr-arrow" aria-hidden="true">&rarr;</span></a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>

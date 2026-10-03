@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Example Brand — Dr. Scribe Product Brief (A4)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Design system tokens + A4 collateral layout. No frameworks, no network JS.
+     A DIFFERENT shape from index.html on purpose: 3 pages, an editorial split
+     cover, stacked content sections, and a statement-led close — same family,
+     not the same template. All composition uses system classes only.
+     One component per row — distinct components never sit side-by-side. -->
+<link rel="stylesheet" href="../colors_and_type.css" />
+<style>
+  /* Document-only helpers (system classes live in colors_and_type.css) */
+  .feat-title { font:500 var(--fs-h4)/1.3 var(--font-display); letter-spacing:-.02em; color:var(--cr-charcoal); }
+  .fill       { height:100%; display:flex; flex-direction:column; }
+</style>
+</head>
+<body>
+<div class="cr-doc">
+
+  <!-- ════════════════ PAGE 1 · COVER — editorial split ════════════════
+       Diverges from index's centred full-bleed cover: a half-image /
+       half-content split, with the product NAME as the hero (not a
+       sentence). Stays dark per brand. -->
+  <section class="cr-page cr-page--bleed cr-page--dark">
+    <div class="cr-split cr-cols-2">
+      <!-- Image side — full-bleed, navy scrim -->
+      <div class="cr-figure cr-figure--flush cr-figure--navy">
+        <img src="../assets/imagery/dark-tech-2.jpg" alt="" />
+      </div>
+      <!-- Content side — navy pane -->
+      <div class="cr-split-pane" style="justify-content:space-between; padding:18mm 16mm">
+        <div class="cr-page-header" style="border:0">
+          <img class="cr-logo" src="../assets/logo/example-brand-white.svg" alt="Example Brand" />
+          <div class="cr-eyebrow" style="color:rgba(255,255,255,.6)">Product Brief</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6mm">
+          <div class="cr-eyebrow" style="color:var(--cr-electric)">Clinical Documentation</div>
+          <h1 class="cr-display-xl" style="color:#fff; font-size:56px; line-height:1.05">Dr.&nbsp;Scribe</h1>
+          <p class="cr-body-lg" style="color:rgba(255,255,255,.82)">The ambient AI scribe that writes the clinical note — so your physician stays with the patient, not the keyboard.</p>
+        </div>
+        <div class="cr-page-foot" style="color:rgba(255,255,255,.82); border:0">
+          <span style="font-weight:600; letter-spacing:.06em; text-transform:uppercase; font-size:12px">example-brand.com</span>
+          <span>An autonomous digital worker</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════ PAGE 2 · WHAT IT DOES — stacked sections ════════════
+       One component per row: headline → capability list → "At a glance"
+       facts band → "Works with" band. Diverges from index's 3-col grid. -->
+  <section class="cr-page">
+    <div class="cr-page-header">
+      <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+      <div class="cr-eyebrow">What It Does</div>
+    </div>
+    <!-- One component per row: headline → capability list → tonal bands stacked -->
+    <div class="cr-headline-block" style="margin-top:14mm; max-width:165mm">
+      <h2 class="cr-display-lg">Your Clinicians Trained to Treat Patients — Not to Type.</h2>
+      <p class="cr-body" style="max-width:160mm">Dr. Scribe listens to the visit, structures the encounter, and drafts a clinical note synced straight into your EHR. Physicians review and sign — they no longer author from a blank screen at 9pm.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:6mm; margin-top:11mm">
+      <div style="display:flex; gap:5mm; align-items:flex-start">
+        <div class="cr-icon-chip tone-periwinkle"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><path d="M12 18v4"/></svg></div>
+        <div style="display:flex; flex-direction:column; gap:2mm">
+          <div class="feat-title">Ambient Capture</div>
+          <p class="cr-list-body" style="max-width:150mm">Listens to the natural conversation — no dictation, no templates to trigger mid-visit.</p>
+        </div>
+      </div>
+      <div style="display:flex; gap:5mm; align-items:flex-start">
+        <div class="cr-icon-chip tone-periwinkle"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg></div>
+        <div style="display:flex; flex-direction:column; gap:2mm">
+          <div class="feat-title">EHR-Native Drafting</div>
+          <p class="cr-list-body" style="max-width:150mm">Writes into your fields, in your specialty's structure — not a copy-paste block to reformat.</p>
+        </div>
+      </div>
+      <div style="display:flex; gap:5mm; align-items:flex-start">
+        <div class="cr-icon-chip tone-periwinkle"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></svg></div>
+        <div style="display:flex; flex-direction:column; gap:2mm">
+          <div class="feat-title">Clinician in Command</div>
+          <p class="cr-list-body" style="max-width:150mm">Every note is reviewed and signed by the provider. The AI drafts; the human decides.</p>
+        </div>
+      </div>
+    </div>
+    <!-- "At a glance" — its own row; the three facts are a homogeneous peer grid inside one band -->
+    <div class="cr-band tone-periwinkle" style="margin-top:11mm">
+      <div class="cr-eyebrow" style="margin-bottom:5mm">At a glance</div>
+      <div class="cr-grid cr-cols-3" style="gap:7mm">
+        <div style="display:flex; gap:8px; align-items:flex-start"><span style="width:7px;height:7px;border-radius:999px;background:var(--cr-tone-periwinkle-accent);margin-top:6px;flex-shrink:0"></span><span class="cr-body" style="color:var(--cr-charcoal)">HIPAA-compliant · SOC 2 Type II · PHI encrypted</span></div>
+        <div style="display:flex; gap:8px; align-items:flex-start"><span style="width:7px;height:7px;border-radius:999px;background:var(--cr-tone-periwinkle-accent);margin-top:6px;flex-shrink:0"></span><span class="cr-body" style="color:var(--cr-charcoal)">30+ specialties, from primary care to cardiology</span></div>
+        <div style="display:flex; gap:8px; align-items:flex-start"><span style="width:7px;height:7px;border-radius:999px;background:var(--cr-tone-periwinkle-accent);margin-top:6px;flex-shrink:0"></span><span class="cr-body" style="color:var(--cr-charcoal)">Multilingual capture — English &amp; Spanish</span></div>
+      </div>
+    </div>
+    <!-- "Works with" — its own row -->
+    <div class="cr-band tone-sky" style="margin-top:6mm">
+      <div class="cr-eyebrow" style="margin-bottom:3mm">Works with</div>
+      <div class="cr-body-strong" style="color:var(--cr-charcoal)">Epic · Cerner · athenahealth · any EHR with an API.</div>
+    </div>
+  </section>
+
+  <!-- ═════════════ PAGE 3 · THE PAYOFF — statement + stat strip ═════════════
+       Diverges from index's 2×2 metrics grid + navy CTA strip: an airy
+       statement at the top, the SAME stat card styling arranged as a
+       horizontal strip, and a lighter on-white close. -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">The Payoff</div>
+      </div>
+
+      <!-- Statement — one large idea, room to breathe -->
+      <div class="cr-headline-block" style="margin-top:18mm; max-width:165mm">
+        <div class="cr-eyebrow" style="color:var(--cr-tone-periwinkle-accent)">Outcomes</div>
+        <h2 class="cr-display" style="font-size:42px; line-height:1.18">Give every physician up to two hours of their day back — and their evenings with it.</h2>
+        <p class="cr-body" style="max-width:150mm; margin-top:1mm">Less time charting means more patients seen, faster notes, and clinicians who stay. The documentation burden was never the job — it was the tax on doing it.</p>
+      </div>
+
+      <!-- Stat strip — same card component, arranged horizontally (dark numerals) -->
+      <div class="cr-grid cr-cols-3" style="margin-top:16mm; gap:6mm">
+        <div class="cr-stat-card tone-periwinkle">
+          <div class="cr-stat-value">2<span class="unit">hrs</span></div>
+          <div class="cr-stat-label">Reclaimed per clinician, per day</div>
+        </div>
+        <div class="cr-stat-card tone-periwinkle">
+          <div class="cr-stat-value">75<span class="unit">%</span></div>
+          <div class="cr-stat-label">Less after-hours charting</div>
+        </div>
+        <div class="cr-stat-card tone-periwinkle">
+          <div class="cr-stat-value">&lt;4<span class="unit">wk</span></div>
+          <div class="cr-stat-label">From pilot to live in your EHR</div>
+        </div>
+      </div>
+
+      <!-- Light close — anchored to the foot, no navy strip -->
+      <div class="cr-anchor-bottom">
+        <div class="cr-divider"></div>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:8mm; margin-top:6mm">
+          <div style="display:flex; flex-direction:column; gap:2mm">
+            <div style="font:500 var(--fs-h2)/1.25 var(--font-display); letter-spacing:-.02em; color:var(--cr-ink)">Bring Dr. Scribe to your clinicians.</div>
+            <div class="cr-body" style="color:var(--cr-graphite)">See it draft a live note inside your own EHR.</div>
+          </div>
+          <a class="cr-btn" href="https://example-brand.com">Book a Demo →</a>
+        </div>
+        <div class="cr-page-foot" style="margin-top:7mm">
+          <span style="font-weight:600; letter-spacing:.06em; text-transform:uppercase; font-size:12px; color:var(--cr-graphite)">example-brand.com</span>
+          <span>Dr. Scribe · Product Brief</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

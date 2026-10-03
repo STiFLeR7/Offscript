@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · More ways to automate (2-up solution showcase)</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — More ways to automate (2-up showcase)   component-more-solutions.html
+  ════════════════════════════════════════════════════════════════════════
+  COMPOSITION  A left-aligned headline at the top of a centred white well, then
+               a TWO-UP layout divided by a CENTRED VERTICAL HAIRLINE. Each
+               column = a free-floating CREATIVE on top (overlapping layers, no
+               card wrapper) + a TEXT BLOCK below (heading → 2–3-line body →
+               outlined "ghost" pill). The two creatives MIRROR diagonally:
+               • LEFT — a rounded PHOTO (person) at the TOP-LEFT overlapping the
+                 top-left corner of an "Agent operations" UI card (navy header →
+                 "Active pipeline" label → "Assigned reviewers" row w/ 3 avatar
+                 faces → "Throughput analytics" row w/ a blue line-chart icon).
+               • RIGHT (mirror) — an "Integrations" UI card at the TOP-RIGHT
+                 (navy header → 3 partner rows: blue bookmark + wordmark +
+                 truncated description) with a rounded PHOTO at the BOTTOM-LEFT
+                 overlapping the card's bottom-left corner.
+               Behind/beside each creative, a LIGHT thin-line ORBIT MOTIF (one
+               orbit line + a planet dot + a small sparkle) sits in the open
+               area next to the card.
+
+  INSPIRATION  Greenhouse "More hiring solutions" (two-up: Candidate experience
+               + Integrations, split by a vertical rule). Layout / proportions /
+               region vocabulary / content volume reproduced; colours / fonts /
+               copy / the decorative pattern re-skinned to CR. (User's "compare
+               section" = the side-by-side; this is a 2-up SHOWCASE, not the
+               literal competitor table — see component-compare-table.html.)
+
+  RE-SKIN      Serif → Urbanist; the source's GREEN family → CR BRAND BLUE for the
+               REAL accents only (bookmark icons, chart line, focus) and CR NAVY
+               (`--cr-ink-night`) for the dark card-header bars — blue is the
+               action colour, not spent on decoration. Leaf/fingerprint pattern
+               → (user choice, re-skinning a Hanwha orbital-geometry reference) a
+               LIGHT thin-line ORBIT MOTIF in NEUTRAL GREY: ONE orbit line + a
+               planet dot per creative (a tilted solid ellipse on the left, a
+               DOTTED orbit on the right) plus a single small 4-point SPARKLE
+               accent — inline SVG, low opacity, sitting in the OPEN area beside
+               each NARROW card so the orbit appears to emerge from behind it.
+               (An earlier denser pass — sphere + concentric circles + extra
+               dots — was pared back per "give a light version".) This is CR's
+               own orbit / system-in-motion motif; it stays a component creative
+               backdrop (not a flat-band section pattern) and never spends the
+               brand blue. Photos →
+               local Unsplash portraits (`assets/avatars/`, object-fit:cover);
+               the avatar trio → real face-crops. Partner logos → CR partners
+               (SAP / Salesforce / Oracle) as placeholder wordmarks (swap for
+               real SVG). Copy → CR voice. The human faces are labelled
+               "Assigned reviewers" (the people who own/review the workflow) —
+               NOT "agents" (AI agents aren't people). NO shadow — layers
+               separate by overlap + contrast + 1px hairlines. Source's ghost
+               pills carry no arrow, so neither do these (the → glyph is
+               optional on tertiary CTAs per the brand).
+
+  MOTION       (user choice) "Reveal + backdrop draw-in" — on first viewport hit
+               the headline fades up, then the LEFT column reveals before the
+               RIGHT; within each, the geometric backdrop fades/scales IN first,
+               then the UI card + photo rise into place, then heading → body →
+               CTA (per-element `--d` stagger). CSS `animation` gated on
+               `.in-view` (anti-race), `IntersectionObserver` fires once then
+               disconnects; static afterward (the source is static). The grid
+               backdrop uses a scale-in (`msGridIn`); everything else rises
+               (`msRise`). `prefers-reduced-motion` snaps in; content is visible
+               WITHOUT JS (hidden reveal-state scoped to `.has-js`). Lucide
+               loaded + drawn once (guarded). Hover lives only on real controls
+               (the two ghost CTAs).
+
+  RESPONSIVE   2-col → SINGLE COLUMN at 900px (the vertical divider becomes a
+               horizontal top-rule between the two stacked solutions; columns go
+               full-width so the free-floating creatives have room — there is no
+               crop safety-net, so the px photo + UI card must clear the divider
+               on their own); at 560px tighter padding, headline + card type +
+               photo/avatar sizes step down via CSS-var knobs. Verified at
+               desktop 1440 / tablet 768 / mobile (the ~482px headless floor).
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  /* ─── scope reset ─────────────────────────────────────────────── */
+  .ms-section, .ms-section * { box-sizing: border-box; }
+  .ms-section {
+    background: var(--cr-bg);
+    padding: 120px 100px;
+    font-family: var(--cr-font-body);
+  }
+  .ms-wrap { max-width: var(--cr-content-max); margin: 0 auto; }   /* centred well */
+
+  /* ─── headline (left-aligned at the well's top, per source) ───── */
+  .ms-head {
+    margin: 0 0 clamp(56px, 7vw, 88px);
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(32px, 3.6vw, 44px);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--cr-fg);
+  }
+
+  /* ─── 2-up grid + centred vertical divider ────────────────────── */
+  .ms-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 0;                        /* divider centred via symmetric column padding */
+  }
+  .ms-col { min-width: 0; padding: 0 52px; }
+  .ms-col:first-child { padding-left: 0; }
+  .ms-col:last-child  { padding-right: 0; }
+  .ms-col--b { border-left: 1px solid var(--cr-line); }   /* the centred vertical rule */
+
+  /* ─── creative stage (free-floating layers, no card wrapper) ──── */
+  .ms-creative {
+    --photo-w: 136px;
+    --photo-h: 154px;
+    position: relative;
+    min-height: 330px;
+    /* the creative spans the column; the CARD is capped narrow (below) so the
+       orbit motif has open space to show on the right */
+  }
+
+  /* geometric "orbit" backdrop — thin NEUTRAL-GREY line motifs (tilted orbit
+     ellipses, a wireframe sphere, a dotted orbit, concentric circles + planet
+     dots & 4-point sparkles) ghosting behind the creatives in corner clusters.
+     A re-skin of the Hanwha orbital-geometry reference; blue stays reserved for
+     the real UI accents (bookmarks / chart) — decoration never spends it. */
+  .ms-grid-bd {
+    position: absolute;
+    width: 232px; height: 232px;
+    z-index: 0;
+    pointer-events: none;
+    color: rgba(14,14,14,0.22);       /* one neutral ink — strokes + dots + sparkles */
+  }
+  .ms-grid-bd svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  /* LIGHT: one orbit line (--1) + one lone sparkle (--2) per creative */
+  .ms-creative--a .ms-grid-bd--1 { left: 56%; top: 2%; }                                     /* orbit ellipse — right of card */
+  .ms-creative--a .ms-grid-bd--2 { width: 42px; height: 42px; left: 40px; bottom: 30px; }    /* lone sparkle — bottom-left */
+  .ms-creative--b .ms-grid-bd--1 { left: 54%; top: 8%; }                                     /* dotted orbit — right of card */
+  .ms-creative--b .ms-grid-bd--2 { width: 42px; height: 42px; right: 26%; bottom: 34px; }    /* lone sparkle — bottom */
+
+  /* overlapping photo card */
+  .ms-photo {
+    position: absolute;
+    width: var(--photo-w); height: var(--photo-h);
+    margin: 0;
+    border-radius: 14px; overflow: hidden;
+    border: 1px solid var(--cr-line);
+    background: var(--cr-bg-grey-100);
+    z-index: 3;
+  }
+  .ms-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ms-creative--a .ms-photo { left: 0;   top: 0; }                 /* top-left  */
+  .ms-creative--b .ms-photo { left: 8px; bottom: 34px; }           /* bottom-left, overlaps card's bottom-row corner (mirror) */
+
+  /* the UI mock card */
+  .ms-uicard {
+    position: absolute;
+    background: var(--cr-bg);
+    border: 1px solid var(--cr-line);
+    border-radius: 14px;
+    overflow: hidden;
+    z-index: 2;
+  }
+  /* cards positioned px-relative to their photo (calc) so the photo↔card overlap AND the
+     header clearance stay CONSTANT across the whole 2-col range — not just tuned to 1440 */
+  .ms-creative--a .ms-uicard { left: calc(var(--photo-w) - 22px); top: 80px; width: min(300px, calc(100% - var(--photo-w) + 22px)); }   /* narrow, photo-anchored */
+  .ms-creative--b .ms-uicard { left: calc(var(--photo-w) - 30px); top: 14px; width: min(332px, calc(100% - var(--photo-w) + 30px)); }   /* narrow, photo-anchored (mirror) */
+  .ms-creative--a .ms-uihead { padding-left: 34px; }   /* shift header text right of the overlapping photo (the bar still runs under it) */
+
+  .ms-uihead {
+    background: var(--cr-ink-night);             /* CR navy header bar (source's dark-green) */
+    color: #fff;
+    font-family: var(--cr-font-body); font-weight: 600; font-size: 13px;
+    padding: 11px 16px;
+  }
+  .ms-uibody { padding: 2px 16px 12px; }
+  .ms-uirow {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--cr-line);
+    font-family: var(--cr-font-body); font-size: 13px; color: var(--cr-fg-2);
+    white-space: nowrap;
+  }
+  .ms-uirow:last-child { border-bottom: none; }
+  .ms-uirow--label { font-family: var(--cr-font-display); font-weight: 700; color: var(--cr-fg); }
+
+  /* avatar trio (real faces — labelled "Assigned reviewers", not agents) */
+  .ms-avatars { display: flex; flex: none; }
+  .ms-avatars img {
+    width: 28px; height: 28px; border-radius: 50%; object-fit: cover;
+    border: 2px solid #fff; margin-left: -8px;
+  }
+  .ms-avatars img:first-child { margin-left: 0; }
+
+  .ms-chart { color: var(--cr-brand); display: flex; flex: none; }     /* blue line-chart accent */
+  .ms-chart .ms-i { width: 22px; height: 22px; stroke-width: 2; }
+
+  /* integration rows */
+  .ms-introw {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--cr-line);
+  }
+  .ms-introw:last-child { border-bottom: none; }
+  .ms-bookmark { flex: none; display: flex; color: var(--cr-brand); }   /* filled blue bookmark */
+  .ms-bookmark .ms-i { width: 18px; height: 18px; fill: var(--cr-brand); stroke: var(--cr-brand); }
+  .ms-logo {
+    flex: none; width: 92px;
+    font-family: var(--cr-font-display); font-weight: 700; font-size: 14px; color: var(--cr-fg);
+    white-space: nowrap;
+  }
+  .ms-introw-desc {
+    flex: 1 1 auto; min-width: 0;
+    font-family: var(--cr-font-body); font-size: 12.5px; color: var(--cr-fg-3);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* ─── text block below each creative ──────────────────────────── */
+  .ms-text { margin-top: 44px; }
+  .ms-title {
+    margin: 0 0 14px;
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(26px, 2.6vw, 34px); line-height: 1.2; letter-spacing: -0.01em;
+    color: var(--cr-fg);
+  }
+  .ms-body {
+    margin: 0 0 28px; max-width: 40ch;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 16px; line-height: 1.6;
+    color: var(--cr-fg-2);
+  }
+  .ms-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 15px;
+    color: var(--cr-fg);
+    background: none;
+    border: 1px solid var(--cr-line);
+    border-radius: var(--cr-radius-pill);
+    padding: 12px 24px;
+    text-decoration: none; cursor: pointer;
+    transition: border-color .2s ease, color .2s ease, transform .15s ease;
+  }
+  .ms-cta:hover { border-color: var(--cr-fg-3); }
+  .ms-cta:active { transform: scale(.98); }
+
+  /* ─── MOTION: reveal + backdrop draw-in (anti-race, fires once) ── */
+  .has-js .ms-section [data-reveal] { opacity: 0; transform: translateY(20px); }
+  .has-js .ms-section [data-reveal].in-view {
+    animation: msRise .7s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes msRise { to { opacity: 1; transform: none; } }
+
+  /* geometric backdrop scales IN rather than rising */
+  .has-js .ms-section [data-reveal].ms-grid-bd { transform: scale(.9); }
+  .has-js .ms-section [data-reveal].ms-grid-bd.in-view {
+    animation: msGridIn .9s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes msGridIn { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .ms-section [data-reveal],
+    .has-js .ms-section [data-reveal].in-view {
+      opacity: 1; transform: none; animation: none;
+    }
+  }
+
+  /* ─── responsive ──────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .ms-section { padding: 88px 56px; }
+    .ms-grid { grid-template-columns: 1fr; row-gap: 64px; }
+    .ms-col { padding: 0; }
+    .ms-col--b { border-left: none; border-top: 1px solid var(--cr-line); padding-top: 64px; }
+    /* cap the now-full-width creative so the narrow card + orbit motif stay grouped */
+    .ms-creative { max-width: 560px; }
+  }
+  @media (max-width: 560px) {
+    .ms-section { padding: 64px 24px; }
+    .ms-head { font-size: clamp(28px, 8vw, 34px); }
+    .ms-creative {
+      --photo-w: 112px; --photo-h: 128px;
+      min-height: 300px;
+    }
+    /* card positions are calc-derived from --photo-w, so they retune automatically;
+       only nudge the right photo up to overlap the shorter mobile card */
+    .ms-creative--b .ms-photo { bottom: 54px; }
+    .ms-grid-bd { width: 168px; height: 168px; }
+    .ms-uihead { font-size: 12px; padding: 10px 14px; }
+    .ms-uibody { padding: 0 14px 10px; }
+    .ms-uirow, .ms-introw { font-size: 12px; }
+    .ms-introw { padding: 11px 14px; }
+    .ms-logo { width: 80px; font-size: 13px; }
+    .ms-title { font-size: clamp(24px, 7vw, 28px); }
+    .ms-text { margin-top: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- The two-up split + left-aligned headline follow the SOURCE — not a
+     hardcoded house rule (composition is intentionally per-section). -->
+<section class="ms-section" data-screen-label="Showcase · More ways to automate">
+  <div class="ms-wrap">
+
+    <h2 class="ms-head" data-reveal style="--d:0s">More Ways to Automate</h2>
+
+    <div class="ms-grid">
+
+      <!-- ── LEFT column: Agent operations ───────────────────────── -->
+      <div class="ms-col ms-col--a">
+        <div class="ms-creative ms-creative--a">
+          <div class="ms-grid-bd ms-grid-bd--1" data-reveal style="--d:.12s" aria-hidden="true">
+            <svg viewBox="0 0 232 232" fill="none">
+              <ellipse cx="116" cy="116" rx="104" ry="62" transform="rotate(-24 116 116)" stroke="currentColor" stroke-width="1.2"/>
+              <circle cx="196" cy="74" r="4.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="ms-grid-bd ms-grid-bd--2" data-reveal style="--d:.18s" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 0 Q 14 10 24 12 Q 14 14 12 24 Q 10 14 0 12 Q 10 10 12 0 Z" fill="currentColor"/>
+            </svg>
+          </div>
+
+          <div class="ms-uicard" data-reveal style="--d:.24s" aria-hidden="true">
+            <div class="ms-uihead">Agent operations</div>
+            <div class="ms-uibody">
+              <div class="ms-uirow ms-uirow--label">Active pipeline</div>
+              <div class="ms-uirow">
+                <span>Assigned reviewers</span>
+                <span class="ms-avatars">
+                  <img src="../assets/../../brand-pack/assets/imagery/avatars/avatar-david.jpg" alt="" />
+                  <img src="../assets/../../brand-pack/assets/imagery/avatars/avatar-olivia.jpg" alt="" />
+                  <img src="../assets/../../brand-pack/assets/imagery/avatars/avatar-priya.jpg" alt="" />
+                </span>
+              </div>
+              <div class="ms-uirow">
+                <span>Throughput analytics</span>
+                <span class="ms-chart"><i data-lucide="trending-up" class="ms-i"></i></span>
+              </div>
+            </div>
+          </div>
+
+          <figure class="ms-photo" data-reveal style="--d:.30s" aria-hidden="true">
+            <img src="../assets/../../brand-pack/assets/imagery/avatars/avatar-jason.jpg" alt="" />
+          </figure>
+        </div>
+
+        <div class="ms-text">
+          <h3 class="ms-title" data-reveal style="--d:.36s">Agent operations</h3>
+          <p class="ms-body" data-reveal style="--d:.42s">Watch every workflow run end to end — exceptions surfaced, decisions logged, and throughput measured against your targets.</p>
+          <a class="ms-cta" href="#" data-reveal style="--d:.48s">Explore agent operations</a>
+        </div>
+      </div>
+
+      <!-- ── RIGHT column: Integrations (mirrored) ───────────────── -->
+      <div class="ms-col ms-col--b">
+        <div class="ms-creative ms-creative--b">
+          <div class="ms-grid-bd ms-grid-bd--1" data-reveal style="--d:.26s" aria-hidden="true">
+            <svg viewBox="0 0 232 232" fill="none">
+              <ellipse cx="116" cy="116" rx="102" ry="58" transform="rotate(22 116 116)" stroke="currentColor" stroke-width="1.5" stroke-dasharray="1.5 8" stroke-linecap="round"/>
+              <circle cx="40" cy="150" r="4.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="ms-grid-bd ms-grid-bd--2" data-reveal style="--d:.32s" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 0 Q 14 10 24 12 Q 14 14 12 24 Q 10 14 0 12 Q 10 10 12 0 Z" fill="currentColor"/>
+            </svg>
+          </div>
+
+          <div class="ms-uicard" data-reveal style="--d:.38s" aria-hidden="true">
+            <div class="ms-uihead">Integrations</div>
+            <!-- placeholder partner wordmarks — swap for real SVGs -->
+            <div class="ms-introw">
+              <span class="ms-bookmark"><i data-lucide="bookmark" class="ms-i"></i></span>
+              <span class="ms-logo" style="letter-spacing:.04em">SAP</span>
+              <span class="ms-introw-desc">Real-time ERP and finance sync…</span>
+            </div>
+            <div class="ms-introw">
+              <span class="ms-bookmark"><i data-lucide="bookmark" class="ms-i"></i></span>
+              <span class="ms-logo">Salesforce</span>
+              <span class="ms-introw-desc">Two-way CRM and pipeline updates…</span>
+            </div>
+            <div class="ms-introw">
+              <span class="ms-bookmark"><i data-lucide="bookmark" class="ms-i"></i></span>
+              <span class="ms-logo" style="letter-spacing:.04em">ORACLE</span>
+              <span class="ms-introw-desc">Orders, records and billing kept…</span>
+            </div>
+          </div>
+
+          <figure class="ms-photo" data-reveal style="--d:.44s" aria-hidden="true">
+            <img src="../assets/../../brand-pack/assets/imagery/avatars/avatar-emily.jpg" alt="" />
+          </figure>
+        </div>
+
+        <div class="ms-text">
+          <h3 class="ms-title" data-reveal style="--d:.50s">Integrations</h3>
+          <p class="ms-body" data-reveal style="--d:.56s">Your agents drop straight into the systems you already run — SAP, Salesforce, Oracle, Epic and your custom stack.</p>
+          <a class="ms-cta" href="#" data-reveal style="--d:.62s">See all integrations</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.ms-section');
+
+  if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }   // guarded
+
+  if (!sec) return;
+
+  function reveal() {
+    sec.querySelectorAll('[data-reveal]').forEach(function (n) { n.classList.add('in-view'); });
+  }
+
+  if (reduce) { reveal(); return; }
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) {
+        if (en.isIntersecting) { reveal(); io.disconnect(); }
+      });
+    }, { threshold: 0.15 });
+    io.observe(sec);
+  } else {
+    reveal();
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Case study carousel</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body); color: var(--cr-text-secondary);
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Section padding and the well are the pack's (`.cr-band` + `.cr-well`, both
+     on the section: this composition has no inner wrapper and the Pilot
+     Constraint forbids adding one). */
+  .section { overflow-x: clip; }
+  .top {
+    display: grid; grid-template-columns: 1fr auto;
+    gap: var(--cr-space-m); align-items: start;
+    margin-bottom: var(--cr-space-s);
+  }
+  .headline { margin: 0; max-width: var(--cr-measure-title); }
+
+  .nav { display: flex; gap: var(--cr-space-xs); align-items: flex-start; }
+  .nav button {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    background: var(--cr-bg-raised); color: var(--cr-text-primary);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-control);
+    padding: var(--cr-space-xs) var(--cr-space-s); cursor: pointer;
+    font-family: var(--cr-font-body);
+    font-size: var(--cr-text-supporting); font-weight: 500;
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  .nav button:hover { border-color: var(--cr-text-primary); }
+  .nav button:active { transform: scale(.96); }
+  .nav button svg { width: 16px; height: 16px; stroke-width: var(--cr-icon-stroke-sm); }
+  .nav button.prev svg { transform: rotate(180deg); }
+
+  /* THE SECTION'S ONE ACCENT IS ITS ONE ASK. An accent used as a surface takes
+     its recorded paired foreground; the pill is retired for controls. */
+  .cta {
+    margin: 0 0 var(--cr-rhythm-content);
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    background: var(--cr-accent-blue); color: var(--cr-on-accent-light);
+    border: 0; border-radius: var(--cr-radius-control);
+    padding: var(--cr-space-xs) var(--cr-space-s); cursor: pointer;
+    font-family: var(--cr-font-body);
+    font-size: var(--cr-text-supporting); font-weight: 500;
+    transition: transform .15s ease;
+  }
+  .cta:active { transform: scale(.97); }
+
+  .viewport { overflow: hidden; width: calc(100% + 200px); }
+  /* The tint stand-in is gone; the environment above is the surface. */
+  /* THIS GAP IS LOAD-BEARING AND MUST STAY 32px. The carousel advances by
+     `firstElementChild.getBoundingClientRect().width + 32` — the CSS gap is
+     hardcoded in the frozen script. Moving it onto the spacing scale desyncs
+     the track progressively, one slide at a time, with nothing to report it.
+     Recorded in FINDINGS as the clearest case of presentation the Pilot
+     Constraint cannot reach. */
+  .track {
+    display: flex;
+    gap: 32px; /* frozen-geometry: the script advances by slideWidth + 32 */
+    transition: transform .6s cubic-bezier(.22,.61,.36,1);
+    will-change: transform;
+  }
+  .track.no-anim { transition: none; }
+  .slide {
+    flex: 0 0 1100px;
+    position: relative;
+    border-radius: var(--cr-radius-card); overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background-size: cover; background-position: center;
+  }
+
+  /* The case photograph is the SUBJECT of the slide. The v2 file laid a
+     directional dark wash over it to make room for what sits on top; the
+     direction retired those scrims, and the panel below is opaque anyway —
+     it never needed the photograph dimmed to be readable. */
+  /* THE PHOTOGRAPH IS ON EVERY CARD, AND IT TRAVELS WITH IT.
+     `.slide` and `.photo` are built by the frozen script, so no element here can
+     carry an environment class — and putting the image behind the whole rail was
+     wrong twice over: a background on the viewport does not move with the track,
+     so the cards slid across a static picture, and a rail-wide ground is not
+     what a card-per-case composition wants. Every card gets the photograph.
+
+     One asset for all five, deliberately: the script ROTATES the DOM children to
+     loop, so anything assigned by `:nth-child` would decouple from the case it
+     belongs to after the first advance. Per-case imagery needs the script, and
+     that is recorded as residue — not faked with a positional selector that
+     silently drifts.
+
+     The path is written out because the pack declares `--cr-env-*` as a `url()`
+     inside a custom property, and such a url resolves against the DOCUMENT that
+     uses it rather than the stylesheet that declared it — the same pack-level
+     defect recorded in FINDINGS. The asset, its crop and its focus are the
+     pack's; only the resolution is local. */
+  .photo {
+    position: absolute; inset: 0;
+    /* ONE STACK, NOT A LAYER ON TOP. A blend mode needs something underneath it
+       in the SAME background stack: on a pseudo-element the grain had nothing to
+       blend against, so `overlay` resolved against transparency and the texture
+       rendered at full strength — the photograph disappeared under grey static.
+       The pack composes a photographic base as one stack for exactly this
+       reason, and the four sections that select an environment through it render
+       three layers in one declaration. This matches that. */
+    background-image: url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+                      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+                      url("../../brand-pack/assets/imagery/environments/env-massif-clear.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 50% 42%;   /* last is the asset's measured focus */
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+  }
+  /* The rings were the abstract decoration this pass exists to remove. They are
+     real elements the DOM freeze keeps, so they are made inert rather than
+     deleted — a photograph does not need a diagram drawn over it. */
+  .photo .orbit { display: none; }
+
+  .info {
+    position: absolute; left: 60px; bottom: 60px;
+    width: 440px;
+    background: var(--cr-bg-raised); border-radius: var(--cr-radius-card);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    display: flex; flex-direction: column;
+  }
+  .info-body { padding: var(--cr-space-m); display: flex; flex-direction: column; gap: var(--cr-space-s); }
+  /* The customer's mark is not the place to spend the section's accent — the
+     ask is. Ink, at the supporting step. */
+  .logo {
+    height: 36px; display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    font-family: var(--cr-font-display); font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    letter-spacing: var(--cr-tracking-heading); color: var(--cr-text-primary);
+  }
+  .logo .mark {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--cr-text-primary); color: var(--cr-bg-raised);
+    display: flex; align-items: center; justify-content: center;
+    font-size: var(--cr-text-supporting); font-weight: 500;
+  }
+  .info h3 {
+    font-family: var(--cr-font-display); font-weight: 500;
+    font-size: var(--cr-text-h6);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary); margin: 0;
+  }
+  .divider { height: var(--cr-stroke); background: var(--cr-border-default); }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--cr-space-s); }
+  .stat .l { font-size: var(--cr-text-supporting); color: var(--cr-text-secondary); line-height: var(--cr-leading-body); }
+  .stat .v {
+    margin-top: var(--cr-space-xs);
+    font-family: var(--cr-font-display); font-weight: 500;
+    font-size: var(--cr-text-h5);
+    letter-spacing: var(--cr-tracking-heading); color: var(--cr-text-primary);
+  }
+  .read {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    font-size: var(--cr-text-supporting); font-weight: 500;
+    color: var(--cr-text-primary); text-decoration: none; cursor: pointer;
+    border-bottom: 0; padding-top: var(--cr-space-xs);
+  }
+  .read u { text-decoration: underline; text-underline-offset: 0.25em; }
+  .read svg { width: 16px; height: 16px; stroke-width: var(--cr-icon-stroke-sm); color: var(--cr-text-secondary); }
+
+  .progress {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 3px;
+    background: var(--cr-bg-raised);
+    overflow: hidden;
+  }
+  .progress .fill { height: 100%; width: 0%; background: var(--cr-text-primary); }
+  .progress.running .fill { animation: fill var(--dur, 6s) linear forwards; }
+  @keyframes fill { from { width: 0% } to { width: 100% } }
+  @media (prefers-reduced-motion: reduce) {
+    .track { transition: none; }
+    .progress.running .fill { animation: none; width: 100%; }
+  }
+
+  /* Responsive: the original's breakpoints and reflow. Type steps with the
+     pack's ramp; section padding steps with `.cr-band`. */
+  @media (max-width: 1200px) {
+    .viewport { width: calc(100% + 120px); }
+    .slide { flex-basis: 880px; }
+    .info { width: 380px; left: 40px; bottom: 60px; }
+    .info-body { padding: var(--cr-space-s); }
+  }
+  @media (max-width: 900px) {
+    .viewport { width: calc(100% + 60px); }
+    .slide { flex-basis: 680px; }
+    .info { width: 320px; left: 32px; }
+    .info-body { padding: var(--cr-space-s); gap: var(--cr-space-xs); }
+  }
+  @media (max-width: 640px) {
+    .section { overflow-x: clip; }
+  .top { grid-template-columns: 1fr; gap: var(--cr-space-s); }
+    .nav { justify-content: flex-start; }
+    .cta { margin-bottom: var(--cr-space-m); }
+    .viewport { width: calc(100% + 20px); }
+    .slide { flex-basis: calc(100vw - 40px); aspect-ratio: 4 / 5; }
+    .info { width: calc(100% - 40px); left: 20px; bottom: 32px; }
+    .info-body { padding: var(--cr-space-s); gap: var(--cr-space-xs); }
+    .stats { gap: var(--cr-space-xs); }
+  }
+
+  /* THE RINGS ARE GONE. Decorative circles drawn over a creative are exactly the
+     abstract ornament this pass replaces with photography — and a photograph does
+     not need a diagram on top of it. They are real elements the DOM freeze keeps,
+     so they are made inert rather than deleted. */
+  .orbit { display: none !important; }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line
+     here that moved nothing. Retrofitted from measurement for the pilot
+     ten; declared before authoring from Phase 1 onward.
+  .cta       | border-radius          | radius-pair
+  .cta       | column-gap             | spacing-scale
+  .cta       | margin-bottom          | spacing-scale
+  .cta       | padding-bottom         | spacing-scale
+  .cta       | padding-left           | spacing-scale
+  .cta       | padding-right          | spacing-scale
+  .cta       | padding-top            | spacing-scale
+  .cta       | row-gap                | spacing-scale
+  .headline  | font-size              | type-ramp
+  .headline  | line-height            | type-ramp
+  .headline  | max-width              | measure
+  .info-body | column-gap             | spacing-scale
+  .info-body | padding-bottom         | spacing-scale
+  .info-body | padding-left           | spacing-scale
+  .info-body | padding-right          | spacing-scale
+  .info-body | padding-top            | spacing-scale
+  .info-body | row-gap                | spacing-scale
+  .l         | font-size              | type-ramp
+  .l         | line-height            | type-ramp
+  .logo      | column-gap             | spacing-scale
+  .logo      | font-size              | type-ramp
+  .logo      | row-gap                | spacing-scale
+  .lucide    | font-size              | type-ramp
+  .mark      | font-size              | type-ramp
+  .next      | border-radius          | radius-pair
+  .next      | column-gap             | spacing-scale
+  .next      | font-size              | type-ramp
+  .next      | padding-left           | spacing-scale
+  .next      | padding-right          | spacing-scale
+  .next      | row-gap                | spacing-scale
+  .prev      | border-radius          | radius-pair
+  .prev      | column-gap             | spacing-scale
+  .prev      | font-size              | type-ramp
+  .prev      | padding-left           | spacing-scale
+  .prev      | padding-right          | spacing-scale
+  .prev      | row-gap                | spacing-scale
+  .read      | column-gap             | spacing-scale
+  .read      | font-size              | type-ramp
+  .read      | padding-top            | spacing-scale
+  .read      | row-gap                | spacing-scale
+  .section   | padding-bottom         | spacing-scale
+  .section   | padding-left           | spacing-scale
+  .section   | padding-right          | spacing-scale
+  .section   | padding-top            | spacing-scale
+  .slide     | border-radius          | radius-pair
+  .stats     | column-gap             | spacing-scale
+  .stats     | row-gap                | spacing-scale
+  .top       | column-gap             | spacing-scale
+  .top       | margin-bottom          | spacing-scale
+  .top       | row-gap                | spacing-scale
+  .v         | font-size              | type-ramp
+  .v         | margin-top             | spacing-scale
+  br         | font-size              | type-ramp
+  br         | line-height            | type-ramp
+  h3         | font-size              | type-ramp
+  h3         | line-height            | type-ramp
+  path       | font-size              | type-ramp
+  u          | font-size              | type-ramp
+-->
+
+
+<section class="section cr-band cr-well" data-screen-label="Case study carousel"
+         data-archetype="storytelling-composition" data-hierarchy="proof" data-intent="build-trust"
+         data-register="editorial" data-signature="editorial-photography" data-density="medium">
+  <div class="top">
+    <h2 class="headline cr-h-section">We help our partners win again<br/>and again and again…</h2>
+    <div class="nav">
+      <button class="prev" id="prev"><i data-lucide="arrow-right"></i> Prev</button>
+      <button class="next" id="next">Next <i data-lucide="arrow-right"></i></button>
+    </div>
+  </div>
+  <button class="cta">Read more case studies <span>→</span></button>
+
+  <div class="viewport">
+    <!-- The five case studies SHIP. Content that only exists after a script has
+           run is not retrievable, and retrieval is what this library is for.
+           The script keeps the carousel: advance, loop, autoplay. (DR-58.) -->
+      <div class="track" id="track">
+      <article class="slide" style="--accent:var(--cr-brand)">
+        <div class="photo" style="--photo:linear-gradient(135deg, var(--cr-brand-700) 0%, color-mix(in srgb, var(--cr-teal-900) 70%, black) 70%, var(--cr-ink-cool) 100%)">
+          <div class="orbit"></div>
+        </div>
+        <div class="info">
+          <div class="info-body">
+            <div class="logo"><span class="mark">B</span>Brookline Bank</div>
+            <h3>Brookline cuts claims-triage cycle time by 78% in eight weeks.</h3>
+            <div class="divider"></div>
+            <div class="stats">
+              <div class="stat"><div class="l">Cycle time</div><div class="v">−78%</div></div>
+              <div class="stat"><div class="l">Auto-resolution</div><div class="v">92%</div></div>
+            </div>
+            <a class="read"><u>Read Brookline's story</u><i data-lucide="arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="progress"><div class="fill"></div></div>
+      </article>
+      <article class="slide" style="--accent:var(--cr-success)">
+        <div class="photo" style="--photo:linear-gradient(135deg, var(--cr-success) 0%, var(--cr-success-700) 60%, color-mix(in srgb, var(--cr-success-700) 60%, black) 100%)">
+          <div class="orbit"></div>
+        </div>
+        <div class="info">
+          <div class="info-body">
+            <div class="logo"><span class="mark">M</span>Meridian Health</div>
+            <h3>Meridian reclaims 5 clinician hours a day with Dr.Scribe.</h3>
+            <div class="divider"></div>
+            <div class="stats">
+              <div class="stat"><div class="l">Hours back</div><div class="v">5/day</div></div>
+              <div class="stat"><div class="l">Documentation accuracy</div><div class="v">99%</div></div>
+            </div>
+            <a class="read"><u>Read Meridian's story</u><i data-lucide="arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="progress"><div class="fill"></div></div>
+      </article>
+      <article class="slide" style="--accent:var(--cr-amber)">
+        <div class="photo" style="--photo:linear-gradient(135deg, var(--cr-amber) 0%, var(--cr-amber-700) 60%, var(--cr-fg) 100%)">
+          <div class="orbit"></div>
+        </div>
+        <div class="info">
+          <div class="info-body">
+            <div class="logo"><span class="mark">K</span>Kestrel Logistics</div>
+            <h3>Kestrel turns three days of procurement into three hours.</h3>
+            <div class="divider"></div>
+            <div class="stats">
+              <div class="stat"><div class="l">Procurement time</div><div class="v">−92%</div></div>
+              <div class="stat"><div class="l">On-time delivery</div><div class="v">+14%</div></div>
+            </div>
+            <a class="read"><u>Read Kestrel's story</u><i data-lucide="arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="progress"><div class="fill"></div></div>
+      </article>
+      <article class="slide" style="--accent:var(--cr-teal)">
+        <div class="photo" style="--photo:linear-gradient(135deg, var(--cr-ink-violet) 0%, var(--cr-teal) 60%, var(--cr-teal-900) 100%)">
+          <div class="orbit"></div>
+        </div>
+        <div class="info">
+          <div class="info-body">
+            <div class="logo"><span class="mark">A</span>Alvora Staffing</div>
+            <h3>Alvora screens 12× more candidates with the same recruiting team.</h3>
+            <div class="divider"></div>
+            <div class="stats">
+              <div class="stat"><div class="l">Throughput</div><div class="v">12×</div></div>
+              <div class="stat"><div class="l">Quality-of-hire</div><div class="v">+22%</div></div>
+            </div>
+            <a class="read"><u>Read Alvora's story</u><i data-lucide="arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="progress"><div class="fill"></div></div>
+      </article>
+      <article class="slide" style="--accent:var(--cr-brand-700)">
+        <div class="photo" style="--photo:linear-gradient(135deg, var(--cr-teal-400) 0%, var(--cr-brand) 60%, var(--cr-ink-card) 100%)">
+          <div class="orbit"></div>
+        </div>
+        <div class="info">
+          <div class="info-body">
+            <div class="logo"><span class="mark">N</span>Northwind SaaS</div>
+            <h3>Northwind replaces five SDR seats with one Jennie agent.</h3>
+            <div class="divider"></div>
+            <div class="stats">
+              <div class="stat"><div class="l">SDR seats saved</div><div class="v">5</div></div>
+              <div class="stat"><div class="l">Reply rate</div><div class="v">14.6%</div></div>
+            </div>
+            <a class="read"><u>Read Northwind's story</u><i data-lucide="arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="progress"><div class="fill"></div></div>
+      </article>
+      </div>
+  </div>
+</section>
+
+<script>
+  // ── Data: 5 case studies. Photo is a layered brand gradient since we
+  //         don't have real client photography in the project; replace
+  //         with a real CDN image url under .photoSrc when available. ──
+  const AUTO_MS = 6000;
+  const trackEl = document.getElementById('track');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+
+
+  function render() { lucide.createIcons(); }
+  render();
+
+  // Carousel mechanics — infinite, by DOM rotation
+  let busy = false;
+  let timer = null;
+  const SLIDE_W = () => trackEl.firstElementChild.getBoundingClientRect().width + 32; // + gap
+
+  function startTimer() {
+    clearTimer();
+    const first = trackEl.firstElementChild;
+    if (!first) return;
+    const bar = first.querySelector('.progress');
+    bar.style.setProperty('--dur', (AUTO_MS / 1000) + 's');
+    // Force reflow so the animation restarts
+    bar.classList.remove('running'); void bar.offsetWidth; bar.classList.add('running');
+    timer = setTimeout(() => next(), AUTO_MS);
+  }
+  function clearTimer() {
+    if (timer) { clearTimeout(timer); timer = null; }
+    trackEl.querySelectorAll('.progress').forEach(b => b.classList.remove('running'));
+  }
+
+  function next() {
+    if (busy) return;
+    busy = true;
+    clearTimer();
+    trackEl.style.transform = `translateX(${-SLIDE_W()}px)`;
+    trackEl.addEventListener('transitionend', function done() {
+      trackEl.removeEventListener('transitionend', done);
+      // Snap: move first child to the end, reset transform without animation
+      trackEl.classList.add('no-anim');
+      trackEl.appendChild(trackEl.firstElementChild);
+      trackEl.style.transform = 'translateX(0)';
+      void trackEl.offsetWidth;
+      trackEl.classList.remove('no-anim');
+      busy = false;
+      startTimer();
+    }, { once: true });
+  }
+
+  function prev() {
+    if (busy) return;
+    busy = true;
+    clearTimer();
+    // Move last child to front so we can animate from -SLIDE_W back to 0
+    trackEl.classList.add('no-anim');
+    trackEl.insertBefore(trackEl.lastElementChild, trackEl.firstElementChild);
+    trackEl.style.transform = `translateX(${-SLIDE_W()}px)`;
+    void trackEl.offsetWidth;
+    trackEl.classList.remove('no-anim');
+    requestAnimationFrame(() => {
+      trackEl.style.transform = 'translateX(0)';
+    });
+    trackEl.addEventListener('transitionend', function done() {
+      trackEl.removeEventListener('transitionend', done);
+      busy = false;
+      startTimer();
+    }, { once: true });
+  }
+
+  nextBtn.addEventListener('click', next);
+  prevBtn.addEventListener('click', prev);
+
+  // Pause on hover, resume on leave
+  trackEl.addEventListener('mouseenter', clearTimer);
+  trackEl.addEventListener('mouseleave', startTimer);
+
+  startTimer();
+  window.addEventListener('resize', () => { /* SLIDE_W reads live each call */ });
+</script>
+</body>
+</html>

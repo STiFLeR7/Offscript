@@ -1,0 +1,179 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Problem card</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Problem card (atom)            from component-problem-card.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  An ATOM PREVIEW, not a band — the same shape `comparison`,
+                `stat-tiles`, `faq`, `buttons` and `footer-links` turned out to
+                be. The v2 file is thirteen lines with NO stylesheet at all:
+                every value is an inline `style` attribute, and the only sheet
+                it links besides the token file is `card.css`, the harness the
+                atom previews inside. That link is kept and repointed; the file
+                it names does not exist anywhere in the repo, so BOTH the
+                control and this specimen resolve it to nothing and the preview
+                shape is declared in the stylesheet below rather than inherited
+                from the harness.
+
+  THE CLAIM     **The only unit in the library that leads with a difficulty.**
+                The profile is explicit: this is the one donor that carries
+                `problem` as its leading information kind, which makes it what
+                any structure reaches for when a band must name a difficulty
+                before answering it. So the specimen composes exactly three
+                things in one column — a mark, the problem stated once, and the
+                cost of it — and adds nothing that would soften the statement
+                into a feature.
+
+  STRUCTURE     Unchanged. One column, an icon tile over a statement over a
+                paragraph. DOM order, element types and depth are byte-
+                compatible with the frozen original (DR-22). Inline `style`
+                attributes are presentation, not contract, so they move into the
+                sheet — which is the whole migration on a file that had no sheet.
+
+  THE DECLARATION, and where its archetype comes from. The profile carries no
+                Envelope archetype — an atom inherits the role of its host band
+                — so the declaration names the host shape it contributes into,
+                and for a single column of a mark over a statement over its
+                consequence that is `editorial-stack`. The rest is the profile
+                read straight: it leads with `orient`, its emphasis is
+                typography, its density is `medium`, and its register inherits —
+                which on a unit whose whole method is a sentence set large is
+                `editorial`.
+
+  THE DARK WAS THE HARNESS, NOT THE ATOM. v2 previewed this card on a near-black
+                page and set every word on it in white. That colour lives on the
+                preview `<body>`, not on the card: the card itself has no
+                surface, no stroke and no fill, and it is a donor meant to be
+                dropped into whatever band composes it. So the preview comes
+                onto the page ground every other atom in this pass previews on,
+                and the words become ink — 13.1:1 for the statement, 5.6:1 for
+                the paragraph. Nothing about the card's own composition changes.
+
+  ACCENT        **Zero spent.** v2 put the mark in brand blue inside a dark
+                tile. There is no control in this atom, and the direction
+                spends its one accent moment on the primary control and nothing
+                else — so the mark takes inverse ink on the same dark tile,
+                14.4:1, and reads as a mark rather than as a status. A problem
+                card that colours its own icon is claiming an emphasis it has
+                not earned; the words are the emphasis.
+
+  ENVIRONMENT   **None, no abstract background.** There is nothing here to
+                retire — no gradient, no glow, no blur plate, no tint wash. The
+                atom is a mark and two blocks of type on a flat ground, and both
+                blocks hold words end to end, so a photograph behind them would
+                be type on a photograph, which the direction refuses. The one
+                plate that carries no type is the 56px icon tile, which is far
+                too small to hold a landscape and is not a creative frame — it
+                is a mark's container. Nothing is invented to satisfy the rule.
+
+  SCALE         The statement was already on the ramp's H6 and stays there; only
+                its leading comes onto the heading value, and its weight comes
+                down to the heavier of the system's two. The paragraph was
+                already on the supporting step and stays there, with the body
+                leading. A 340px column will not hold the body step at a
+                readable measure, which is why the paragraph is supporting and
+                not body — the atom's width is its identity and is not moved.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/sections/card.css">
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  html, body {
+    margin: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+  }
+  body { padding: var(--cr-space-s); }
+  .pc-card, .pc-card * { box-sizing: border-box; }
+
+  /* The card. No surface, no stroke, no fill — it is a donor, and the band that
+     composes it owns the container. The 340px cap is the atom's identity and is
+     carried over untouched; only the rhythm between its three parts comes onto
+     the closed scale. */
+  .pc-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cr-space-s);
+    max-width: 340px;
+  }
+
+  /* The mark's container. Its 56px box and the card radius are the atom's own
+     and do not move; the fill is the same primary ink it already resolved to
+     through a legacy alias, and the mark on it inverts rather than taking a
+     hue. */
+  .pc-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--cr-radius-card);
+    background: var(--cr-text-primary);
+    color: var(--cr-text-inverse);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  /* The mark is drawn by the frozen icon script, so its size and stroke are
+     declared here rather than on the element it replaces — the medium icon
+     stroke at the 24px icon size, which is the pair the pack holds. */
+  .pc-icon svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: var(--cr-icon-stroke-md);
+  }
+
+  /* The statement. Display face, the heavier of the two weights, the ramp step
+     it already used, and the heading leading and tracking it did not have. */
+  .pc-title {
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-h6);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+
+  /* The cost. Quieter ink than the statement, because the statement is the
+     claim and this is what follows from it. */
+  .pc-body {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+</style>
+</head><body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing.
+     NO `directed` line. Everything that moves is a scale doing its job: the
+     column's rhythm onto the closed spacing set, and the two type blocks onto
+     the ramp's leadings. The card's 340px cap, the icon tile's 56px box and its
+     card radius are the atom's identity and appear nowhere here, because none
+     of them moved.
+
+     `.pc-title` moves its SIZE as well as its leading, and only away from the
+     desktop reading. The statement sat at a hand-written 24 at every width; the
+     ramp steps H6 at the pack's own breakpoints, so at 1440 it is the same 24
+     it always was and below that it comes down with the rest of the ramp. That
+     is the ramp being responsive, which is the reason not to write the number.
+  .pc-body  | line-height            | type-ramp
+  .pc-card  | column-gap             | spacing-scale
+  .pc-card  | row-gap                | spacing-scale
+  .pc-title | font-size              | type-ramp
+  .pc-title | line-height            | type-ramp
+-->
+<div class="pc-card"
+     data-archetype="editorial-stack" data-hierarchy="secondary" data-intent="orient"
+     data-register="editorial" data-signature="architectural-whitespace" data-density="medium">
+  <div class="pc-icon">
+    <i data-lucide="user-cog"></i>
+  </div>
+  <div class="pc-title">Experts are doing admin work</div>
+  <div class="pc-body">Your best people spend most of their day on work that requires no judgment — data entry, reporting, chasing updates. The work gets done. But your margins shrink.</div>
+</div>
+<script>lucide.createIcons();</script>
+</body></html>

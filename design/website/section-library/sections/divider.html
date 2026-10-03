@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Divider · figure hand-off</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Divider · figure hand-off          from component-divider.html
+  ════════════════════════════════════════════════════════════════════════
+  THE GRADIENT IS THE COMPONENT — KEPT AS MECHANISM, NOT REPLACED.
+
+              This section has no content. It IS the graphic: a ramp is the
+              only thing here, and it performs the hand-off between the band
+              above and the band below. Replacing it with a photograph would
+              not modernize the component, it would delete it — the same
+              category error as putting a picture behind a wall of wordmarks.
+              So the ramp stays, and what changes is what it is MADE OF: its
+              two endpoints become surface tokens, and every stop between
+              them is a rung of the pack's own neutral ladder.
+
+              Environment used: NONE — the gradient is the component, not a
+              background sitting behind content. The assigned environment was
+              not spent.
+
+  WHAT THE RAMP NOW RUNS BETWEEN, AND WHY IT REVERSED ON THE SECOND BAND.
+              v2 ran both bands from a saturated brand hue down to cream. Two
+              things retire that. First, this is punctuation between sections
+              and punctuation must read quiet, so it spends ZERO accent — a
+              band-length wash of a hue is the one thing an accent may never
+              be. Second, and this is the real find: the demo has THREE
+              context strips and TWO dividers, and strip 2 sits underneath
+              divider 1 and on top of divider 2. If both dividers ran the
+              same direction, strip 2 would have to be light and dark at the
+              same time, and one of its two edges would land as a hard seam
+              — precisely the failure a hand-off exists to prevent.
+
+              So the pair is now directional and mirrored, and all four
+              boundaries resolve to the same token on both sides:
+
+                strip 1   page-ground
+                  ▼       divider 1 ramps page-ground → bg-dark
+                strip 2   bg-dark
+                  ▼       divider 2 ramps bg-dark → page-ground
+                strip 3   page-ground
+
+              That is the profile's own job description — "a hand-off between
+              two bands of DIFFERENT surface", "base→contrast transitions" —
+              performed rather than described.
+
+  THE CTA VARIANT'S TYPE.
+              The headline and its control were already anchored low, on the
+              pale end of the band. With the ramp reversed that anchoring is
+              what makes them legible: dark ink on `page-ground`, which is
+              the same pairing they would have on any light section. Remove
+              the ramp entirely and not one word changes legibility.
+
+  ACCENT      Zero. A divider is punctuation and must never be the loudest
+              thing on the page; the CTA takes the dark-ink primary fill,
+              which is the system's default anyway (DR-25 — orange is a spark
+              a page spends once, and it is not spent here).
+
+  RETIRED     The film-grain `::after` — decoration laid ON TOP of the
+              mechanism, and a `mix-blend-mode` on a pseudo-element composites
+              against transparency rather than against the ramp, so it was
+              rendering as grey static over the one thing this component is.
+              It is a pseudo-element, not frozen DOM, so it is deleted rather
+              than made inert.
+
+              And a pale hairline nobody authored: the pack publishes
+              `.cr-divider` as the RULE utility for an `<hr>`, which is this
+              component's root class, so linking the pack drew a border across
+              the top of both bands. Reset. The band is non-bearing, so no
+              predicate sees it — it was found by reading the render, which is
+              the only place it existed.
+
+  RESPONSIVE  Band heights are untouched. Type steps on the pack's ramp at one
+              breakpoint; `clamp()` is gone from every type declaration.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--cr-page-ground); font-family: var(--cr-font-body); }
+
+  /* ── Demo context strips (NOT part of the component) ──────────────────
+     Kept as demo context, but they now carry the surfaces the dividers hand
+     off BETWEEN, so the seams can be read. A tracked-out uppercase label is
+     retired: supporting text is never uppercase and never tracked. */
+  .dvd-ctx {
+    min-height: 150px;
+    display: grid; place-items: center;
+    padding: var(--cr-space-m) var(--cr-page-gutter);
+    background: var(--cr-page-ground);
+    color: var(--cr-text-secondary);
+    font-family: var(--cr-font-body);
+    font-size: var(--cr-text-supporting);
+    font-weight: 400;
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  /* The middle strip is the contrast band the first divider hands off INTO
+     and the second hands back OUT of. `.cr-on-dark` is the pack's own
+     dark-surface pairing, so the label re-colours through the ramp rather
+     than through a local override. */
+  .dvd-ctx--deep { background: var(--cr-bg-dark); color: var(--cr-fg); }
+
+  /* ── THE DIVIDER DEVICE ───────────────────────────────────────────────
+     The ramp itself, unchanged in kind: a soft full-bleed transition band.
+     What changed is that every stop is now a token — the two ends are the
+     page ground and the dark surface, and each stop between them is a rung of
+     the neutral ladder those two surfaces are themselves drawn from, so the
+     ramp cannot drift off-palette.
+
+     `background-image`, never the `background` shorthand: the shorthand
+     would reset anything else on the layer. */
+  .cr-divider {
+    --div-h: clamp(200px, 24vw, 340px);
+    position: relative;
+    width: 100%;
+    height: var(--div-h);
+    overflow: hidden;
+    /* NAME COLLISION, and it renders. The pack publishes `.cr-divider` as the
+       hairline RULE utility (`border-top: 1px solid --cr-border-default`) for
+       an `<hr>`, and this component's root class is the same name — so linking
+       the pack drew a pale 1px line across the top of BOTH bands. A rule laid
+       across a transition device is the exact thing the device replaces
+       ("sections divided by surface, not rules"), so it is reset here. The
+       band is non-bearing, so no predicate would have caught it; it was found
+       by reading the render. */
+    border: 0;
+    background-color: var(--cr-page-ground);
+    background-image: linear-gradient(180deg,
+      var(--cr-page-ground) 0%,
+      var(--cr-page-ground) 48%,
+      var(--cr-surface-5) 58%,
+      var(--cr-neutral-600) 72%,
+      var(--cr-neutral-800) 86%,
+      var(--cr-bg-dark) 100%);
+  }
+
+  /* ── CTA variant — the mirrored ramp ──────────────────────────────────
+     Runs the other way, so it closes the contrast band above it and opens
+     the light band below. Content stays anchored low, which is now the
+     light end, so the headline and the control take ordinary dark ink. */
+  .cr-divider--cta {
+    --div-h: clamp(320px, 32vw, 440px);
+    display: grid;
+    align-items: end; justify-items: center;
+    text-align: center;
+    padding-bottom: var(--cr-space-xl);
+    background-color: var(--cr-bg-dark);
+    /* The exact mirror of the plain band, and the stops are placed rather than
+       spread: the ramp COMPLETES at 52% and the lower half is flat
+       `page-ground`, so the headline and its control stand on one settled
+       surface instead of across a tonal slope. Delete the ramp entirely and
+       not one word changes legibility — which is the test. */
+    background-image: linear-gradient(180deg,
+      var(--cr-bg-dark) 0%,
+      var(--cr-neutral-800) 14%,
+      var(--cr-neutral-600) 28%,
+      var(--cr-surface-5) 42%,
+      var(--cr-page-ground) 52%);
+  }
+  .cr-divider__inner {
+    position: relative; z-index: 2;
+    max-width: var(--cr-measure-title);
+    padding: 0 var(--cr-space-s);
+  }
+  .cr-divider__title {
+    margin: 0 0 var(--cr-space-s);
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  /* The one control. Dark-ink primary fill, the control radius in place of
+     the retired pill, one of the system's two weights. */
+  .cr-divider__cta {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    background: var(--cr-text-primary); color: var(--cr-text-inverse);
+    border-radius: var(--cr-radius-control);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    text-decoration: none;
+    transition: background-color .2s ease, transform .1s ease;
+  }
+  .cr-divider__cta span { transition: transform .2s ease; }
+  .cr-divider__cta:hover { background: var(--cr-neutral-1000); }
+  .cr-divider__cta:hover span { transform: translateX(4px); }
+  .cr-divider__cta:active { transform: scale(.98); }
+  /* Dark ink on the pale end of the ramp — a focus ring is a ring, not a
+     hue, and it keeps its contrast because the type does. */
+  .cr-divider__cta:focus-visible {
+    outline: 2px solid var(--cr-text-primary);
+    outline-offset: 3px;
+  }
+
+  /* ── CTA scroll-reveal (JS-gated, fires once) ─────────────────────────
+     Unchanged in kind. `.cr-divider__inner` carries no surface of its own,
+     so fading it fades only the words. */
+  .has-js .cr-divider__inner {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity .6s cubic-bezier(.22, .61, .36, 1),
+                transform .6s cubic-bezier(.22, .61, .36, 1);
+  }
+  .has-js .cr-divider--cta.in .cr-divider__inner { opacity: 1; transform: none; }
+
+  /* The guard is written at the TRIGGER's own specificity, so it wins the
+     cascade on merit rather than on `!important`. The reveal snaps. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .cr-divider__inner,
+    .has-js .cr-divider--cta.in .cr-divider__inner {
+      opacity: 1; transform: none; transition: none;
+    }
+    .cr-divider__cta, .cr-divider__cta span { transition: none; }
+  }
+
+  /* ── Responsive — one step down the ramp, no per-section type scale ── */
+  @media (max-width: 700px) {
+    .cr-divider__title { font-size: var(--cr-text-h5); }
+  }
+</style>
+</head>
+
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Drafted from measurement and answered by hand; predicate 6 fails on any
+     change not listed and on any line here that moved nothing.
+  .cr-divider__cta   | border-radius          | radius-pair
+  .cr-divider__cta   | column-gap             | spacing-scale
+  .cr-divider__cta   | font-size              | type-ramp
+  .cr-divider__cta   | line-height            | type-ramp
+  .cr-divider__cta   | padding-bottom         | spacing-scale
+  .cr-divider__cta   | padding-left           | spacing-scale
+  .cr-divider__cta   | padding-right          | spacing-scale
+  .cr-divider__cta   | padding-top            | spacing-scale
+  .cr-divider__cta   | row-gap                | spacing-scale
+  .cr-divider__inner | max-width              | measure
+  .cr-divider__inner | padding-left           | spacing-scale
+  .cr-divider__inner | padding-right          | spacing-scale
+  .cr-divider__title | font-size              | type-ramp
+  .cr-divider__title | line-height            | type-ramp
+  .cr-divider__title | margin-bottom          | spacing-scale
+  .dvd-ctx           | font-size              | type-ramp
+  .dvd-ctx           | line-height            | type-ramp
+  .dvd-ctx           | padding-left           | spacing-scale
+  .dvd-ctx           | padding-right          | spacing-scale
+  span               | font-size              | type-ramp
+  span               | line-height            | type-ramp
+-->
+
+  <!-- demo context: a section above -->
+  <div class="dvd-ctx">Section content</div>
+
+  <!-- ① PLAIN divider — decorative transition between sections -->
+  <div class="cr-divider" role="presentation" aria-hidden="true"
+       data-archetype="editorial-stack" data-hierarchy="supporting" data-intent="orient"
+       data-register="quiet" data-signature="architectural-whitespace" data-density="low"></div>
+
+  <!-- demo context: a section below -->
+  <div class="dvd-ctx dvd-ctx--deep cr-on-dark">Section content</div>
+
+  <!-- ② CTA divider — the same band hosting an occasional call-to-action -->
+  <div class="cr-divider cr-divider--cta">
+    <div class="cr-divider__inner">
+      <h2 class="cr-divider__title">Put your first agent to work this week</h2>
+      <a href="#" class="cr-divider__cta">Book a Demo <span aria-hidden="true">&rarr;</span></a>
+    </div>
+  </div>
+
+  <!-- demo context: a section below -->
+  <div class="dvd-ctx">Section content</div>
+
+<script>
+  // The band is static; JS only adds a one-time reveal to the CTA variant's content.
+  (function () {
+    var root = document.documentElement;
+    root.classList.add('has-js');
+    var ctas = document.querySelectorAll('.cr-divider--cta');
+    if (!ctas.length) return;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) {
+      ctas.forEach(function (c) { c.classList.add('in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.3 });
+    ctas.forEach(function (c) { io.observe(c); });
+  })();
+</script>
+</body>
+</html>

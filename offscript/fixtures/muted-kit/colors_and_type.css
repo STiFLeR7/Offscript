@@ -1,0 +1,18 @@
+/* offscript/fixtures/muted-kit/colors_and_type.css
+ * A deliberately RESTRAINED, low-saturation single-accent brand ARCHETYPE — the
+ * counter-pole to loud-kit. Like loud-kit, this posture is NOT tied to any one
+ * sector: restrained/editorial brands span finance, legal, healthcare, B2B
+ * infrastructure, luxury, institutional, and more. The point is the POSTURE
+ * (quiet, low-chroma, single accent), which gives a pronounced saturation-ceiling
+ * gap against loud-kit so posture-relativity is unmistakable in tests.
+ *
+ * Slate-grey accent: a single desaturated hue (HSL S ≈ 0.09), so the derived
+ * saturationCeiling is low (≈ 0.17). A mid-saturation off-token colour that
+ * passes the loud kit's high ceiling will trip this kit's low one — that IS the
+ * posture difference, working as designed.
+ */
+:root {
+  --brand-slate: #6b7280;
+  --fg: #1a1a1a;
+  --bg: #ffffff;
+}

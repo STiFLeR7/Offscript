@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR — Subscription (plan cards + FAQ)</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Grid · four-column-equal from component-subscription-faq.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **The questions a price raises are answered where the price is.**
+              The profile calls this the densest band in the library and says it
+              is only justified when a page cannot afford two — so the plan row
+              and the objection list belong to one band, and separating them
+              would be a different section. Four equal cards with one lifted out
+              of the row is the comparison; the FAQ underneath is the doubt that
+              comparison creates.
+
+  STRUCTURE   Unchanged. Two visually-hidden radios drive a pure-CSS billing
+              toggle, so the price swap works with no script at all. Header row ·
+              four plan cards · a right-weighted FAQ whose answers open in the
+              column BESIDE the question. DOM, the script, every id, aria
+              attribute and label association are byte-compatible with the
+              frozen original.
+
+  ACCENT      One moment: the recommended plan's control. The original spent
+              colour three times — a green badge, a green discount figure and a
+              filled button — and two of those were marks, not actions. The
+              badge is a neutral chip on the dark card and the discount reads in
+              the same ink as the label beside it. Text on the accent is the
+              light-accent foreground.
+
+  ENVIRONMENT None, and the report says so rather than forcing one. The only
+              abstract background in the section is the four-stop wash behind
+              the recommended plan — and that card is a price, a description, a
+              feature list and a button, top to bottom. A photograph there would
+              be a surface under words, which the direction refuses, and the
+              card has no wrapper to give the type an opaque band of its own.
+              So the wash becomes the flat dark surface the tier already owns,
+              and the local grain layer goes with it: atmosphere belongs to the
+              pack's own treatment, not to a per-section overlay.
+
+  SURFACE     The wireframe outline is now solid. A dashed stroke is a second
+              stroke vocabulary running beside the system's one, and the card it
+              described stopped being provisional the moment it held a price.
+
+  TYPE        Display face at 400 for the two headings and the prices; body face
+              at 400 or 500 everywhere else. The segment labels and the
+              "includes" labels stop being micro-caps. The billing toggle takes
+              the control radius — the pill is retired.
+
+  RESPONSIVE  The original's breakpoints, unchanged. The per-viewport type sizes
+              are gone rather than re-authored; the ramp already steps at the
+              pack's own breakpoints.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--cr-page-ground); font-family: var(--cr-font-body); color: var(--cr-text-secondary); }
+
+  /* ── Section ─────────────────────────────────────────────────────────── */
+  .sub {
+    position: relative;
+    width: 100%;
+    background: var(--cr-page-ground);
+    padding: var(--cr-space-2xl) 0;
+    overflow: hidden;
+  }
+  .sub-inner {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+    padding: 0 var(--cr-page-gutter);
+  }
+  /* pure-CSS toggle radios — visually hidden but focusable; FIRST children of
+     .sub so `:checked ~ .sub-inner …` reaches the whole subtree */
+  .sub-radio { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+  /* ── Header row: title (left) + toggle (right) ───────────────────────── */
+  .sub-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--cr-space-s);
+    flex-wrap: wrap;
+  }
+  .sub-title {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+
+  /* SEGMENTED TOGGLE — a control, so it takes the control radius rather than a
+     third shape of its own. The track's inset padding is retired with the pill:
+     the thumb now fills its half exactly, which is also the only way the 100%
+     translate lands on the second segment without arithmetic. */
+  .sub-toggle {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: max-content;
+    padding: 0;
+    background: var(--cr-bg-tint);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-control);
+  }
+  .sub-thumb {
+    position: absolute;
+    top: 0; bottom: 0; left: 0;
+    width: 50%;
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);   /* a border, never a shadow */
+    border-radius: var(--cr-radius-control);
+    transition: transform .35s cubic-bezier(.4, 0, .2, 1);
+  }
+  .sub-seg {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: 1;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--cr-text-secondary);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    border-radius: var(--cr-radius-control);
+    transition: color .25s ease;
+  }
+  /* The discount figure is a MARK, not an action — it reads in the same ink as
+     the label it sits beside. Colour here was the section's second accent. */
+  .sub-off {
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    color: var(--cr-text-secondary);
+  }
+  #bill-m:checked ~ .sub-inner .sub-seg--m { color: var(--cr-text-primary); }
+  #bill-a:checked ~ .sub-inner .sub-seg--a { color: var(--cr-text-primary); }
+  #bill-a:checked ~ .sub-inner .sub-thumb  { transform: translateX(100%); }
+  .sub-radio:focus-visible ~ .sub-inner .sub-toggle { outline: 2px solid var(--cr-focus-ring); outline-offset: 3px; }
+
+  /* ── Cards grid ──────────────────────────────────────────────────────── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--cr-space-xs);
+    align-items: center;                       /* the taller card pops above and below */
+    margin-top: var(--cr-space-m);
+  }
+  /* THE OUTLINE IS SOLID. A dashed stroke is a second stroke vocabulary beside
+     the system's one, and it describes something provisional — which a priced
+     plan is not. */
+  .card {
+    display: flex;
+    flex-direction: column;
+    min-height: 380px;
+    padding: var(--cr-space-s);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+    background: transparent;
+  }
+
+  .card-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--cr-space-xs);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: 1;
+    color: var(--cr-text-secondary);
+  }
+  /* A neutral chip. On the dark card the inverse surface with ink on it is the
+     highest-contrast mark available, and it costs the section nothing. */
+  .card-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--cr-space-xs);
+    border-radius: var(--cr-radius-control);
+    background: var(--cr-surface-1);
+    color: var(--cr-text-primary);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: 1;
+    letter-spacing: 0;
+  }
+
+  .amt {
+    display: inline-grid;                       /* stack the two prices → stable width */
+    margin-top: var(--cr-space-xs);
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h4);
+    line-height: 1;
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .card-desc {
+    margin-top: var(--cr-space-xs);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* feature rows */
+  .feat-rows { margin-top: var(--cr-space-s); }
+  .frow {
+    padding: var(--cr-space-xs) 0;
+    border-top: var(--cr-stroke) solid var(--cr-border-default);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* Subscribe control — pinned to the card bottom */
+  .sub-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--cr-space-xs);
+    width: 100%;
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    margin-top: var(--cr-space-s);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: 1;
+    color: var(--cr-text-primary);
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-control);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .2s ease, border-color .2s ease, color .2s ease;
+  }
+  .feat-rows + .sub-btn { margin-top: auto; }    /* push to bottom when features precede it */
+  .sub-btn:hover { background: var(--cr-bg-tint); border-color: var(--cr-text-secondary); }
+  .sub-btn .spk { width: 16px; height: 16px; flex: none; stroke-width: var(--cr-icon-stroke-sm); }
+
+  /* ── The recommended card ─────────────────────────────────────────────────
+     A FLAT DARK SURFACE, not a wash. The original layered three radial glows
+     over a linear base and a grain overlay on top — depth simulation on a
+     language that has no depth, and four abstract gradients where the direction
+     allows none. The dark tier is a real surface the pack owns; the card takes
+     it, and pops by height and by contrast exactly as before. The grain
+     pseudo-layer is retired with it: atmosphere is the pack's treatment, not a
+     per-section overlay. */
+  .card--pop {
+    position: relative;
+    overflow: hidden;
+    min-height: 0;
+    padding: var(--cr-space-m) var(--cr-space-s);   /* taller than its neighbours */
+    border: 0;
+    border-radius: var(--cr-radius-card);
+    color: var(--cr-text-inverse);
+    background: var(--cr-bg-dark);
+  }
+  .card--pop::after { content: none; }
+  .card--pop > * { position: relative; z-index: 2; }
+
+  .card--pop .card-label { color: var(--cr-neutral-400); }
+  .card--pop .amt { color: var(--cr-text-inverse); }
+  .card--pop .card-desc { color: var(--cr-neutral-400); }
+  .card--pop .frow { border-top-color: var(--cr-neutral-700); color: var(--cr-neutral-400); }
+  /* THE SECTION'S ONE ACCENT MOMENT. Text on orange is the light-accent
+     foreground — the dark ink; the inverse value on this hue does not clear the
+     contrast floor. */
+  .card--pop .sub-btn {
+    background: var(--cr-accent-orange);
+    border-color: var(--cr-accent-orange);
+    color: var(--cr-on-accent-light);
+  }
+  .card--pop .sub-btn:hover { background: var(--cr-accent-orange-800); border-color: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+
+  /* ── Price swap — visibility flips so a reader never hears both ───────── */
+  .amt > span {
+    grid-area: 1 / 1;
+    transition: opacity .3s ease, transform .3s ease, visibility 0s linear .3s;
+  }
+  .amt .amt--m {
+    opacity: 1; transform: none; visibility: visible;
+    transition: opacity .3s ease, transform .3s ease, visibility 0s;
+  }
+  .amt .amt--a { opacity: 0; transform: translateY(8px); visibility: hidden; }
+  #bill-a:checked ~ .sub-inner .amt .amt--m {
+    opacity: 0; transform: translateY(-8px); visibility: hidden;
+    transition: opacity .3s ease, transform .3s ease, visibility 0s linear .3s;
+  }
+  #bill-a:checked ~ .sub-inner .amt .amt--a {
+    opacity: 1; transform: none; visibility: visible;
+    transition: opacity .3s ease, transform .3s ease, visibility 0s;
+  }
+
+  /* ── FAQ ─────────────────────────────────────────────────────────────── */
+  .faq {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 2.4fr);
+    column-gap: var(--cr-space-xl);
+    margin-top: var(--cr-space-2xl);
+  }
+  .faq-title {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+
+  .qa {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) 22px;
+    column-gap: var(--cr-space-m);
+    align-items: start;
+    padding: var(--cr-space-s) 0;
+    border-top: var(--cr-stroke) solid var(--cr-border-default);
+  }
+  /* A BUTTON DOES NOT INHERIT ITS FACE, so the family is stated. Closed reads as
+     present rather than absent — secondary ink closed, primary open, which is a
+     step on the two-value text ramp rather than a colour change. */
+  .qa-q {
+    grid-column: 1;
+    margin: 0;
+    padding: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    background: none;
+    border: 0;
+    text-align: left;
+    cursor: pointer;
+    transition: color .2s ease;
+  }
+  /* answer sits in the column BESIDE the question; reveals via the grid-rows trick */
+  .qa-ans {
+    grid-column: 2;
+    display: grid;
+    grid-template-rows: 1fr;                      /* default (no-JS) = open */
+    opacity: 1;
+  }
+  .qa-ans > div { overflow: hidden; }
+  .qa-ans p {
+    margin: 0 0 var(--cr-space-xs);
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  .qa-ans p:last-child { margin-bottom: 0; }
+  .qa-ico {
+    grid-column: 3;
+    position: relative;
+    width: 18px; height: 18px;
+    margin-top: 0;
+    transition: transform .3s ease;
+    pointer-events: none;                         /* the row click handles the toggle */
+  }
+  .qa-ico::before, .qa-ico::after {
+    content: ""; position: absolute; background: var(--cr-text-secondary); border-radius: 0;
+  }
+  .qa-ico::before { left: 0; top: 50%; width: 100%; height: 1.6px; transform: translateY(-50%); }
+  .qa-ico::after  { top: 0; left: 50%; height: 100%; width: 1.6px; transform: translateX(-50%); }
+
+  /* with JS: collapse the answers, rotate the mark when open. Visibility flips
+     with the rows so a collapsed answer leaves the accessibility tree, matching
+     aria-expanded; scoped to .has-js so the no-JS path keeps every answer open
+     and in-tree. */
+  .has-js .qa-ans {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    visibility: hidden;
+    transition: grid-template-rows .4s cubic-bezier(.4, 0, .2, 1), opacity .3s ease, visibility 0s linear .4s;
+  }
+  .has-js .qa.open .qa-ans {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    visibility: visible;
+    transition: grid-template-rows .4s cubic-bezier(.4, 0, .2, 1), opacity .3s ease, visibility 0s;
+  }
+  .has-js .qa.open .qa-ico { transform: rotate(45deg); }
+  .has-js .qa:hover .qa-q,
+  .has-js .qa.open .qa-q { color: var(--cr-text-primary); }
+
+  /* ── Entrance reveal (JS-gated, fires once) ──────────────────────────── */
+  .has-js .sub-head,
+  .has-js .sub-toggle,
+  .has-js .card,
+  .has-js .faq-title,
+  .has-js .qa {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity .6s cubic-bezier(.22, .61, .36, 1),
+                transform .6s cubic-bezier(.22, .61, .36, 1);
+    transition-delay: var(--d, 0ms);
+  }
+  .has-js .sub.in .sub-head,
+  .has-js .sub.in .sub-toggle,
+  .has-js .sub.in .card,
+  .has-js .sub.in .faq-title,
+  .has-js .sub.in .qa { opacity: 1; transform: none; }
+
+  /* ── Responsive ──────────────────────────────────────────────────────── */
+  @media (max-width: 1000px) {
+    .cards { grid-template-columns: repeat(2, 1fr); gap: var(--cr-space-xs); align-items: stretch; }
+    .card--pop { min-height: 380px; }            /* match its neighbours once 2×2 */
+  }
+  @media (max-width: 900px) {
+    .faq { grid-template-columns: 1fr; row-gap: var(--cr-space-s); }
+    .qa { grid-template-columns: minmax(0, 1fr) 22px; column-gap: var(--cr-space-s); }
+    .qa-q { grid-column: 1; }
+    .qa-ico { grid-column: 2; }
+    .qa-ans { grid-column: 1 / -1; }             /* answer drops below the question */
+    .has-js .qa.open .qa-ans { margin-top: var(--cr-space-xs); }
+  }
+  @media (max-width: 600px) {
+    .cards { grid-template-columns: 1fr; gap: var(--cr-space-xs); }
+    .sub-head { gap: var(--cr-space-s); }
+  }
+
+  /* Reduced motion: everything stays functional, the animation goes — each rule
+     matched to the specificity of the one it answers. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .sub-head,
+    .has-js .sub-toggle,
+    .has-js .card,
+    .has-js .faq-title,
+    .has-js .qa { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .sub-thumb, .amt > span, .qa-ico, .qa-q { transition: none !important; }
+    .has-js .qa-ans, .has-js .qa.open .qa-ans { transition: none !important; }
+  }
+</style>
+</head>
+
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. Drafted from the measurement and then answered:
+     nothing in it is unexplained, so no line carries the directed reason.
+  .amt        | font-size              | type-ramp
+  .amt        | line-height            | type-ramp
+  .amt        | margin-top             | spacing-scale
+  .amt--a     | font-size              | type-ramp
+  .amt--a     | line-height            | type-ramp
+  .amt--m     | font-size              | type-ramp
+  .amt--m     | line-height            | type-ramp
+  .card       | border-radius          | radius-pair
+  .card       | padding-bottom         | spacing-scale
+  .card       | padding-left           | spacing-scale
+  .card       | padding-right          | spacing-scale
+  .card       | padding-top            | spacing-scale
+  .card-badge | border-radius          | radius-pair
+  .card-badge | font-size              | type-ramp
+  .card-badge | line-height            | type-ramp
+  .card-badge | padding-bottom         | spacing-scale
+  .card-badge | padding-left           | spacing-scale
+  .card-badge | padding-right          | spacing-scale
+  .card-badge | padding-top            | spacing-scale
+  .card-desc  | font-size              | type-ramp
+  .card-desc  | line-height            | type-ramp
+  .card-desc  | margin-bottom          | spacing-scale
+  .card-label | column-gap             | spacing-scale
+  .card-label | font-size              | type-ramp
+  .card-label | line-height            | type-ramp
+  .card-label | row-gap                | spacing-scale
+  .cards      | column-gap             | spacing-scale
+  .cards      | margin-top             | spacing-scale
+  .cards      | row-gap                | spacing-scale
+  .faq        | column-gap             | spacing-scale
+  .faq        | margin-top             | spacing-scale
+  .faq        | row-gap                | spacing-scale
+  .faq-title  | font-size              | type-ramp
+  .faq-title  | line-height            | type-ramp
+  .feat-rows  | margin-top             | spacing-scale
+  .frow       | font-size              | type-ramp
+  .frow       | line-height            | type-ramp
+  .frow       | padding-bottom         | spacing-scale
+  .frow       | padding-top            | spacing-scale
+  .qa         | column-gap             | spacing-scale
+  .qa         | padding-bottom         | spacing-scale
+  .qa         | padding-top            | spacing-scale
+  .qa-q       | font-size              | type-ramp
+  .qa-q       | line-height            | type-ramp
+  .spk        | font-size              | type-ramp
+  .spk        | line-height            | type-ramp
+  .spk        | stroke-width           | stroke
+  .sub        | padding-bottom         | spacing-scale
+  .sub        | padding-top            | spacing-scale
+  .sub-btn    | border-radius          | radius-pair
+  .sub-btn    | column-gap             | spacing-scale
+  .sub-btn    | font-size              | type-ramp
+  .sub-btn    | line-height            | type-ramp
+  .sub-btn    | padding-left           | spacing-scale
+  .sub-btn    | padding-right          | spacing-scale
+  .sub-btn    | row-gap                | spacing-scale
+  .sub-head   | column-gap             | spacing-scale
+  .sub-head   | row-gap                | spacing-scale
+  .sub-inner  | padding-left           | spacing-scale
+  .sub-inner  | padding-right          | spacing-scale
+  .sub-off    | font-size              | type-ramp
+  .sub-off    | line-height            | type-ramp
+  .sub-seg    | border-radius          | radius-pair
+  .sub-seg    | column-gap             | spacing-scale
+  .sub-seg    | font-size              | type-ramp
+  .sub-seg    | line-height            | type-ramp
+  .sub-seg    | padding-bottom         | spacing-scale
+  .sub-seg    | padding-top            | spacing-scale
+  .sub-seg    | row-gap                | spacing-scale
+  .sub-title  | font-size              | type-ramp
+  .sub-title  | line-height            | type-ramp
+  .sub-toggle | border-radius          | radius-pair
+  .sub-toggle | padding-bottom         | spacing-scale
+  .sub-toggle | padding-left           | spacing-scale
+  .sub-toggle | padding-right          | spacing-scale
+  .sub-toggle | padding-top            | spacing-scale
+  br          | font-size              | type-ramp
+  br          | line-height            | type-ramp
+  p           | font-size              | type-ramp
+  p           | margin-bottom          | spacing-scale
+  path        | font-size              | type-ramp
+  path        | line-height            | type-ramp
+  path        | stroke-width           | stroke
+  span        | font-size              | type-ramp
+  span        | line-height            | type-ramp
+-->
+<section class="sub" data-screen-label="Subscription — plans + FAQ"
+         data-archetype="feature-comparison" data-hierarchy="technical" data-intent="compare"
+         data-register="technical" data-signature="colour-interruption" data-density="high">
+
+  <!-- pure-CSS toggle state (sr-only radios; Monthly default) -->
+  <input type="radio" name="sub-bill" id="bill-m" class="sub-radio" checked aria-label="Bill monthly" />
+  <input type="radio" name="sub-bill" id="bill-a" class="sub-radio" aria-label="Bill annually (save 15%)" />
+
+  <div class="sub-inner">
+
+    <!-- ── Pricing header ──────────────────────────────────────────────── -->
+    <div class="sub-head" style="--d:0ms">
+      <h2 class="sub-title">Subscription</h2>
+      <div class="sub-toggle">
+        <span class="sub-thumb" aria-hidden="true"></span>
+        <label for="bill-m" class="sub-seg sub-seg--m">Monthly</label>
+        <label for="bill-a" class="sub-seg sub-seg--a">Annual <span class="sub-off">-15%</span></label>
+      </div>
+    </div>
+
+    <!-- ── Plan cards ──────────────────────────────────────────────────── -->
+    <div class="cards">
+
+      <!-- Starter -->
+      <article class="card" style="--d:90ms">
+        <div class="card-label"><span>Starter</span></div>
+        <span class="amt"><span class="amt--m">$10</span><span class="amt--a">$8.50</span></span>
+        <p class="card-desc">Automate the work your team repeats, end to end.</p>
+        <div class="feat-rows">
+          <div class="frow">1 active agent</div>
+          <div class="frow">500 runs / month</div>
+          <div class="frow">Core integrations</div>
+          <div class="frow">Community support</div>
+        </div>
+        <a href="#" class="sub-btn">
+          <svg class="spk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+          Subscribe
+        </a>
+      </article>
+
+      <!-- Growth (the recommended plan — the dark card) -->
+      <article class="card card--pop" style="--d:160ms">
+        <div class="card-label"><span>Growth</span><span class="card-badge">Most popular</span></div>
+        <span class="amt"><span class="amt--m">$20</span><span class="amt--a">$17</span></span>
+        <p class="card-desc">Automate the work your team repeats, end to end.</p>
+        <div class="feat-rows">
+          <div class="frow">5 active agents</div>
+          <div class="frow">5,000 runs / month</div>
+          <div class="frow">Priority support</div>
+          <div class="frow">Analytics dashboard</div>
+        </div>
+        <a href="#" class="sub-btn">
+          <svg class="spk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+          Subscribe
+        </a>
+      </article>
+
+      <!-- Business -->
+      <article class="card" style="--d:230ms">
+        <div class="card-label"><span>Business</span></div>
+        <span class="amt"><span class="amt--m">$40</span><span class="amt--a">$34</span></span>
+        <p class="card-desc">Automate the work your team repeats, end to end.</p>
+        <div class="feat-rows">
+          <div class="frow">20 active agents</div>
+          <div class="frow">25,000 runs / month</div>
+          <div class="frow">SSO &amp; roles</div>
+          <div class="frow">API access</div>
+        </div>
+        <a href="#" class="sub-btn">
+          <svg class="spk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+          Subscribe
+        </a>
+      </article>
+
+      <!-- Enterprise -->
+      <article class="card" style="--d:300ms">
+        <div class="card-label"><span>Enterprise</span></div>
+        <span class="amt"><span class="amt--m">$60</span><span class="amt--a">$51</span></span>
+        <p class="card-desc">Automate the work your team repeats, end to end.</p>
+        <div class="feat-rows">
+          <div class="frow">Unlimited agents</div>
+          <div class="frow">Custom run volume</div>
+          <div class="frow">Dedicated success manager</div>
+          <div class="frow">Audit logs &amp; SLA</div>
+        </div>
+        <a href="#" class="sub-btn">
+          <svg class="spk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+          Subscribe
+        </a>
+      </article>
+
+    </div><!-- /.cards -->
+
+    <!-- ── FAQ (side-by-side question / answer columns) ─────────────────── -->
+    <div class="faq">
+      <h2 class="faq-title" style="--d:0ms">Frequently asked<br />questions</h2>
+
+      <div class="faq-list">
+
+        <div class="qa open" style="--d:80ms">
+          <button class="qa-q" aria-expanded="true">How many automation runs do I get on the Starter plan?</button>
+          <div class="qa-ans"><div>
+            <p>The Starter plan includes 500 agent runs per month — enough to automate one or two recurring workflows end to end.</p>
+            <p>Runs reset on the first of each month, and you can top up or move to Growth at any time without losing your agents or configurations.</p>
+          </div></div>
+          <span class="qa-ico" aria-hidden="true"></span>
+        </div>
+
+        <div class="qa" style="--d:150ms">
+          <button class="qa-q" aria-expanded="false">Can I change plans later?</button>
+          <div class="qa-ans"><div>
+            <p>Yes — upgrade or downgrade anytime from your account. Changes are prorated to the day, and your agents, integrations, and run history carry over untouched.</p>
+          </div></div>
+          <span class="qa-ico" aria-hidden="true"></span>
+        </div>
+
+        <div class="qa" style="--d:220ms">
+          <button class="qa-q" aria-expanded="false">Do unused runs roll over?</button>
+          <div class="qa-ans"><div>
+            <p>Unused runs don't roll over month to month, but you can set usage alerts and auto-top-ups so an agent never stalls in the middle of a process.</p>
+          </div></div>
+          <span class="qa-ico" aria-hidden="true"></span>
+        </div>
+
+        <div class="qa" style="--d:290ms">
+          <button class="qa-q" aria-expanded="false">Is there a discount for annual billing?</button>
+          <div class="qa-ans"><div>
+            <p>Annual billing saves 15% versus monthly on every plan. Switch the toggle above to "Annual" to see the per-month price for each tier.</p>
+          </div></div>
+          <span class="qa-ico" aria-hidden="true"></span>
+        </div>
+
+      </div><!-- /.faq-list -->
+    </div><!-- /.faq -->
+
+  </div><!-- /.sub-inner -->
+</section>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    root.classList.add('has-js');
+    var sec = document.querySelector('.sub');
+    if (!sec) return;
+
+    // Single-open FAQ accordion. Clicking a row (or its question / icon) opens it
+    // and closes the others; <a> clicks inside an answer are ignored.
+    var rows = Array.prototype.slice.call(sec.querySelectorAll('.qa'));
+    rows.forEach(function (row) {
+      row.addEventListener('click', function (e) {
+        if (e.target.closest('a')) return;
+        var isOpen = row.classList.contains('open');
+        rows.forEach(function (r) {
+          r.classList.remove('open');
+          var b = r.querySelector('.qa-q'); if (b) b.setAttribute('aria-expanded', 'false');
+        });
+        if (!isOpen) {
+          row.classList.add('open');
+          var btn = row.querySelector('.qa-q'); if (btn) btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+
+    // One-time entrance reveal.
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) { sec.classList.add('in'); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { sec.classList.add('in'); io.disconnect(); }
+      });
+    }, { threshold: 0.12 });
+    io.observe(sec);
+  })();
+</script>
+</body>
+</html>

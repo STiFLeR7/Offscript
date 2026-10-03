@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CR — Hero · agent (chat demo)</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Hero · agent (chat demo)       from component-hero-agent.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **The capture sits inside the demonstration, not after it.** The
+              profile is explicit: the reader is invited to *act* rather than
+              shown a state, and the ask arrives at the moment of highest
+              curiosity. That only holds if the demo is real enough to justify
+              asking this early — so the demo, not the form, gets the weight.
+
+  STRUCTURE   Unchanged. Nav band · 44/56 split (headline → lede → email+CTA on
+              the left, the chat demo on the right). DOM, both scripts, ids,
+              `data-*`, `src`, the `<form>` and every behavioural hook are
+              byte-compatible with the frozen original (DR-22). The v2 file is
+              beside this one in `_v2/`.
+
+  THE CREATIVE FRAME. The demo panel was a flat grey tonal block — the one
+              surface on the page whose whole job was to be a background. It
+              takes an approved environment instead: `env-cliffside-muted`, one
+              per section, carrying the texture stack in a SINGLE background so
+              the blend modes composite against the photograph rather than
+              against transparency.
+
+              NO TYPE SITS ON THE PHOTOGRAPH. Every readable thing in that
+              column is inside an OPAQUE surface — the three tab pills and the
+              chat card — which is the permitted case. Remove the photograph and
+              not one word changes legibility. No scrim, no veil: if the type
+              needed one, the photograph would have been a surface.
+
+              The user bubble's two-stop tint gradient goes the same way, to a
+              flat quiet surface. A gradient that exists to suggest depth is the
+              thing this direction retires.
+
+  ACCENT      One moment: `Book a Demo Call`. v2 also spent colour on the active
+              tab, the two thinking glyphs and the send control. They are ink
+              now — a page where everything is marked marks nothing, and the one
+              thing this section wants is the click on the form.
+
+  RESPONSIVE  The original's breakpoints (899 / 860 / 480), unchanged. Type
+              steps down the pack's ramp; `clamp()` is gone from type, and the
+              responsive gutter literals fold into the one page gutter.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  .cr-ha {
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+  }
+  .cr-ha *, .cr-ha *::before, .cr-ha *::after { box-sizing: border-box; }
+
+  /* ── (0) Canonical nav — LIGHT, because the hero surface is light ── */
+  .ha-navband { background: var(--cr-page-ground); border-bottom: var(--cr-stroke) solid var(--cr-border-default); }
+  .ha-nav {
+    max-width: var(--cr-content-max); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: var(--cr-space-s) var(--cr-page-gutter); gap: var(--cr-space-s);
+  }
+  .ha-logo { height: 30px; width: auto; display: block; flex: 0 0 auto; }
+  .ha-links {
+    display: flex; gap: var(--cr-space-s); align-items: center;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: var(--cr-text-supporting);
+    color: var(--cr-text-secondary); letter-spacing: 0;
+  }
+  .ha-link { display: inline-flex; align-items: center; gap: var(--cr-space-xs); cursor: pointer; white-space: nowrap; }
+  .ha-link svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: var(--cr-icon-stroke-sm); fill: none; }
+  /* Dark ink, not accent — the accent is spent once, on the form. */
+  .ha-navcta {
+    flex: 0 0 auto; background: var(--cr-text-primary); color: var(--cr-text-inverse);
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+    padding: var(--cr-space-xs) var(--cr-space-s); border-radius: var(--cr-radius-control); border: 0; cursor: pointer;
+    letter-spacing: 0; transition: background .18s ease;
+  }
+  .ha-navcta:hover { background: var(--cr-ink); }
+
+  /* ── Body — the original's 44/56 tracks ─────────────────── */
+  .ha-body {
+    max-width: var(--cr-content-max); margin: 0 auto;
+    padding: var(--cr-rhythm-content) var(--cr-page-gutter);
+    display: grid;
+    grid-template-columns: 44fr 56fr;
+    gap: var(--cr-space-m);
+    align-items: center;
+  }
+
+  /* ── LEFT column ────────────────────────────────────────── */
+  .ha-left { min-width: 0; }
+  .ha-title {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h1);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .ha-sub {
+    margin: var(--cr-rhythm-cluster) 0 0;
+    max-width: var(--cr-measure-body);
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* email + CTA — the container takes the control radius; the pill is retired */
+  .ha-form {
+    display: flex; align-items: center;
+    margin-top: var(--cr-space-m);
+    max-width: var(--cr-measure-body);
+    background: var(--cr-surface-1);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-control);
+    padding: var(--cr-space-xs);
+    gap: var(--cr-space-xs);
+  }
+  .ha-email {
+    flex: 1 1 auto; min-width: 0;
+    border: 0; background: transparent; outline: 0;
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-supporting); color: var(--cr-text-primary);
+  }
+  .ha-email::placeholder { color: var(--cr-text-secondary); }
+  /* THE SECTION'S ONE ACCENT MOMENT. */
+  .ha-form-btn {
+    flex: 0 0 auto;
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    background: var(--cr-accent-orange); color: var(--cr-on-accent-light);
+    border: 0; border-radius: var(--cr-radius-control);
+    padding: var(--cr-space-xs) var(--cr-space-s); cursor: pointer;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+    white-space: nowrap; text-decoration: none; letter-spacing: 0;
+    transition: background .18s ease;
+  }
+  .ha-form-btn:hover { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+  .ha-form-btn svg { width: 16px; height: 16px; stroke-width: var(--cr-icon-stroke-md); }
+
+  /* ── RIGHT column — the chat demo ────────────────────────────
+     THE STANDARD CREATIVE TREATMENT. One stack, three layers, in this order:
+     grain on top, grunge under it, the environment underneath both. It has to be
+     ONE stack — a blend mode composites against what is beneath it in the SAME
+     background, so putting the grain on a pseudo-element resolves `overlay`
+     against transparency and renders the texture at full strength as grey
+     static. The last position is the asset's measured focus, not a guess.
+
+     The URLs are written out rather than reached through `--cr-env-*`, because a
+     `url()` inside a custom property resolves against the CONSUMING document,
+     not the sheet that declared it, and fails silently.
+
+     No `background:` shorthand on this element — the shorthand resets
+     `background-image` and would drop the whole stack. */
+  .ha-right { min-width: 0; }
+  .ha-demo {
+    background-color: var(--cr-bg-dark);
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-cliffside-muted.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 50% 42%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-s);
+  }
+  /* tabs — OPAQUE pills, which is why words may sit in them over a photograph */
+  .ha-tabs { display: flex; gap: var(--cr-space-xs); flex-wrap: wrap; margin-bottom: var(--cr-space-xs); }
+  .ha-tab {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs); border-radius: var(--cr-radius-control);
+    background: var(--cr-surface-1); border: var(--cr-stroke) solid var(--cr-border-default);
+    font-size: var(--cr-text-supporting); font-weight: 400; color: var(--cr-text-secondary);
+    white-space: nowrap;
+  }
+  .ha-tab svg { width: 15px; height: 15px; color: var(--cr-text-secondary); stroke-width: var(--cr-icon-stroke-sm); }
+  /* The active tab was a blue tint. Selection is ink and a stronger edge — the
+     accent belongs to the one control this section wants pressed. */
+  .ha-tab.active {
+    background: var(--cr-surface-5);
+    border-color: var(--cr-border-strong);
+    color: var(--cr-text-primary);
+    font-weight: 500;
+  }
+  .ha-tab.active svg { color: var(--cr-text-primary); }
+
+  /* chat card — OPAQUE, and the artifact the section exists to show */
+  .ha-chat {
+    background: var(--cr-surface-1);
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-s);
+    min-height: calc(var(--cr-space-2xl) * 5);
+    display: flex; flex-direction: column;
+  }
+  .ha-msgs { display: flex; flex-direction: column; gap: var(--cr-space-xs); flex: 1 1 auto; }
+
+  /* The bubble's tint gradient becomes a flat quiet surface. */
+  .ha-user {
+    align-self: flex-end; max-width: 72%;
+    padding: var(--cr-space-xs);
+    border-radius: var(--cr-radius-card) var(--cr-radius-card) var(--cr-radius-control) var(--cr-radius-card);
+    background: var(--cr-surface-5);
+    font-size: var(--cr-text-supporting); color: var(--cr-text-primary); line-height: var(--cr-leading-body);
+  }
+  .ha-think { display: flex; align-items: center; gap: var(--cr-space-xs); font-size: var(--cr-text-supporting); color: var(--cr-text-secondary); }
+  .ha-think svg { width: 16px; height: 16px; color: var(--cr-text-secondary); stroke-width: var(--cr-icon-stroke-sm); flex: 0 0 auto; }
+  .ha-ai {
+    align-self: flex-start; max-width: 78%;
+    margin-top: var(--cr-space-xs);
+  }
+  .ha-ai-bubble {
+    padding: var(--cr-space-xs);
+    border-radius: var(--cr-radius-control) var(--cr-radius-card) var(--cr-radius-card) var(--cr-radius-card);
+    background: var(--cr-surface-1); border: var(--cr-stroke) solid var(--cr-border-default);
+    font-size: var(--cr-text-supporting); color: var(--cr-text-primary); line-height: var(--cr-leading-body);
+  }
+  .ha-ai-tag { display: inline-flex; align-items: center; gap: var(--cr-space-xs); margin-top: var(--cr-space-xs); font-size: var(--cr-text-supporting); color: var(--cr-text-secondary); }
+  .ha-ai-tag svg { width: 14px; height: 14px; color: var(--cr-text-secondary); stroke-width: var(--cr-icon-stroke-sm); }
+
+  .ha-input {
+    margin-top: var(--cr-space-xs);
+    display: flex; align-items: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs);
+    background: var(--cr-surface-1); border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+  }
+  .ha-input-txt { flex: 1 1 auto; min-width: 0; font-size: var(--cr-text-supporting); color: var(--cr-text-secondary); }
+  .ha-send {
+    flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%;
+    background: var(--cr-text-primary); border: 0; cursor: pointer;
+    font-family: var(--cr-font-body);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ha-send:hover { background: var(--cr-ink); }
+  .ha-send svg { width: 17px; height: 17px; color: var(--cr-text-inverse); stroke-width: var(--cr-icon-stroke-md); }
+
+  /* ── Reveal — unchanged in kind ─────────────────────────── */
+  .cr-ha.has-js .reveal { opacity: 0; transform: translateY(16px); }
+  .cr-ha.has-js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  /* Matched to the trigger's specificity — a guard that loses the cascade is
+     not a guard. */
+  @media (prefers-reduced-motion: reduce) {
+    .cr-ha.has-js .reveal,
+    .cr-ha.has-js .reveal.in { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ── Responsive — the ORIGINAL's breakpoints; type steps on the ramp ── */
+  @media (max-width: 899px) {
+    .ha-body { grid-template-columns: 1fr; gap: var(--cr-space-m); }
+    .ha-title { font-size: var(--cr-text-h2); }
+    .ha-sub, .ha-form { max-width: none; }
+  }
+  @media (max-width: 860px) {
+    .ha-links { display: none; }
+  }
+  @media (max-width: 480px) {
+    .ha-title { font-size: var(--cr-text-h4); }
+    .ha-form { flex-wrap: wrap; border-radius: var(--cr-radius-card); padding: var(--cr-space-xs); gap: var(--cr-space-xs); }
+    .ha-email { flex-basis: 100%; padding: 0; }
+    .ha-form-btn { flex: 1 1 auto; justify-content: center; }
+    .ha-user, .ha-ai { max-width: 90%; }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. Every reason is one of the closed six; there is no `directed`
+     line, because the 44/56 split and the demo's arrangement are the original's —
+     what moved is scale, ramp, radius and stroke.
+     `.ha-chat min-height` is composed from the closed spacing scale, not picked.
+  .ha-ai        | margin-top             | spacing-scale
+  .ha-ai-bubble | border-radius          | radius-pair
+  .ha-ai-bubble | font-size              | type-ramp
+  .ha-ai-bubble | line-height            | type-ramp
+  .ha-ai-bubble | padding-bottom         | spacing-scale
+  .ha-ai-bubble | padding-left           | spacing-scale
+  .ha-ai-bubble | padding-right          | spacing-scale
+  .ha-ai-bubble | padding-top            | spacing-scale
+  .ha-ai-tag    | column-gap             | spacing-scale
+  .ha-ai-tag    | font-size              | type-ramp
+  .ha-ai-tag    | margin-top             | spacing-scale
+  .ha-ai-tag    | row-gap                | spacing-scale
+  .ha-body      | column-gap             | spacing-scale
+  .ha-body      | padding-bottom         | spacing-scale
+  .ha-body      | padding-left           | spacing-scale
+  .ha-body      | padding-right          | spacing-scale
+  .ha-body      | padding-top            | spacing-scale
+  .ha-body      | row-gap                | spacing-scale
+  .ha-chat      | border-radius          | radius-pair
+  .ha-chat      | min-height             | spacing-scale
+  .ha-chat      | padding-bottom         | spacing-scale
+  .ha-chat      | padding-left           | spacing-scale
+  .ha-chat      | padding-right          | spacing-scale
+  .ha-chat      | padding-top            | spacing-scale
+  .ha-demo      | border-radius          | radius-pair
+  .ha-demo      | padding-bottom         | spacing-scale
+  .ha-demo      | padding-left           | spacing-scale
+  .ha-demo      | padding-right          | spacing-scale
+  .ha-demo      | padding-top            | spacing-scale
+  .ha-email     | font-size              | type-ramp
+  .ha-email     | padding-bottom         | spacing-scale
+  .ha-email     | padding-top            | spacing-scale
+  .ha-form      | border-radius          | radius-pair
+  .ha-form      | column-gap             | spacing-scale
+  .ha-form      | margin-top             | spacing-scale
+  .ha-form      | max-width              | measure
+  .ha-form      | padding-bottom         | spacing-scale
+  .ha-form      | padding-left           | spacing-scale
+  .ha-form      | padding-right          | spacing-scale
+  .ha-form      | padding-top            | spacing-scale
+  .ha-form      | row-gap                | spacing-scale
+  .ha-form-btn  | border-radius          | radius-pair
+  .ha-form-btn  | column-gap             | spacing-scale
+  .ha-form-btn  | font-size              | type-ramp
+  .ha-form-btn  | padding-bottom         | spacing-scale
+  .ha-form-btn  | padding-left           | spacing-scale
+  .ha-form-btn  | padding-right          | spacing-scale
+  .ha-form-btn  | padding-top            | spacing-scale
+  .ha-form-btn  | row-gap                | spacing-scale
+  .ha-input     | border-radius          | radius-pair
+  .ha-input     | margin-top             | spacing-scale
+  .ha-input     | padding-left           | spacing-scale
+  .ha-input-txt | font-size              | type-ramp
+  .ha-link      | column-gap             | spacing-scale
+  .ha-link      | row-gap                | spacing-scale
+  .ha-links     | column-gap             | spacing-scale
+  .ha-links     | row-gap                | spacing-scale
+  .ha-msgs      | column-gap             | spacing-scale
+  .ha-msgs      | row-gap                | spacing-scale
+  .ha-nav       | column-gap             | spacing-scale
+  .ha-nav       | padding-left           | spacing-scale
+  .ha-nav       | padding-right          | spacing-scale
+  .ha-nav       | row-gap                | spacing-scale
+  .ha-navcta    | border-radius          | radius-pair
+  .ha-navcta    | font-size              | type-ramp
+  .ha-navcta    | padding-left           | spacing-scale
+  .ha-navcta    | padding-right          | spacing-scale
+  .ha-sub       | font-size              | type-ramp
+  .ha-sub       | line-height            | type-ramp
+  .ha-sub       | margin-top             | spacing-scale
+  .ha-sub       | max-width              | measure
+  .ha-tab       | border-radius          | radius-pair
+  .ha-tab       | column-gap             | spacing-scale
+  .ha-tab       | font-size              | type-ramp
+  .ha-tab       | padding-bottom         | spacing-scale
+  .ha-tab       | padding-left           | spacing-scale
+  .ha-tab       | padding-right          | spacing-scale
+  .ha-tab       | padding-top            | spacing-scale
+  .ha-tab       | row-gap                | spacing-scale
+  .ha-tabs      | column-gap             | spacing-scale
+  .ha-tabs      | margin-bottom          | spacing-scale
+  .ha-tabs      | row-gap                | spacing-scale
+  .ha-think     | column-gap             | spacing-scale
+  .ha-think     | font-size              | type-ramp
+  .ha-think     | row-gap                | spacing-scale
+  .ha-title     | font-size              | type-ramp
+  .ha-title     | line-height            | type-ramp
+  .ha-user      | border-radius          | radius-pair
+  .ha-user      | font-size              | type-ramp
+  .ha-user      | line-height            | type-ramp
+  .ha-user      | padding-left           | spacing-scale
+  .ha-user      | padding-right          | spacing-scale
+  .lucide       | font-size              | type-ramp
+  .lucide       | stroke-width           | stroke
+  circle        | font-size              | type-ramp
+  circle        | stroke-width           | stroke
+  line          | font-size              | type-ramp
+  line          | stroke-width           | stroke
+  path          | font-size              | type-ramp
+  path          | stroke-width           | stroke
+  polyline      | font-size              | type-ramp
+  polyline      | stroke-width           | stroke
+  rect          | font-size              | type-ramp
+  rect          | stroke-width           | stroke
+  svg           | stroke-width           | stroke
+-->
+
+
+<section class="cr-ha" data-screen-label="Hero · agent (chat demo)"
+         data-archetype="product-showcase" data-hierarchy="hero" data-intent="orient"
+         data-register="human" data-signature="embedded-screenshot" data-density="medium">
+
+  <!-- ── (0) Canonical CR nav (light variant) ────────────── -->
+  <div class="ha-navband">
+    <nav class="ha-nav">
+      <img class="ha-logo" src="../../brand-pack/assets/logo/logo-color.svg" alt="Example Brand">
+      <div class="ha-links">
+        <span class="ha-link">AI <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ha-link">Industry <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ha-link">FosterX <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ha-link">About us</span>
+        <span class="ha-link">Resources <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+      <button class="ha-navcta">Let's talk</button>
+    </nav>
+  </div>
+
+  <!-- ── Body ────────────────────────────────────────────── -->
+  <div class="ha-body">
+
+    <!-- LEFT -->
+    <div class="ha-left">
+      <h1 class="ha-title reveal" style="--d:0ms">The best operations hire you&rsquo;ll ever make</h1>
+      <p class="ha-sub reveal" style="--d:80ms">Our AI agents handle complex operational work end-to-end, learning from plain-language procedures &mdash; no code, no decision trees, no workflows.</p>
+
+      <form class="ha-form reveal" style="--d:160ms" novalidate>
+        <input class="ha-email" type="email" placeholder="Your work email" aria-label="Work email">
+        <a class="ha-form-btn" href="#">Book a Demo Call <i data-lucide="arrow-right"></i></a>
+      </form>
+    </div>
+
+    <!-- RIGHT — chat demo on an approved environment -->
+    <div class="ha-right reveal" style="--d:160ms">
+      <div class="ha-demo">
+
+        <div class="ha-tabs">
+          <span class="ha-tab"><i data-lucide="credit-card"></i>Refund request</span>
+          <span class="ha-tab active"><i data-lucide="file-text"></i>Invoice query</span>
+          <span class="ha-tab"><i data-lucide="package"></i>Order status</span>
+        </div>
+
+        <div class="ha-chat">
+          <div class="ha-msgs">
+            <div class="ha-user">Can you re-issue invoice #3380?</div>
+
+            <div class="ha-think"><i data-lucide="sparkles"></i>Checking invoice record</div>
+            <div class="ha-think"><i data-lucide="sparkles"></i>Checking billing policy</div>
+
+            <div class="ha-ai">
+              <div class="ha-ai-bubble">Hi there &mdash; invoice #3380 has been re-issued and emailed to your AP inbox.</div>
+              <span class="ha-ai-tag"><i data-lucide="message-circle"></i>AI agent</span>
+            </div>
+          </div>
+
+          <div class="ha-input">
+            <span class="ha-input-txt">Great, can you update the PO number too?</span>
+            <button class="ha-send" type="button" aria-label="Send"><i data-lucide="arrow-up"></i></button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<script>
+  (function () {
+    if (window.lucide) lucide.createIcons();
+    var sec = document.querySelector('.cr-ha');
+    if (!sec || !('IntersectionObserver' in window)) return;
+    sec.classList.add('has-js');
+    var done = false;
+    function revealAll() {
+      if (done) return; done = true;
+      sec.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { revealAll(); io.disconnect(); } });
+    }, { threshold: 0.04 });
+    io.observe(sec);
+    setTimeout(revealAll, 1200);
+  })();
+</script>
+</body>
+</html>

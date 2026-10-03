@@ -1,0 +1,183 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../_card.css">
+<style>
+  /* ─────────────────────────────────────────────────────────────────────
+     DIAGRAM · MATURITY MODEL  (doc-scoped .diag-* — pure HTML/CSS, no JS, no SVG)
+     Progression through stages. Governing RULES live in README-DIAGRAMS.md; the
+     notes below are this family's MECHANICS only.
+
+     What it's for (Rulebook §8, Level 2): show a capability/maturity progression
+     through ordered stages. The form is FIXED by the family (§8): a LINEAR
+     progression, MAXIMUM 5 levels. Stages run horizontally Level 1 → Level 5 with
+     directional connectors (.diag-arrow--r) — it IS a progression (§10). Ascent is
+     carried by a RISING BASELINE: the row is align-items:flex-end and each stage
+     takes a taller --rise min-height, so the tops step up left→right (flow layout,
+     never absolute). Tones deepen one .tone-* step per stage as a secondary cue —
+     flat fills, NO gradients (§12). Flexbox only — no absolute positioning.
+     ───────────────────────────────────────────────────────────────────── */
+
+  /* ── SHARED .diag-* CORE — byte-identical in every specimen (copy verbatim) ──
+     The primitives every diagram reuses: node block + node text, connector +
+     arrowhead (h/v), eyebrow, caption. Identical everywhere, so two diagrams
+     pasted into one document stay consistent and never collide. Family-specific
+     classes (.diag-<family>-*) layer on top and are namespaced. Pure HTML/CSS,
+     no JavaScript; inherits the system tokens; NO gradients. ── */
+  .diag-node        { background: var(--surface, var(--cr-tone-sky)); border-radius: var(--radius-lg); padding: 5mm 6mm; min-width: 0; }
+  .diag-node--line  { background: transparent; border: 1px solid var(--cr-keyline); }
+  .diag-node-label  { font: 500 var(--fs-h4)/1.25 var(--font-display); letter-spacing: var(--tracking-display); color: var(--cr-charcoal); }
+  .diag-node-text   { font: 400 var(--fs-body)/1.45 var(--font-body); color: var(--cr-graphite); margin-top: 2mm; }
+  .diag-eyebrow     { font: 600 var(--fs-eyebrow)/1.4 var(--font-body); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; color: var(--cr-graphite); }
+  .diag-connector   { background: var(--cr-keyline); }
+  .diag-connector--h{ flex: 1 1 auto; height: 1px; min-width: 5mm; }
+  .diag-connector--v{ width: 1px; min-height: 5mm; margin: 0 auto; }
+  .diag-arrow       { flex: 0 0 auto; width: 0; height: 0; }
+  .diag-arrow--r    { border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 6px solid var(--cr-graphite); }
+  .diag-arrow--d    { border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 6px solid var(--cr-graphite); }
+  .diag-caption     { font: 400 var(--fs-body)/1.5 var(--font-body); color: var(--cr-graphite); }
+  /* On a dark band, only OUTLINE nodes (.diag-node--line) lift their text to white/stone;
+     a tonal-filled .diag-node is a LIGHT card and keeps DARK text on any ground (its own
+     surface sets the text colour, not the page). Bare-on-band labels are the family's to lift. */
+  .cr-band--dark .diag-node--line .diag-node-label, .cr-page--dark .diag-node--line .diag-node-label { color: var(--fg-inverse); }
+  .cr-band--dark .diag-node--line .diag-node-text,  .cr-page--dark .diag-node--line .diag-node-text  { color: var(--cr-stone); }
+  .cr-band--dark .diag-node--line .diag-eyebrow,    .cr-page--dark .diag-node--line .diag-eyebrow    { color: var(--cr-stone); }
+  .cr-band--dark .diag-node--line, .cr-page--dark .diag-node--line { border-color: var(--cr-keyline-dark); }
+  .cr-band--dark .diag-connector,  .cr-page--dark .diag-connector  { background: var(--cr-keyline-dark); }
+  .cr-band--dark .diag-arrow--r,   .cr-page--dark .diag-arrow--r   { border-left-color: var(--cr-stone); }
+  .cr-band--dark .diag-arrow--d,   .cr-page--dark .diag-arrow--d   { border-top-color: var(--cr-stone); }
+  .diag-demo   { max-width: 178mm; display: flex; flex-direction: column; gap: 40px; }
+  .diag-caveat { font: 400 13px/1.55 var(--font-body); color: var(--cr-graphite); max-width: 178mm; margin-top: 26px; }
+
+  /* ── MATURITY-MODEL-specific (namespaced) ── */
+  .diag-mat-ramp  { display: flex; align-items: flex-end; }
+  .diag-mat-stage { flex: 1 1 0; display: flex; flex-direction: column; justify-content: flex-end; }
+  /* The RISE lives on the visible node (not the wrapper): each box grows taller
+     left→right, so the COLOURED boxes step up — the ascent isn't invisible space
+     and never depends on how long a stage's text happens to be. */
+  .diag-mat-stage > .diag-node { flex: 0 0 auto; min-height: var(--rise, 40mm); }
+  .diag-mat-link  { flex: 0 0 9mm; align-self: flex-end; display: flex; align-items: center; justify-content: center; padding-bottom: 18mm; }
+  .diag-mat-lvl   { font: 600 var(--fs-eyebrow)/1 var(--font-body); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; color: var(--accent, var(--cr-tone-sky-accent)); margin-bottom: 2.5mm; }
+</style>
+</head>
+<body style="background:#FFFFFF">
+<div class="diag-demo">
+
+  <!-- (1) Linear ramp of 5 levels — rising baseline + directional connectors. The fixed family form. -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">1 · Linear progression · 5 ascending levels, rising baseline + directional connectors</div>
+    <div class="diag-mat-ramp">
+
+      <div class="diag-mat-stage" style="--rise:34mm">
+        <div class="diag-node tone-sky">
+          <div class="diag-mat-lvl">Level 1</div>
+          <div class="diag-node-label">Ad-hoc</div>
+          <div class="diag-node-text">Manual, one-off automation with no shared pattern.</div>
+        </div>
+      </div>
+      <div class="diag-mat-link"><span class="diag-arrow diag-arrow--r"></span></div>
+
+      <div class="diag-mat-stage" style="--rise:42mm">
+        <div class="diag-node tone-periwinkle">
+          <div class="diag-mat-lvl">Level 2</div>
+          <div class="diag-node-label">Repeatable</div>
+          <div class="diag-node-text">First playbooks reused across a single team.</div>
+        </div>
+      </div>
+      <div class="diag-mat-link"><span class="diag-arrow diag-arrow--r"></span></div>
+
+      <div class="diag-mat-stage" style="--rise:50mm">
+        <div class="diag-node tone-lilac">
+          <div class="diag-mat-lvl">Level 3</div>
+          <div class="diag-node-label">Defined</div>
+          <div class="diag-node-text">Standard agentic patterns governed centrally.</div>
+        </div>
+      </div>
+      <div class="diag-mat-link"><span class="diag-arrow diag-arrow--r"></span></div>
+
+      <div class="diag-mat-stage" style="--rise:58mm">
+        <div class="diag-node tone-sage">
+          <div class="diag-mat-lvl">Level 4</div>
+          <div class="diag-node-label">Managed</div>
+          <div class="diag-node-text">Outcomes measured against baselines and tuned.</div>
+        </div>
+      </div>
+      <div class="diag-mat-link"><span class="diag-arrow diag-arrow--r"></span></div>
+
+      <div class="diag-mat-stage" style="--rise:66mm">
+        <div class="diag-node tone-coral">
+          <div class="diag-mat-lvl">Level 5</div>
+          <div class="diag-node-label">Optimised</div>
+          <div class="diag-node-text">Self-improving agents scaled across the business.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- (2) On navy — the same maturity model; the LIGHT tonal cards keep dark text, only the arrowheads lift. -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">2 · On navy (.cr-band--dark) · the same ascending ramp; the light tonal cards keep dark text, only the arrowheads lift</div>
+    <div class="cr-band cr-band--dark">
+      <div class="diag-mat-ramp">
+
+        <div class="diag-mat-stage" style="--rise:34mm">
+          <div class="diag-node tone-sky">
+            <div class="diag-mat-lvl">Level 1</div>
+            <div class="diag-node-label">Ad-hoc</div>
+            <div class="diag-node-text">Manual, one-off automation with no shared pattern.</div>
+          </div>
+        </div>
+        <div class="diag-mat-link"><span class="diag-arrow diag-arrow--r"></span></div>
+
+        <div class="diag-mat-stage" style="--rise:42mm">
+          <div class="diag-node tone-periwinkle">
+            <div class="diag-mat-lvl">Level 2</div>
+            <div class="diag-node-label">Repeatable</div>
+            <div class="diag-node-text">First playbooks reused across a single team.</div>
+          </div>
+        </div>
+        <div class="diag-mat-link"><span class="diag-arrow diag-arrow--r"></span></div>
+
+        <div class="diag-mat-stage" style="--rise:50mm">
+          <div class="diag-node tone-lilac">
+            <div class="diag-mat-lvl">Level 3</div>
+            <div class="diag-node-label">Defined</div>
+            <div class="diag-node-text">Standard agentic patterns governed centrally.</div>
+          </div>
+        </div>
+        <div class="diag-mat-link"><span class="diag-arrow diag-arrow--r"></span></div>
+
+        <div class="diag-mat-stage" style="--rise:58mm">
+          <div class="diag-node tone-sage">
+            <div class="diag-mat-lvl">Level 4</div>
+            <div class="diag-node-label">Managed</div>
+            <div class="diag-node-text">Outcomes measured against baselines and tuned.</div>
+          </div>
+        </div>
+        <div class="diag-mat-link"><span class="diag-arrow diag-arrow--r"></span></div>
+
+        <div class="diag-mat-stage" style="--rise:66mm">
+          <div class="diag-node tone-coral">
+            <div class="diag-mat-lvl">Level 5</div>
+            <div class="diag-node-label">Optimised</div>
+            <div class="diag-node-text">Self-improving agents scaled across the business.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="diag-caveat">
+    <strong>Maturity Model</strong> · progression through stages (<strong>Level 2</strong>).
+    <strong>Governing rules: the Diagrams Rulebook</strong> (<code>README-DIAGRAMS.md</code> —
+    §8 maturity model, §6 layout intelligence, §10 nodes &amp; connectors, §12 style). The form is fixed
+    by the family: a <strong>linear progression, a maximum of 5 levels</strong>, running Level 1 → Level 5.
+    Ascent is carried by a <strong>rising baseline</strong> — the row is bottom-aligned and each stage takes
+    a taller min-height, so the tops step up; tones deepen one <code>.tone-*</code> step per stage as a
+    secondary cue. Directional connectors mark the progression — <strong>relationship only, no ornament</strong>.
+    Flat fills, <strong>no gradients</strong>. <strong>Pure HTML/CSS — Flexbox, no JavaScript, no SVG, no
+    absolute positioning.</strong> Doc-scoped (never in <code>colors_and_type.css</code>). Illustrative
+    AI / automation maturity model.
+  </div>
+
+</div>
+</body></html>

@@ -1,0 +1,171 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../_card.css">
+<style>
+  /* ─────────────────────────────────────────────────────────────────────
+     DATA VIZ · TREND  (doc-scoped .viz-* — pure HTML/CSS + inline SVG, no JS)
+     A line + soft area over an ORDERED sequence. Governing RULES live in
+     README-DATA-VIZ.md; the notes below are this idiom's MECHANICS only (doc-scoped).
+
+     What it's for (Rulebook §7–§8): a Level-4 time-series / ordered sequence (≥3 points,
+     prefer 5+) → a line (+ optional area). Only with ACTUAL ordered observations — never
+     imply a trend you don't have (§6). Intelligent domain, NOT a forced 0–100 (§5).
+
+     Colour (Rulebook §4 — marks are never navy): the line + dots = the accent var(--accent)
+     (set by .tone-*); the area is the inert tonal var(--surface), faint. The baseline is a
+     hairline axis (var(--cr-keyline)) — exempt, it's the grid, not a mark; axis/point labels
+     stay dark ink (type).
+
+     ASPECT GOTCHA: the SVG uses preserveAspectRatio="none", so the rendered box MUST match
+     the viewBox aspect (320:158) or the round dots distort. We pin it with
+     aspect-ratio:320/158 on the <svg> — so at ANY width the box stays proportional.
+     ───────────────────────────────────────────────────────────────────── */
+  .viz-trend       { width:100%; }
+  .viz-trend svg   { width:100%; height:auto; display:block; aspect-ratio:320 / 158; }   /* box aspect == viewBox → dots stay round */
+  .viz-trend-area  { fill:var(--surface, var(--cr-tone-sky)); opacity:.55; stroke:none; }              /* inert tonal fill */
+  .viz-trend-line  { fill:none; stroke:var(--accent); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }   /* §4: subject = accent, never navy */
+  .viz-trend-dot   { fill:var(--accent); }
+  /* §4-sanctioned gradient variants (quiet, same-hue, crisp edges) — each references a
+     <linearGradient> defined inside its own SVG's <defs> (unique ids, no cross-SVG collision). */
+  .viz-trend-area--shadow { fill:url(#trendShadowGrad); opacity:1; stroke:none; }   /* accent "shadow" under the line → transparent at the baseline */
+  .viz-trend-line--grad   { stroke:url(#trendLineGrad); }                           /* the line runs light → deep accent, 1st → last point */
+  .viz-trend-base  { stroke:var(--cr-keyline); stroke-width:1; }    /* axis hairline (exempt — stays) */
+  .viz-trend-ax    { font:400 6.5px/1 var(--font-body); fill:var(--cr-graphite); }
+  .viz-trend-pt    { font:600 6.5px/1 var(--font-display); fill:var(--cr-charcoal); }
+  .viz-flag        { font:400 13px/1.5 var(--font-body); color:var(--cr-graphite); }
+
+  /* preview-page chrome */
+  .viz-demo  { max-width:178mm; display:flex; flex-direction:column; gap:40px; }
+  .viz-caveat{ font:400 13px/1.55 var(--font-body); color:var(--cr-graphite); max-width:178mm; margin-top:26px; }
+</style>
+</head>
+<body style="background:#FFFFFF">
+<div class="viz-demo">
+
+  <!-- (1) Hero · full-width line + area over five ordered phases -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">1 · Hero · full-width, five ordered phases, intelligent domain</div>
+    <div class="viz-trend tone-sky">
+      <svg viewBox="0 0 320 158" preserveAspectRatio="none" role="img" aria-label="Illustrative cumulative value rising across the five engagement phases">
+        <path class="viz-trend-area" d="M20,132 L20,126 L90,115 L160,81 L230,52 L300,18 L300,132 Z"/>
+        <line class="viz-trend-base" x1="20" y1="132" x2="300" y2="132"/>
+        <polyline class="viz-trend-line" points="20,126 90,115 160,81 230,52 300,18"/>
+        <circle class="viz-trend-dot" cx="20" cy="126" r="3"/>
+        <circle class="viz-trend-dot" cx="90" cy="115" r="3"/>
+        <circle class="viz-trend-dot" cx="160" cy="81" r="3"/>
+        <circle class="viz-trend-dot" cx="230" cy="52" r="3"/>
+        <circle class="viz-trend-dot" cx="300" cy="18" r="4"/>
+        <text class="viz-trend-pt" x="20" y="121" text-anchor="middle">5</text>
+        <text class="viz-trend-pt" x="300" y="13" text-anchor="end">100</text>
+        <text class="viz-trend-ax" x="20" y="147" text-anchor="start">Assess</text>
+        <text class="viz-trend-ax" x="90" y="147" text-anchor="middle">Strategize</text>
+        <text class="viz-trend-ax" x="160" y="147" text-anchor="middle">Integrate</text>
+        <text class="viz-trend-ax" x="230" y="147" text-anchor="middle">Measure</text>
+        <text class="viz-trend-ax" x="300" y="147" text-anchor="end">Scale</text>
+      </svg>
+    </div>
+    <div style="margin-top:8mm; display:flex; flex-direction:column; gap:3mm">
+      <div class="cr-divider"></div>
+      <div class="viz-flag"><strong>Representative value-realization arc for planning</strong> — cumulative value indexed to 100 at scale. Illustrative placeholder figures.</div>
+    </div>
+  </div>
+
+  <!-- (2) Inline · the same chart at body scale (aspect pinned → dots stay round) -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">2 · Inline · the same figure at body scale — aspect stays pinned, dots stay round</div>
+    <div class="viz-trend tone-sky" style="max-width:120mm">
+      <svg viewBox="0 0 320 158" preserveAspectRatio="none" role="img" aria-label="The same illustrative value arc at body scale">
+        <path class="viz-trend-area" d="M20,132 L20,126 L90,115 L160,81 L230,52 L300,18 L300,132 Z"/>
+        <line class="viz-trend-base" x1="20" y1="132" x2="300" y2="132"/>
+        <polyline class="viz-trend-line" points="20,126 90,115 160,81 230,52 300,18"/>
+        <circle class="viz-trend-dot" cx="20" cy="126" r="3"/>
+        <circle class="viz-trend-dot" cx="90" cy="115" r="3"/>
+        <circle class="viz-trend-dot" cx="160" cy="81" r="3"/>
+        <circle class="viz-trend-dot" cx="230" cy="52" r="3"/>
+        <circle class="viz-trend-dot" cx="300" cy="18" r="4"/>
+        <text class="viz-trend-ax" x="20" y="147" text-anchor="start">Assess</text>
+        <text class="viz-trend-ax" x="90" y="147" text-anchor="middle">Strategize</text>
+        <text class="viz-trend-ax" x="160" y="147" text-anchor="middle">Integrate</text>
+        <text class="viz-trend-ax" x="230" y="147" text-anchor="middle">Measure</text>
+        <text class="viz-trend-ax" x="300" y="147" text-anchor="end">Scale</text>
+      </svg>
+    </div>
+    <p class="viz-flag" style="margin-top:6mm">Same arc at body scale — illustrative placeholder figures.</p>
+  </div>
+
+  <!-- (3) Gradient "shadow" · the AREA is a vertical accent gradient fading to transparent at the baseline -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">3 · Hero · gradient "shadow" — the area fades from the accent under the line to transparent at the baseline</div>
+    <div class="viz-trend tone-sky">
+      <svg viewBox="0 0 320 158" preserveAspectRatio="none" role="img" aria-label="Cumulative value rising across five ordered phases, with a soft accent gradient under the line">
+        <defs>
+          <linearGradient id="trendShadowGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   style="stop-color:var(--accent); stop-opacity:.42"/>
+            <stop offset="100%" style="stop-color:var(--accent); stop-opacity:0"/>
+          </linearGradient>
+        </defs>
+        <path class="viz-trend-area--shadow" d="M20,132 L20,126 L90,115 L160,81 L230,52 L300,18 L300,132 Z"/>
+        <line class="viz-trend-base" x1="20" y1="132" x2="300" y2="132"/>
+        <polyline class="viz-trend-line" points="20,126 90,115 160,81 230,52 300,18"/>
+        <circle class="viz-trend-dot" cx="20" cy="126" r="3"/>
+        <circle class="viz-trend-dot" cx="90" cy="115" r="3"/>
+        <circle class="viz-trend-dot" cx="160" cy="81" r="3"/>
+        <circle class="viz-trend-dot" cx="230" cy="52" r="3"/>
+        <circle class="viz-trend-dot" cx="300" cy="18" r="4"/>
+        <text class="viz-trend-pt" x="20" y="121" text-anchor="middle">5</text>
+        <text class="viz-trend-pt" x="300" y="13" text-anchor="end">100</text>
+        <text class="viz-trend-ax" x="20" y="147" text-anchor="start">Assess</text>
+        <text class="viz-trend-ax" x="90" y="147" text-anchor="middle">Strategize</text>
+        <text class="viz-trend-ax" x="160" y="147" text-anchor="middle">Integrate</text>
+        <text class="viz-trend-ax" x="230" y="147" text-anchor="middle">Measure</text>
+        <text class="viz-trend-ax" x="300" y="147" text-anchor="end">Scale</text>
+      </svg>
+    </div>
+    <p class="viz-flag" style="margin-top:6mm">Same arc, gradient fill — illustrative placeholder figures.</p>
+  </div>
+
+  <!-- (4) Gradient line · the LINE STROKE runs light → deep accent from the 1st to the last point -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">4 · Hero · gradient line — the stroke runs light → deep accent from the first point to the last</div>
+    <div class="viz-trend tone-sky">
+      <svg viewBox="0 0 320 158" preserveAspectRatio="none" role="img" aria-label="Cumulative value rising across five ordered phases, the line deepening in accent from first to last point">
+        <defs>
+          <linearGradient id="trendLineGrad" gradientUnits="userSpaceOnUse" x1="20" y1="0" x2="300" y2="0">
+            <stop offset="0%"   style="stop-color:color-mix(in srgb, var(--accent) 50%, #fff)"/>
+            <stop offset="100%" style="stop-color:var(--accent)"/>
+          </linearGradient>
+        </defs>
+        <path class="viz-trend-area" d="M20,132 L20,126 L90,115 L160,81 L230,52 L300,18 L300,132 Z"/>
+        <line class="viz-trend-base" x1="20" y1="132" x2="300" y2="132"/>
+        <polyline class="viz-trend-line viz-trend-line--grad" points="20,126 90,115 160,81 230,52 300,18"/>
+        <circle class="viz-trend-dot" cx="20" cy="126" r="3"/>
+        <circle class="viz-trend-dot" cx="90" cy="115" r="3"/>
+        <circle class="viz-trend-dot" cx="160" cy="81" r="3"/>
+        <circle class="viz-trend-dot" cx="230" cy="52" r="3"/>
+        <circle class="viz-trend-dot" cx="300" cy="18" r="4"/>
+        <text class="viz-trend-pt" x="20" y="121" text-anchor="middle">5</text>
+        <text class="viz-trend-pt" x="300" y="13" text-anchor="end">100</text>
+        <text class="viz-trend-ax" x="20" y="147" text-anchor="start">Assess</text>
+        <text class="viz-trend-ax" x="90" y="147" text-anchor="middle">Strategize</text>
+        <text class="viz-trend-ax" x="160" y="147" text-anchor="middle">Integrate</text>
+        <text class="viz-trend-ax" x="230" y="147" text-anchor="middle">Measure</text>
+        <text class="viz-trend-ax" x="300" y="147" text-anchor="end">Scale</text>
+      </svg>
+    </div>
+    <p class="viz-flag" style="margin-top:6mm">Same arc, gradient stroke — illustrative placeholder figures.</p>
+  </div>
+
+  <div class="viz-caveat">
+    <strong>Trend</strong> · a line + soft area over an <strong>ordered sequence</strong>
+    (<strong>Level-4</strong> → line/area; ≥3 points, prefer 5+). <strong>Governing rules: the Data-Viz
+    Rulebook</strong> (<code>README-DATA-VIZ.md</code> — §5 intelligent domain, §6 only-real-observations,
+    §4 colour). Use it <strong>only with actual ordered observations</strong> — never imply a trend you
+    don't have. The line + dots are the accent <code>var(--accent)</code>, the area the inert tonal
+    <code>var(--surface)</code>, the baseline a hairline axis; labels stay dark ink. The SVG uses
+    <code>preserveAspectRatio="none"</code>, so the box aspect is pinned to the viewBox (320:158) with
+    <code>aspect-ratio</code> — dots stay round at any width. The area-shadow and line-gradient variants are
+    <strong>§4-sanctioned</strong> (quiet, same-hue, crisp value edges). <strong>Pure HTML/CSS + inline
+    SVG, no JavaScript.</strong> Doc-scoped (never in <code>colors_and_type.css</code>). Figures are
+    illustrative placeholders.
+  </div>
+
+</div>
+</body></html>

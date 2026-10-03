@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Grid · three-column-equal — value prop, who we are</title>
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Grid · three-column-equal        from component-value-who.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **The statement leads and the measures corroborate.** The profile
+              is explicit that this is a position held, not a record presented —
+              which is the whole difference between it and `value-stats`. So the
+              headline keeps its narrow stacked measure and carries the section's
+              emphasis; the three numbers arrive underneath as support.
+
+  STRUCTURE   Unchanged. Two-column header (eyebrow + two-tone headline | lede) ·
+              a stats band carrying three measures · a recruit band. DOM, scripts,
+              ids, `data-*`, `src` and every behavioural hook are byte-compatible
+              with the frozen original (DR-22). The count-up reads the same nodes
+              it always did. The v2 file is beside this one in `_v2/`.
+
+  THE CREATIVE  v2's band was a pre-blurred atmospheric plate (`value-bg.jpg`) with
+              a grain layer and a dark wash on top. `src` is frozen, so the image
+              element stays in the document, inert, and its frame carries an
+              approved environment instead: `dawn-haze` under the grunge and grain,
+              as ONE background stack. It has to be one stack — a blend mode
+              composites against what is beneath it in the SAME background, so a
+              texture on its own layer resolves `overlay` against transparency and
+              renders as grey static. The URLs are written out rather than reached
+              through `--cr-env-*`, because a `url()` inside a custom property
+              resolves against the CONSUMING document and fails silently.
+
+  THE ONE REAL DESIGN DECISION — and it is DR-46's, not taste.
+              v2 set three translucent cards over the picture and won their
+              contrast back with a wash ramping the image darker. DR-46 refuses
+              exactly that: *if the type was readable only because a veil sat on
+              top, the photograph was a surface.* The DOM is frozen, so the numbers
+              cannot move to another element — but the element they sit in can stop
+              being a window. The three stat cards become OPAQUE. An opaque panel
+              over an image is the permitted case, and it is what makes the band
+              read as measures resting on a place rather than measures printed on
+              a picture.
+
+              Remove the photograph now and not one number changes legibility.
+              That is the test, and it passes by construction rather than by
+              measurement — which is why the wash could go rather than be re-tuned.
+
+  ACCENT      One moment: "Apply now". v2 spent nothing on it and everything on
+              translucency; the accent now belongs to the only thing in the section
+              that asks the reader to act.
+
+  RESPONSIVE  The original's breakpoints (860 / 640), unchanged. Type steps on the
+              pack's ramp; `clamp()` is gone — it resolves to sizes nobody authored.
+              The headline keeps its authored `13ch` measure, because the narrow
+              stack IS the typographic emphasis the profile names.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  .wv-section, .wv-section * { box-sizing: border-box; }
+  .wv-section {
+    background: var(--cr-page-ground);
+    padding: var(--cr-space-2xl) var(--cr-page-gutter);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+    font-size: var(--cr-text-body);
+  }
+  .wv-wrap { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ─── header ──────────────────────────────────────────────────── */
+  .wv-head {
+    display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    column-gap: var(--cr-space-xl); align-items: start;
+  }
+  /* A LABEL, not a badge: supporting size, sentence case, never tracked. Its
+     shape comes from the control radius — the pill is retired. */
+  .wv-eyebrow {
+    display: inline-block;
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-control); padding: var(--cr-space-xs) var(--cr-space-s);
+    font-family: var(--cr-font-body); font-weight: 400; font-size: var(--cr-text-supporting);
+    color: var(--cr-text-secondary);
+  }
+  .wv-title {
+    margin: var(--cr-space-s) 0 0; max-width: 13ch;
+    font-family: var(--cr-font-display); font-weight: 400;
+    font-size: var(--cr-text-h2); line-height: var(--cr-leading-heading); letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  /* the two-tone tail — a step in the ink hierarchy, not a second colour */
+  .wv-title .wv-soft { color: var(--cr-text-secondary); }
+  .wv-lede {
+    margin: var(--cr-space-xs) 0 0;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: var(--cr-text-body); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary); max-width: 38ch;
+  }
+
+  /* ─── stats band ──────────────────────────────────────────────── */
+  /* The inset went with the panel — directed, DR-53. Forty pixels of padding
+     was the plate's own margin, holding the cards off its edge. With no plate
+     there is no edge to hold them off, and the padding only pushed the row in
+     from the column the eyebrow, the statement and the recruit band all share.
+     The radius stays declared and is now inert: it shapes nothing, and it is
+     left rather than pruned so the rule still reads as the band it is. */
+  .wv-stats {
+    position: relative; overflow: hidden;
+    border-radius: var(--cr-radius-card);
+    margin-top: var(--cr-rhythm-content); padding: 0;
+  }
+  /* THE PANEL IS WITHDRAWN — directed, DR-53. This carried `env-dawn-haze`
+     under the standard three-layer treatment, as a dark plate behind the three
+     stat cards. The cards are opaque and always were, so not one number ever
+     drew its contrast from it: the panel was a frame around three objects that
+     were already finished. What it actually did was put a hard dark rectangle
+     between the statement above and the recruit band below, on a page whose
+     ground is the cream — and the section reads as one continuous field
+     without it. An element that can be removed without loss was decoration.
+
+     Hidden rather than deleted: the `<img>` inside it is frozen `src` under
+     DR-22 and the element still holds it. */
+  .wv-stats-bg { display: none; }
+  /* The blurred plate stays in the document — `src` is frozen — but it no longer
+     paints, and the separate grain layer has nothing left to do now that the
+     stack carries its own. The v2 wash is simply absent: with opaque cards there
+     is no contrast left for it to win back. */
+  .wv-stats-bg img { display: none; }
+  .wv-grain { display: none; }
+
+  .wv-stats-grid {
+    position: relative;
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--cr-space-s);
+  }
+  /* OPAQUE. No number here draws its contrast from the picture behind it. */
+  .wv-stat {
+    display: flex; flex-direction: column; justify-content: center;
+    min-height: var(--cr-space-3xl); min-width: 0;
+    background-color: var(--cr-surface-1);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-m);
+  }
+  .wv-stat-num {
+    font-family: var(--cr-font-display); font-weight: 400;
+    font-size: var(--cr-text-h3); line-height: var(--cr-leading-heading); letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .wv-stat-cap {
+    margin: var(--cr-space-s) 0 0;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* ─── recruit band ────────────────────────────────────────────── */
+  .wv-recruit {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--cr-space-m);
+    margin-top: var(--cr-space-s); padding: var(--cr-space-m);
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+  }
+  .wv-recruit-l { min-width: 0; }
+  .wv-recruit-head { display: flex; align-items: center; gap: var(--cr-space-xs); flex-wrap: wrap; }
+  .wv-recruit-title {
+    margin: 0; font-family: var(--cr-font-display); font-weight: 400; font-size: var(--cr-text-h6);
+    line-height: var(--cr-leading-heading); letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .wv-pill-sm {
+    background: var(--cr-bg-tint); border-radius: var(--cr-radius-control);
+    padding: var(--cr-space-xs); font-family: var(--cr-font-body); font-weight: 400; font-size: var(--cr-text-supporting);
+    color: var(--cr-text-secondary);
+  }
+  .wv-recruit-sub {
+    margin: var(--cr-space-xs) 0 0;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary); max-width: 62ch;
+  }
+  /* the section's single accent moment */
+  .wv-apply {
+    flex: none;
+    display: inline-flex; align-items: center;
+    background: var(--cr-accent-orange); color: var(--cr-on-accent-light); text-decoration: none;
+    border-radius: var(--cr-radius-control); padding: var(--cr-space-xs) var(--cr-space-s);
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+    transition: background .2s ease, transform .12s ease;
+  }
+  .wv-apply:hover { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+  .wv-apply:active { transform: scale(.97); }
+
+  /* ─── reveal (anti-race, fires once; no-JS shows all) ─────────── */
+  .has-js .wv-section [data-reveal] { opacity: 0; transform: translateY(20px); }
+  .has-js .wv-section [data-reveal].in-view {
+    animation: wvRise .7s cubic-bezier(.16,1,.3,1) forwards; animation-delay: var(--d, 0s);
+  }
+  @keyframes wvRise { to { opacity: 1; transform: none; } }
+  /* Matched to the trigger's specificity — a guard that loses the cascade is
+     not a guard. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .wv-section [data-reveal],
+    .has-js .wv-section [data-reveal].in-view { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* ─── responsive ──────────────────────────────────────────────── */
+  @media (max-width: 860px) {
+    .wv-section { padding: var(--cr-space-xl) var(--cr-page-gutter); }
+    .wv-head { grid-template-columns: minmax(0, 1fr); row-gap: var(--cr-space-s); }
+    .wv-title { max-width: none; }
+    .wv-lede { max-width: none; }
+    .wv-stats { padding: 0; }
+    .wv-stats-grid { grid-template-columns: 1fr; gap: var(--cr-space-xs); }
+    .wv-stat { min-height: var(--cr-space-2xl); padding: var(--cr-space-s); }
+  }
+  @media (max-width: 640px) {
+    .wv-section { padding: var(--cr-space-m) var(--cr-page-gutter); }
+    .wv-recruit { flex-direction: column; align-items: flex-start; gap: var(--cr-space-s); padding: var(--cr-space-s); }
+    .wv-apply { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. Everything below realizes a scale the pack already
+     holds — the `min-height` line is the stat card
+     landing on the spacing ladder, not a new proportion.
+  .wv-head > div    | font-size              | type-ramp
+  .wv-apply         | border-radius          | radius-pair
+  .wv-apply         | font-size              | type-ramp
+  .wv-apply         | padding-bottom         | spacing-scale
+  .wv-apply         | padding-left           | spacing-scale
+  .wv-apply         | padding-right          | spacing-scale
+  .wv-apply         | padding-top            | spacing-scale
+  .wv-eyebrow       | border-radius          | radius-pair
+  .wv-eyebrow       | font-size              | type-ramp
+  .wv-eyebrow       | padding-bottom         | spacing-scale
+  .wv-eyebrow       | padding-left           | spacing-scale
+  .wv-eyebrow       | padding-right          | spacing-scale
+  .wv-eyebrow       | padding-top            | spacing-scale
+  .wv-head          | column-gap             | spacing-scale
+  .wv-head          | font-size              | type-ramp
+  .wv-head          | row-gap                | spacing-scale
+  .wv-lede          | font-size              | type-ramp
+  .wv-lede          | line-height            | type-ramp
+  .wv-lede          | margin-top             | spacing-scale
+  .wv-lede          | max-width              | measure
+  .wv-pill-sm       | border-radius          | radius-pair
+  .wv-pill-sm       | font-size              | type-ramp
+  .wv-pill-sm       | padding-bottom         | spacing-scale
+  .wv-pill-sm       | padding-top            | spacing-scale
+  .wv-recruit       | border-bottom-width    | stroke
+  .wv-recruit       | border-left-width      | stroke
+  .wv-recruit       | border-radius          | radius-pair
+  .wv-recruit       | border-right-width     | stroke
+  .wv-recruit       | border-top-width       | stroke
+  .wv-recruit       | column-gap             | spacing-scale
+  .wv-recruit       | font-size              | type-ramp
+  .wv-recruit       | margin-top             | spacing-scale
+  .wv-recruit       | padding-bottom         | spacing-scale
+  .wv-recruit       | padding-left           | spacing-scale
+  .wv-recruit       | padding-right          | spacing-scale
+  .wv-recruit       | padding-top            | spacing-scale
+  .wv-recruit       | row-gap                | spacing-scale
+  .wv-recruit-head  | font-size              | type-ramp
+  .wv-recruit-l     | font-size              | type-ramp
+  .wv-recruit-sub   | font-size              | type-ramp
+  .wv-recruit-sub   | line-height            | type-ramp
+  .wv-recruit-sub   | margin-top             | spacing-scale
+  .wv-recruit-sub   | max-width              | measure
+  .wv-recruit-title | font-size              | type-ramp
+  .wv-recruit-title | line-height            | type-ramp
+  .wv-soft          | font-size              | type-ramp
+  .wv-soft          | line-height            | type-ramp
+  .wv-stat          | border-radius          | radius-pair
+  .wv-stat          | font-size              | type-ramp
+  .wv-stat          | min-height             | spacing-scale
+  .wv-stat          | padding-bottom         | spacing-scale
+  .wv-stat          | padding-left           | spacing-scale
+  .wv-stat          | padding-right          | spacing-scale
+  .wv-stat          | padding-top            | spacing-scale
+  .wv-stat-cap      | font-size              | type-ramp
+  .wv-stat-cap      | line-height            | type-ramp
+  .wv-stat-cap      | margin-top             | spacing-scale
+  .wv-stat-num      | font-size              | type-ramp
+  .wv-stat-num      | line-height            | type-ramp
+  .wv-stats         | border-radius          | radius-pair
+  .wv-stats         | font-size              | type-ramp
+  .wv-stats         | margin-top             | spacing-scale
+  .wv-stats         | padding-bottom         | spacing-scale
+  .wv-stats         | padding-left           | spacing-scale
+  .wv-stats         | padding-right          | spacing-scale
+  .wv-stats         | padding-top            | spacing-scale
+  .wv-stats-grid    | column-gap             | spacing-scale
+  .wv-stats-grid    | font-size              | type-ramp
+  .wv-stats-grid    | row-gap                | spacing-scale
+  .wv-title         | font-size              | type-ramp
+  .wv-title         | line-height            | type-ramp
+  .wv-title         | margin-top             | spacing-scale
+  .wv-title         | max-width              | measure
+  .wv-wrap          | font-size              | type-ramp
+  img               | font-size              | type-ramp
+  -->
+
+
+<section class="wv-section" data-screen-label="Value prop · Who we are"
+         data-archetype="editorial-split" data-hierarchy="secondary" data-intent="build-trust"
+         data-register="human" data-signature="large-statistic" data-density="medium">
+  <div class="wv-wrap">
+
+    <!-- ── header ─────────────────────────────────────────────── -->
+    <div class="wv-head">
+      <div data-reveal style="--d:0s">
+        <span class="wv-eyebrow">Who we are</span>
+        <h2 class="wv-title">The automation partner built for <span class="wv-soft">you.</span></h2>
+      </div>
+      <p class="wv-lede" data-reveal style="--d:.08s">We built Example Brand to take routine operations off your team &mdash; not to sell you another platform. We map where agents pay off, ship what works, and skip the hype.</p>
+    </div>
+
+    <!-- ── stats band ─────────────────────────────────────────── -->
+    <div class="wv-stats" data-reveal style="--d:.14s">
+      <div class="wv-stats-bg"><img src="../../brand-pack/assets/imagery/value-bg.jpg" alt="" decoding="async" /></div>
+      <div class="wv-grain"></div>
+      <div class="wv-stats-grid">
+        <div class="wv-stat" data-reveal style="--d:.2s">
+          <div class="wv-stat-num" data-to="1500" data-suffix="+">1,500+</div>
+          <p class="wv-stat-cap">Hours of manual work removed monthly</p>
+        </div>
+        <div class="wv-stat" data-reveal style="--d:.28s">
+          <div class="wv-stat-num" data-to="80" data-suffix="%">80%</div>
+          <p class="wv-stat-cap">Average reduction in routine work</p>
+        </div>
+        <div class="wv-stat" data-reveal style="--d:.36s">
+          <div class="wv-stat-num" data-to="4" data-suffix=" weeks">4 weeks</div>
+          <p class="wv-stat-cap">Average time to a live pilot</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── recruit band ───────────────────────────────────────── -->
+    <div class="wv-recruit" data-reveal style="--d:.2s">
+      <div class="wv-recruit-l">
+        <div class="wv-recruit-head">
+          <h3 class="wv-recruit-title">Want to build agents that ship?</h3>
+          <span class="wv-pill-sm">3 roles open</span>
+        </div>
+        <p class="wv-recruit-sub">We're hiring engineers and forward-deployed folks who'd rather remove busywork than talk about it.</p>
+      </div>
+      <a class="wv-apply" href="#">Apply now</a>
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.wv-section');
+  if (!sec) return;
+  var nums = Array.prototype.slice.call(sec.querySelectorAll('.wv-stat-num'));
+
+  function fmt(v, suf) { return Math.round(v).toLocaleString('en-US') + suf; }
+  function countUp(el) {
+    var to = parseFloat(el.getAttribute('data-to'));
+    var suf = el.getAttribute('data-suffix') || '';
+    var dur = 1200, t0 = null;
+    function step(ts) {
+      if (t0 === null) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      el.textContent = fmt(to * (1 - Math.pow(1 - p, 3)), suf);   // easeOutCubic
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = fmt(to, suf);
+    }
+    requestAnimationFrame(step);
+  }
+  function revealOnly() { sec.querySelectorAll('[data-reveal]').forEach(function (el) { el.classList.add('in-view'); }); }
+
+  if (reduce || !('IntersectionObserver' in window)) { revealOnly(); return; }
+
+  nums.forEach(function (el) { el.textContent = fmt(0, el.getAttribute('data-suffix') || ''); });
+  var io = new IntersectionObserver(function (ents) {
+    ents.forEach(function (en) {
+      if (en.isIntersecting) { revealOnly(); nums.forEach(countUp); io.disconnect(); }
+    });
+  }, { threshold: 0.18 });
+  io.observe(sec);
+})();
+</script>
+
+</body>
+</html>

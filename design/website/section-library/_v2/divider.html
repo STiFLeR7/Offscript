@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR — Gradient divider (occasional / library)</title>
+
+<!--
+  ────────────────────────────────────────────────────────────────────────────
+  COMPONENT: Gradient divider — soft brand-blue → cream transition band
+  ────────────────────────────────────────────────────────────────────────────
+  WHAT IT IS (per the user): an OCCASIONAL device — a soft full-bleed gradient
+  band used now and then to (a) divide / transition between sections, or (b) host
+  a one-off CTA. It is NOT a between-every-section rule — use it sparingly, where
+  a page wants a breath or a punctuating call-to-action. Lives in the library so
+  it's there when a layout calls for it.
+
+  CHARTER NOTE: the charter says LIGHT section bands stay flat (no in-band
+  gradient). A DIVIDER / transition band is a SEPARATE intentional device (the
+  same way the dark Ink/Night bands are a separate device that DO carry gradients
+  + grain), so a soft gradient here is deliberate — not a content section
+  background. Kept honest by: used OCCASIONALLY, flat grain (no blur), no shadow.
+
+  RE-SKIN: the supplied inspiration is a periwinkle→cream gradient. Per the locked
+  inspiration rule (extract the idea, render in the CR kit) it's rendered in CR's
+  own palette: a deep brand-blue (#0074DD) → brand-blue (#149DFF) → light blue →
+  warm cream (--cr-bg-warm), with the CR grain texture. (The source's periwinkle is
+  deliberately NOT reproduced — v2 brand law bans violet/periwinkle.)
+
+  TWO MODES:
+    • `.cr-divider`            — plain band, decorative (aria-hidden). A pure
+                                 visual transition between two sections.
+    • `.cr-divider.cr-divider--cta` — the same band hosting a one-off CTA (short
+                                 Urbanist line + a brand-blue pill). Content is
+                                 anchored LOW on the pale/cream "ground" so the dark
+                                 headline keeps clean contrast (a single text colour
+                                 can't span the blue→cream range); the blue "sky"
+                                 fills above.
+  Height is a knob: `--div-h` (plain ~clamp(200→340px), CTA ~clamp(320→460px)).
+  The bottom melts into a warm-cream section; the top is a defined blue edge
+  (matches the source). To also fade IN from the top, add a transparent top stop.
+
+  MOTION: the band is STATIC (a divider shouldn't fidget). The CTA variant's
+  content does a one-time scroll-reveal (fade-up, .has-js / IntersectionObserver,
+  fires once). prefers-reduced-motion snaps it in; visible without JS.
+
+  HOVER only on the real control (the CTA pill — arrow nudges 4px).
+
+  Responsive: full-bleed at all widths; --div-h + the CTA type scale via clamp.
+  Screenshot-verified at desktop 1440 / tablet 768 / the ~482px floor.
+
+  (The two pale "Section content" strips here are just demo CONTEXT to show the
+  band dividing sections — they are not part of the component.)
+  ────────────────────────────────────────────────────────────────────────────
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--cr-bg-warm); font-family: var(--cr-font-body); }
+
+  /* ── Demo context strips (NOT part of the component) ─────────────────── */
+  .dvd-ctx {
+    min-height: 150px;
+    display: grid; place-items: center;
+    padding: 40px var(--cr-page-gutter);
+    background: var(--cr-bg-warm);
+    color: var(--cr-fg-muted);
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+
+  /* ── THE DIVIDER DEVICE ──────────────────────────────────────────────── */
+  .cr-divider {
+    --div-h: clamp(200px, 24vw, 340px);
+    position: relative;
+    width: 100%;
+    height: var(--div-h);
+    overflow: hidden;
+    /* deep brand-blue → brand → light → warm cream (renders the source in CR) */
+    background: linear-gradient(180deg,
+      var(--cr-brand-700) 0%, var(--cr-brand) 22%, #7FC4FF 44%, #CFE9FF 66%, #F2F8FF 84%, var(--cr-bg-warm) 100%);
+  }
+  /* film grain — tile at native size, flat (no blur) */
+  .cr-divider::after {
+    content: ""; position: absolute; inset: 0; z-index: 1;
+    background: url("../assets/../../brand-pack/assets/imagery/textures/texture-grain.png");
+    opacity: 0.5; mix-blend-mode: soft-light;
+    pointer-events: none;
+  }
+
+  /* ── CTA variant ─────────────────────────────────────────────────────── */
+  .cr-divider--cta {
+    --div-h: clamp(320px, 32vw, 440px);
+    display: grid;
+    align-items: end; justify-items: center;   /* content sits on the pale/cream "ground" → clean dark-text contrast */
+    text-align: center;
+    padding-bottom: clamp(48px, 6vw, 80px);
+  }
+  .cr-divider__inner {
+    position: relative; z-index: 2;
+    max-width: 660px;
+    padding: 0 24px;
+  }
+  .cr-divider__title {
+    margin: 0 0 26px;
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(26px, 3.2vw, 40px);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--cr-fg);
+  }
+  .cr-divider__cta {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 14px 26px;
+    background: var(--cr-brand); color: #fff;
+    border-radius: var(--cr-radius-pill);
+    font-family: var(--cr-font-body); font-weight: 600; font-size: 15px; line-height: 1;
+    text-decoration: none;
+    transition: background .2s ease, transform .1s ease;
+  }
+  .cr-divider__cta span { transition: transform .2s ease; }
+  .cr-divider__cta:hover { background: var(--cr-brand-700); }
+  .cr-divider__cta:hover span { transform: translateX(4px); }
+  .cr-divider__cta:active { transform: scale(.98); }
+
+  /* ── CTA scroll-reveal (JS-gated, fires once) ────────────────────────── */
+  .has-js .cr-divider__inner {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity .6s cubic-bezier(.22, .61, .36, 1),
+                transform .6s cubic-bezier(.22, .61, .36, 1);
+  }
+  .has-js .cr-divider--cta.in .cr-divider__inner { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .cr-divider__inner { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .cr-divider__cta, .cr-divider__cta span { transition: none !important; }
+  }
+</style>
+</head>
+
+<body>
+
+  <!-- demo context: a section above -->
+  <div class="dvd-ctx">Section content</div>
+
+  <!-- ① PLAIN divider — decorative transition between sections -->
+  <div class="cr-divider" role="presentation" aria-hidden="true"></div>
+
+  <!-- demo context: a section below -->
+  <div class="dvd-ctx">Section content</div>
+
+  <!-- ② CTA divider — the same band hosting an occasional call-to-action -->
+  <div class="cr-divider cr-divider--cta">
+    <div class="cr-divider__inner">
+      <h2 class="cr-divider__title">Put your first agent to work this week</h2>
+      <a href="#" class="cr-divider__cta">Book a Demo <span aria-hidden="true">&rarr;</span></a>
+    </div>
+  </div>
+
+  <!-- demo context: a section below -->
+  <div class="dvd-ctx">Section content</div>
+
+<script>
+  // The band is static; JS only adds a one-time reveal to the CTA variant's content.
+  (function () {
+    var root = document.documentElement;
+    root.classList.add('has-js');
+    var ctas = document.querySelectorAll('.cr-divider--cta');
+    if (!ctas.length) return;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) {
+      ctas.forEach(function (c) { c.classList.add('in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.3 });
+    ctas.forEach(function (c) { io.observe(c); });
+  })();
+</script>
+</body>
+</html>

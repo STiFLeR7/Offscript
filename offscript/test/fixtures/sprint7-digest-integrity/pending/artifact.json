@@ -1,0 +1,11 @@
+{
+  "contractVersion": 1,
+  "id": "sprint7-pending",
+  "intentDigest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "artifactType": "html",
+  "location": "test/fixtures/sprint7-digest-integrity/pending/visual.html",
+  "artifactDigest": "sha256:a8dc39feb21c4a200cc08bd071346a0cd58b1b3c0e853501a6fe09389871e76d",
+  "createdAt": "2026-08-12T00:00:00.000Z",
+  "generation": { "sourceSystem": "sprint7-fixture" },
+  "approval": { "status": "pending", "source": "sprint7-fixture" }
+}

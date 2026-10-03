@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Editorial stack · quiet — footer mega</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Editorial stack · quiet         from component-footer-mega.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **The page ends quietly, and the identity carries what a surface
+              change would otherwise have to.** The profile makes that the whole
+              distinction from `footer-dark`: this one stays on the base
+              surface, "so the page fades rather than concludes", and on an
+              editorial site the watermark carries identity where a slab would
+              carry finality. Reach for it on large sites; not when the ending
+              needs to be decisive.
+
+  STRUCTURE   Unchanged. Watermark band · rule · three link columns and an
+              action block · rule · legal bar. DOM, scripts, ids, `data-*`,
+              `aria-*`, `href` and every behavioural hook are byte-compatible
+              with the frozen original (DR-22). The v2 file is beside this one
+              in `_v2/`.
+
+  ENVIRONMENT NONE, no abstract background — and here that is the plain reading
+              rather than a judgement call. There is no gradient, no glow, no
+              blur plate and no tint wash anywhere in this section: the band is
+              one flat page-ground token and always was. So there is nothing for
+              the pass to replace, and the assigned environment is DECLINED.
+
+              Three things would each be enough on their own. The profile
+              records `Media presence none` and says so twice — the second time
+              in its own words, "a watermark is treatment, not a creative".
+              Below the rule the section is a wall of links end to end, and no
+              photograph goes behind those. And an environment here would make
+              the page end decisively, which is the one thing this footer exists
+              NOT to do — it would turn the section into `footer-dark` with a
+              different watermark.
+
+  THE WATERMARK  It stays exactly as authored, because it is not decoration
+              standing in for a subject — it is the logo wordmark, sampled to a
+              monospace character grid, and the grid IS the artwork. Its
+              `cqw` sizing and unit line-height are load-bearing geometry rather
+              than type decisions: the art is a fixed 150 columns by 12 rows and
+              a ramp step or a leading token would shear it. What does change is
+              the authored grey it was painted in, which is a canonical neutral
+              now. The mono family is the pack's own.
+
+  ACCENT      ZERO, and that is the decision rather than an omission. v2 gave
+              the demo pill brand blue, which on a footer that is supposed to
+              fade is the loudest thing on the screen and lands after the
+              argument is over. A footer spends zero or one accent, and the one
+              is reserved for a newsletter submit — which this footer does not
+              have. So the action pair separates the way the rest of the page
+              does: a solid ink pill for the ask, a hairline ghost beside it.
+              The four social badges stay flat ink chips.
+
+  TYPE        One ramp step below the watermark, one weight for a label and one
+              for a link. The four authored sizes between 13.5 and 14 were a
+              distinction nobody could see and nobody could reproduce; they are
+              the supporting step now, and hierarchy comes from position and
+              weight, which is where the direction says it comes from.
+
+  RESPONSIVE  The original's breakpoints (900 / 560), unchanged, including the
+              watermark's `cqw` sizing that keeps the fixed column count filling
+              the band at every width. `clamp()` never appears. The reduce guard
+              already named both the hidden state and its trigger, and still
+              does — the watermark rests instead of rising and the columns snap
+              in.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  .fm-footer, .fm-footer * { box-sizing: border-box; }
+  /* The page ground, declared rather than inherited — nothing takes a
+     background by accident. The gutter and the alignment edge are the pack's;
+     horizontal layout is a page concern and a section never redeclares it. */
+  .fm-footer {
+    background: var(--cr-page-ground);
+    padding: var(--cr-space-2xl) var(--cr-page-gutter) var(--cr-space-m);
+    font-family: var(--cr-font-body);
+    font-size: var(--cr-text-body);
+    color: var(--cr-text-primary);
+  }
+  .fm-wrap { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ─── The watermark — the logo wordmark on a monospace character grid ──
+     GEOMETRY, NOT TYPESETTING. The art is a fixed 150 columns by 12 rows, so
+     the `cqw` size and the unit line-height are what hold the letterforms
+     together; a ramp step or a leading token would shear the wordmark into
+     noise. They are therefore left exactly as authored. The mono family is
+     the pack's own, and the authored grey it was painted in is a canonical
+     neutral now. Its bottom fifth is cut by the rule line, which is the
+     composition. */
+  .fm-mark-band {
+    position: relative; overflow: hidden; container-type: inline-size;
+    height: 10.6cqw;                     /* < the art's full height → bottom ~20% clipped */
+  }
+  .fm-mark {
+    margin: 0;
+    font-family: var(--cr-font-mono);
+    font-size: calc(100cqw / 91);        /* 150 monospace cols fill the band */
+    line-height: 1; letter-spacing: 0; white-space: pre;
+    color: var(--cr-neutral-400);
+    user-select: none; pointer-events: none;
+    will-change: transform;              /* reveal target */
+  }
+  /* the rule sits right at the band's bottom edge — that IS the cut line */
+  .fm-rule { border: 0; border-top: var(--cr-stroke) solid var(--cr-border-default); margin: 0 0 var(--cr-space-m); }
+  .fm-rule--bottom { margin: var(--cr-space-m) 0 var(--cr-space-s); }
+
+  /* ─── columns ─────────────────────────────────────────────────── */
+  .fm-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1.55fr;   /* the split IS the composition — untouched */
+    column-gap: var(--cr-space-m);
+  }
+  .fm-col { min-width: 0; }
+  /* A column head is supporting text: one ramp step, one weight. */
+  /* A FOOTER COLUMN HEADING IS SUPPORTING TEXT, and the type system says so:
+     the tracking rule governs headings on the scale's heading steps, and a
+     heading deliberately presented as supporting text carries `.cr-label` and
+     sits below the smallest heading step. These five were failing the tracking
+     rule for being what they are. The class is the declared exception, not a
+     waiver. (visual-language.md §3; LIBRARY-AUDIT.md C-6.) */
+  .fm-col-h {
+    margin: 0 0 var(--cr-space-s);
+    font-family: var(--cr-font-body); font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-primary);
+  }
+  .fm-list { list-style: none; margin: 0; padding: 0; }
+  .fm-list li { margin-bottom: var(--cr-space-xs); }
+  .fm-list a {
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary); text-decoration: none;
+    transition: color .18s ease;
+  }
+  /* A hover in a link column is a presence change, not a colour event. */
+  .fm-list a:hover { color: var(--cr-text-primary); }
+
+  /* right block */
+  .fm-right { min-width: 0; }
+  .fm-right-h {
+    margin: 0 0 var(--cr-space-xs);
+    font-family: var(--cr-font-body); font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-primary);
+  }
+  .fm-right-h + .fm-ctas { margin-bottom: var(--cr-space-s); }
+  .fm-ctas { display: flex; flex-wrap: wrap; gap: var(--cr-space-xs); }
+  /* The pill radius is retired for controls (DR-25). */
+  .fm-cta {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    border-radius: var(--cr-radius-control);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    font-family: var(--cr-font-body); font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    text-decoration: none; border: var(--cr-stroke) solid transparent;
+    transition: background .2s ease, border-color .2s ease, transform .12s ease;
+  }
+  /* ZERO accent. The ask is the dark pill — the language's default primary —
+     and the alternative is a hairline ghost. A footer that fades does not
+     spend the page's emphasis after the argument is over. */
+  .fm-cta--primary { background: var(--cr-text-primary); color: var(--cr-text-inverse); }
+  .fm-cta--primary .fm-arr { transition: transform .2s ease; }
+  .fm-cta--primary:hover { background: var(--cr-neutral-1000); }
+  .fm-cta--primary:hover .fm-arr { transform: translateX(3px); }
+  .fm-cta--ink { background: transparent; color: var(--cr-text-primary); border-color: var(--cr-border-default); }
+  .fm-cta--ink:hover { border-color: var(--cr-text-primary); }
+  .fm-cta:active { transform: scale(.97); }
+  .fm-cta:focus-visible { outline: var(--cr-stroke) solid var(--cr-focus-ring); outline-offset: var(--cr-stroke); }
+
+  .fm-socials { display: flex; gap: var(--cr-space-xs); }
+  .fm-social {
+    width: 34px; height: 34px; border-radius: var(--cr-radius-control);
+    background: var(--cr-text-primary); color: var(--cr-text-inverse);
+    display: inline-flex; align-items: center; justify-content: center;
+    text-decoration: none;
+    transition: transform .15s ease, background .2s ease;
+  }
+  .fm-social svg { width: 16px; height: 16px; display: block; }
+  .fm-social:hover { background: var(--cr-neutral-1000); transform: translateY(-2px); }
+  .fm-social:focus-visible { outline: var(--cr-stroke) solid var(--cr-focus-ring); outline-offset: var(--cr-stroke); }
+
+  /* ─── bottom bar ──────────────────────────────────────────────── */
+  .fm-bottom {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: var(--cr-space-s);
+    font-family: var(--cr-font-body);
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  .fm-legal { display: flex; flex-wrap: wrap; gap: var(--cr-space-s); }
+  .fm-legal a { color: var(--cr-text-secondary); text-decoration: none; transition: color .18s ease; }
+  .fm-legal a:hover { color: var(--cr-text-primary); }
+
+  /* ─── reveal (columns + bottom; fires once; no-JS shows all) ──── */
+  .has-js .fm-footer [data-reveal] { opacity: 0; transform: translateY(20px); }
+  .has-js .fm-footer [data-reveal].in-view {
+    animation: fmRise .65s cubic-bezier(.16,1,.3,1) forwards; animation-delay: var(--d, 0s);
+  }
+  @keyframes fmRise { to { opacity: 1; transform: none; } }
+
+  /* watermark RISES UP out of the cut line when the footer is scrolled into view */
+  .has-js .fm-mark { transform: translateY(106%); }
+  .has-js .fm-footer.fm-shown .fm-mark {
+    animation: fmMarkRise .9s cubic-bezier(.16,1,.3,1) .08s forwards;
+  }
+  @keyframes fmMarkRise { to { transform: translateY(0); } }
+
+  /* Both the hidden state and the trigger that animates over it are named —
+     a guard that loses the cascade is not a guard. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .fm-footer [data-reveal],
+    .has-js .fm-footer [data-reveal].in-view { opacity: 1; transform: none; animation: none; }
+    .has-js .fm-mark,
+    .has-js .fm-footer.fm-shown .fm-mark { transform: none !important; animation: none !important; }
+  }
+
+  /* ─── responsive — the ORIGINAL's breakpoints ─────────────────── */
+  @media (max-width: 900px) {
+    .fm-footer { padding: var(--cr-space-xl) var(--cr-page-gutter) var(--cr-space-m); }
+    .fm-cols { grid-template-columns: 1fr 1fr; row-gap: var(--cr-space-m); }
+    .fm-right { grid-column: 1 / -1; }
+  }
+  @media (max-width: 560px) {
+    .fm-footer { padding: var(--cr-space-m) var(--cr-page-gutter) var(--cr-space-m); }
+    .fm-cols { grid-template-columns: 1fr; row-gap: var(--cr-space-m); }
+    .fm-bottom { flex-direction: column; align-items: flex-start; gap: var(--cr-space-xs); }
+  }
+</style>
+</head>
+<body>
+
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. There is no directed line: the Pilot Constraint was not
+     asked to yield anywhere in this section, and every track declaration is
+     exactly as authored.
+
+     The two .fm-mark lines look like type decisions and are not. The watermark
+     is sized in cqw against its own band, so its size is a function of the band
+     width and nothing else. The band got wider because the section's horizontal
+     inset came off an authored 100px onto the pack's one gutter source. The
+     glyph grid did not change; the container did, which is why both lines read
+     spacing-scale.
+  .fm-arr     | font-size              | type-ramp
+  .fm-arr     | line-height            | type-ramp
+  .fm-bottom  | column-gap             | spacing-scale
+  .fm-bottom  | font-size              | type-ramp
+  .fm-bottom  | line-height            | type-ramp
+  .fm-bottom  | row-gap                | spacing-scale
+  .fm-col     | font-size              | type-ramp
+  .fm-col-h   | font-size              | type-ramp
+  .fm-col-h   | line-height            | type-ramp
+  .fm-col-h   | margin-bottom          | spacing-scale
+  .fm-cols    | font-size              | type-ramp
+  .fm-cols    | row-gap                | spacing-scale
+  .fm-cta     | border-radius          | radius-pair
+  .fm-cta     | column-gap             | spacing-scale
+  .fm-cta     | font-size              | type-ramp
+  .fm-cta     | line-height            | type-ramp
+  .fm-cta     | padding-bottom         | spacing-scale
+  .fm-cta     | padding-top            | spacing-scale
+  .fm-cta     | row-gap                | spacing-scale
+  .fm-ctas    | column-gap             | spacing-scale
+  .fm-ctas    | font-size              | type-ramp
+  .fm-ctas    | margin-bottom          | spacing-scale
+  .fm-ctas    | row-gap                | spacing-scale
+  .fm-legal   | column-gap             | spacing-scale
+  .fm-legal   | font-size              | type-ramp
+  .fm-legal   | line-height            | type-ramp
+  .fm-legal   | row-gap                | spacing-scale
+  .fm-list    | font-size              | type-ramp
+  .fm-mark    | font-size              | spacing-scale
+  .fm-mark    | line-height            | spacing-scale
+  .fm-right   | font-size              | type-ramp
+  .fm-right-h | font-size              | type-ramp
+  .fm-right-h | line-height            | type-ramp
+  .fm-right-h | margin-bottom          | spacing-scale
+  .fm-rule    | font-size              | type-ramp
+  .fm-rule    | margin-bottom          | spacing-scale
+  .fm-rule    | margin-top             | spacing-scale
+  .fm-socials | column-gap             | spacing-scale
+  .fm-socials | font-size              | type-ramp
+  .fm-socials | row-gap                | spacing-scale
+  .fm-wrap    | font-size              | type-ramp
+  a           | font-size              | type-ramp
+  a           | line-height            | type-ramp
+  path        | font-size              | type-ramp
+  span        | font-size              | type-ramp
+  span        | line-height            | type-ramp
+  svg         | font-size              | type-ramp
+-->
+
+<footer class="fm-footer" data-screen-label="Footer · mega (watermark)"
+        data-archetype="editorial-stack" data-hierarchy="closing" data-intent="orient"
+        data-register="editorial" data-signature="architectural-whitespace" data-density="high">
+  <div class="fm-wrap">
+
+    <!-- watermark (parallax target; top clipped by the band) -->
+    <div class="fm-mark-band"><pre class="fm-mark" aria-hidden="true">              :@@@%.                                           -@%%%.                                     +@%%#                                 .--:-:
+              :@@@%.                                           -@@@%.                                     +@@@#                                 - -- -
+              :@@@%.                                           -@@@%.                                     +@@@#                                 :::.:-
+   :=*#%%#*+: :@@@%.    -+##%##+-.   .#%%%-   #%%%=    :+##%%#**@@@%.  .=*#%#    .-*##%#*=:       -+#%%%#*#@@@# .#%%%-   #%%%= =%%%*.   -#%%#:   .... 
+ .*@@@@@@@@@* :@@@%.  =%@@@@@@@@@%=  .%@@@-   %@@@+  :#@@@@@@@@@@@@%. :%@@@@%   +%@@@@@@@@%*.   -%@@@@@@@@@@@@# .%@@@-   %@@@=  =@@@#: =%@@#:         
+:%@@@#=--=*=  :@@@%. *@@@%+-:-+%@@@* .%@@@-   #@@@= -%@@@#=--+%@@@@%  %@@@#==  *@@@%+-+%@@@@#  +@@@@#=--+%@@@@# .%@@@-   %@@@=   -%@@%-=@@*.          
+#@@@*         :@@@%.-@@@%:     :%@@@- %@@@-   #@@@= %@@@+      *@@@% :@@@%:   =@@@%-=*%@@%*=: :@@@%=     .#@@@# .%@@@-   %@@@=    :#@@%=-+            
+%@@@=         :@@@%.+@@@#       #@@@+.%@@@-   #@@@=.@@@@:      -@@@% :@@@%.   *@@@%@@%*=:     -@@@%       +@@@# .%@@@-   %@@@=     =@@@%.             
+#@@@#         :@@@%.-@@@%=     -%@@@= %@@@=   %@@@= %@@@*     .#@@@# :@@@%.   +@@@%+.    +-   :@@@%=     :%@@@+ .%@@@=   %@@@=    =%@@#:*#.           
+:%@@@#=-:-*=  :@@@%. *@@@@#+=+#@@@@*  *@@@%+=*@@@@: -%@@@#+--+%@@@%: :@@@%.    #@@@#+--+%@@%-  +@@@@#=--+%@@@#.  #@@@%+=*@@@@:   =@@@*.#@@#.          
+ :#@@@@@@@@@* :@@@%.  =%@@@@@@@@@%=   .#@@@@@@@@%=   :#@@@@@@@@@%*.  :@@@%.    .*%@@@@@@@@%+    -#@@@@@@@@@%+.   .#@@@@@@@@%=   +@@@+  =%@@%:         
+   :+#%%%%#+- :@%%%.   .-*#%%%%*=.      =*%%%%#+:      :+#%%%%#+:    :@@@%.      :+#%%%%*=.       -*#%%%%*=.       =*%%%%#+:   +@@%+    -%@@%:        </pre></div>
+
+    <hr class="fm-rule" />
+
+    <!-- columns -->
+    <div class="fm-cols">
+
+      <nav class="fm-col" data-reveal style="--d:0s" aria-label="Product">
+        <h3 class="fm-col-h cr-label">Product</h3>
+        <ul class="fm-list">
+          <li><a href="#">APA Platform</a></li>
+          <li><a href="#">CR-DocXter</a></li>
+          <li><a href="#">CR-Jennie</a></li>
+          <li><a href="#">Dr.Scribe</a></li>
+          <li><a href="#">Integrations</a></li>
+          <li><a href="#">Security &amp; Compliance</a></li>
+          <li><a href="#">Pricing</a></li>
+        </ul>
+      </nav>
+
+      <nav class="fm-col" data-reveal style="--d:.08s" aria-label="Resources">
+        <h3 class="fm-col-h cr-label">Resources</h3>
+        <ul class="fm-list">
+          <li><a href="#">How Example Brand Works</a></li>
+          <li><a href="#">Case Studies</a></li>
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">FAQs</a></li>
+          <li><a href="#">System Status</a></li>
+        </ul>
+      </nav>
+
+      <nav class="fm-col" data-reveal style="--d:.16s" aria-label="Company">
+        <h3 class="fm-col-h cr-label">Company</h3>
+        <ul class="fm-list">
+          <li><a href="#">About Example Brand</a></li>
+          <li><a href="#">Our Mission</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press &amp; Media</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Partners</a></li>
+        </ul>
+      </nav>
+
+      <div class="fm-right" data-reveal style="--d:.24s">
+        <h3 class="fm-right-h cr-label">Get started</h3>
+        <div class="fm-ctas">
+          <a class="fm-cta fm-cta--primary" href="#">Book a Demo <span class="fm-arr">&rarr;</span></a>
+          <a class="fm-cta fm-cta--ink" href="#">Talk to Sales</a>
+        </div>
+        <h3 class="fm-right-h cr-label">Follow us</h3>
+        <div class="fm-socials">
+          <a class="fm-social" href="#" aria-label="Example Brand on X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644z"/></svg></a>
+          <a class="fm-social" href="#" aria-label="Example Brand on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+          <a class="fm-social" href="#" aria-label="Example Brand on Instagram"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 3.25.15 4.77 1.69 4.92 4.92.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.15 3.23-1.66 4.77-4.92 4.92-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-3.26-.15-4.77-1.7-4.92-4.92C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85C2.38 3.92 3.9 2.38 7.15 2.23 8.42 2.17 8.8 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07 2.7.27.27 2.69.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.2 4.36 2.62 6.78 6.98 6.98C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c4.35-.2 6.78-2.62 6.98-6.98.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.2-4.35-2.62-6.78-6.98-6.98C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.41-11.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/></svg></a>
+          <a class="fm-social" href="#" aria-label="Example Brand on YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.5A3.02 3.02 0 0 0 .5 6.19C0 8.07 0 12 0 12s0 3.93.5 5.81a3.02 3.02 0 0 0 2.12 2.14c1.88.5 9.38.5 9.38.5s7.5 0 9.38-.5a3.02 3.02 0 0 0 2.12-2.14C24 15.93 24 12 24 12s0-3.93-.5-5.81zM9.55 15.57V8.43L15.82 12l-6.27 3.57z"/></svg></a>
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="fm-rule fm-rule--bottom" />
+
+    <!-- bottom bar -->
+    <div class="fm-bottom" data-reveal style="--d:.34s">
+      <span>&copy; 2026 Example Brand. All rights reserved.</span>
+      <div class="fm-legal">
+        <a href="#">Terms of Service</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Security Policy</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.fm-footer');
+  if (!sec) return;
+
+  // reveal-on-scroll: the watermark rises out of the cut line + columns stagger up
+  function reveal() {
+    sec.classList.add('fm-shown');     // triggers the watermark rise
+    sec.querySelectorAll('[data-reveal]').forEach(function (el) { el.classList.add('in-view'); });
+  }
+
+  if (reduce) { reveal(); return; }
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) { if (en.isIntersecting) { reveal(); io.disconnect(); } });
+    }, { threshold: 0.12 });
+    io.observe(sec);
+  } else { reveal(); }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,113 @@
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Verification / scratch render output from .claude/lib/render-deliverable.py
+# and .claude/lib/screenshot-build.py. Regenerable; commit only the source
+# (HTML / Design.md / skill files) and the user-facing final/ deliverables.
+.claude/pipeline/_test-*/
+.claude/pipeline/_scratch/
+.claude/pipeline/_tmp/
+
+# Playwright internals (if anyone ends up running playwright install locally)
+.cache/
+playwright-report/
+test-results/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+/.agent
+/.antigravitycli
+
+# ruflo/ruvector local database
+ruvector.db
+
+# Local Claude Code machine settings (per-user, not shared) — unanchored so it also catches
+# nested copies (e.g. experiments/.claude/settings.local.json), not just the repo-root one.
+**/.claude/settings.local.json
+node_modules
+
+# Local Codex CLI config (per-user, not shared)
+.codex/
+
+# Local MCP server config (per-user, not shared)
+.mcp.json
+
+# shadcn MCP tooling artifacts (local dev dependency, not shared)
+# anchored to repo root so they do NOT match offscript/package.json etc.
+
+# Raw design-team font delivery — the full Inter/Manrope families (~19M, 61 files).
+# Redundant: colors_and_type.css references only the curated fonts/ subset, which
+# IS committed. Keep the raw dump local. (Both the legacy root copy and the copy
+# that ships inside the collateral bundle.)
+/uploads/
+offscript/references/collateral/uploads/
+
+# Archive / delivery bundles (e.g. CR-offscripts.zip, champion-accountants.rar)
+*.zip
+*.rar
+
+# Root-level per-client engagement material (briefs handed in at use-time) — the "WHAT"
+# layer, may contain personal/sensitive data, never committed (same rule as /offscript/projects/).
+/brief-*.txt
+
+# Root-level HTML artifacts are per-brand collateral/website references + generated
+# samples, NOT engine source. They live (gitignored) under offscript/projects/<track>/
+# <brand>/artifacts/, never committed at the repo root. Anchored so the offscript
+# preview cards (now offscript/references/collateral/preview/*.html), offscript/**, archive/**,
+# and .claude/** stay tracked.
+/*.html
+
+# CI config — this project does not use CI/CD (render tests run manually via
+# `npm run test:render`). Keep any pipeline file local-only.
+/.gitlab-ci.yml
+
+# External offscript reference bundles — raw design-team dumps used as
+# read-only inspiration, NOT engine source. Kept local.
+/Website-offscript-v1/
+/CR-one-page-offscript/
+
+# Scratch render screenshots (regenerable verification output, like the other
+# render/screenshot artifacts above).
+offscript/_shots/
+
+# Local forensic / scratch dumps (audit notes, raw chat logs, prompt drafts) — keep local
+/DUMP/
+
+# Chromium user-data-dirs left behind by ad-hoc local Playwright screenshot runs
+# (not repo evidence — the .png screenshots alongside them are the actual artifacts).
+**/udd/
+**/udd2/
+
+# Personal one-off local screenshot tooling / output, unrelated to any Offscript sprint.
+/offscript/_shot.mjs
+/nexus-orchestration-comparison.png
+
+# Per-client engagement context (brief, assets, scraped signals) — the "WHAT" layer,
+# created at use-time, may contain personal/sensitive data, never committed.
+/offscript/projects/
+
+# Offscript local runtime state and credentials
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+*.log
+coverage/
+/artifacts/
+/offscript-demo-output/
+
+# Local experiments and generated output stay outside the maintained source tree
+/.experiments/
+/experiments/
+/design/**/output/
+
+# Private development notes, roadmap, strategy and local research
+/.local/

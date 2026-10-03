@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CR — Hero · AI Actions</title>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — Hero · AI Actions            component-hero-actions.html
+  ════════════════════════════════════════════════════════════════════════
+  A full LIGHT product hero. Two-column composition + a trust-logo bar below.
+    (0) the CANONICAL CR NAV, LIGHT variant — adapts to the light hero surface:
+        seamless light band + hairline bottom rule, logo-color.svg, the canonical
+        link set (AI▾ / Industry▾ / FosterX▾ / About us / Resources▾) in dark, and
+        a dark-ink "Let's talk" pill. (A dark hero uses the inverse — see
+        component-nav.html / cr-nav-spec.) The SOURCE's own nav links are NOT
+        copied — the canonical CR nav is reused identically across heroes.
+    (1) LEFT column — a large Urbanist headline (3–4 lines, scaled UP past the 54px
+        token so the type carries the drama like the source), a grey lede (~3
+        lines, matched to the source's sub length so the column rhythm holds), then
+        a brand-blue "Book a Demo Call →" pill + a small grey reassurance line.
+    (2) RIGHT column — a tall rounded creative-bg card. The source's vivid
+        orange→pink→magenta CSS gradient is RE-SKINNED to the on-brand CR cool
+        atmospheric (blur-7.png — the brand-legal cool-blue creative background; the
+        source's warm/pink/magenta tone is deliberately NOT carried over, since brand
+        law forbids violet/pink in v2), MUTED with a soft white veil +
+        a faint grain overlay (calmer/less "pop" than the saturated source). Inside
+        floats a white "AI Actions" panel (hairline border — blur-7 is pale, so the
+        panel needs a border to separate; CR separates with borders, never shadow)
+        holding TWO bordered action sub-cards, each: icon-chip + green ON toggle +
+        label + two skeleton bars. A cursor sits on the 2nd toggle; a circular
+        pause control sits in the gradient frame, bottom-left.
+    (3) TRUST BAR — bold lead-in ("Trusted in production") + worldwide + a row of
+        six monochrome partner wordmarks (the source's fabricated "9000+" dropped;
+        structure + length preserved so the line holds).
+  INSPIRATION: Chatbase hero ("AI Agents for magical customer experiences") —
+    layout/composition only. Re-skinned to CR per the LOCKED rules: customer-
+    support voice → ops-automation voice; headline concept "make no mistake" →
+    "AI Agents That Make No Mistakes." (maps onto CR's "every exception caught");
+    self-serve "No credit card required" → enterprise "30 minutes · No commitment";
+    the dark CTA's multicolor under-glow DROPPED (charter bans glow + purple) →
+    solid brand-blue pill; the panel's Cal/webhook actions → CR ops actions
+    (Reconcile invoices / Route exceptions); source colours ignored, CR kit
+    throughout.
+  MOTION: reproduce the source's own animated demo (the user named none). Entrance
+    is pure-CSS TRANSFORM-ONLY (translateY; opacity stays 1, no IO gate) so a
+    headless/preview snapshot at load shows everything — never blank. The demo
+    loops a subtle cursor "tap" on the 2nd toggle with a micro knob-bounce; both
+    toggles stay ON (green) every frame, so any screenshot is clean. The pause
+    control's progress ring is a static partial arc. prefers-reduced-motion snaps.
+  RATIO/GRID: well ~1320px (widened on feedback), wide outer margins + a MODERATE column gutter
+    (~clamp 32–60px — the 16px tight-gap rule is for bento card-to-card, not a hero
+    gutter). Columns ~1fr / 1.06fr (card a touch wider, like the source). Card is
+    tall-square (min-height clamp 520–620). 2-col ≥ 900 → 1-col below; nav links
+    hide ≤ 860; trust bar stacks ≤ 780.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  .cr-ha { background: var(--cr-bg); font-family: var(--cr-font-body); }
+  .cr-ha *, .cr-ha *::before, .cr-ha *::after { box-sizing: border-box; }
+  .cr-ha [data-lucide] { width: 1em; height: 1em; display: inline-block; vertical-align: middle; }
+
+  /* ── (0) Canonical nav — LIGHT variant (reused from hero-bento) ───────── */
+  .ha-navband { background: var(--cr-bg); border-bottom: 1px solid var(--cr-line); }
+  .ha-nav {
+    max-width: var(--cr-content-max); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px clamp(24px, 4vw, 64px); gap: 24px;
+  }
+  .ha-logo { height: 30px; width: auto; display: block; flex: 0 0 auto; }
+  .ha-links {
+    display: flex; gap: clamp(20px, 2.6vw, 38px); align-items: center;
+    font-family: var(--cr-font-display); font-weight: 500; font-size: 16px;
+    color: var(--cr-fg); letter-spacing: -0.01em;
+  }
+  .ha-link { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; white-space: nowrap; }
+  .ha-link svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 2; fill: none; opacity: .85; }
+  .ha-navcta {
+    flex: 0 0 auto; background: var(--cr-ink); color: #fff;
+    font-family: var(--cr-font-display); font-weight: 700; font-size: 15px;
+    padding: 12px 26px; border-radius: var(--cr-radius-pill); border: 0; cursor: pointer;
+    letter-spacing: -0.01em; transition: background .18s ease;
+  }
+  .ha-navcta:hover { background: var(--cr-fg); }
+
+  /* ── Well ─────────────────────────────────────────────────────────────── */
+  .ha-wrap { max-width: var(--cr-content-max); margin: 0 auto; padding: 0 clamp(24px, 4vw, 64px); }
+
+  /* ── (1)+(2) Hero grid ────────────────────────────────────────────────── */
+  .ha-hero {
+    display: grid; grid-template-columns: 1fr 1.06fr;
+    gap: clamp(32px, 5vw, 60px); align-items: center;
+    padding: clamp(44px, 6vw, 84px) 0 clamp(40px, 5vw, 64px);
+  }
+  .ha-col-text { min-width: 0; }
+
+  .ha-title {
+    margin: 0; font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(40px, 5.4vw, 68px); line-height: 1.06; letter-spacing: -0.025em;
+    color: var(--cr-ink);
+  }
+  .ha-sub {
+    margin: clamp(20px, 2.2vw, 30px) 0 0; max-width: 440px;
+    font-size: clamp(17px, 1.5vw, 20px); line-height: 1.5; color: var(--cr-fg-3);
+  }
+  .ha-cta-row {
+    display: flex; align-items: center; gap: clamp(18px, 2.4vw, 30px);
+    margin-top: clamp(30px, 3.4vw, 44px); flex-wrap: wrap;
+  }
+  .ha-cta {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: var(--cr-brand); color: #fff; border: 0; cursor: pointer;
+    font-family: var(--cr-font-display); font-weight: 600; font-size: 16px;
+    padding: 16px 30px; border-radius: var(--cr-radius-pill); text-decoration: none;
+    transition: background .2s ease, transform .15s ease;
+  }
+  .ha-cta:hover { background: var(--cr-brand-700); }
+  .ha-cta:active { transform: scale(.97); }
+  .ha-cta .ar { transition: transform .16s ease; }
+  .ha-cta:hover .ar { transform: translateX(4px); }
+  .ha-reassure {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 14.5px; color: var(--cr-fg-3); white-space: nowrap;
+  }
+  .ha-reassure svg { width: 16px; height: 16px; color: var(--cr-fg-muted); }
+
+  /* ── (2) Gradient card ────────────────────────────────────────────────── */
+  .ha-card {
+    position: relative; overflow: hidden;
+    min-height: clamp(520px, 46vw, 620px);
+    border-radius: 28px;
+    /* soft white veil mutes the warm image (calmer, less "pop" than the saturated source) */
+    background: linear-gradient(rgba(255,255,255,0.30), rgba(255,255,255,0.30)),
+                url("../assets/creative-background/blur-7.png") center / cover no-repeat;
+    padding: clamp(40px, 5vw, 64px) clamp(26px, 3.4vw, 46px) clamp(56px, 6.5vw, 78px);
+    display: flex;
+  }
+  /* faint grain — no background-size (it tiles into a visible grid) */
+  .ha-card-grain {
+    position: absolute; inset: 0; z-index: 0;
+    background-image: url("../assets/texture-grain.png"); background-repeat: repeat;
+    opacity: 0.035; pointer-events: none;
+  }
+  .ha-panel {
+    position: relative; z-index: 1; width: 100%; align-self: flex-start;
+    background: #fff; border: 1px solid rgba(14,14,14,0.07);
+    border-radius: 20px; padding: clamp(20px, 2.4vw, 28px);
+  }
+  .ha-panel-title {
+    margin: 2px 0 clamp(16px, 1.8vw, 22px); font-family: var(--cr-font-display);
+    font-weight: 700; font-size: clamp(18px, 1.6vw, 21px); letter-spacing: -0.01em;
+    color: var(--cr-ink);
+  }
+  .ha-actions { display: flex; flex-direction: column; gap: clamp(12px, 1.4vw, 16px); }
+
+  .ha-action {
+    border: 1px solid var(--cr-line); border-radius: 14px;
+    padding: clamp(15px, 1.7vw, 19px); position: relative;
+  }
+  .ha-action-head { display: flex; align-items: center; justify-content: space-between; }
+  .ha-chip {
+    width: 42px; height: 42px; border-radius: 13px; flex: 0 0 auto;
+    display: flex; align-items: center; justify-content: center; color: #fff;
+  }
+  .ha-chip svg { width: 21px; height: 21px; stroke-width: 2; }
+  .ha-chip-dark { background: var(--cr-ink); }
+  .ha-chip-blue { background: var(--cr-brand); border-radius: 50%; }  /* source: card-2 chip is a circle, card-1 a rounded square */
+
+  .ha-toggle {
+    width: 46px; height: 26px; border-radius: 500px; background: var(--cr-success);
+    position: relative; flex: 0 0 auto;
+  }
+  .ha-knob {
+    position: absolute; top: 3px; left: 23px; width: 20px; height: 20px;
+    border-radius: 50%; background: #fff;
+  }
+  .ha-action-label {
+    margin: clamp(15px, 1.7vw, 19px) 0 14px; font-family: var(--cr-font-display);
+    font-weight: 600; font-size: clamp(15px, 1.4vw, 17px); color: var(--cr-ink);
+    letter-spacing: -0.01em;
+  }
+  .ha-skel { height: 10px; border-radius: 500px; background: var(--cr-bg-grey-100); }
+  .ha-skel + .ha-skel { margin-top: 9px; }
+  .ha-skel.w1 { width: 86%; }
+  .ha-skel.w2 { width: 54%; }
+
+  /* cursor on the 2nd toggle */
+  .ha-cursor { position: absolute; top: 30px; right: 4px; z-index: 2; pointer-events: none; }
+  .ha-cursor svg { width: 23px; height: 23px; display: block; }
+
+  /* pause control — bottom-left of the gradient frame */
+  .ha-pause { position: absolute; left: clamp(18px, 2.2vw, 28px); bottom: clamp(18px, 2.2vw, 28px); z-index: 2; width: 54px; height: 54px; }
+  .ha-pause-ring { position: absolute; inset: 0; width: 54px; height: 54px; transform: rotate(-90deg); }
+  .ha-pause-btn {
+    position: absolute; inset: 6px; border-radius: 50%; background: rgba(14,18,28,0.5);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ha-pause-btn svg { width: 17px; height: 17px; color: #fff; fill: #fff; stroke: #fff; }
+
+  /* ── (3) Trust bar ────────────────────────────────────────────────────── */
+  .ha-trust {
+    display: flex; align-items: center; justify-content: space-between; gap: clamp(24px, 3vw, 40px);
+    padding: clamp(26px, 4vw, 44px) 0 clamp(52px, 7vw, 88px); flex-wrap: wrap;
+  }
+  .ha-trust-label { font-size: 16px; color: var(--cr-fg-2); flex: 0 0 auto; }
+  .ha-trust-label strong { font-family: var(--cr-font-display); font-weight: 700; color: var(--cr-ink); }
+  .ha-logos { display: flex; align-items: center; gap: clamp(18px, 2.4vw, 32px); flex-wrap: wrap; }
+  .ha-logo-item { display: inline-flex; align-items: center; gap: 8px; opacity: 0.42; }
+  .ha-logo-item svg { height: 21px; width: auto; display: block; }
+  .ha-logo-item svg * { fill: var(--cr-ink) !important; stroke: var(--cr-ink) !important; }
+  .ha-logo-wm { font-family: var(--cr-font-display); font-weight: 700; font-size: 18px; color: var(--cr-ink); letter-spacing: -0.01em; }
+
+  /* ── Motion ───────────────────────────────────────────────────────────── */
+  /* entrance: transform-only (opacity stays 1 → preview-safe, never blank) */
+  .ha-reveal { animation: haRise .7s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--d, 0s); }
+  @keyframes haRise { from { transform: translateY(16px); } to { transform: none; } }
+  /* demo loop: subtle cursor tap; both toggles stay ON every frame */
+  .ha-cursor { animation: haTap 2.8s ease-in-out infinite; }
+  @keyframes haTap { 0%, 38%, 100% { transform: translate(0,0); } 48%, 56% { transform: translate(-3px,-4px); } }
+  .ha-action--live .ha-knob { animation: haBounce 2.8s ease-in-out infinite; }
+  @keyframes haBounce { 0%, 40%, 100% { transform: scale(1); } 50% { transform: scale(.9); } }
+  @media (prefers-reduced-motion: reduce) {
+    .ha-reveal, .ha-cursor, .ha-action--live .ha-knob { animation: none; }
+  }
+
+  /* ── Responsive ───────────────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .ha-hero { grid-template-columns: 1fr; gap: clamp(36px, 6vw, 52px); }
+    .ha-col-text { text-align: center; }
+    .ha-sub { margin-left: auto; margin-right: auto; }
+    .ha-cta-row { justify-content: center; }
+    .ha-card { max-width: 560px; margin: 0 auto; width: 100%; }
+  }
+  @media (max-width: 860px) { .ha-links { display: none; } }
+  @media (max-width: 780px) {
+    .ha-trust { justify-content: center; text-align: center; }
+  }
+  @media (max-width: 480px) {
+    .ha-card { padding: 28px 18px 56px; min-height: 0; }
+    .ha-panel { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="cr-ha" data-screen-label="Hero · AI Actions">
+
+  <!-- ── (0) Canonical CR nav — light variant ─────────────────────────── -->
+  <div class="ha-navband">
+    <nav class="ha-nav">
+      <img class="ha-logo" src="../assets/logo-color.svg" alt="Example Brand">
+      <div class="ha-links">
+        <span class="ha-link">AI <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ha-link">Industry <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ha-link">FosterX <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ha-link">About us</span>
+        <span class="ha-link">Resources <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+      <button class="ha-navcta">Let's talk</button>
+    </nav>
+  </div>
+
+  <div class="ha-wrap">
+
+    <!-- ── (1)+(2) Hero ───────────────────────────────────────────────── -->
+    <div class="ha-hero">
+
+      <!-- LEFT — copy -->
+      <div class="ha-col-text">
+        <h1 class="ha-title ha-reveal" style="--d:.05s">AI Agents That Make No Mistakes.</h1>
+        <p class="ha-sub ha-reveal" style="--d:.16s">Example Brand deploys production AI agents into your existing stack to absorb routine operational work &mdash; every workflow running, every exception caught.</p>
+        <div class="ha-cta-row ha-reveal" style="--d:.26s">
+          <a class="ha-cta" href="#">Book a Demo Call <span class="ar" aria-hidden="true">&rarr;</span></a>
+          <span class="ha-reassure"><i data-lucide="clock"></i>30 minutes &middot; No commitment</span>
+        </div>
+      </div>
+
+      <!-- RIGHT — gradient card + AI Actions panel -->
+      <div class="ha-card ha-reveal" style="--d:.2s">
+        <span class="ha-card-grain" aria-hidden="true"></span>
+
+        <div class="ha-panel">
+          <h2 class="ha-panel-title">AI Actions</h2>
+          <div class="ha-actions">
+
+            <!-- action 1 -->
+            <div class="ha-action">
+              <div class="ha-action-head">
+                <span class="ha-chip ha-chip-dark"><i data-lucide="receipt"></i></span>
+                <span class="ha-toggle"><span class="ha-knob"></span></span>
+              </div>
+              <div class="ha-action-label">Reconcile invoices</div>
+              <div class="ha-skel w1"></div>
+              <div class="ha-skel w2"></div>
+            </div>
+
+            <!-- action 2 (cursor sits on its toggle) -->
+            <div class="ha-action ha-action--live">
+              <div class="ha-action-head">
+                <span class="ha-chip ha-chip-blue"><i data-lucide="split"></i></span>
+                <span class="ha-toggle"><span class="ha-knob"></span></span>
+                <span class="ha-cursor" aria-hidden="true">
+                  <svg viewBox="0 0 16 16"><path d="M1 1 L1 13.2 L4.3 9.9 L6.5 14.7 L8.4 13.85 L6.2 9.1 L10.7 9.1 Z" fill="var(--cr-ink-flat)" stroke="#fff" stroke-width="1.1" stroke-linejoin="round"/></svg>
+                </span>
+              </div>
+              <div class="ha-action-label">Route exceptions</div>
+              <div class="ha-skel w1"></div>
+              <div class="ha-skel w2"></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- pause control -->
+        <span class="ha-pause" aria-hidden="true">
+          <svg class="ha-pause-ring" viewBox="0 0 54 54">
+            <circle cx="27" cy="27" r="25" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="3"/>
+            <circle cx="27" cy="27" r="25" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="62"/>
+          </svg>
+          <span class="ha-pause-btn"><i data-lucide="pause"></i></span>
+        </span>
+      </div>
+
+    </div>
+
+    <!-- ── (3) Trust bar ──────────────────────────────────────────────── -->
+    <div class="ha-trust ha-reveal" style="--d:.34s" aria-label="Trusted by">
+      <div class="ha-trust-label"><strong>Trusted in production</strong> &middot; 4M+ tasks automated</div>
+      <div class="ha-logos">
+        <span class="ha-logo-item">
+          <svg viewBox="0 0 122.8 122.8" aria-hidden="true"><path d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9zm6.5 0c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z"/><path d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2zm0 6.5c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 51.1 0 45.3 0 38.2s5.8-12.9 12.9-12.9h32.3z"/><path d="M97 38.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97V38.2zm-6.5 0c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V5.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9v25.3z"/><path d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9zm0-6.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z"/></svg>
+          <span class="ha-logo-wm">slack</span>
+        </span>
+        <span class="ha-logo-item">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.78 12.653a5.22 5.22 0 1 0 0 10.44 5.22 5.22 0 0 0 0-10.44zm-13.56 0a5.22 5.22 0 1 0 0 10.44 5.22 5.22 0 0 0 0-10.44zM12 .908a5.22 5.22 0 1 0 0 10.44A5.22 5.22 0 0 0 12 .908z"/></svg>
+          <span class="ha-logo-wm">asana</span>
+        </span>
+        <span class="ha-logo-item">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 1.807 0 5.629l6 3.822 6.001-3.822zM18 1.807l-6 3.822 6 3.822 6-3.822zM0 13.274l6 3.822 6.001-3.822L6 9.452zM18 9.452l-6.001 3.822L18 17.096l6-3.822zM6 18.371l6.001 3.822 6-3.822-6-3.822z"/></svg>
+          <span class="ha-logo-wm">Dropbox</span>
+        </span>
+        <span class="ha-logo-item">
+          <svg viewBox="0 0 23 23" aria-hidden="true"><rect x="1" y="1" width="10" height="10"/><rect x="12" y="1" width="10" height="10"/><rect x="1" y="12" width="10" height="10"/><rect x="12" y="12" width="10" height="10"/></svg>
+          <span class="ha-logo-wm">Microsoft</span>
+        </span>
+        <span class="ha-logo-item"><span class="ha-logo-wm">stripe</span></span>
+        <span class="ha-logo-item"><span class="ha-logo-wm">zoom</span></span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

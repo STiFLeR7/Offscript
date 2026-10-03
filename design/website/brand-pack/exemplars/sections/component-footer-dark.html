@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CR — Footer · dark (CTA + columns)</title>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css">
+<!--
+  COMPONENT: Footer · dark (CTA + columns + wordmark)
+  COMPOSITION: A FULL-BLEED near-black band (CR ink #0E0E0E, edge-to-edge, no
+    outer frame; overflow:hidden to clip the wordmark) whose content sits in a
+    centered max-width (1280) well. Stacked regions, top→bottom:
+    (1) CTA ROW — LEFT a large 3-line TWO-TONE headline (Urbanist 500; the setup
+        clause "Discover how Example Brand can help you" in muted grey #6E6E6E, the
+        focal clause "automate the work that holds your operations back." in
+        near-white — the CR two-tone headline technique); RIGHT a brand-blue
+        PILL button "Book a Demo Call" with a LEADING circular ink icon holding
+        a white Lucide arrow-right (top-aligned with the headline).
+    (2) a full-width hairline RULE (--cr-line-dark).
+    (3) MID ROW — LEFT the CR logo (logo-white.svg) + a 2-line muted tagline;
+        RIGHT a newsletter block: a "Subscribe to our newsletter" label + a dark
+        PILL INPUT (leading Lucide mail, "Enter your email", a small brand-blue
+        ACCENT CHIP holding a light bar, and a circular submit button with a
+        Lucide arrow-right) + a small uppercase "By subscribing…" terms caption.
+    (4) FOUR LINK COLUMNS (LINKS / PLATFORM / RESOURCES / SOCIALS) — each a small
+        uppercase letter-spaced Inter heading (the source's mono labels re-skinned
+        to Inter, since the CR kit is Urbanist+Inter only) over muted-grey links.
+    (5) a full-width hairline RULE.
+    (6) BOTTOM BAR — LEFT an uppercase copyright, RIGHT three uppercase legal links.
+    (7) a GIANT embossed "EXAMPLE BRAND" wordmark (Urbanist 800) spanning the band,
+        pinned to the bottom and clipped at its edge; a subtle top-lit gradient
+        (background-clip:text) gives the raised/embossed read — a gradient FILL,
+        not a shadow/blur (charter-safe).
+  INSPIRATION: the Amini.ai mega-footer — layout/composition + minute details
+    reproduced 1:1 (two-tone headline, leading-circle pill CTA, logo+tagline /
+    newsletter split, 4 labelled columns, copyright/legal bar, giant wordmark,
+    the input's accent-chip + circular-submit pair). Re-skinned to CR per the
+    LOCKED inspiration rule (brand wins on palette/voice/type): YELLOW accent →
+    CR brand blue; the input's RED chip → brand-blue chip; mono labels → Inter
+    uppercase; "Amini" → Example Brand; tagline + headline → CR voice; © 2025 → 2026.
+  MOTION: scroll-reveal entrance (default — answer 3 was the fidelity note, not a
+    motion idea). On first viewport hit each region fades+rises in sequence
+    (headline → button → rule → brand → newsletter → the 4 columns L→R → rule →
+    bottom bar). IntersectionObserver fires once. **Robust reveal:** every
+    opacity:0 state is scoped under `.has-js` (so script-stripped / no-JS shows
+    everything at full opacity) PLUS a setTimeout(revealAll,1200) safety net
+    beside the IO so snapshot/headless contexts that never fire IO can't leave the
+    footer gated blank; prefers-reduced-motion snaps in. Lucide (CDN) draws the
+    arrow + mail glyphs; no other icon set.
+  RESPONSIVE: CTA 2-col ≥ 780 → 1-col ≤ 779 (button drops under headline,
+    left-aligned); MID 2-col ≥ 880 → 1-col ≤ 879 (newsletter under brand);
+    columns 4-col ≥ 820 → 2-col ≤ 819 (2×2) → 1-col ≤ 480; bottom bar 2-col →
+    stacked when it wraps. Headline + wordmark scale via clamp; the wordmark
+    clips at the band edges on narrow screens (matches the source's edge-bleed).
+-->
+<style>
+  .cr-fm {
+    position: relative;
+    overflow: hidden;
+    background: var(--cr-ink);
+    font-family: var(--cr-font-body);
+  }
+  .fm-well {
+    position: relative;
+    z-index: 1;
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+    padding: clamp(56px, 7vw, 100px) clamp(24px, 5vw, 64px) clamp(120px, 17vw, 240px);
+  }
+
+  /* ── (1) CTA row ────────────────────────────────────────── */
+  .fm-cta {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: center;
+  }
+  .fm-headline {
+    margin: 0;
+    /* no width cap — the grid 1fr track (~830px capped) governs the 2-line wrap */
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: clamp(24px, 2.9vw, 38px);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .fm-h-mute   { color: var(--cr-fg-3); }
+  .fm-h-strong { color: var(--cr-bg-grey-100); }
+
+  .fm-demo {
+    justify-self: end;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 28px 8px 8px;
+    background: var(--cr-brand);
+    border-radius: var(--cr-radius-pill);
+    text-decoration: none;
+    transition: background .2s ease;
+    white-space: nowrap;
+  }
+  .fm-demo:hover { background: var(--cr-brand-700); }
+  .fm-demo:focus-visible { outline: 2px solid var(--cr-brand); outline-offset: 3px; }
+  .fm-demo-ic {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--cr-ink);
+    display: flex; align-items: center; justify-content: center;
+    flex: 0 0 auto;
+  }
+  .fm-demo-ic svg { width: 18px; height: 18px; color: #fff; stroke-width: 2.2; }
+  .fm-demo-txt {
+    font-family: var(--cr-font-display);
+    font-weight: 600;
+    font-size: 16px;
+    color: #fff;
+  }
+
+  /* ── hairline rules ─────────────────────────────────────── */
+  .fm-rule {
+    border: none;
+    border-top: 1px solid var(--cr-line-dark);
+    margin: clamp(36px, 5vw, 64px) 0;
+  }
+
+  /* ── (3) Mid row ────────────────────────────────────────── */
+  .fm-mid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 48px;
+    align-items: start;
+  }
+  .fm-logo { height: 26px; width: auto; display: block; }
+  .fm-tagline {
+    margin: 22px 0 0;
+    max-width: 30ch;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--cr-fg-muted);
+  }
+
+  /* Newsletter */
+  .fm-news { justify-self: end; width: min(440px, 100%); }
+  .fm-news-label {
+    margin: 0 0 14px;
+    font-size: 16px;
+    color: var(--cr-bg-grey-100);
+    text-align: left;
+  }
+  .fm-news-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 8px 8px 18px;
+    background: rgba(255,255,255,0.035);
+    border: 1px solid var(--cr-line-dark);
+    border-radius: var(--cr-radius-pill);
+    transition: border-color .18s ease;
+  }
+  .fm-news-pill:focus-within { border-color: rgba(255,255,255,0.28); }
+  .fm-news-mail { width: 18px; height: 18px; color: var(--cr-fg-muted); flex: 0 0 auto; }
+  .fm-news-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: var(--cr-font-body);
+    font-size: 15px;
+    color: #fff;
+  }
+  .fm-news-input::placeholder { color: var(--cr-fg-muted); }
+  /* small brand-blue accent chip (source's red chip → CR brand blue) */
+  .fm-news-chip {
+    flex: 0 0 auto;
+    width: 30px; height: 24px;
+    border-radius: 7px;
+    background: var(--cr-brand);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .fm-news-chip::before {
+    content: '';
+    width: 14px; height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.9);
+  }
+  .fm-news-go {
+    flex: 0 0 auto;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--cr-line-dark);
+    background: rgba(255,255,255,0.06);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .18s ease;
+  }
+  .fm-news-go:hover { background: rgba(255,255,255,0.12); }
+  .fm-news-go:focus-visible { outline: 2px solid var(--cr-brand); outline-offset: 2px; }
+  .fm-news-go svg { width: 17px; height: 17px; color: #fff; stroke-width: 2; }
+  .fm-news-terms {
+    margin: 14px 0 0;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cr-fg-3);
+  }
+
+  /* ── (4) Link columns ───────────────────────────────────── */
+  .fm-cols {
+    margin-top: clamp(56px, 7vw, 96px);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+  }
+  .fm-col-h {
+    margin: 0 0 22px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #EDEDED;
+  }
+  .fm-col a {
+    display: block;
+    font-size: 15px;
+    color: var(--cr-fg-muted);
+    text-decoration: none;
+    padding: 9px 0;
+    transition: color .18s ease;
+  }
+  .fm-col a:hover, .fm-col a:focus-visible { color: #fff; }
+
+  /* ── (6) Bottom bar ─────────────────────────────────────── */
+  .fm-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .fm-copy {
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cr-fg-3);
+  }
+  .fm-legal { display: flex; gap: 32px; flex-wrap: wrap; }
+  .fm-legal a {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cr-fg-3);
+    text-decoration: none;
+    transition: color .18s ease;
+  }
+  .fm-legal a:hover, .fm-legal a:focus-visible { color: var(--cr-line); }
+
+  /* ── (7) Giant embossed wordmark ────────────────────────── */
+  .fm-wordmark {
+    position: absolute;
+    left: 50%;
+    bottom: -0.14em;
+    transform: translateX(-50%);
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 800;
+    font-size: clamp(78px, 15.5vw, 220px);
+    line-height: 0.8;
+    letter-spacing: -0.045em;
+    white-space: nowrap;
+    background: linear-gradient(180deg,
+      rgba(255,255,255,0.060) 0%,
+      rgba(255,255,255,0.022) 55%,
+      rgba(255,255,255,0.006) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+
+  /* ── Scroll-reveal (default-VISIBLE) ────────────────────── */
+  .cr-fm.has-js .reveal { opacity: 0; transform: translateY(16px); }
+  .cr-fm.has-js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cr-fm.has-js .reveal { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ── Responsive ─────────────────────────────────────────── */
+  @media (max-width: 879px) {
+    .fm-mid { grid-template-columns: 1fr; gap: 40px; }
+    .fm-news { justify-self: stretch; width: 100%; }
+  }
+  @media (max-width: 819px) {
+    .fm-cols { grid-template-columns: 1fr 1fr; gap: 36px 40px; }
+  }
+  @media (max-width: 779px) {
+    .fm-cta { grid-template-columns: 1fr; gap: 28px; }
+    .fm-demo { justify-self: start; }
+    .fm-headline { max-width: none; }
+  }
+  @media (max-width: 480px) {
+    .fm-cols { grid-template-columns: 1fr; gap: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="cr-fm" data-screen-label="Footer · dark (CTA + columns)">
+  <div class="fm-well">
+
+    <!-- ── (1) CTA row ───────────────────────────────────── -->
+    <div class="fm-cta">
+      <h2 class="fm-headline reveal" style="--d:0ms"><span class="fm-h-mute">Discover how Example Brand can help you </span><span class="fm-h-strong">automate the work that holds your operations back.</span></h2>
+      <a class="fm-demo reveal" style="--d:120ms" href="#">
+        <span class="fm-demo-ic"><i data-lucide="arrow-right"></i></span>
+        <span class="fm-demo-txt">Book a Demo Call</span>
+      </a>
+    </div>
+
+    <hr class="fm-rule reveal" style="--d:160ms">
+
+    <!-- ── (3) Mid row ───────────────────────────────────── -->
+    <div class="fm-mid">
+      <div class="fm-brand">
+        <img class="fm-logo reveal" style="--d:120ms" src="../assets/logo-white.svg" alt="Example Brand">
+        <p class="fm-tagline reveal" style="--d:180ms">Production AI agents that absorb the routine operational work &mdash; built to deploy in weeks, not quarters.</p>
+      </div>
+
+      <div class="fm-news reveal" style="--d:240ms">
+        <p class="fm-news-label">Subscribe to our newsletter</p>
+        <form class="fm-news-form" novalidate>
+          <div class="fm-news-pill">
+            <i class="fm-news-mail" data-lucide="mail"></i>
+            <input class="fm-news-input" type="email" placeholder="Enter your email" aria-label="Email address">
+            <span class="fm-news-chip" aria-hidden="true"></span>
+            <button type="submit" class="fm-news-go" aria-label="Subscribe">
+              <i data-lucide="arrow-right"></i>
+            </button>
+          </div>
+        </form>
+        <p class="fm-news-terms">By subscribing you agree to our terms.</p>
+      </div>
+    </div>
+
+    <!-- ── (4) Link columns ──────────────────────────────── -->
+    <nav class="fm-cols" aria-label="Footer">
+      <div class="fm-col reveal" style="--d:120ms">
+        <p class="fm-col-h">Links</p>
+        <a href="#">Home</a>
+        <a href="#">Platform</a>
+        <a href="#">About</a>
+        <a href="#">Careers</a>
+        <a href="#">Contact us</a>
+      </div>
+      <div class="fm-col reveal" style="--d:180ms">
+        <p class="fm-col-h">Platform</p>
+        <a href="#">Our Platform</a>
+        <a href="#">Why Example Brand?</a>
+      </div>
+      <div class="fm-col reveal" style="--d:240ms">
+        <p class="fm-col-h">Resources</p>
+        <a href="#">Case Studies</a>
+        <a href="#">Blog &amp; Insights</a>
+        <a href="#">Research</a>
+        <a href="#">FAQ</a>
+      </div>
+      <div class="fm-col reveal" style="--d:300ms">
+        <p class="fm-col-h">Socials</p>
+        <a href="#">LinkedIn</a>
+        <a href="#">X (Formerly Twitter)</a>
+      </div>
+    </nav>
+
+    <hr class="fm-rule reveal" style="--d:120ms">
+
+    <!-- ── (6) Bottom bar ────────────────────────────────── -->
+    <div class="fm-bottom">
+      <p class="fm-copy reveal" style="--d:120ms">&copy; Copyright 2026 Example Brand.com</p>
+      <div class="fm-legal reveal" style="--d:180ms">
+        <a href="#">Terms of Service</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Data Platform TOS</a>
+      </div>
+    </div>
+
+  </div><!-- /.fm-well -->
+
+  <!-- ── (7) Giant embossed wordmark ─────────────────────── -->
+  <p class="fm-wordmark" aria-hidden="true">EXAMPLE BRAND</p>
+</section>
+
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<script>
+  (function () {
+    if (window.lucide) lucide.createIcons();
+
+    var sec = document.querySelector('.cr-fm');
+    if (!sec || !('IntersectionObserver' in window)) return;
+    sec.classList.add('has-js');
+
+    var done = false;
+    function revealAll() {
+      if (done) return;
+      done = true;
+      sec.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        revealAll();
+        io.disconnect();
+      });
+    }, { threshold: 0.04 });
+    io.observe(sec);
+
+    // Safety net: some snapshot/headless contexts never fire IO.
+    setTimeout(revealAll, 1200);
+  })();
+</script>
+</body>
+</html>

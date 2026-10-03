@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Product Showcase · asymmetric — book a demo</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Product Showcase · asymmetric      from component-book-demo.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **The artifact answers the objection the form cannot.** The profile
+              is unusually direct about the mechanism: "putting the artifact
+              beside the booking answers *what am I actually agreeing to see*,
+              which is the objection that stops demo bookings." It also calls
+              this "the heaviest close in the library", and names the condition
+              for using it at all — `Media` presence `l`, anchor `framed`,
+              **requires** a real product artifact. So the right panel is not
+              atmosphere. It is the evidence, and everything done to it below is
+              done to make it read as evidence rather than as mood.
+
+  STRUCTURE   Unchanged. A 45fr/55fr full-viewport split: logo → headline → lede
+              → five fields → submit → note on the left; eyebrow → headline →
+              browser-framed product mock on the right. DOM, scripts, ids,
+              `data-*`, `src` and every behavioural hook are byte-compatible
+              with the frozen original (DR-22). The v2 file is beside this one
+              in `_v2/`.
+
+  THE FORM IS FROZEN. Every input, label, `type`, `autocomplete`, `placeholder`
+              and the submit behaviour are exactly the original's. What moved is
+              presentation: the control radius, one stroke, the raised surface,
+              and a focus indicator that is dark ink rather than a hue. The
+              left panel also flips from a white page to the page ground, which
+              is what lets the raised input surface be a real second cue instead
+              of white-on-white.
+
+  THE CREATIVE  The right panel was FOUR abstract layers stacked on one another
+              — a two-stop cool-navy gradient, a blur raster (`blur-7`) at 30%
+              on `screen`, a grain PNG at 7% on `overlay`, a 480px rainbow glow
+              bloom pulsing on a 4s loop, and a 600px orbit ring. Every one of
+              them is decoration standing in for a subject. They are replaced by
+              an approved environment carrying the texture stack. `lake-mirror`
+              is the catalogue's bright, calm, deliberately centred member, and
+              a calm bright field is what makes a dark artifact panel read as
+              the figure rather than as more atmosphere.
+
+              ONE STACK, three layers: grain on top, grunge under it, the
+              environment underneath both, on `.right` itself. It has to be one
+              stack — a blend mode composites against what is beneath it in the
+              SAME background, so moving the grain to a pseudo-element would
+              resolve `overlay` against transparency and render at full strength
+              as grey static. The two pseudo-elements that carried the blur and
+              the grain are therefore made INERT rather than re-pointed, and the
+              glow and the ring go inert too. They are frozen DOM, so they go
+              inert rather than away — precedent `tabs-panel-below.html`.
+
+              The URLs are written out rather than reached through `--cr-env-*`:
+              a `url()` inside a custom property resolves against the CONSUMING
+              document and fails silently.
+
+  NO TYPE ON THE PHOTOGRAPH — the DR-46 move, made here. v2 put an eyebrow and a
+              headline directly onto the gradient, and the frame onto it too. The
+              DOM is frozen, so the words cannot move to another element — but
+              they can come off the image. `.right-content` becomes its own
+              OPAQUE dark panel: eyebrow, headline and product frame all sit on
+              it, and the environment occupies the region around it, which
+              carries no type. Remove the photograph now and not one word
+              changes legibility. That is the test, and it passes by
+              construction rather than by measurement — which is why no scrim,
+              veil or overlay was needed to win contrast back.
+
+              HONEST LIMIT, stated rather than hidden: the environment reads as a
+              generous field at desktop (~150px each side of the 480px panel) and
+              narrows to a 40px frame at the phone breakpoint, where the panel is
+              nearly the full column. It is a margin there, not a field. Widening
+              it would mean narrowing the artifact, and the profile makes the
+              artifact the requirement.
+
+  THE MOCK    The dashboard is miniature interface chrome — 10-13px labels, a
+              140px sidebar rail. It cannot be typeset on a ramp whose smallest
+              step is the supporting size without ceasing to be a mock, so it
+              claims the graphic exemption by naming it in the selector
+              (`.product-frame.cr-graphic`). The exemption covers type and the
+              interior geometry, which is left byte-identical. It does NOT cover
+              colour: every value in there is a token now, and the glass it was
+              built from is gone — the frame, the chrome bar, the rows and the
+              sidebar are opaque surfaces with real hairlines, because a
+              translucent panel over a photograph is the depth simulation the
+              direction retires.
+
+  ACCENT      One moment, and it is the ask. `Book My Demo Call` takes the
+              orange. v2 spent brand blue on the submit, the focus ring of every
+              field, the eyebrow, the sidebar logo mark, an agent dot and eleven
+              chart bars — and green and amber on two more dots. A panel where
+              everything is marked marks nothing, so the status ladder is now a
+              VALUE ladder in ink: three neutral steps that still read as three
+              states, without a second colour moment competing with the button.
+
+              THE LABEL MOVES WITH THE FILL. The submit steps to the deep orange
+              on hover, and dark ink on that step measures 1.9:1 — an AA failure
+              if the label stayed put. It moves to the inverse at 7.4:1.
+              Darkening a fill without moving its foreground is a contrast bug
+              wearing a hover state.
+
+  RESPONSIVE  The original's breakpoints (1024 / 560), unchanged. The two
+              `clamp()` headline ramps are DELETED rather than converted — they
+              resolved to a different unnameable size at every viewport width,
+              and the pack already steps h4 and h5 down its own ladder at its own
+              breakpoints. The reduce guard now matches the trigger's
+              specificity: the frame's entrance is declared on
+              `.product-frame.cr-graphic`, so a guard naming only `.product-frame`
+              would have lost the cascade and the animation would have run under
+              a reduce preference.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; font-family: var(--cr-font-body); -webkit-font-smoothing: antialiased; }
+
+  /* ── Full-viewport split: LEFT capture / RIGHT evidence ──────────── */
+  .split {
+    display: grid;
+    grid-template-columns: 45fr 55fr;
+    min-height: 100vh;
+  }
+
+  /* ──────────────────────────────────────────────────────────────────
+     LEFT — the capture, on the page ground
+  ───────────────────────────────────────────────────────────────────── */
+  .left {
+    background-color: var(--cr-page-ground);
+    display: flex; flex-direction: column;
+    justify-content: center;
+    padding: var(--cr-space-xl) var(--cr-page-gutter);
+  }
+
+  .l-logo { display: flex; align-items: center; gap: var(--cr-space-xs); margin-bottom: var(--cr-space-m); }
+  .l-logo img { height: 24px; }
+  .l-logo span {
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+
+  .l-headline {
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h4);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+    margin: 0 0 var(--cr-space-xs);
+  }
+  .l-sub {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    margin: 0 0 var(--cr-space-m);
+    max-width: 360px;                 /* the original's measure — untouched */
+  }
+
+  /* ── Form ─────────────────────────────────────────────────────────
+     SECOND CUE. All three border tokens measure under 3:1 against the page
+     ground, so a hairline cannot be a control's only boundary — and v2's
+     fields had no border at all, only a grey fill on a white page. The fields
+     now sit on the RAISED surface against the cream ground inside a full
+     stroke: the surface change is the second cue, and it is measurable rather
+     than asserted. */
+  .f-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--cr-space-xs); }
+  .field { display: flex; flex-direction: column; margin-bottom: var(--cr-space-xs); }
+  .field label {
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    color: var(--cr-text-secondary);
+    margin-bottom: var(--cr-space-xs);
+  }
+  /* A control never inherits `font-family` — it is stated. */
+  .field input, .field textarea {
+    background-color: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-control);   /* inputs take the CONTROL radius */
+    padding: var(--cr-space-xs);
+    font-family: var(--cr-font-body);
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-primary);
+    outline: none; resize: none;
+    transition: border-color .15s ease;
+  }
+  .field input::placeholder, .field textarea::placeholder { color: var(--cr-text-secondary); }
+  /* THE FOCUS INDICATOR IS DARK INK, not a hue. `--cr-focus-ring` resolves to
+     `--cr-text-primary` — ~13:1 on the page ground, where the blue v2's focus
+     border reached for measures 2.07:1 and is disqualified outright. */
+  .field input:focus-visible, .field textarea:focus-visible {
+    border-color: var(--cr-text-primary);
+    outline: 2px solid var(--cr-focus-ring);
+    outline-offset: 2px;
+  }
+  .field textarea { min-height: 80px; }
+
+  /* ── THE ONE ACCENT MOMENT — the ask ──────────────────────────── */
+  .submit-btn {
+    display: block; width: 100%;
+    margin-top: var(--cr-space-xs);
+    background-color: var(--cr-accent-orange);
+    color: var(--cr-on-accent-light);           /* what sits on orange */
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    border: none;
+    border-radius: var(--cr-radius-control);    /* the pill radius is retired */
+    cursor: pointer;
+    transition: background-color .18s ease, color .18s ease, transform .1s ease;
+  }
+  /* THE LABEL MOVES WITH THE FILL. Ink on the deep orange step measures 1.9:1;
+     the inverse measures 7.4:1. */
+  .submit-btn:hover, .submit-btn:focus-visible {
+    background-color: var(--cr-accent-orange-800);
+    color: var(--cr-text-inverse);
+  }
+  .submit-btn:active { transform: scale(.98); }
+  .submit-btn:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 3px; }
+
+  .f-note {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    text-align: center;
+    margin-top: var(--cr-space-s);
+  }
+
+  /* ──────────────────────────────────────────────────────────────────
+     RIGHT — the environment, and the evidence panel standing on it
+  ───────────────────────────────────────────────────────────────────── */
+  /* ONE BACKGROUND STACK. Written out rather than reached through a custom
+     property, and never split onto a pseudo-element: a blend mode composites
+     against what is beneath it in the SAME background, so on a `::before` it
+     would resolve against transparency and render as grey static. */
+  .right {
+    position: relative; overflow: hidden;
+    background-color: var(--cr-bg-dark);
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-lake-mirror.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 50% 50%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: var(--cr-space-xl) var(--cr-page-gutter);
+  }
+  /* The blur raster and the grain PNG both moved INTO the one stack above.
+     These two layers stay in place and carry nothing. */
+  .right::before { content: none; }
+  .right::after  { content: none; }
+
+  /* Abstract decoration this pass removes. Frozen DOM, so inert rather than
+     deleted — precedent `tabs-panel-below.html`. */
+  .glow-bloom { display: none; }
+  .orbit-ring { display: none; }
+  @keyframes pulse-glow {
+    0%,100% { transform:translate(-50%,-50%) scale(1);   opacity:1; }
+    50%      { transform:translate(-50%,-50%) scale(1.08); opacity:.78; }
+  }
+
+  /* THE OPAQUE PANEL — the whole DR-46 move. Every word on this side sits on
+     this surface, not on the photograph. Remove the environment and legibility
+     is unchanged. */
+  .right-content {
+    position: relative; z-index: 1; width: 100%; max-width: 480px;
+    background-color: var(--cr-bg-dark);
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-s);
+  }
+
+  .r-eyebrow {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;                /* supporting text: never tracked, never uppercase */
+    color: var(--cr-neutral-500);
+    margin: 0 0 var(--cr-space-xs);
+  }
+  .r-headline {
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h5);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-inverse);
+    margin: 0 0 var(--cr-space-s);
+  }
+
+  /* ── Product preview frame — MINIATURE INTERFACE CHROME ───────────
+     It says so in its own selector. A mock typeset on the supporting step
+     stops being a mock — a sidebar label at 16px does not fit the artifact it
+     sits inside. So every rule below claims the graphic exemption by naming
+     `.cr-graphic`, which is bounded and greppable rather than assumed. The
+     exemption covers the type ramp and the interior geometry, which is left
+     exactly as the original authored it. It does NOT cover colour: every value
+     here is a token, the glass is gone, and the blue that marked the active
+     row, the logo mark and the tall bars is ink now. */
+  .product-frame.cr-graphic {
+    background-color: var(--cr-neutral-1000);
+    border: var(--cr-stroke) solid var(--cr-neutral-900);
+    border-radius: var(--cr-radius-card); overflow: hidden;
+    animation: frame-up .7s ease both; animation-delay: 150ms;
+  }
+  @keyframes frame-up {
+    from { opacity:0; transform:translateY(16px); }
+    to   { opacity:1; transform:none; }
+  }
+
+  /* Browser chrome bar */
+  .cr-graphic .frame-chrome {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px;
+    background-color: var(--cr-neutral-950);
+    border-bottom: var(--cr-stroke) solid var(--cr-neutral-900);
+  }
+  .cr-graphic .chrome-dots { display: flex; gap: 5px; }
+  .cr-graphic .chrome-dots span {
+    width: 9px; height: 9px; border-radius: 50%;
+    background-color: var(--cr-neutral-800);
+  }
+  .cr-graphic .chrome-url {
+    flex: 1; text-align: center;
+    font-family: var(--cr-font-body); font-size: 11px;
+    color: var(--cr-neutral-600); letter-spacing: 0.02em;
+  }
+
+  /* App layout inside frame */
+  .cr-graphic .app-layout {
+    display: grid; grid-template-columns: 140px 1fr;
+    min-height: 300px;
+  }
+  /* App sidebar */
+  .cr-graphic .app-sidebar {
+    background-color: var(--cr-neutral-950);
+    border-right: var(--cr-stroke) solid var(--cr-neutral-900);
+    padding: 16px 0;
+  }
+  .cr-graphic .sidebar-logo {
+    display: flex; align-items: center; gap: 7px;
+    padding: 4px 16px 16px;
+    font-family: var(--cr-font-display); font-weight: 500; font-size: 12px;
+    color: var(--cr-neutral-300);
+    border-bottom: var(--cr-stroke) solid var(--cr-neutral-900); margin-bottom: 10px;
+  }
+  .cr-graphic .sidebar-logo-dot { width: 18px; height: 18px; background-color: var(--cr-neutral-600); border-radius: 5px; flex:0 0 18px; }
+  .cr-graphic .sidebar-item {
+    padding: 8px 16px;
+    font-family: var(--cr-font-body); font-size: 12px;
+    color: var(--cr-neutral-600);
+    cursor: default;
+  }
+  .cr-graphic .sidebar-item.active {
+    color: var(--cr-text-inverse); background-color: var(--cr-neutral-900);
+    border-radius: 8px; margin: 0 8px;
+    padding: 8px; padding-left: 8px;
+  }
+  /* App main area */
+  .cr-graphic .app-main { padding: 16px; }
+  .cr-graphic .app-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .cr-graphic .app-title {
+    font-family: var(--cr-font-display); font-weight: 500; font-size: 13px; color: var(--cr-text-inverse);
+  }
+  .cr-graphic .app-badge {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.04em;
+    color: var(--cr-neutral-300); background-color: var(--cr-neutral-900);
+    border: var(--cr-stroke) solid var(--cr-neutral-800); border-radius: 20px; padding: 2px 7px;
+  }
+  /* Agent rows. THE STATUS LADDER IS A VALUE LADDER — three neutral steps that
+     still read as three states, spending no colour. The section's one accent
+     is the button. */
+  .cr-graphic .agent-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 10px; margin-bottom: 6px;
+    background-color: var(--cr-neutral-950);
+    border: var(--cr-stroke) solid var(--cr-neutral-900);
+  }
+  .cr-graphic .agent-dot { width: 7px; height: 7px; border-radius: 50%; flex:0 0 7px; }
+  .cr-graphic .agent-dot.green  { background-color: var(--cr-neutral-200); }
+  .cr-graphic .agent-dot.blue   { background-color: var(--cr-neutral-600); }
+  .cr-graphic .agent-dot.amber  { background-color: var(--cr-neutral-800); }
+  .cr-graphic .agent-name { font-size: 12px; color: var(--cr-neutral-300); flex:1; }
+  .cr-graphic .agent-stat { font-size: 11px; color: var(--cr-neutral-600); white-space: nowrap; }
+  /* Mini chart strip */
+  .cr-graphic .chart-strip { display: flex; align-items: flex-end; gap: 2px; height: 28px; margin-top: 14px; }
+  .cr-graphic .chart-bar {
+    flex: 1; border-radius: 2px;
+    background-color: var(--cr-neutral-800);
+  }
+  .cr-graphic .chart-bar.hi { background-color: var(--cr-neutral-500); }
+
+  /* ── Responsive — the ORIGINAL's breakpoints. The two clamp() headline
+     ramps are deleted, not converted: the pack walks h4 and h5 down its own
+     ladder at its own breakpoints. ─────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .split { grid-template-columns: 1fr; }
+    .right { min-height: 560px; }
+  }
+  @media (max-width: 560px) {
+    /* The right panel keeps a real inset rather than falling to the page
+       gutter's floor, so the environment still reads as a frame around the
+       evidence panel instead of a hairline. */
+    .left, .right { padding: var(--cr-space-m); }
+    .f-row { grid-template-columns: 1fr; }
+    .cr-graphic .app-layout { grid-template-columns: 1fr; }
+    .cr-graphic .app-sidebar { display: none; }
+  }
+  /* The guard must match the trigger it is guarding. The entrance is declared
+     on `.product-frame.cr-graphic`, so a guard naming only `.product-frame`
+     would lose the cascade and the animation would run anyway. */
+  @media (prefers-reduced-motion: reduce) {
+    .glow-bloom { animation: none; }
+    .product-frame.cr-graphic { animation: none; }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. `directed` marks the FOUR lines the Pilot Constraint
+     would otherwise forbid, and they are one decision, not four: DR-46
+     required the eyebrow and the headline to come off the photograph, and the
+     DOM is frozen, so the only element that could carry them is the one that
+     already wraps them. `.right-content` therefore became an opaque panel,
+     and a panel has an inset. Every other line is a scale realising itself.
+     The mock's interior is absent from this budget on purpose — it claims the
+     graphic exemption and its geometry is left byte-identical.
+  .f-note        | font-size              | type-ramp
+  .f-note        | line-height            | type-ramp
+  .f-note        | margin-bottom          | spacing-scale
+  .f-note        | margin-top             | spacing-scale
+  .field         | margin-bottom          | spacing-scale
+  .l-headline    | font-size              | type-ramp
+  .l-headline    | line-height            | type-ramp
+  .l-headline    | margin-bottom          | spacing-scale
+  .l-logo        | column-gap             | spacing-scale
+  .l-logo        | margin-bottom          | spacing-scale
+  .l-logo        | row-gap                | spacing-scale
+  .l-sub         | font-size              | type-ramp
+  .l-sub         | line-height            | type-ramp
+  .l-sub         | margin-bottom          | spacing-scale
+  .left          | padding-bottom         | spacing-scale
+  .left          | padding-left           | spacing-scale
+  .left          | padding-right          | spacing-scale
+  .left          | padding-top            | spacing-scale
+  .product-frame | border-radius          | radius-pair
+  .r-eyebrow     | font-size              | type-ramp
+  .r-eyebrow     | line-height            | type-ramp
+  .r-headline    | font-size              | type-ramp
+  .r-headline    | line-height            | type-ramp
+  .r-headline    | margin-bottom          | spacing-scale
+  .right         | padding-bottom         | spacing-scale
+  .right         | padding-left           | spacing-scale
+  .right         | padding-right          | spacing-scale
+  .right         | padding-top            | spacing-scale
+  .right-content | border-radius          | radius-pair
+  .right-content | padding-bottom         | directed
+  .right-content | padding-left           | directed
+  .right-content | padding-right          | directed
+  .right-content | padding-top            | directed
+  .submit-btn    | border-radius          | radius-pair
+  .submit-btn    | font-size              | type-ramp
+  .submit-btn    | line-height            | type-ramp
+  .submit-btn    | margin-top             | spacing-scale
+  .submit-btn    | padding-bottom         | spacing-scale
+  .submit-btn    | padding-left           | spacing-scale
+  .submit-btn    | padding-right          | spacing-scale
+  .submit-btn    | padding-top            | spacing-scale
+  input          | border-radius          | radius-pair
+  input          | font-size              | type-ramp
+  input          | line-height            | type-ramp
+  input          | padding-bottom         | spacing-scale
+  input          | padding-left           | spacing-scale
+  input          | padding-right          | spacing-scale
+  input          | padding-top            | spacing-scale
+  label          | font-size              | type-ramp
+  label          | line-height            | type-ramp
+  label          | margin-bottom          | spacing-scale
+  span           | font-size              | type-ramp
+  span           | line-height            | type-ramp
+  textarea       | border-radius          | radius-pair
+  textarea       | font-size              | type-ramp
+  textarea       | line-height            | type-ramp
+  textarea       | padding-bottom         | spacing-scale
+  textarea       | padding-left           | spacing-scale
+  textarea       | padding-right          | spacing-scale
+  textarea       | padding-top            | spacing-scale
+-->
+
+<div class="split" data-screen-label="Book a Demo · split-panel form"
+     data-archetype="product-showcase" data-hierarchy="closing" data-intent="convert"
+     data-register="confident" data-signature="embedded-screenshot" data-density="high">
+
+  <!-- ── LEFT: the capture ──────────────────────────────────────── -->
+  <div class="left">
+
+    <div class="l-logo">
+      <img src="../../brand-pack/assets/logo/logo-color.svg" alt="Example Brand" onerror="this.style.display='none'">
+      <span>Example Brand</span>
+    </div>
+
+    <h2 class="l-headline">Book a Demo Call.</h2>
+    <p class="l-sub">30 minutes. We show you the agent running on workflows like yours — no pitch deck, no commitment.</p>
+
+    <form>
+      <div class="f-row">
+        <div class="field">
+          <label>First Name</label>
+          <input type="text" placeholder="Jane" autocomplete="given-name">
+        </div>
+        <div class="field">
+          <label>Last Name</label>
+          <input type="text" placeholder="Smith" autocomplete="family-name">
+        </div>
+      </div>
+      <div class="field">
+        <label>Company</label>
+        <input type="text" placeholder="Acme Corp" autocomplete="organization">
+      </div>
+      <div class="field">
+        <label>Work Email</label>
+        <input type="email" placeholder="jane@acmecorp.com">
+      </div>
+      <div class="field">
+        <label>What would you like to automate?</label>
+        <textarea placeholder="e.g. invoice reconciliation, claims triage, vendor onboarding…"></textarea>
+      </div>
+      <button type="submit" class="submit-btn">Book My Demo Call &rarr;</button>
+    </form>
+
+    <p class="f-note">30 minutes &middot; no commitment &middot; we show you the numbers first</p>
+  </div>
+
+  <!-- ── RIGHT: the environment, and the evidence panel on it ───── -->
+  <div class="right">
+    <div class="glow-bloom"></div>
+    <div class="orbit-ring"></div>
+
+    <div class="right-content">
+      <p class="r-eyebrow">Live in your stack</p>
+      <h3 class="r-headline">Your agents, running in production — not in a sandbox.</h3>
+
+      <!-- Product preview frame -->
+      <div class="product-frame cr-graphic">
+        <!-- Browser chrome -->
+        <div class="frame-chrome">
+          <div class="chrome-dots"><span></span><span></span><span></span></div>
+          <span class="chrome-url">app.example-brand.com / agents</span>
+        </div>
+        <!-- App UI -->
+        <div class="app-layout">
+          <!-- Sidebar -->
+          <div class="app-sidebar">
+            <div class="sidebar-logo">
+              <div class="sidebar-logo-dot"></div>
+              Example Brand
+            </div>
+            <div class="sidebar-item active">Agents</div>
+            <div class="sidebar-item">Workflows</div>
+            <div class="sidebar-item">Reports</div>
+            <div class="sidebar-item">Settings</div>
+          </div>
+          <!-- Main -->
+          <div class="app-main">
+            <div class="app-top">
+              <span class="app-title">Active Agents</span>
+              <span class="app-badge">3 Running</span>
+            </div>
+            <div class="agent-row">
+              <span class="agent-dot green"></span>
+              <span class="agent-name">Invoice Reconciliation</span>
+              <span class="agent-stat">1,247 today · 92% auto</span>
+            </div>
+            <div class="agent-row">
+              <span class="agent-dot blue"></span>
+              <span class="agent-name">Claims Triage</span>
+              <span class="agent-stat">384 today · 88% auto</span>
+            </div>
+            <div class="agent-row">
+              <span class="agent-dot amber"></span>
+              <span class="agent-name">Vendor Onboarding</span>
+              <span class="agent-stat">17 today · 79% auto</span>
+            </div>
+            <!-- Chart strip -->
+            <div class="chart-strip">
+              <div class="chart-bar" style="height:40%"></div>
+              <div class="chart-bar" style="height:55%"></div>
+              <div class="chart-bar" style="height:48%"></div>
+              <div class="chart-bar hi" style="height:75%"></div>
+              <div class="chart-bar" style="height:62%"></div>
+              <div class="chart-bar hi" style="height:88%"></div>
+              <div class="chart-bar" style="height:70%"></div>
+              <div class="chart-bar hi" style="height:95%"></div>
+              <div class="chart-bar" style="height:82%"></div>
+              <div class="chart-bar" style="height:68%"></div>
+              <div class="chart-bar hi" style="height:90%"></div>
+              <div class="chart-bar" style="height:74%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

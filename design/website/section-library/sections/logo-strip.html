@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Logo strip — trusted by</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Logo strip (trusted-by rail)      from component-logo-strip.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  The v2 section authored under the v3 editorial-restraint
+                direction. Structure, both marquee mechanics, the entrance
+                script and every behavioural hook are byte-compatible with
+                the frozen original (DR-22, the Pilot Constraint). Only the
+                presentation layer moved; the v2 file sits beside this one in
+                `_v2/` so the comparison is a diff rather than a claim.
+
+  THE CLAIM     **An assertion with no sentence attached.** The profile is
+                explicit that this is the lowest visual weight in the library
+                and that it must never argue — it sits under an opening and
+                lends credibility before the argument starts. Everything below
+                serves that: one supporting line, then marks, and nothing that
+                raises its voice.
+
+  ACCENT        ZERO, and that is the decision rather than an omission. v2
+                spent colour eight times in one band — every third-party mark
+                in its own brand hues, two wordmarks in borrowed brand blues.
+                A logo wall is read one mark at a time; colour turns the row
+                into scenery and scenery confers nothing. Every mark is now
+                one ink, which is also what the still wall two rows over
+                (`backed-by`) already does. The one deliberate exception is
+                the counter-form inside the Notion mark, which is white BY
+                CONSTRUCTION — it is the shape knocked out of the ink square,
+                not a second colour.
+
+  TYPE          Wordmarks collapse from six weights and five trackings to the
+                system's two weights and one tracking, and onto one ramp step.
+                Marks then separate by their own wording and their own glyphs,
+                which is what a real logo wall does anyway. The caption stays
+                supporting — never uppercased, never tracked — and its lead
+                separates by WEIGHT and INK, not by a size step.
+
+  ENVIRONMENT   NONE, and there is nothing to replace. The band's only surface
+                is a flat token (the raised cream); there is no gradient, no
+                blurred bitmap and no tint wash anywhere in the file. The rule
+                that retires abstract creative backgrounds has no subject
+                here, and the section is almost entirely wordmarks — a
+                photograph behind them is the one place the rule says a
+                photograph does not go. The edge fade stays: it is a gradient
+                on a MASK, which is an alpha channel, not a surface.
+
+  MOTION        Unchanged in kind. The marquee is pure CSS and runs without
+                JS; the script adds a one-time entrance only. Reduced motion
+                stops the rail and centres a single static row, and the guard
+                keeps the specificity that lets it win.
+
+  RESPONSIVE    The original's breakpoints (768 / 480), unchanged. `clamp()`
+                is gone throughout — it resolves to sizes nobody authored —
+                so type steps on the pack's own ramp and spacing steps on the
+                closed scale.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--cr-page-ground); font-family: var(--cr-font-body); }
+
+  /* ── The band ─────────────────────────────────────────────────────────
+     A supporting rail, so it takes the major-group step rather than the
+     section-padding step: the band under an opening should not be given the
+     same vertical weight as the section it is attesting to. */
+  .ls {
+    --gap: var(--cr-space-xl);          /* mark-to-mark spacing (margin-based) */
+    --mark-h: 28px;                     /* optical mark height */
+    position: relative;
+    width: 100%;
+    background: var(--cr-bg-raised);
+    padding: var(--cr-space-xl) 0;
+    overflow: hidden;                   /* contain the wide track */
+  }
+
+  /* ── Caption — supporting text, and it stays supporting ──────────────── */
+  .ls-inner {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+    padding: 0 var(--cr-page-gutter);
+  }
+  .ls-cap {
+    margin: 0 auto;
+    max-width: var(--cr-measure-body);
+    text-align: center;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    letter-spacing: 0;
+  }
+  /* The lead is focal by weight and ink — the two instruments the direction
+     leaves standing once the scale is shared. */
+  .ls-cap strong {
+    font-weight: 500;
+    color: var(--cr-text-primary);
+  }
+
+  /* ── Marquee ──────────────────────────────────────────────────────────
+     The caption hands off to the marks, so the gap is the CONTENT role of the
+     rhythm, not a generic step. The edge fade is a mask: `black` here is an
+     alpha value, not a colour — nothing is painted with it. */
+  .ls-marquee {
+    margin-top: var(--cr-rhythm-content);
+    width: 100%;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, black 9%, black 91%, transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0, black 9%, black 91%, transparent 100%);
+  }
+  .ls-track {
+    display: flex;
+    align-items: center;
+    width: max-content;                 /* two sets side by side */
+    animation: ls-scroll 40s linear infinite;
+    will-change: transform;
+  }
+  .ls-set { display: flex; align-items: center; }
+
+  @keyframes ls-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }   /* one full set — seamless */
+  }
+  /* pause to read — an animation control, not a decorative hover */
+  .ls-marquee:hover .ls-track { animation-play-state: paused; }
+
+  /* ── Logo lockups ─────────────────────────────────────────────────────── */
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--cr-space-xs);
+    margin-right: var(--gap);           /* uniform spacing → seamless loop */
+    flex: none;
+    white-space: nowrap;
+  }
+  .logo .mk { height: var(--mark-h); width: auto; display: block; flex: none; }
+  .logo .wm {
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-body);
+    line-height: 1;
+    color: var(--cr-text-primary);
+    letter-spacing: var(--cr-tracking-heading);
+  }
+
+  /* Every mark to one ink. The v2 file distinguished seven marks by seven
+     palettes; the wall now distinguishes them by their own glyphs. */
+  .logo .mk * { fill: var(--cr-text-primary); }
+  /* The one shape that is NOT filled: the letterform knocked out of the ink
+     square. Filling it would turn the mark into a solid block, which is the
+     failure mode of a blanket override rather than a colour decision. */
+  .logo--notion .mk path { fill: none; stroke: var(--cr-text-inverse); }
+
+  /* ── Entrance reveal (JS-gated, fires once) ───────────────────────────── */
+  .has-js .ls-cap,
+  .has-js .ls-marquee {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity .6s cubic-bezier(.22,.61,.36,1),
+                transform .6s cubic-bezier(.22,.61,.36,1);
+    transition-delay: var(--d, 0ms);
+  }
+  .has-js .ls.in .ls-cap,
+  .has-js .ls.in .ls-marquee { opacity: 1; transform: none; }
+
+  /* ── Responsive — the ORIGINAL's breakpoints ──────────────────────────── */
+  @media (max-width: 768px) {
+    .ls { --gap: var(--cr-space-m); --mark-h: 26px; padding: var(--cr-space-xl) 0; }
+  }
+  @media (max-width: 480px) {
+    .ls { --gap: var(--cr-space-m); --mark-h: 24px; padding: var(--cr-space-m) 0; }
+    .ls-marquee { margin-top: var(--cr-space-m); }
+  }
+
+  /* ── Reduced motion: stop the rail, centre a single static row ────────────
+     The set is a flex item of the track; its default min-width:auto pins it to
+     its content width so it never reflows and the marquee clips it.
+     flex:1 1 100% + min-width:0 collapses it to the track width so it wraps its
+     marks cleanly. Gap (not margin-right) keeps wrapped rows centred. */
+  @media (prefers-reduced-motion: reduce) {
+    .ls-track {
+      animation: none;
+      transform: none;
+      width: 100%;
+      min-width: 0;
+    }
+    .ls-set {
+      flex: 1 1 100%;
+      min-width: 0;                     /* remove the auto floor → can shrink + wrap */
+      flex-wrap: wrap;
+      justify-content: center;
+      column-gap: var(--gap);
+      row-gap: var(--cr-space-s);
+    }
+    .ls-set--dup { display: none; }
+    .ls-set .logo { margin-right: 0; }
+    .ls-marquee {
+      -webkit-mask-image: none; mask-image: none;
+    }
+    .has-js .ls-cap,
+    .has-js .ls-marquee { opacity: 1 !important; transform: none !important; transition: none !important; }
+  }
+</style>
+</head>
+
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. Nothing is marked `directed`: the rail, the two sets and the
+     seamless-loop arithmetic are exactly where v2 left them. The gaps are
+     measured in the REDUCED-MOTION state, which is the only state that reads
+     the same twice — so `.ls-set`'s gaps are the wrapped static row's, and
+     `.logo`'s margin-right is zero on both sides and is correctly absent here.
+  .logo   | column-gap             | spacing-scale
+  .logo   | row-gap                | spacing-scale
+  .ls     | padding-bottom         | spacing-scale
+  .ls     | padding-top            | spacing-scale
+  .ls-cap | font-size              | type-ramp
+  .ls-cap | line-height            | type-ramp
+  .ls-cap | margin-left            | spacing-scale
+  .ls-cap | margin-right           | spacing-scale
+  .ls-cap | max-width              | measure
+  .ls-set | column-gap             | spacing-scale
+  .ls-set | row-gap                | spacing-scale
+  .wm     | font-size              | type-ramp
+  .wm     | line-height            | type-ramp
+  strong  | font-size              | type-ramp
+  strong  | line-height            | type-ramp
+-->
+<section class="ls" data-screen-label="Logo strip — trusted by"
+         data-archetype="editorial-stack" data-hierarchy="supporting" data-intent="build-trust"
+         data-register="quiet" data-signature="architectural-whitespace" data-density="low">
+
+  <div class="ls-inner">
+    <p class="ls-cap" style="--d:0ms">
+      <strong>Trusted by 500+</strong> operations teams running complex workflows
+    </p>
+  </div>
+
+  <div class="ls-marquee" style="--d:120ms">
+    <div class="ls-track">
+
+      <!-- SET A (the readable set) -->
+      <div class="ls-set">
+
+        <!-- Slack -->
+        <span class="logo logo--slack">
+          <svg class="mk" viewBox="0 0 122.8 122.8" aria-hidden="true" role="img">
+            <path d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9zm6.5 0c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z"/>
+            <path d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2zm0 6.5c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 51.1 0 45.3 0 38.2s5.8-12.9 12.9-12.9h32.3z"/>
+            <path d="M97 38.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97V38.2zm-6.5 0c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V5.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9v25.3z"/>
+            <path d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9zm0-6.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z"/>
+          </svg>
+          <span class="wm">slack</span>
+        </span>
+
+        <!-- Notion -->
+        <span class="logo logo--notion">
+          <svg class="mk" viewBox="0 0 24 24" aria-hidden="true" role="img">
+            <rect x="1" y="1" width="22" height="22" rx="5"/>
+            <path d="M8 17V7l8 10V7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="wm">Notion</span>
+        </span>
+
+        <!-- Stripe (wordmark-only) -->
+        <span class="logo logo--stripe">
+          <span class="wm">stripe</span>
+        </span>
+
+        <!-- Zoom (wordmark-only) -->
+        <span class="logo logo--zoom">
+          <span class="wm">zoom</span>
+        </span>
+
+        <!-- Asana -->
+        <span class="logo logo--asana">
+          <svg class="mk" viewBox="0 0 24 24" aria-hidden="true" role="img">
+            <path d="M18.78 12.653a5.22 5.22 0 1 0 0 10.44 5.22 5.22 0 0 0 0-10.44zm-13.56 0a5.22 5.22 0 1 0 0 10.44 5.22 5.22 0 0 0 0-10.44zM12 .908a5.22 5.22 0 1 0 0 10.44A5.22 5.22 0 0 0 12 .908z"/>
+          </svg>
+          <span class="wm">asana</span>
+        </span>
+
+        <!-- Dropbox -->
+        <span class="logo logo--dropbox">
+          <svg class="mk" viewBox="0 0 24 24" aria-hidden="true" role="img">
+            <path d="M6 1.807 0 5.629l6 3.822 6.001-3.822zM18 1.807l-6 3.822 6 3.822 6-3.822zM0 13.274l6 3.822 6.001-3.822L6 9.452zM18 9.452l-6.001 3.822L18 17.096l6-3.822zM6 18.371l6.001 3.822 6-3.822-6-3.822z"/>
+          </svg>
+          <span class="wm">Dropbox</span>
+        </span>
+
+        <!-- Microsoft -->
+        <span class="logo logo--ms">
+          <svg class="mk" viewBox="0 0 23 23" aria-hidden="true" role="img">
+            <rect x="1"  y="1"  width="10" height="10"/>
+            <rect x="12" y="1"  width="10" height="10"/>
+            <rect x="1"  y="12" width="10" height="10"/>
+            <rect x="12" y="12" width="10" height="10"/>
+          </svg>
+          <span class="wm">Microsoft</span>
+        </span>
+
+      </div><!-- /SET A -->
+
+      <!-- SET B (visual duplicate for the seamless loop; hidden from a11y tree) -->
+      <div class="ls-set ls-set--dup" aria-hidden="true">
+
+        <span class="logo logo--slack">
+          <svg class="mk" viewBox="0 0 122.8 122.8" aria-hidden="true" role="img">
+            <path d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9zm6.5 0c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z"/>
+            <path d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2zm0 6.5c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 51.1 0 45.3 0 38.2s5.8-12.9 12.9-12.9h32.3z"/>
+            <path d="M97 38.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97V38.2zm-6.5 0c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V5.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9v25.3z"/>
+            <path d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9zm0-6.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z"/>
+          </svg>
+          <span class="wm">slack</span>
+        </span>
+
+        <span class="logo logo--notion">
+          <svg class="mk" viewBox="0 0 24 24" aria-hidden="true" role="img">
+            <rect x="1" y="1" width="22" height="22" rx="5"/>
+            <path d="M8 17V7l8 10V7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="wm">Notion</span>
+        </span>
+
+        <span class="logo logo--stripe"><span class="wm">stripe</span></span>
+        <span class="logo logo--zoom"><span class="wm">zoom</span></span>
+
+        <span class="logo logo--asana">
+          <svg class="mk" viewBox="0 0 24 24" aria-hidden="true" role="img">
+            <path d="M18.78 12.653a5.22 5.22 0 1 0 0 10.44 5.22 5.22 0 0 0 0-10.44zm-13.56 0a5.22 5.22 0 1 0 0 10.44 5.22 5.22 0 0 0 0-10.44zM12 .908a5.22 5.22 0 1 0 0 10.44A5.22 5.22 0 0 0 12 .908z"/>
+          </svg>
+          <span class="wm">asana</span>
+        </span>
+
+        <span class="logo logo--dropbox">
+          <svg class="mk" viewBox="0 0 24 24" aria-hidden="true" role="img">
+            <path d="M6 1.807 0 5.629l6 3.822 6.001-3.822zM18 1.807l-6 3.822 6 3.822 6-3.822zM0 13.274l6 3.822 6.001-3.822L6 9.452zM18 9.452l-6.001 3.822L18 17.096l6-3.822zM6 18.371l6.001 3.822 6-3.822-6-3.822z"/>
+          </svg>
+          <span class="wm">Dropbox</span>
+        </span>
+
+        <span class="logo logo--ms">
+          <svg class="mk" viewBox="0 0 23 23" aria-hidden="true" role="img">
+            <rect x="1"  y="1"  width="10" height="10"/>
+            <rect x="12" y="1"  width="10" height="10"/>
+            <rect x="1"  y="12" width="10" height="10"/>
+            <rect x="12" y="12" width="10" height="10"/>
+          </svg>
+          <span class="wm">Microsoft</span>
+        </span>
+
+      </div><!-- /SET B -->
+
+    </div><!-- /.ls-track -->
+  </div><!-- /.ls-marquee -->
+
+</section>
+
+<script>
+  // JS only adds the one-time entrance reveal; the marquee itself is pure CSS,
+  // so the strip is fully visible + animating without JS.
+  (function () {
+    var root = document.documentElement;
+    root.classList.add('has-js');
+    var sec = document.querySelector('.ls');
+    if (!sec) return;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) { sec.classList.add('in'); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { sec.classList.add('in'); io.disconnect(); }
+      });
+    }, { threshold: 0.25 });
+    io.observe(sec);
+  })();
+</script>
+</body>
+</html>

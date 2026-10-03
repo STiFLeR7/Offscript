@@ -1,0 +1,15 @@
+concepts:
+  - "concept:interactive-affordance"
+  - "concept:brand-color-role"
+capabilities:
+  - "capability:action-surface"
+obligations:
+  - "obligation:primary-action-legibility"
+owners:
+  - "offscript-authority"
+  - "acme-brand-authority"
+scope_identities:
+  - "offscript"
+  - "acme"
+guarantees:
+  - "guarantee:legible-actions"

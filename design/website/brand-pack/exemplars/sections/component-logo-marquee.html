@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Logo marquee</title>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background: var(--cr-ink-cool);
+    font-family: var(--cr-font-body); color: #fff;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Dark brand band — ink-night navy (the hero/CTA dark surface). */
+  .section {
+    background: var(--cr-ink-cool);
+    padding: 88px 100px;
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }
+
+  /* ── Layout — title on top, marquee below (centred) ───────────── */
+  .wrap { text-align: center; }
+
+  /* Two-tone title: white base (secondary) + brand-blue accent (primary).
+     The accent is a configurable CSS var so it can differ per page. */
+  .title {
+    --accent: var(--cr-brand);
+    margin: 0 auto 56px; max-width: 760px;
+    font-family: "Urbanist", sans-serif; font-weight: 700; font-size: 40px;
+    line-height: 1.2; letter-spacing: -0.02em; color: #FFFFFF;
+  }
+  .title .accent { color: var(--accent, var(--cr-brand)); }
+
+  /* ── Marquee ──────────────────────────────────────────────────
+     The edge mask fades logos out on the left and in from the right. */
+  .marquee {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%);
+  }
+  .track {
+    display: flex; width: max-content; align-items: center;
+    gap: 64px;
+    animation: logo-scroll 40s linear infinite;   /* moves leftward, infinite */
+  }
+  .marquee:hover .track { animation-play-state: paused; }   /* pause on hover */
+
+  /* The set is rendered twice; shifting by exactly one copy (-50%) loops
+     seamlessly for any number of logos. */
+  @keyframes logo-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .track { animation: none; }
+  }
+
+  /* ── Logo lockups (PLACEHOLDERS) ──────────────────────────────
+     Grayscale wordmark + Lucide mark, darkening on hover — the standard
+     social-proof "logo wall" treatment. The project has no real client
+     logos; replace each .logo's contents with a real
+     <img src="../assets/logos/<name>.svg" alt="<name>"> when available. */
+  .logo {
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; gap: 12px;
+    color: rgba(255,255,255,0.45);   /* muted on the dark band — static, no hover */
+    cursor: default; white-space: nowrap;
+  }
+  .logo svg { width: 24px; height: 24px; stroke-width: 1.5; }   /* 24px → 1.5 stroke (icon rule) */
+  .logo .name {
+    font-family: "Urbanist", sans-serif; font-weight: 700; font-size: 20px;
+    letter-spacing: -0.01em;
+  }
+
+  /* ── Responsive — deliberate per-device behaviour ─────────────── */
+
+  /* Tablet: tighter padding, smaller title. */
+  @media (max-width: 1024px) {
+    .section { padding: 64px 60px; }
+    .title { font-size: 32px; margin-bottom: 48px; }
+    .track { gap: 56px; }
+  }
+
+  /* Mobile: smaller title + logos, tighter gap; narrower edge fade so
+     more logos stay legible at once. */
+  @media (max-width: 640px) {
+    .section { padding: 48px 20px; }
+    .title { font-size: 26px; margin-bottom: 36px; }
+    .marquee {
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 5%, #000 95%, transparent 100%);
+              mask-image: linear-gradient(to right, transparent 0%, #000 5%, #000 95%, transparent 100%);
+    }
+    .track { gap: 40px; }
+    .logo { gap: 9px; }
+    .logo svg { width: 20px; height: 20px; }
+    .logo .name { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="section" data-screen-label="Logo marquee">
+  <div class="wrap">
+    <!-- Two-tone title: white base + brand-blue accent span (configurable via --accent). -->
+    <h2 class="title">Trusted By Operations Teams In <span class="accent">Regulated Industries</span></h2>
+
+    <div class="marquee">
+      <div class="track" id="track"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Placeholder logos — reuse the case-study companies for continuity.
+  // Swap each {mark,name} for a real SVG logo when assets land.
+  const LOGOS = [
+    { mark: "landmark",    name: "Brookline Bank" },
+    { mark: "heart-pulse", name: "Meridian Health" },
+    { mark: "package",     name: "Kestrel Logistics" },
+    { mark: "users",       name: "Alvora Staffing" },
+    { mark: "wind",        name: "Northwind" },
+    { mark: "line-chart",  name: "Halcyon Capital" },
+  ];
+
+  const logoHTML = (l) =>
+    `<div class="logo"><i data-lucide="${l.mark}"></i><span class="name">${l.name}</span></div>`;
+
+  // Render the set TWICE so the -50% translate loops seamlessly.
+  const set = LOGOS.map(logoHTML).join('');
+  document.getElementById('track').innerHTML = set + set;
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

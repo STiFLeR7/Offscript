@@ -1,0 +1,76 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../_card.css">
+<style>
+  /* ─────────────────────────────────────────────────────────────────────
+     DATA VIZ · RANK  (doc-scoped .viz-* — pure HTML/CSS, no JS)
+     Ranked horizontal bars — categorical magnitude, sorted. Governing RULES live in
+     README-DATA-VIZ.md; the notes below are this idiom's MECHANICS only (doc-scoped).
+
+     What it's for (Rulebook §7–§8): a Level-3 categorical dataset where the ORDER is the
+     story (which is biggest) → a ranked horizontal bar (a bar chart, the §8 first choice).
+     Sort descending; ZERO baseline — bars start at the left edge so length is honestly
+     proportional (Rulebook §5); a nice-number domain indexed to the leader.
+
+     Colour (Rulebook §4 — marks are never navy): the bar is a quiet same-hue accent
+     gradient var(--accent) over a flat inert tonal track var(--surface) (both from one
+     .tone-*). The value sits as a DIRECT label at the right (§9 — labels over legends);
+     it reuses display type in dark ink (type, not a mark).
+     ───────────────────────────────────────────────────────────────────── */
+  .viz-rank       { display:flex; flex-direction:column; }
+  .viz-rank-row   { display:grid; grid-template-columns:50mm 1fr 14mm; align-items:center; gap:5mm; padding:4mm 0; border-top:1px solid var(--cr-keyline); }
+  .viz-rank-row:first-child { border-top:0; }
+  .viz-rank-label { font:500 var(--fs-body)/1.3 var(--font-body); color:var(--cr-charcoal); }
+  .viz-rank-track { height:12px; background:var(--surface, var(--cr-tone-sky)); border-radius:var(--radius-pill); }   /* inert tonal track */
+  .viz-rank-bar   { height:12px; border-radius:var(--radius-pill); min-width:6px;                                     /* §4: subject = accent gradient, never navy */
+                    background:var(--accent);
+                    background:linear-gradient(270deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 55%, #fff) 100%); }
+  .viz-rank-val   { text-align:right; font:600 22px/1 var(--font-display); letter-spacing:var(--tracking-display); color:var(--cr-ink); }
+  .viz-flag       { font:400 13px/1.5 var(--font-body); color:var(--cr-graphite); }
+
+  /* preview-page chrome */
+  .viz-demo  { max-width:178mm; display:flex; flex-direction:column; gap:38px; }
+  .viz-caveat{ font:400 13px/1.55 var(--font-body); color:var(--cr-graphite); max-width:178mm; margin-top:26px; }
+</style>
+</head>
+<body style="background:#FFFFFF">
+<div class="viz-demo">
+
+  <!-- (1) Hero / full-width · six functions, ranked descending -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">1 · Hero / full width · ranked descending, zero baseline, direct value labels</div>
+    <div class="viz-rank tone-sky">
+      <div class="viz-rank-row"><div class="viz-rank-label">Customer operations</div><div class="viz-rank-track"><div class="viz-rank-bar" style="width:100%"></div></div><div class="viz-rank-val">100</div></div>
+      <div class="viz-rank-row"><div class="viz-rank-label">Finance &amp; accounting</div><div class="viz-rank-track"><div class="viz-rank-bar" style="width:78%"></div></div><div class="viz-rank-val">78</div></div>
+      <div class="viz-rank-row"><div class="viz-rank-label">Sales &amp; marketing</div><div class="viz-rank-track"><div class="viz-rank-bar" style="width:64%"></div></div><div class="viz-rank-val">64</div></div>
+      <div class="viz-rank-row"><div class="viz-rank-label">Supply chain &amp; ops</div><div class="viz-rank-track"><div class="viz-rank-bar" style="width:55%"></div></div><div class="viz-rank-val">55</div></div>
+      <div class="viz-rank-row"><div class="viz-rank-label">HR &amp; back office</div><div class="viz-rank-track"><div class="viz-rank-bar" style="width:34%"></div></div><div class="viz-rank-val">34</div></div>
+      <div class="viz-rank-row"><div class="viz-rank-label">IT service management</div><div class="viz-rank-track"><div class="viz-rank-bar" style="width:28%"></div></div><div class="viz-rank-val">28</div></div>
+    </div>
+    <p class="viz-flag" style="margin-top:7mm">Estimated annual value opportunity by function, indexed to the leader (scale 0–100) — illustrative and representative, not a measurement of your organization.</p>
+  </div>
+
+  <!-- (2) Compact · four tasks, a different tone -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">2 · Compact · fewer rows, a different <code>.tone-*</code></div>
+    <div class="viz-rank tone-lilac" style="max-width:140mm">
+      <div class="viz-rank-row"><div class="viz-rank-label">Document processing</div><div class="viz-rank-track"><div class="viz-rank-bar" style="width:100%"></div></div><div class="viz-rank-val">100</div></div>
+      <div class="viz-rank-row"><div class="viz-rank-label">Email triage</div><div class="viz-rank-track"><div class="viz-rank-bar" style="width:72%"></div></div><div class="viz-rank-val">72</div></div>
+      <div class="viz-rank-row"><div class="viz-rank-label">Data entry &amp; matching</div><div class="viz-rank-track"><div class="viz-rank-bar" style="width:58%"></div></div><div class="viz-rank-val">58</div></div>
+      <div class="viz-rank-row"><div class="viz-rank-label">Scheduling</div><div class="viz-rank-track"><div class="viz-rank-bar" style="width:40%"></div></div><div class="viz-rank-val">40</div></div>
+    </div>
+    <p class="viz-flag" style="margin-top:7mm">Indexed to the leader (scale 0–100) — illustrative, representative for planning.</p>
+  </div>
+
+  <div class="viz-caveat">
+    <strong>Rank</strong> · ranked horizontal bars for a <strong>categorical magnitude</strong> where the
+    order is the story (<strong>Level-3</strong> → bar chart, the §8 first choice). <strong>Governing
+    rules: the Data-Viz Rulebook</strong> (<code>README-DATA-VIZ.md</code> — §5 zero baseline +
+    nice-number domain + direct labels, §4 colour). Bars start at a <strong>zero baseline</strong> and
+    are sorted <strong>descending</strong>; the bar is a quiet same-hue <strong>accent gradient</strong>
+    over a flat inert tonal track (both from one <code>.tone-*</code>), the value a <strong>direct
+    label</strong> in dark display ink. Widths are an inline <code>width:%</code> — <strong>pure
+    HTML/CSS, no JavaScript.</strong> Doc-scoped (never in <code>colors_and_type.css</code>). Figures are
+    illustrative placeholders.
+  </div>
+
+</div>
+</body></html>

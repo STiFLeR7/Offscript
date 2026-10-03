@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Horizon divider (occasional dark-band separator)</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — Horizon divider   component-divider-horizon.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT IT IS   A full-bleed DARK BAND carrying a single faint PLANET-LIMB /
+               horizon curve — the CR "orbit / system-in-motion" motif distilled
+               to its quietest form. It is a DIVIDER, not a content section: a bit
+               of breath + a tonal break between two light surfaces, or a frame
+               around a CTA. Two placements are demoed: (1) the default band as a
+               section divider between light sections, and (2) `.cr-divider--foot`
+               sitting ABOVE A DARK FOOTER, melting black→black (the Liveblocks use).
+
+  USE SPARINGLY (the brief).  This is an OCCASIONAL punctuation, NOT a rule.
+               Drop it in once in a while — between two major sections that would
+               otherwise blur together, or above/below a closing CTA — to reset
+               the eye. Do NOT stamp it between every section; that would turn a
+               grace note into noise (and fights the README "sections are divided
+               by SURFACE, not rules" guidance). The reusable atom is the single
+               <div class="cr-divider"> … </div> band; everything else on this
+               page (the light blocks above & below) is just context to show it
+               doing its job.
+
+  COMPOSITION  A short full-bleed band (clamp 150→260px tall). The horizon limb is
+               built from TWO stacked radial gradients sharing ONE WIDE ellipse
+               centred BELOW the band (so their iso-contours arc gently across it):
+               (1) a broad PLANET-BODY lift — dark cool-grey at the lower/near side,
+               brightening to a soft grey CREST in the upper third (~33% down), then
+               falling back to near-black ABOVE the crest; (2) a very diffuse crest GLOW. The wide
+               stop spread is what makes it read as a SMOKY ridge, NOT a hard rim
+               line. Above the crest the base "sky" stays deepest; the lower corners
+               fall dark too (the dome's falloff). A grain overlay sits on top. NO
+               blur (the soft edge is the gradient itself), NO shadow, NO border.
+
+  RE-SKIN      Reference = a near-black, soft, MONOCHROME planet-horizon still: a diffuse
+               ridge of DIM grey light, not a bright/defined arc. Per the CR inspiration
+               rule (extract composition, render in the kit) the limb is rendered NEUTRAL
+               GREY (R≈G≈B) to honour the grayscale source; the only nod to "never pure
+               black / dark surfaces lean navy" is a FAINT navy in the near-black SKY
+               token (`--sky #0A0D12`), which is imperceptible at that depth and never
+               tints the visible ridge. (History: pass 1 overshot into a bright brand-blue
+               rim; pass 2 was soft grey but still carried a blue CAST in the ridge;
+               on 2026-06-05, per "still not matching the source", neutralised the ridge
+               (ridge `#4E4E4E`, neutral glow) and lifted the crest into the upper third.
+               The user's earlier abstract "cool navy tint" pick is reversible in one
+               line — bump `--body-hi`/`--glow` cool — but "match the source" = neutral.)
+
+  DARK-FOOTER  `.cr-divider--foot` — the Liveblocks usage (per the user's ref): the limb's
+               grey RIM arc floats on a CONTINUOUS near-black field so the band melts
+               BLACK→BLACK into a dark footer. The dark closing section ABOVE, the band,
+               and the dark footer BELOW all share ONE base (`--foot-base`, default
+               `#0A0D12`); the modifier just flattens the band's sky/body to that base, so
+               only the grey rim + glow show and there is no seam at the footer. Demoed at
+               the BOTTOM of this page: a dark section → the divider → a dark Liveblocks-
+               style footer (link columns + the white logo + "all systems operational" +
+               inline social brand-marks; no Lucide — self-contained SVGs, like the real
+               logos in component-logo-strip). (Replaced an earlier LIGHT/white-footer
+               take once the user shared the Liveblocks ref — the real page is all-dark.)
+
+  MOTION       (user choice) "Entrance bloom, then still" — on first viewport hit the
+               limb (body + glow) fades up + settles from a slight scale (~1.1s), once,
+               then holds STATIC (no loop — a looping divider between sections would
+               pull the eye). CSS animation gated on `.in-view` (anti-race);
+               IntersectionObserver fires once then disconnects. `prefers-reduced-
+               motion` snaps it in. Fully visible WITHOUT JS (the hidden reveal-state
+               is scoped to `.has-js`; no JS → the limb is simply already there).
+
+  RESPONSIVE   Full-bleed at every width; the limb is drawn in % so the curve stays
+               proportional as the band reflows — nothing to re-lay-out. Height steps
+               down a little on small screens. Verified at desktop 1440 / tablet 768 /
+               mobile (the ~482px headless floor).
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../_frozen-v2-tokens.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<style>
+  body { margin: 0; }
+  .dv-page, .dv-page * { box-sizing: border-box; }
+  .dv-page { background: var(--cr-bg); font-family: var(--cr-font-body); }
+
+  /* ════════════════════════════════════════════════════════════════════
+     THE DIVIDER — copy this block to use it between two sections / a CTA.
+     ════════════════════════════════════════════════════════════════════ */
+  .cr-divider {
+    /* ── tuning knobs ──
+       Matches the SOURCE: a soft, smoky, near-monochrome ridge of DIM grey light —
+       not a bright/sharp rim. Greys carry only a FAINT navy undertone (blue channel
+       highest) so the band still belongs to CR's dark family without going neon. */
+    --sky:     var(--cr-ink-card);                      /* near-black sky — faint navy ONLY here (invisible) */
+    --body-lo: #131315;                      /* planet body, lower / near-side — dark NEUTRAL grey */
+    --body-hi: var(--cr-fg-2);                      /* planet body at the crest — soft NEUTRAL grey (R≈G≈B)*/
+    --above:   #0B0B0E;                      /* the darkening just ABOVE the crest, into the sky    */
+    --glow:    rgba(206,207,210,0.17);       /* VERY diffuse NEUTRAL highlight along the crest ridge*/
+
+    position: relative;
+    width: 100%;
+    height: clamp(150px, 18vw, 260px);
+    background-color: var(--sky);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  /* the limb — two radial gradients on ONE WIDE ellipse centred below the band, so
+     their contours arc gently across it. Soft + diffuse to read like the source's
+     smoky glow (broad stops, low opacity — deliberately NOT a defined rim line).
+     `.cr-limb` is the layer the entrance bloom moves. */
+  .cr-limb {
+    position: absolute; inset: 0;
+    background:
+      /* (1) crest glow — a faint, very diffuse ridge of light (soft, not a line) */
+      radial-gradient(150% 150% at 50% 150%,
+        transparent 64%, var(--glow) 83%, transparent 94%),
+      /* (2) planet body — dark NEUTRAL grey brightening to the crest (~33% down, upper
+         third like the source), then falling back to near-black ABOVE the crest (into the
+         sky). The wide 30→83→92% spread is what makes the glow smoky rather than a hard
+         arc; the 150/150 ellipse keeps a gentle convex DOME (peak centre, curving down to
+         the lower corners). */
+      radial-gradient(150% 150% at 50% 150%,
+        var(--body-lo) 30%, var(--body-hi) 83%, var(--above) 92%, transparent 97%);
+  }
+
+  /* grain — brand texture, native tile, never sized (per brand kit) */
+  .cr-divider .cr-grain {
+    position: absolute; inset: 0;
+    background-image: url("../assets/texture-grain.png");
+    background-repeat: repeat;
+    opacity: 0.06;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* MOTION — entrance bloom (scoped to .has-js so no-JS shows the limb at once) */
+  .has-js .cr-divider .cr-limb { opacity: 0; transform: scale(1.08); }
+  .has-js .cr-divider.in-view .cr-limb {
+    animation: dvBloom 1.1s cubic-bezier(.16,1,.3,1) forwards;
+  }
+  @keyframes dvBloom { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .cr-divider .cr-limb,
+    .has-js .cr-divider.in-view .cr-limb { opacity: 1; transform: none; animation: none; }
+  }
+
+  @media (max-width: 640px) {
+    .cr-divider { height: clamp(120px, 30vw, 180px); }
+  }
+
+  /* ════════════════════════════════════════════════════════════════════
+     CONTEXT ONLY — light blocks above & below, so the preview shows the
+     divider separating two surfaces / framing a CTA. NOT part of the atom.
+     ════════════════════════════════════════════════════════════════════ */
+  .dv-ctx {
+    text-align: center;
+    padding: clamp(64px, 9vw, 112px) 24px;
+    max-width: 720px; margin: 0 auto;
+  }
+  .dv-eyebrow {
+    font-family: var(--cr-font-body); font-weight: 600; font-size: 13px;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--cr-fg-3);
+    margin: 0 0 14px;
+  }
+  .dv-h {
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(26px, 3.2vw, 38px); line-height: 1.2; letter-spacing: -0.02em;
+    color: var(--cr-fg); margin: 0 0 14px;
+  }
+  .dv-sub {
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 17px;
+    line-height: 1.6; color: var(--cr-fg-2); margin: 0 auto; max-width: 48ch;
+  }
+  /* a brand primary pill, to show the "frame a CTA" use */
+  .dv-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 28px;
+    font-family: var(--cr-font-body); font-weight: 600; font-size: 15px;
+    color: #fff; background: var(--cr-brand);
+    border: 0; border-radius: var(--cr-radius-pill);
+    padding: 13px 26px; text-decoration: none; cursor: pointer;
+    transition: transform .15s ease;
+  }
+  .dv-cta .dv-arrow { transition: transform .2s ease; }
+  .dv-cta:hover .dv-arrow { transform: translateX(4px); }
+  .dv-cta:active { transform: scale(.97); }
+
+  /* ════════════════════════════════════════════════════════════════════
+     DARK-FOOTER placement — `.cr-divider--foot` (the Liveblocks usage).
+     The limb's grey RIM arc floats on a CONTINUOUS near-black field: the band,
+     the dark section ABOVE it, and the footer BELOW all share ONE base
+     (`--foot-base`), so the band melts BLACK→BLACK both ways and only the grey
+     rim + glow show. (The everyday section-divider band — the first demo — keeps
+     its tonal sky-vs-body dome; this modifier just flattens sky/body to the
+     footer base so there is no seam against the dark footer.)
+     ════════════════════════════════════════════════════════════════════ */
+  .dv-dark { --foot-base: var(--cr-ink-card); }
+  .cr-divider--foot {
+    --sky:     var(--foot-base);    /* uniform near-black field …             */
+    --above:   var(--foot-base);
+    --body-lo: var(--foot-base);    /* …so only the grey rim arc + glow read  */
+  }
+  .cr-divider--foot .cr-grain { opacity: 0.05; }
+
+  /* dark closing SECTION above the footer (content sits in the black) */
+  .dv-dark-sec {
+    background: var(--foot-base); text-align: center;
+    padding: clamp(80px,11vw,140px) 24px clamp(44px,6vw,76px);
+  }
+  .dv-dark-sec > * { max-width: 760px; margin-left: auto; margin-right: auto; }
+  .dv-dark-sec .dv-eyebrow { color: var(--cr-fg-muted); }
+  .dv-dark-sec .dv-h { color: #fff; }
+  .dv-dark-sec .dv-sub { color: var(--cr-fg-muted); }
+
+  /* DARK footer MOCK (Liveblocks-style) — link columns + brand block */
+  .dv-foot-dark { background: var(--foot-base); padding: 60px clamp(24px,6vw,100px) 72px; }
+  .dv-foot-dark-inner {
+    max-width: var(--cr-content-max); margin: 0 auto;
+    display: flex; flex-wrap: wrap; gap: 48px 56px; justify-content: space-between;
+  }
+  .dv-fcols { display: flex; flex-wrap: wrap; gap: 40px 56px; }
+  .dv-fcol { display: flex; flex-direction: column; gap: 12px; min-width: 132px; }
+  .dv-fcol-h {
+    font-family: var(--cr-font-body); font-weight: 700; font-size: 15px;
+    color: #fff; margin-bottom: 4px;
+  }
+  .dv-fcol a {
+    font-family: var(--cr-font-body); font-size: 14px; color: var(--cr-fg-link);
+    text-decoration: none; transition: color .15s ease;
+  }
+  .dv-fcol a:hover { color: #fff; }
+  .dv-fbadge {
+    margin-left: 6px; padding: 1px 7px; border-radius: 999px;
+    background: #23232a; color: #b9b9c0; font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .03em; vertical-align: middle;
+  }
+  /* brand block (right) */
+  .dv-fbrand { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+  .dv-fbrand img { height: 22px; display: block; }
+  .dv-fstatus {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--cr-font-body); font-size: 14px; color: var(--cr-fg-muted);
+  }
+  .dv-fstatus::before { content:""; width: 8px; height: 8px; border-radius: 50%; background: var(--cr-success); }
+  .dv-fsocial { display: flex; gap: 16px; margin-top: 2px; }
+  .dv-fsocial a { color: #6a6a72; display: inline-flex; transition: color .15s ease; }
+  .dv-fsocial a:hover { color: #fff; }
+  .dv-fsocial svg { width: 18px; height: 18px; fill: currentColor; display: block; }
+</style>
+</head>
+<body>
+
+<div class="dv-page">
+
+  <!-- ── context: the tail of a preceding section ───────────────────── -->
+  <div class="dv-ctx">
+    <p class="dv-eyebrow">Preceding section</p>
+    <h2 class="dv-h">Every workflow, accounted for</h2>
+    <p class="dv-sub">Exceptions surfaced, decisions logged, throughput measured against
+      your targets — the operating picture stays whole.</p>
+  </div>
+
+  <!-- ════════ THE DIVIDER (the reusable atom) ════════ -->
+  <div class="cr-divider" role="separator" aria-orientation="horizontal"
+       data-screen-label="Divider · Horizon (occasional)">
+    <span class="cr-limb" aria-hidden="true"></span>
+    <span class="cr-grain" aria-hidden="true"></span>
+  </div>
+
+  <!-- ── context: a CTA framed below the divider ─────────────────────── -->
+  <div class="dv-ctx">
+    <p class="dv-eyebrow">Following section · CTA</p>
+    <h2 class="dv-h">See it run on your stack</h2>
+    <p class="dv-sub">Book a working session and watch an agent handle a real process
+      end to end — on your systems, with your data.</p>
+    <a class="dv-cta" href="#">Book a demo <span class="dv-arrow" aria-hidden="true">→</span></a>
+  </div>
+
+  <!-- ════════ DARK-FOOTER placement (the Liveblocks usage) ════════
+       A dark closing section → the divider → a dark footer, all sharing one
+       near-black base so the limb's rim melts BLACK→BLACK into the footer. -->
+  <div class="dv-dark">
+
+    <section class="dv-dark-sec">
+      <p class="dv-eyebrow">Above the footer · dark page</p>
+      <h2 class="dv-h">Turn your product into the space where work happens</h2>
+      <p class="dv-sub">One last beat of breath before the footer — the limb's rim floats
+        on black and melts straight into the dark footer below it, no seam.</p>
+    </section>
+
+    <!-- the divider — melts a dark section into a dark footer -->
+    <div class="cr-divider cr-divider--foot" role="separator" aria-orientation="horizontal"
+         data-screen-label="Divider · Horizon (above a dark footer)">
+      <span class="cr-limb" aria-hidden="true"></span>
+      <span class="cr-grain" aria-hidden="true"></span>
+    </div>
+
+    <!-- DARK footer MOCK — shows the divider melting BLACK→BLACK into the footer -->
+    <footer class="dv-foot-dark">
+      <div class="dv-foot-dark-inner">
+        <div class="dv-fcols">
+          <div class="dv-fcol"><span class="dv-fcol-h">Solutions</span>
+            <a href="#">Accelerate Growth</a><a href="#">Scale SME Operations</a>
+            <a href="#">Automate Workflows</a><a href="#">Knowledge &amp; Insights</a></div>
+          <div class="dv-fcol"><span class="dv-fcol-h">AI Capabilities</span>
+            <a href="#">Custom AI Development</a><a href="#">AI Strategy &amp; Integration</a></div>
+          <div class="dv-fcol"><span class="dv-fcol-h">Product</span>
+            <a href="#">WPSteroids</a><a href="#">DocXter</a><a href="#">FosterX</a></div>
+          <div class="dv-fcol"><span class="dv-fcol-h">Company</span>
+            <a href="#">About Us</a><a href="#">Customers</a><a href="#">Careers</a><a href="#">Contact</a></div>
+        </div>
+        <div class="dv-fbrand">
+          <img src="../assets/logo-white.svg" alt="Example Brand" />
+          <span class="dv-fstatus">All systems operational</span>
+          <!-- third-party brand marks (inline SVG, like the real logos in component-logo-strip) -->
+          <div class="dv-fsocial">
+            <a href="#" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.6 18 4.9 18 4.9c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg></a>
+            <a href="#" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 1.2h3.7l-8 9.1 9.4 12.4h-7.4l-5.8-7.6-6.6 7.6H.5l8.5-9.8L0 1.2h7.6l5.2 6.9 6.1-6.9zm-1.3 19.3h2L6.5 3.3H4.3l13.3 17.2z"/></svg></a>
+            <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8 19H5v-9h3v9zM6.5 8.3a1.7 1.7 0 1 1 0-3.5 1.7 1.7 0 0 1 0 3.5zM19 19h-3v-4.7c0-1.1 0-2.6-1.6-2.6S12.6 13 12.6 14.2V19h-3v-9h2.9v1.2h.04c.4-.8 1.4-1.6 2.9-1.6 3.1 0 3.7 2 3.7 4.7V19z"/></svg></a>
+            <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var divs = document.querySelectorAll('.cr-divider');
+  if (!divs.length) return;
+
+  function reveal(el) { el.classList.add('in-view'); }
+
+  if (reduce) { Array.prototype.forEach.call(divs, reveal); return; }
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) {
+        if (en.isIntersecting) { reveal(en.target); io.unobserve(en.target); }  // each fires once
+      });
+    }, { threshold: 0.25 });
+    Array.prototype.forEach.call(divs, function (d) { io.observe(d); });
+  } else {
+    Array.prototype.forEach.call(divs, reveal);
+  }
+})();
+</script>
+
+</body>
+</html>

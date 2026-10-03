@@ -1,0 +1,11 @@
+{
+  "id": "early-churn-signal",
+  "contractVersion": 1,
+  "digest": "sha256:dd939f3eba1b6a8981d012a89d046a6abbdb10a0292826201566e7719a44e42d",
+  "belief": "churn risk becomes visible three weeks before a customer would actually leave",
+  "feature": "analytics",
+  "ratio": "16:9",
+  "camera": "establishing",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

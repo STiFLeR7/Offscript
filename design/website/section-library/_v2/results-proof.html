@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<!--
+  component-results-proof.html
+  Composition: centred header (brand-blue square eyebrow + 2-line Urbanist 54px title) →
+  full-width 4-col bordered grid [testimonial+company logo | full-bleed portrait photo |
+  tinted stat card (80%) | white stat card (92%)] → 7-logo greyscale client strip.
+  Multi-use: value proposition (stats prove the claim), case study (quote + person +
+  "Read full story"), social proof (logo strip validates adoption breadth).
+  Inspiration: "Trusted by industry leaders worldwide" 4-col proof layout — orange
+  accent → CR brand blue; portrait photo from assets/avatars/case-lead.jpg.
+  Motion: CSS keyframe stagger (header → card at 120ms, animation-fill-mode:both,
+  fires with --virtual-time-budget) + stat count-up via IntersectionObserver (fires once;
+  HTML shows final value without JS).
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CR — Results &amp; Case Study</title>
+  <link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--cr-bg);
+      font-family: var(--cr-font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Entrance animations (CSS keyframe — fires with virtual-time-budget) ── */
+    @keyframes cr-up {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .crp-head {
+        animation: cr-up .65s cubic-bezier(.16,1,.3,1) both;
+      }
+      .crp-grid {
+        animation: cr-up .65s cubic-bezier(.16,1,.3,1) both;
+        animation-delay: .12s;
+      }
+    }
+
+    /* ── Section shell ──────────────────────────────────────────── */
+    .crp {
+      padding: var(--cr-space-20) var(--cr-page-gutter);
+      background: var(--cr-bg);
+    }
+
+    .crp-well {
+      max-width: var(--cr-content-max);
+      margin: 0 auto;
+    }
+
+    /* ── Header ─────────────────────────────────────────────────── */
+    .crp-head {
+      text-align: center;
+      margin-bottom: 52px;
+    }
+
+    .crp-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cr-brand);
+      margin-bottom: 18px;
+    }
+
+    .crp-dot {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      background: var(--cr-brand);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .crp-title {
+      font-family: var(--cr-font-display);
+      font-weight: 700;
+      font-size: 54px;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: var(--cr-fg);
+      max-width: 660px;
+      margin: 0 auto;
+    }
+
+    /* ── 4-col open grid — no outer frame, cards float freely ──── */
+    .crp-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 0.82fr 1fr 0.88fr;
+      gap: 16px;
+      min-height: 344px;
+      align-items: stretch;
+    }
+
+    .crp-col {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--cr-line);
+      border-radius: var(--cr-radius-md);
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    /* ── Col 1 · testimonial ────────────────────────────────────── */
+    .crp-c-text { padding: 32px 28px; }
+
+    .crp-company {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 20px;
+    }
+
+    .crp-company-name {
+      font-family: var(--cr-font-display);
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--cr-fg);
+    }
+
+    .crp-quote {
+      font-size: 15px;
+      line-height: 1.74;
+      color: var(--cr-fg-2);
+      flex: 1;
+    }
+
+    .crp-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 24px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--cr-brand);
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .crp-link .arr { display: inline-block; transition: transform .15s; }
+    .crp-link:hover .arr { transform: translateX(4px); }
+
+    /* ── Col 2 · full-bleed portrait photo ──────────────────────── */
+    .crp-c-photo {
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .crp-c-photo img {
+      width: 100%;
+      height: 100%;
+      min-height: 300px;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    .crp-photo-cap {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 56px 18px 18px;
+      background: linear-gradient(to top, rgba(0,0,0,0.64) 0%, transparent 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .crp-photo-name {
+      font-family: var(--cr-font-display);
+      font-weight: 600;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .crp-photo-role {
+      font-size: 12px;
+      color: rgba(255,255,255,0.68);
+    }
+
+    /* ── Col 3 & 4 · stat cards ─────────────────────────────────── */
+    .crp-c-stat { padding: 28px 24px; }
+
+    /* Vibrant blue gradient stat card — text kept white for readability */
+    .crp-stat-tint {
+      background: linear-gradient(148deg, var(--cr-brand) 0%, #0058C0 100%);
+      border-color: #0070D8;
+    }
+    .crp-stat-tint .crp-stat-lbl   { color: rgba(255,255,255,0.78); }
+    .crp-stat-tint .crp-stat-n     { color: #fff; }
+    .crp-stat-tint .crp-stat-logo  { border-top-color: rgba(255,255,255,0.22); }
+    .crp-stat-tint .crp-stat-logo-name { color: #fff; }
+    /* CSS fill override for inline SVG on blue background */
+    .crp-stat-tint .crp-stat-logo svg rect { fill: rgba(255,255,255,0.88); }
+
+    .crp-stat-lbl {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--cr-fg-3);
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .crp-stat-n {
+      font-family: var(--cr-font-display);
+      font-weight: 800;
+      font-size: 72px;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--cr-fg);
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .crp-stat-logo {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding-top: 16px;
+      border-top: 1px solid var(--cr-line);
+      margin-top: auto;
+    }
+
+    .crp-stat-logo-name {
+      font-family: var(--cr-font-display);
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--cr-fg);
+    }
+
+    /* ── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 1100px) {
+      .crp { padding: 64px 48px; }
+      .crp-stat-n { font-size: 58px; }
+    }
+
+    @media (max-width: 840px) {
+      .crp { padding: 56px 24px; }
+      .crp-title { font-size: 38px; }
+      .crp-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .crp { padding: 48px 16px; }
+      .crp-title { font-size: 32px; max-width: 100%; }
+      .crp-grid { grid-template-columns: 1fr; }
+      .crp-c-photo { min-height: 260px; }
+      .crp-stat-n { font-size: 56px; }
+    }
+  </style>
+</head>
+<body>
+  <section class="crp" data-screen-label="Results &amp; Case Study">
+    <div class="crp-well">
+
+      <!-- Header -->
+      <header class="crp-head">
+        <p class="crp-eyebrow"><span class="crp-dot" aria-hidden="true"></span>Results and Case Studies</p>
+        <h2 class="crp-title">Trusted by Operations<br>Leaders Worldwide.</h2>
+      </header>
+
+      <!-- 4-col open proof grid -->
+      <div class="crp-grid">
+
+        <!-- Col 1: Company + testimonial -->
+        <div class="crp-col crp-c-text">
+          <div class="crp-company">
+            <!-- MedFlow logo mark: medical cross -->
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M10 2v16M2 10h16" stroke="var(--cr-fg)" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+            <span class="crp-company-name">MedFlow</span>
+          </div>
+          <p class="crp-quote">
+            CR completely changed how our billing team operates. Instead of chasing exceptions across four systems, every claim routes automatically — and the ones that need human attention are flagged before they become a problem. We freed up twelve analysts in the first quarter alone.
+          </p>
+          <a href="#" class="crp-link">Read full story <span class="arr">→</span></a>
+        </div>
+
+        <!-- Col 2: Full-bleed portrait -->
+        <div class="crp-col crp-c-photo">
+          <img src="../assets/../../brand-pack/assets/imagery/avatars/case-lead.jpg" alt="Vikram Mehta, VP Operations at MedFlow">
+          <div class="crp-photo-cap">
+            <span class="crp-photo-name">Vikram Mehta</span>
+            <span class="crp-photo-role">VP Operations @MedFlow</span>
+          </div>
+        </div>
+
+        <!-- Col 3: Stat — tinted background -->
+        <div class="crp-col crp-c-stat crp-stat-tint">
+          <p class="crp-stat-lbl">Routine Work<br>Automated</p>
+          <div class="crp-stat-n" data-target="80" data-suffix="%">80%</div>
+          <div class="crp-stat-logo">
+            <!-- NovaCorp logo mark: 4-square grid -->
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <rect x="1" y="1" width="6" height="6" rx="1" fill="var(--cr-fg)"/>
+              <rect x="9" y="1" width="6" height="6" rx="1" fill="var(--cr-fg)"/>
+              <rect x="1" y="9" width="6" height="6" rx="1" fill="var(--cr-fg)"/>
+              <rect x="9" y="9" width="6" height="6" rx="1" fill="var(--cr-fg)"/>
+            </svg>
+            <span class="crp-stat-logo-name">NovaCorp</span>
+          </div>
+        </div>
+
+        <!-- Col 4: Stat — white background -->
+        <div class="crp-col crp-c-stat">
+          <p class="crp-stat-lbl">Operations Cost<br>Removed</p>
+          <div class="crp-stat-n" data-target="92" data-suffix="%">92%</div>
+          <div class="crp-stat-logo">
+            <!-- Meridian logo mark: diamond outline -->
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 1L15 8L8 15L1 8L8 1Z" stroke="var(--cr-fg)" stroke-width="1.5"/>
+            </svg>
+            <span class="crp-stat-logo-name">Meridian</span>
+          </div>
+        </div>
+
+      </div><!-- /crp-grid -->
+
+    </div><!-- /crp-well -->
+  </section>
+
+  <script>
+    /* Stat count-up on scroll entry (progressive enhancement — HTML shows final value without JS) */
+    const canAnim = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const countIO = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        const target = parseInt(el.dataset.target, 10);
+        const suffix = el.dataset.suffix || '';
+        if (!canAnim) { el.textContent = target + suffix; countIO.unobserve(el); return; }
+        let t0 = null;
+        const dur = 1100;
+        const tick = ts => {
+          if (!t0) t0 = ts;
+          const p = Math.min((ts - t0) / dur, 1);
+          el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * target) + suffix;
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+        countIO.unobserve(el);
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('[data-target]').forEach(el => countIO.observe(el));
+  </script>
+</body>
+</html>

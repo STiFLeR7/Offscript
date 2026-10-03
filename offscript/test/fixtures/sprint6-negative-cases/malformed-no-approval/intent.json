@@ -1,0 +1,8 @@
+{
+  "id": "malformed-no-approval",
+  "digest": "sha256:c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1",
+  "belief": "a malformed artifact record should be skipped, not crash discovery",
+  "feature": "automation",
+  "mustInclude": ["skip gracefully"],
+  "section": "feature"
+}

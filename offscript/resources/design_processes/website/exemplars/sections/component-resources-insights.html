@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CR — Resources · insights grid</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Resources insights grid  from component-resources-insights.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  A library grid: a two-column header — headline left, lede and
+                one control right — over three borderless cards, each a
+                thumbnail above a meta line, a title, an excerpt and a read
+                affordance.
+
+  THE CLAIM     **A reader who came looking for material wants to see the
+                range.** The profile says density is correct here for the same
+                reason it is wrong on a marketing page, so nothing below buys
+                air at the cost of showing less.
+
+  STRUCTURE     Unchanged. DOM order, element types and depth are
+                byte-compatible with the frozen original (DR-22). The three
+                lockups keep their container-relative internal scale, which is
+                what holds each miniature proportional to its card at every
+                width.
+
+  ENVIRONMENT   `env-massif-clear` at 50% 42%, on all THREE thumbnails through
+                one shared rule.
+
+                This one needs saying, because the batch note that came with
+                this file expected none. The section has no CSS gradient — but
+                all three thumbnails were painted with a colour behind
+                `blur-7.png`, an asset that lives in the creative-background
+                library and is a BLUR PLATE, which the blanket rule names in
+                the same breath as a gradient. A `gradient(` search does not
+                find it; reading the declaration does. Two of the three colours
+                behind it were raw hexes as well, so there was no version of
+                this file that could ship them untouched.
+
+                The plate becomes the approved environment carrying the texture
+                stack, as ONE background stack rather than a layer on top: a
+                blend mode composites against what is beneath it in the SAME
+                background, so grain on a pseudo-element resolves `overlay`
+                against transparency and renders as grey static. The three
+                thumbnails already shared one plate, so they share one rule and
+                one crop — substituting the plate, not redesigning the set. It
+                is written on `.thumb-inner`, which is what the frozen hover
+                scales, so the whole illustration still zooms as one thing.
+
+  NO TYPE ON    Not a word sits on the photograph. Every character in all three
+  THE PICTURE   thumbnails lives inside `.tg-card`, an opaque white lockup that
+                already carried its own surface — remove the photograph and not
+                one word changes legibility. That is why this section can take
+                an environment where the press grid beside it cannot: here the
+                type came pre-plated.
+
+  IMAGERY       Both images KEPT. They are the Example Brand wordmark inside two
+                of the lockups — identity, not creative frames, and nothing a
+                substitution rule reaches. Only their directory moved; the
+                basenames are the same files.
+
+  RATIO         The frame steps from 5:3 (1.667) to 16/9 — the nearest rung of
+                the approved crop vocabulary. The picture crops to it; nothing
+                stretches.
+
+  ACCENT        ONE, and it is the primary control. The section had brand hue in
+                four places — the CTA outline's focus ring, the integration
+                arrow, the early-access badge and both card focus rings — which
+                between them said four things were the point. The pill takes the
+                accent; the lockup interiors and every focus ring drop to ink. A
+                focus ring is a legibility instrument at ~14:1 and never a
+                brand moment. On hover the pill's fill descends to the 800 step,
+                so its label inverts: primary ink on that step measures 1.9:1.
+
+  TYPE          The eyebrow and the meta line stop being uppercase and stop
+                being tracked. Both are supporting text — a section label and a
+                filing line — and setting them like eyebrows gave a dense grid
+                two more things shouting at the reader it is trying to let
+                browse.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  .cr-res {
+    background: var(--cr-page-ground);
+    padding: var(--cr-space-xl) var(--cr-page-gutter);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-primary);
+  }
+  .res-well { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ── Header (2-col) ─────────────────────────────────────── */
+  .res-head {
+    display: grid;
+    grid-template-columns: 1fr minmax(300px, 380px);
+    gap: var(--cr-space-m);
+    align-items: start;
+  }
+  .res-head-l { min-width: 0; }
+  /* A section label is supporting text. No uppercase, no tracking. */
+  .eyebrow {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  .res-title {
+    margin: var(--cr-space-s) 0 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+    max-width: 720px;
+  }
+  .res-head-r { display: flex; flex-direction: column; align-items: flex-start; }
+  .res-lede {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  /* THE ONE ACCENT MOMENT — the primary control, and nothing else. */
+  .res-pill {
+    margin-top: var(--cr-space-s);
+    display: inline-flex;
+    align-items: center;
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    border: var(--cr-stroke) solid transparent;
+    border-radius: var(--cr-radius-control);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-on-accent-light);
+    background: var(--cr-accent-orange);
+    text-decoration: none;
+    transition: background-color .2s ease, color .2s ease;
+  }
+  /* The fill descends to the 800 step, so the label MUST invert: primary ink
+     on that step measures 1.9:1. */
+  .res-pill:hover, .res-pill:focus-visible {
+    background: var(--cr-accent-orange-800);
+    color: var(--cr-text-inverse);
+  }
+  /* A focus ring is a legibility instrument — dark ink at ~14:1, never a hue. */
+  .res-pill:focus-visible { outline: 2px solid var(--cr-text-primary); outline-offset: 2px; }
+
+  /* ── Card grid ──────────────────────────────────────────── */
+  .res-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--cr-space-m);
+    margin-top: var(--cr-rhythm-content);
+  }
+  .rcard { display: flex; flex-direction: column; text-decoration: none; color: inherit; min-width: 0; }
+  .rcard:focus-visible {
+    outline: 2px solid var(--cr-text-primary);
+    outline-offset: 5px;
+    border-radius: var(--cr-radius-control);
+  }
+
+  /* The creative frame. 16/9 is the approved rung nearest the 5:3 it declared;
+     the plate crops to it and is never stretched to fit. */
+  .thumb {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--cr-radius-card);
+    overflow: hidden;
+    background: var(--cr-surface-5);
+    container-type: inline-size;
+  }
+  .thumb-inner {
+    position: absolute;
+    inset: 0;
+    transition: transform .5s cubic-bezier(.2,.7,.2,1);
+  }
+  .rcard:hover .thumb-inner,
+  .rcard:focus-visible .thumb-inner { transform: scale(1.04); }
+
+  /* A filing line is supporting text. No uppercase, no tracking. */
+  .meta {
+    margin-top: var(--cr-space-s);
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  .meta .dot { margin: 0 var(--cr-space-xs); color: var(--cr-text-secondary); }
+  .ctitle {
+    margin-top: var(--cr-space-xs);
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-h6);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .excerpt {
+    margin-top: var(--cr-space-xs);
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .readnow {
+    margin-top: var(--cr-space-s);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--cr-space-xs);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-primary);
+  }
+  .readnow .arw { display: inline-flex; transition: transform .25s ease; }
+  .readnow .arw svg { width: 17px; height: 17px; stroke-width: var(--cr-icon-stroke-sm); }
+  .rcard:hover .readnow .arw,
+  .rcard:focus-visible .readnow .arw { transform: translateX(4px); }
+
+  /* ── Thumbnails — THE STANDARD CREATIVE TREATMENT ──────────
+     Replaces the colour-behind-blur-plate all three cards shared. ONE
+     background stack, three layers, in this order: grain on top, grunge under
+     it, the environment underneath both. It has to be one stack — a blend mode
+     composites against what is beneath it in the SAME background, so moving
+     the grain onto a pseudo-element resolves `overlay` against transparency
+     and renders the texture at full strength as grey static. The URLs are
+     written out rather than reached through a `--cr-env-*` custom property,
+     because a url() inside a custom property resolves against the CONSUMING
+     document and fails silently.
+
+     One rule for all three, because all three shared one plate. The stack sits
+     on `.thumb-inner`, which is what the frozen hover scales, so the whole
+     illustration still zooms as one thing. */
+  .t-warm .thumb-inner,
+  .t-grad .thumb-inner,
+  .t-cool .thumb-inner {
+    background-color: var(--cr-bg-dark);
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-massif-clear.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 50% 42%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* The white lockup card. It is why an environment is admissible here: it was
+     ALREADY an opaque surface carrying every character in the thumbnail, so
+     nothing draws its contrast from the picture behind it.
+
+     Its interior keeps the container-relative scale it was built on. That is
+     not the page's type ramp being ignored — the lockup is a rendered
+     artifact, a miniature whose metrics have to stay proportional to a card
+     that changes width, and a fixed px ramp inside it would break at the
+     first breakpoint. What the ramp does govern here is weight and colour,
+     and both are on the system. */
+  .tg-card {
+    background: var(--cr-surface-1);
+    /* The SUBTLE stroke, not the default one. The lockup's separation is
+       already carried by white against a photograph; the default border reads
+       as a hard drawn edge over the picture, which the near-invisible hairline
+       it replaces never did. */
+    border: var(--cr-stroke) solid var(--cr-border-subtle);
+    border-radius: var(--cr-radius-card);
+    padding: 6cqw 8cqw;
+    display: flex; flex-direction: column; align-items: center; gap: 2.4cqw;
+  }
+  .tg-logo { display: flex; align-items: center; gap: 2cqw; }
+  .tg-logo img { height: 4.4cqw; width: auto; display: block; }
+  .tg-div { color: var(--cr-border-default); font-size: 5cqw; font-weight: 400; }
+  .tg-apa { font-family: var(--cr-font-display); font-weight: 500; font-size: 4.2cqw; color: var(--cr-text-primary); }
+  .tg-arrow { color: var(--cr-text-primary); width: 4.6cqw; height: 4.6cqw; stroke-width: var(--cr-icon-stroke-md); }
+  .tg-partner { font-family: var(--cr-font-display); font-weight: 500; font-size: 7cqw; letter-spacing: var(--cr-tracking-heading); color: var(--cr-text-primary); }
+  .tg-cap { font-size: 2.7cqw; color: var(--cr-text-secondary); }
+  /* ① product lockup extras */
+  .tg-rule { width: 28px; height: var(--cr-stroke); background: var(--cr-border-default); }
+  .tg-tagline { font-size: 2.8cqw; color: var(--cr-text-secondary); text-align: center; }
+  .tg-badge { font-size: 2.2cqw; font-weight: 500; color: var(--cr-text-secondary); }
+  /* ③ stat card extras */
+  .tg-stat-num { font-family: var(--cr-font-display); font-weight: 400; font-size: 13cqw; letter-spacing: var(--cr-tracking-heading); color: var(--cr-text-primary); line-height: 1; }
+  .tg-stat-label { font-family: var(--cr-font-display); font-weight: 500; font-size: 3.8cqw; color: var(--cr-text-primary); }
+  .tg-stat-sub { font-size: 2.4cqw; color: var(--cr-text-secondary); text-align: center; }
+
+  /* ── Scroll-reveal (gated on .has-js; visible without JS) ── */
+  .cr-res.has-js .reveal { opacity: 0; transform: translateY(18px); }
+  .cr-res.has-js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  /* The guard matches the trigger's specificity, so the reveal SNAPS. */
+  @media (prefers-reduced-motion: reduce) {
+    .cr-res.has-js .reveal { opacity: 1; transform: none; transition: none; }
+    .thumb-inner, .readnow .arw { transition: none; }
+  }
+
+  /* ── Responsive ─────────────────────────────────────────── */
+  /* NO per-section type breakpoint and no per-section gutter: the ramp steps
+     at the pack's own breakpoints and the gutter token is already responsive.
+     What remains is column count, which is layout and stays as it was. */
+  @media (max-width: 860px) {
+    .res-head { grid-template-columns: 1fr; gap: var(--cr-space-s); }
+    .res-title { max-width: none; }
+    .res-grid { grid-template-columns: 1fr; gap: var(--cr-space-m); margin-top: var(--cr-space-m); }
+  }
+  @media (max-width: 560px) {
+    .res-title .hb { display: none; }   /* let the headline wrap naturally on mobile */
+    .res-grid { gap: var(--cr-space-m); }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. Three notes on rows that are not plain spacing.
+
+     The lockup rows are the artifact FOLLOWING its card, not being re-sized.
+     Its interior is authored in container-relative units, so every one of its
+     metrics is a function of how wide the card is; moving the grid gutter onto
+     the closed scale changed the card's width and the whole miniature scaled
+     with it, exactly as it was built to. The only value inside the lockup this
+     pass actually chose is its radius, which joins the pair.
+
+     The stroke-width rows are the two icons moving onto the pack's icon
+     weights, and the font-size rows on the icons and the line break are
+     inheritance rather than a decision: an inline element inside a text run
+     picks up the metrics of the run it sits in, and re-typesetting the run
+     moves them.
+
+     The frame's aspect-ratio does not appear, and that is correct rather than
+     missing: the frame is a single-child pass-through, which the comparison
+     elides from BOTH sides. The crop still moves — 5:3 renders 1.667 and no
+     approved ratio is within tolerance of it, so it steps to the nearest rung
+     that exists — it is simply not a row this instrument can carry.
+  .ctitle      | font-size              | type-ramp
+  .ctitle      | line-height            | type-ramp
+  .ctitle      | margin-top             | spacing-scale
+  .dot         | font-size              | type-ramp
+  .dot         | line-height            | type-ramp
+  .dot         | margin-left            | spacing-scale
+  .dot         | margin-right           | spacing-scale
+  .excerpt     | line-height            | type-ramp
+  .excerpt     | margin-top             | spacing-scale
+  .eyebrow     | font-size              | type-ramp
+  .eyebrow     | line-height            | type-ramp
+  .hb          | font-size              | type-ramp
+  .hb          | line-height            | type-ramp
+  .lucide      | font-size              | type-ramp
+  .lucide      | line-height            | type-ramp
+  .lucide      | stroke-width           | stroke
+  .meta        | font-size              | type-ramp
+  .meta        | line-height            | type-ramp
+  .meta        | margin-top             | spacing-scale
+  .readnow     | column-gap             | spacing-scale
+  .readnow     | font-size              | type-ramp
+  .readnow     | line-height            | type-ramp
+  .readnow     | margin-top             | spacing-scale
+  .readnow     | row-gap                | spacing-scale
+  .res-grid    | column-gap             | spacing-scale
+  .res-grid    | margin-top             | spacing-scale
+  .res-grid    | row-gap                | spacing-scale
+  .res-head    | column-gap             | spacing-scale
+  .res-head    | row-gap                | spacing-scale
+  .res-lede    | font-size              | type-ramp
+  .res-lede    | line-height            | type-ramp
+  .res-pill    | border-radius          | radius-pair
+  .res-pill    | font-size              | type-ramp
+  .res-pill    | line-height            | type-ramp
+  .res-pill    | margin-top             | spacing-scale
+  .res-pill    | padding-left           | spacing-scale
+  .res-pill    | padding-right          | spacing-scale
+  .res-title   | font-size              | type-ramp
+  .res-title   | line-height            | type-ramp
+  .res-title   | margin-top             | spacing-scale
+  .tg-card     | border-radius          | radius-pair
+  .tg-card     | padding-bottom         | spacing-scale
+  .tg-card     | padding-left           | spacing-scale
+  .tg-card     | padding-right          | spacing-scale
+  .tg-card     | padding-top            | spacing-scale
+  .tg-partner  | font-size              | type-ramp
+  .tg-stat-num | font-size              | type-ramp
+  .tg-stat-num | line-height            | type-ramp
+  path         | font-size              | type-ramp
+  path         | line-height            | type-ramp
+  path         | stroke-width           | stroke
+-->
+
+<section class="cr-res" data-screen-label="Resources · insights grid"
+         data-archetype="feature-comparison" data-hierarchy="supporting" data-intent="educate"
+         data-register="technical" data-signature="embedded-screenshot" data-density="high">
+  <div class="res-well">
+
+    <header class="res-head">
+      <div class="res-head-l reveal" style="--d:0ms">
+        <p class="eyebrow">Insights</p>
+        <h2 class="res-title">Intelligence from the agent-<br class="hb">ops frontier</h2>
+      </div>
+      <div class="res-head-r reveal" style="--d:80ms">
+        <p class="res-lede">Research, case studies, and field notes on running production AI agents — how teams automate operations, hold agents accountable, and turn manual work into measurable outcomes.</p>
+        <a class="res-pill" href="#">Explore Insights</a>
+      </div>
+    </header>
+
+    <div class="res-grid">
+
+      <!-- ① PRODUCT — cool atmospheric (blur-7) + DocXter lockup (t-warm tint retained for a future varied set) -->
+      <a class="rcard reveal" href="#" style="--d:160ms">
+        <div class="thumb t-warm">
+          <div class="thumb-inner">
+            <div class="tg-card">
+              <div class="tg-logo"><img src="../../brand-pack/assets/logo/logo-color.svg" alt="Example Brand"><span class="tg-div">|</span><span class="tg-apa">DocXter</span></div>
+              <div class="tg-rule"></div>
+              <div class="tg-tagline">AI answers from your docs</div>
+              <div class="tg-badge">Now in Early Access</div>
+            </div>
+          </div>
+        </div>
+        <div class="meta">Product<span class="dot">•</span>Mar 10, 2026</div>
+        <div class="ctitle">Introducing CR-DocXter: Answers Pulled Straight From Your Documents</div>
+        <div class="excerpt">We're opening early access to CR-DocXter — a drop-in agent that reads your PDFs, contracts, and tickets and answers in plain language, with a citation for every claim.</div>
+        <span class="readnow">Read Now <span class="arw"><i data-lucide="arrow-right"></i></span></span>
+      </a>
+
+      <!-- ② INTEGRATIONS — gradient lockup thumbnail -->
+      <a class="rcard reveal" href="#" style="--d:240ms">
+        <div class="thumb t-grad">
+          <div class="thumb-inner">
+            <div class="tg-card">
+              <div class="tg-logo"><img src="../../brand-pack/assets/logo/logo-color.svg" alt=""><span class="tg-div">|</span><span class="tg-apa">APA</span></div>
+              <i data-lucide="arrow-down" class="tg-arrow"></i>
+              <div class="tg-partner">SAP</div>
+              <div class="tg-cap">Native Connector</div>
+            </div>
+          </div>
+        </div>
+        <div class="meta">Integrations<span class="dot">•</span>Feb 2, 2026</div>
+        <div class="ctitle">APA Now Runs Natively Inside SAP — No Middleware, No Rip-and-Replace</div>
+        <div class="excerpt">Example Brand ships native connectors for SAP and Salesforce — agents now read and write to your systems of record directly, with a full audit trail on every action.</div>
+        <span class="readnow">Read Now <span class="arw"><i data-lucide="arrow-right"></i></span></span>
+      </a>
+
+      <!-- ③ RELIABILITY — cool gradient (blur-7) + stat card -->
+      <a class="rcard reveal" href="#" style="--d:320ms">
+        <div class="thumb t-cool">
+          <div class="thumb-inner">
+            <div class="tg-card">
+              <div class="tg-stat-num">92%</div>
+              <div class="tg-rule"></div>
+              <div class="tg-stat-label">Ops Cost Removed</div>
+              <div class="tg-stat-sub">Median across APA deployments</div>
+            </div>
+          </div>
+        </div>
+        <div class="meta">Reliability<span class="dot">•</span>Mar 10, 2026</div>
+        <div class="ctitle">The Handoff Gap: Where Autonomous Agents Quietly Drop Work</div>
+        <div class="excerpt">As agents take over more of the workflow, a quiet handoff gap opens between systems — costing teams the exact hours automation was meant to save. Here's how to close it.</div>
+        <span class="readnow">Read Now <span class="arw"><i data-lucide="arrow-right"></i></span></span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<script>
+  (function () {
+    var sec = document.querySelector('.cr-res');
+    if (window.lucide) lucide.createIcons();
+    if (!sec || !('IntersectionObserver' in window)) return;
+    sec.classList.add('has-js');
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          sec.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+          io.disconnect();
+        }
+      });
+    }, { threshold: 0.12 });
+    io.observe(sec);
+  })();
+</script>
+</body>
+</html>

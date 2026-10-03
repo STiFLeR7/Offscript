@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR — Pixel-dissolve divider (occasional / library)</title>
+
+<!--
+  ────────────────────────────────────────────────────────────────────────────
+  COMPONENT: Pixel-dissolve divider — blocky ink → cream section transition
+  ────────────────────────────────────────────────────────────────────────────
+  WHAT IT IS (per the user): a second OCCASIONAL divider for the library — a
+  BLOCKY "pixel dissolve" between a DARK (ink) section and a LIGHT (cream)
+  section. The boundary isn't a smooth line: it's a grid of squares where the
+  ink/cream edge MEANDERS up and down by a cell and a few squares "float" across,
+  giving an 8-bit dither / dissolve. Use SPARINGLY — not every section needs it.
+
+  CHARTER NOTE: same as the gradient divider — a DIVIDER / transition band is a
+  SEPARATE intentional device (like the dark Ink/Night bands are), so this blocky
+  treatment on the boundary is deliberate. Flat squares, no blur, no shadow; uses
+  the brand neutrals only — --cr-ink (#0E0E0E) above, --cr-bg-warm cream below.
+
+  HOW IT'S BUILT: the transition zone is a CSS grid of square cells; a tiny script
+  fills it — each column gets a boundary row from a gentle random walk (so the
+  edge steps ±1 cell, never jumps), cells above = ink, below = cream, plus a small
+  chance of a "floater" flip near the edge. Responsive: cols = ceil(width / cell),
+  rebuilt (debounced) on resize. Decorative → aria-hidden.
+
+  NO-JS: the band keeps a min-height and a hard straight ink→cream split as a CSS
+  fallback (a clean, if un-pixelated, divider). The dark section above + cream
+  section below connect seamlessly to the band's top (ink) and bottom (cream)
+  either way.
+
+  MOTION: a one-time "pixels ASSEMBLE" reveal — on first view each cell pops in
+  (scale + fade) with a random stagger, then the divider is STATIC (a divider
+  shouldn't fidget). prefers-reduced-motion → cells appear instantly. Fires once.
+
+  Flip the dissolve direction (cream→ink, for a light→dark transition) by adding
+  the `--flip` modifier (`.cr-dissolve--flip`).
+
+  Responsive: full-bleed; cell size constant so more columns appear on wider
+  screens. Screenshot-verified at desktop 1440 / tablet 768 / the ~482px floor.
+  (The dark + cream context blocks here are DEMO context, not the component.)
+  ────────────────────────────────────────────────────────────────────────────
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--cr-bg-warm); font-family: var(--cr-font-body); }
+
+  /* ── Demo context (NOT part of the component) ────────────────────────── */
+  .dx-ctx { display: grid; place-items: center; padding: 60px var(--cr-page-gutter); text-align: center; }
+  .dx-ctx--dark  { background: var(--cr-ink); min-height: 200px; }
+  .dx-ctx--light { background: var(--cr-bg-warm); min-height: 220px; align-content: center; gap: 16px; }
+  .dx-lbl { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+  .dx-ctx--dark .dx-lbl  { color: rgba(255,255,255,0.46); }
+  .dx-ctx--light .dx-lbl { color: var(--cr-fg-muted); }
+
+  /* ── THE DISSOLVE DIVIDER ────────────────────────────────────────────── */
+  .cr-dissolve {
+    --cell: 36px; --rows: 6;
+    position: relative;
+    width: 100%;
+    min-height: calc(var(--cell) * var(--rows));
+    overflow: hidden;
+    /* no-JS fallback: a clean straight ink→cream split (top ink, bottom cream) */
+    background: linear-gradient(to bottom,
+      var(--cr-ink) 0, var(--cr-ink) 50%, var(--cr-bg-warm) 50%, var(--cr-bg-warm) 100%);
+  }
+  .cr-dissolve__mix { display: grid; width: 100%; }   /* grid-template-columns + auto-rows set by JS */
+  .cr-dissolve__mix i { display: block; }
+  .cr-dissolve__mix i.ink   { background: var(--cr-ink); }
+  .cr-dissolve__mix i.cream { background: var(--cr-bg-warm); }
+
+  /* flip variant: cream above → ink below (for a light→dark transition) */
+  .cr-dissolve--flip { background: linear-gradient(to bottom,
+      var(--cr-bg-warm) 0, var(--cr-bg-warm) 50%, var(--cr-ink) 50%, var(--cr-ink) 100%); }
+
+  /* ── "pixels assemble" reveal (JS-gated, fires once) ─────────────────── */
+  .has-js .cr-dissolve.anim .cr-dissolve__mix i { opacity: 0; }
+  .has-js .cr-dissolve.anim.in .cr-dissolve__mix i {
+    animation: cellIn .42s cubic-bezier(.22, .61, .36, 1) both;
+    animation-delay: var(--d, 0ms);
+  }
+  @keyframes cellIn { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .cr-dissolve.anim .cr-dissolve__mix i { opacity: 1 !important; animation: none !important; }
+  }
+</style>
+</head>
+
+<body>
+
+  <!-- demo context: a DARK section above -->
+  <div class="dx-ctx dx-ctx--dark"><span class="dx-lbl">Dark section</span></div>
+
+  <!-- ── THE PIXEL-DISSOLVE DIVIDER ──────────────────────────────────────── -->
+  <div class="cr-dissolve" aria-hidden="true">
+    <div class="cr-dissolve__mix" id="dissolveMix"></div>
+  </div>
+
+  <!-- demo context: a LIGHT section below -->
+  <div class="dx-ctx dx-ctx--light">
+    <span class="dx-lbl">Light section content</span>
+  </div>
+
+<script>
+  (function () {
+    document.documentElement.classList.add('has-js');
+    var dis = document.querySelector('.cr-dissolve');
+    var mix = document.getElementById('dissolveMix');
+    if (!dis || !mix) return;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var CELL = 36, ROWS = 6;
+
+    function build(animate) {
+      var w = dis.clientWidth || mix.clientWidth;
+      var cols = Math.ceil(w / CELL) + 1;          // +1 so the right edge is covered (clipped by overflow)
+      mix.style.gridTemplateColumns = 'repeat(' + cols + ', ' + CELL + 'px)';
+      mix.style.gridAutoRows = CELL + 'px';
+      mix.textContent = '';
+
+      // boundary per column — a gentle random walk around the middle (steps ±1, pulled back to centre)
+      var mid = ROWS * 0.5, cur = mid, b = [];
+      for (var c = 0; c < cols; c++) {
+        cur += (Math.random() < 0.5 ? -1 : 1) * (Math.random() < 0.55 ? 1 : 0);
+        cur += (mid - cur) * 0.22;
+        cur = Math.max(1.4, Math.min(ROWS - 1.4, cur));
+        b[c] = cur;
+      }
+
+      var frag = document.createDocumentFragment();
+      for (var r = 0; r < ROWS; r++) {
+        for (var c2 = 0; c2 < cols; c2++) {
+          var ink = r < b[c2];
+          if (Math.abs(r - b[c2]) < 1.8 && Math.random() < 0.12) ink = !ink;   // occasional floater
+          var d = document.createElement('i');
+          d.className = ink ? 'ink' : 'cream';
+          if (animate) d.style.setProperty('--d', Math.round(Math.random() * 420) + 'ms');
+          frag.appendChild(d);
+        }
+      }
+      mix.appendChild(frag);
+    }
+
+    var doAnim = !reduce && ('IntersectionObserver' in window);
+    if (doAnim) dis.classList.add('anim');
+    build(doAnim);
+
+    // rebuild on resize (plain — the assemble only plays once, on first view)
+    var t;
+    window.addEventListener('resize', function () {
+      clearTimeout(t);
+      t = setTimeout(function () { dis.classList.remove('anim', 'in'); build(false); }, 180);
+    });
+
+    if (doAnim) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { dis.classList.add('in'); io.disconnect(); } });
+      }, { threshold: 0.25 });
+      io.observe(dis);
+    }
+  })();
+</script>
+</body>
+</html>

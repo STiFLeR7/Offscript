@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Testimonial stack</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  COMPOSITION  — Pixel-faithful re-skin of the Teamway "Used by Iconic companies"
+                 testimonial stack. Section headline top-left (~3 lines, bold),
+                 then 2 stacked wide cards, gap ~12px.
+                 Each card = 3-col grid:
+                   [1] PORTRAIT — local photo fills card height, rounded left corners,
+                       square-ish crop (200px col)
+                   [2] QUOTE   — ~3-line body + attribution row at bottom
+                                 (32px logo chip · bold name · grey "Title, Company")
+                   [3] STAT    — left hairline divider · big proof number · small caption
+                 Cards: the raised surface and one hairline on the page surface,
+                 separated by surface contrast + radius only. No shadow, no border.
+                 Row heights held by minmax(164px, auto) so portrait never clips.
+  INSPIRATION  — Teamway "Used by Iconic companies to hire their dream teams."
+                 Layout/composition/spacing/region-vocab only; type→the single family and its two weights,
+                 photos→local assets/avatars/, stats→CR documented numbers (92%, 11.3×).
+  MOTION       — Stagger reveal (cards fade-up 0ms / 90ms) + stat count-up on first
+                 viewport entry. CSS animation gated on .in-view; fires once.
+                 data-decimals="1" keeps 11.3× through the count. No-JS: <noscript>
+                 forces cards visible; .stat-num SSR text shows final value.
+  ROW RATIOS   — Both cards: minmax(164px, auto) — content-driven height matching
+                 the reference's compact, equal-height pair.
+-->
+<noscript><style>.card{opacity:1!important;transform:none!important}</style></noscript>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Surface, section padding and the well are the pack's — SECTION_LAYOUT §16.
+     The narrow well is a CONTAINER decision, not a third text measure. */
+  .headline { margin: 0 0 var(--cr-rhythm-content); max-width: var(--cr-measure-title); }
+
+  .stack { display: flex; flex-direction: column; gap: var(--cr-space-xs); }
+
+  /* A TESTIMONIAL IS A QUOTATION, NOT A TILE. The v2 card sat on a second warm
+     surface with no border — a fill standing in for structure. The direction
+     has one page surface, so the card takes the raised surface and the single
+     hairline, and what separates the three regions is the RULE between them
+     plus the room around them. */
+  .card {
+    display: grid;
+    grid-template-columns: 200px minmax(0,1fr) 224px;
+    grid-template-rows: minmax(calc(var(--cr-space-3xl) + var(--cr-space-xs)), auto);
+    align-items: stretch;
+    overflow: hidden;                         /* portrait clips to card corners */
+    opacity: 0; transform: translateY(12px);
+  }
+  .portrait { width: 200px; height: 100%; overflow: hidden; border-radius: 0; flex-shrink: 0; }
+  .portrait img { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; display: block; }
+
+  .c-quote {
+    padding: var(--cr-space-m);
+    display: flex; flex-direction: column;
+    justify-content: space-between; gap: var(--cr-space-s);
+    min-width: 0;
+  }
+  /* The quote is BODY, not caption. It is the one thing the section exists to
+     carry, and the v2 file set it a step below its own attribution line. */
+  .quote {
+    margin: 0;
+    display: -webkit-box; -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4; overflow: hidden;
+  }
+  .attr { display: flex; align-items: center; gap: var(--cr-space-xs); flex-shrink: 0; }
+  /* The credibility mark: a filled tile with the glyph inside it (DR-3). */
+  .chip {
+    flex-shrink: 0;
+    width: 28px; height: 28px; border-radius: var(--cr-radius-control);
+    background: var(--cr-text-primary); color: var(--cr-bg-raised);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .chip img { width: 16px; height: 16px; object-fit: contain; filter: invert(1) brightness(2); }
+  .chip-ltr { font-family: var(--cr-font-display); font-weight: 500; font-size: var(--cr-text-supporting); }
+  .attr-text {}
+  .attr-name { color: var(--cr-text-primary); font-weight: 500; }
+  .attr-role { color: var(--cr-text-secondary); }
+
+  .c-stat {
+    border-left: var(--cr-stroke) solid var(--cr-border-default);
+    padding: var(--cr-space-m);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .stat-num { font-variant-numeric: tabular-nums; }
+  .stat-cap { margin-top: var(--cr-space-xs); }
+
+  .section.in-view .card {
+    animation: card-in .5s ease forwards;
+    animation-delay: var(--d, 0ms);
+  }
+  @keyframes card-in { to { opacity: 1; transform: none; } }
+  /* The guard must outrank the trigger, or it is a declaration that never
+     runs — the same defect as in `component-stat-cards`. */
+  @media (prefers-reduced-motion: reduce) {
+    .card,
+    .section.in-view .card { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* Responsive: the original's breakpoints and the original's reflow. Type
+     steps with the pack's ramp; section padding steps with `.cr-band`. */
+  @media (max-width: 860px) {
+    .card { grid-template-columns: 160px minmax(0,1fr) 180px; }
+    .portrait { width: 160px; }
+    .c-quote, .c-stat { padding: var(--cr-space-s); }
+  }
+  @media (max-width: 600px) {
+    .headline { margin-bottom: var(--cr-space-m); }
+    .card { grid-template-columns: 1fr 1fr; grid-template-rows: 160px auto; }
+    .portrait { width: 100%; height: 160px; min-height: 0; grid-column: 1 / -1; }
+    .c-quote { padding: var(--cr-space-s); grid-column: 1 / -1; }
+    .c-stat {
+      border-left: 0; border-top: var(--cr-stroke) solid var(--cr-border-default);
+      padding: var(--cr-space-s); grid-column: 1 / -1;
+      flex-direction: row; align-items: baseline; gap: var(--cr-space-xs);
+    }
+    .stat-cap { margin-top: 0; }
+    .quote { -webkit-line-clamp: 5; }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line
+     here that moved nothing. Retrofitted from measurement for the pilot
+     ten; declared before authoring from Phase 1 onward.
+  .attr      | column-gap             | spacing-scale
+  .attr      | row-gap                | spacing-scale
+  .attr-name | font-size              | type-ramp
+  .attr-name | line-height            | type-ramp
+  .attr-name | max-width              | measure
+  .attr-role | font-size              | type-ramp
+  .attr-role | line-height            | type-ramp
+  .attr-role | margin-top             | spacing-scale
+  .attr-role | max-width              | measure
+  .c-quote   | column-gap             | spacing-scale
+  .c-quote   | padding-bottom         | spacing-scale
+  .c-quote   | padding-left           | spacing-scale
+  .c-quote   | padding-right          | spacing-scale
+  .c-quote   | padding-top            | spacing-scale
+  .c-quote   | row-gap                | spacing-scale
+  .c-stat    | padding-bottom         | spacing-scale
+  .c-stat    | padding-left           | spacing-scale
+  .c-stat    | padding-right          | spacing-scale
+  .c-stat    | padding-top            | spacing-scale
+  .card      | border-bottom-width    | stroke
+  .card      | border-left-width      | stroke
+  .card      | border-radius          | radius-pair
+  .card      | border-right-width     | stroke
+  .card      | border-top-width       | stroke
+  .card      | padding-bottom         | spacing-scale
+  .card      | padding-left           | spacing-scale
+  .card      | padding-right          | spacing-scale
+  .card      | padding-top            | spacing-scale
+  .chip-ltr  | font-size              | type-ramp
+  .headline  | font-size              | type-ramp
+  .headline  | line-height            | type-ramp
+  .headline  | margin-bottom          | spacing-scale
+  .headline  | max-width              | measure
+  .quote     | font-size              | type-ramp
+  .quote     | line-height            | type-ramp
+  .quote     | max-width              | measure
+  .stat-cap  | font-size              | type-ramp
+  .stat-cap  | line-height            | type-ramp
+  .stat-cap  | margin-top             | spacing-scale
+  .stat-cap  | max-width              | measure
+  .stat-num  | font-size              | type-ramp
+  .stat-num  | line-height            | type-ramp
+  .well      | margin-left            | spacing-scale
+  .well      | margin-right           | spacing-scale
+  .well      | padding-left           | spacing-scale
+  .well      | padding-right          | spacing-scale
+-->
+
+
+<section class="section cr-band" data-archetype="editorial-split" data-hierarchy="proof" data-intent="build-trust" data-register="human" data-signature="pull-quote" data-density="medium" data-screen-label="Testimonial stack">
+  <div class="well cr-well cr-well--narrow">
+
+    <h2 class="headline cr-h-section">Trusted in Production, Not in Demos.</h2>
+
+    <div class="stack">
+
+      <!-- Card 1 ─────────────────────────────────────────────── -->
+      <article class="card cr-card" style="--d:0ms">
+        <div class="portrait">
+          <img src="../../brand-pack/assets/imagery/avatars/testimonial-1.jpg" alt="Priya Nair">
+        </div>
+        <div class="c-quote">
+          <p class="quote cr-p">Example Brand had an agent live in our SAP invoice queue in four weeks. It clears the routine work on its own and escalates the rest with a reason attached. My team stopped firefighting and started reviewing exceptions that matter.</p>
+          <div class="attr">
+            <span class="chip"><span class="chip-ltr">N</span></span>
+            <div class="attr-text">
+              <div class="attr-name cr-meta">Priya Nair</div>
+              <div class="attr-role cr-meta">VP Finance Operations, Northwind Logistics</div>
+            </div>
+          </div>
+        </div>
+        <div class="c-stat">
+          <div class="stat-num cr-num-display" data-target="92" data-suffix="%">92%</div>
+          <div class="stat-cap cr-meta">of invoices cleared without human touch.</div>
+        </div>
+      </article>
+
+      <!-- Card 2 ─────────────────────────────────────────────── -->
+      <article class="card cr-card" style="--d:90ms">
+        <div class="portrait">
+          <img src="../../brand-pack/assets/imagery/avatars/testimonial-2.jpg" alt="Daniel Brooks">
+        </div>
+        <div class="c-quote">
+          <p class="quote cr-p">We'd tried RPA twice and both times it broke when a form changed. These agents reason about the task, not the screen, so they hold up. The first pilot paid for itself before the quarter closed.</p>
+          <div class="attr">
+            <span class="chip"><span class="chip-ltr">M</span></span>
+            <div class="attr-text">
+              <div class="attr-name cr-meta">Daniel Brooks</div>
+              <div class="attr-role cr-meta">Chief Operating Officer, Meridian Health</div>
+            </div>
+          </div>
+        </div>
+        <div class="c-stat">
+          <div class="stat-num cr-num-display" data-target="11.3" data-suffix="×" data-decimals="1">11.3×</div>
+          <div class="stat-cap cr-meta">return on the pilot in year one.</div>
+        </div>
+      </article>
+
+    </div><!-- /stack -->
+  </div><!-- /well -->
+</section>
+
+<script>
+  var section = document.querySelector('.section');
+
+  function fmt(n, dec) {
+    if (n >= 1e6) return (n/1e6).toFixed(1).replace(/\.0$/,'') + 'M';
+    if (n >= 1e3) return Math.floor(n/1e3) + 'K';
+    return dec > 0 ? n.toFixed(dec) : Math.floor(n).toString();
+  }
+
+  var reduced = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  function countUp(el) {
+    var target = parseFloat(el.dataset.target);
+    var suffix = el.dataset.suffix || '';
+    var dec    = parseInt(el.dataset.decimals || '0', 10);
+    if (reduced || !isFinite(target)) { el.textContent = fmt(target,dec)+suffix; return; }
+    var dur = 1400, t0 = performance.now();
+    var ease = function(t){ return 1-Math.pow(1-t,3); };
+    function tick(now) {
+      var t = Math.min(1,(now-t0)/dur);
+      el.textContent = fmt(Math.max(0.1,target*ease(t)),dec)+suffix;
+      if (t < 1) requestAnimationFrame(tick);
+      else el.textContent = fmt(target,dec)+suffix;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          e.target.classList.add('in-view');
+          e.target.querySelectorAll('.stat-num').forEach(countUp);
+          io.unobserve(e.target);
+        }
+      });
+    }, {threshold: 0.2});
+    io.observe(section);
+  } else {
+    section.classList.add('in-view');
+    section.querySelectorAll('.stat-num').forEach(function(el){
+      el.textContent = fmt(parseFloat(el.dataset.target), parseInt(el.dataset.decimals||'0',10)) + (el.dataset.suffix||'');
+    });
+  }
+</script>
+</body>
+</html>

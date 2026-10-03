@@ -1,0 +1,16 @@
+{
+  "contractVersion": 1,
+  "id": "shared-intent-variant-a",
+  "intentDigest": "sha256:c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4",
+  "artifactType": "html",
+  "location": "test/fixtures/sprint6-negative-cases/duplicate-intent-a/visual.html",
+  "artifactDigest": "sha256:9b667005de2a6033fced99073c8acb42f3b1ad042a28ccbf61106e54d731f41b",
+  "createdAt": "2026-08-12T00:00:00.000Z",
+  "generation": {
+    "sourceSystem": "sprint6-negative-case"
+  },
+  "approval": {
+    "status": "approved",
+    "source": "sprint6-negative-case"
+  }
+}

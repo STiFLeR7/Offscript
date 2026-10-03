@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Grid · four-column-unequal   from component-results-proof.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **A named party, a measure and a mark in one field.** The profile
+              is unusually strict about this one: it is the strongest single
+              unit of proof the library holds precisely because each element
+              covers the others' weakness — the voice makes the number
+              credible, the number makes the voice specific, the mark makes
+              both checkable. So nothing here may be quietly dropped, and
+              nothing may outrank the other two.
+
+  STRUCTURE   Unchanged. Centred header over four unequal columns —
+              testimonial · portrait · measure · measure. DOM, the count-up
+              script, every `data-target` / `data-suffix` / `alt` and the
+              `src` basename are byte-compatible with the frozen original
+              (DR-22); only the asset's directory moved.
+
+  THE TWO REAL DESIGN DECISIONS — and both are DR-46's, not taste.
+
+  (1) THE CAPTION COMES OFF THE PHOTOGRAPH. v2 put the name and role directly
+              ON the portrait and won the contrast back with a gradient scrim
+              ramping to 64% black. DR-46 refuses exactly that: if the type was
+              readable only because a scrim sat on top, the photograph was a
+              surface. The DOM is frozen, so the caption cannot move to another
+              element — but it can move off the image. `.crp-c-photo` becomes a
+              column that pushes `.crp-photo-cap` to the bottom on a SOLID
+              band; the portrait fills the column behind it and is seen above
+              that band. Remove the photograph and not one word changes
+              legibility. `case-lead.jpg` itself is untouched — human /
+              portrait imagery is never substituted.
+
+  (2) THE TINTED CARD BECOMES AN ENVIRONMENT. `env-dawn-haze`, focus 55% 50%.
+              v2's third column was a 148° two-stop blue gradient, two of its
+              three colours authored as raw hex. The blanket rule replaces every
+              abstract creative background with an approved environment
+              photograph — and a stat card is almost entirely type, which is
+              exactly the case the rule anticipates: give the TYPE its own
+              opaque surface so the photograph can still go in. The card is a
+              column justified to its end; its label, measure and mark share one
+              continuous solid band at the bottom, and the environment is seen
+              above it. Roughly two fifths of the card is photograph and none of
+              it is behind a word.
+
+              The stack is ONE background — grain, grunge, environment — because
+              a blend mode composites against what is beneath it in the SAME
+              background; on a pseudo-element `overlay` resolves against
+              transparency and renders as grey static. The URLs are written out
+              rather than reached through `--cr-env-*`, because a `url()` inside
+              a custom property resolves against the CONSUMING document and
+              fails silently.
+
+              The two dark bands in this section are the same device used twice
+              — an opaque type surface in front of a picture — not a dark-tier
+              inversion. The section's own surface stays the page ground.
+
+  ACCENT      One moment: the square mark beside the eyebrow. It is a mark, not
+              a measure — orange marks a rule, a fill or a control, and never a
+              numeral. Everything else, including the "Read full story" link and
+              both measures, is ink; the link's affordance is its underline.
+
+  RESPONSIVE  The original's breakpoints (1100 / 840 / 600), unchanged, columns
+              and all. Type steps on the pack's own ramp at 1024 and 700.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CR — Results &amp; Case Study</title>
+  <link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--cr-page-ground);
+      font-family: var(--cr-font-body);
+      color: var(--cr-text-secondary);
+      font-size: var(--cr-text-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Entrance animations (CSS keyframe — fires with virtual-time-budget) ── */
+    @keyframes cr-up {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .crp-head {
+        animation: cr-up .65s cubic-bezier(.16,1,.3,1) both;
+      }
+      .crp-grid {
+        animation: cr-up .65s cubic-bezier(.16,1,.3,1) both;
+        animation-delay: .12s;
+      }
+    }
+
+    /* ── Section shell ──────────────────────────────────────────── */
+    .crp {
+      padding: var(--cr-space-2xl) var(--cr-page-gutter);
+      background: var(--cr-page-ground);
+    }
+
+    .crp-well {
+      max-width: var(--cr-content-max);
+      margin: 0 auto;
+    }
+
+    /* ── Header ─────────────────────────────────────────────────── */
+    .crp-head {
+      text-align: center;
+      margin-bottom: var(--cr-rhythm-content);
+    }
+
+    /* Supporting text is never uppercase and never tracked; the mark beside it
+       is what makes it read as an opening line. */
+    .crp-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--cr-space-xs);
+      font-size: var(--cr-text-supporting);
+      font-weight: 400;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--cr-text-secondary);
+      margin-bottom: var(--cr-space-s);
+    }
+
+    /* THE SECTION'S ONE ACCENT MOMENT — the system's square mark, at the
+       system's mark size and the system's mark radius. */
+    .crp-dot {
+      display: inline-block;
+      width: var(--cr-marker-size);
+      height: var(--cr-marker-size);
+      background: var(--cr-accent-orange);
+      border-radius: var(--cr-marker-radius);
+      flex-shrink: 0;
+    }
+
+    .crp-title {
+      font-family: var(--cr-font-display);
+      font-weight: 400;
+      font-size: var(--cr-text-h2);
+      line-height: var(--cr-leading-heading);
+      letter-spacing: var(--cr-tracking-heading);
+      color: var(--cr-text-primary);
+      max-width: var(--cr-measure-title);
+      margin: 0 auto;
+    }
+
+    /* ── 4-col open grid — no outer frame, cards float freely ────
+       The unequal tracks ARE the section and do not move. */
+    .crp-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 0.82fr 1fr 0.88fr;
+      gap: var(--cr-space-s);
+      min-height: calc(var(--cr-space-2xl) * 3);
+      align-items: stretch;
+    }
+
+    .crp-col {
+      display: flex;
+      flex-direction: column;
+      border: var(--cr-stroke) solid var(--cr-border-default);
+      border-radius: var(--cr-radius-card);
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    /* ── Col 1 · testimonial ────────────────────────────────────── */
+    .crp-c-text { padding: var(--cr-space-s); }
+
+    .crp-company {
+      display: flex;
+      align-items: center;
+      gap: var(--cr-space-xs);
+      margin-bottom: var(--cr-space-s);
+    }
+
+    .crp-company-name {
+      font-family: var(--cr-font-display);
+      font-weight: 400;
+      font-size: var(--cr-text-body);
+      letter-spacing: var(--cr-tracking-heading);
+      color: var(--cr-text-primary);
+    }
+
+    .crp-quote {
+      font-size: var(--cr-text-body);
+      line-height: var(--cr-leading-body);
+      color: var(--cr-text-secondary);
+      flex: 1;
+    }
+
+    /* Links read as primary text; the underline carries the affordance. The v2
+       link spent brand blue on it, which is colour doing a job an underline
+       already does. */
+    .crp-link {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--cr-space-xs);
+      margin-top: var(--cr-space-s);
+      font-size: var(--cr-text-supporting);
+      font-weight: 500;
+      color: var(--cr-text-primary);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      flex-shrink: 0;
+    }
+    .crp-link .arr { display: inline-block; transition: transform .15s; }
+    .crp-link:hover .arr { transform: translateX(4px); }
+
+    /* ── Col 2 · the portrait, and its caption on its OWN band ────
+       The column is a flex column justified to its end; the image fills it
+       behind, the caption sits on an opaque surface in front. The v2 `::after`
+       scrim ramping to 64% black has nothing left to do, so it is gone rather
+       than re-tuned. */
+    .crp-c-photo {
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .crp-c-photo img {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    /* THE BRAND WASH — directed, DR-52. v2's own gradient re-taken: the column
+       runs from an unveiled portrait at the top to the direction's dark ink at
+       the bottom, and the caption is where the ramp has arrived at full
+       strength. Every stop is `--cr-bg-dark` at a strength, mixed toward
+       transparent rather than toward a second colour, so no new value enters
+       the file and the wash cannot drift off the palette.
+
+       IT IS DECLARED ON THE COLUMN, NOT ON THE CAPTION. A gradient does not
+       span siblings: put it on each element that holds a line and the ramp
+       restarts at every one of them, drawing exactly the seams the opaque band
+       existed to avoid. The column is the one box that covers the region the
+       wash has to cross. Generated content, not a node — the DOM is frozen. */
+    .crp-c-photo::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(180deg,
+        color-mix(in srgb, var(--cr-bg-dark) 0%, transparent) 0%,
+        color-mix(in srgb, var(--cr-bg-dark) 46%, transparent) 38%,
+        var(--cr-bg-dark) 70%);
+    }
+
+    .crp-photo-cap {
+      position: relative;
+      z-index: 1;
+      padding: var(--cr-space-s);
+      background: var(--cr-bg-dark);
+      display: flex;
+      flex-direction: column;
+      gap: var(--cr-space-xs);
+    }
+
+    .crp-photo-name {
+      font-family: var(--cr-font-display);
+      font-weight: 500;
+      font-size: var(--cr-text-supporting);
+      color: var(--cr-text-inverse);
+    }
+
+    .crp-photo-role {
+      font-size: var(--cr-text-supporting);
+      color: var(--cr-text-inverse);
+      opacity: .82;
+    }
+
+    /* ── Col 3 & 4 · stat cards ─────────────────────────────────
+       Both are columns justified to their end, so the measure sits low in the
+       field and the air above it is the card. That is what lets column 3 hold
+       a photograph in exactly the same composition column 4 holds nothing. */
+    .crp-c-stat {
+      padding: var(--cr-space-s);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    /* THE ENVIRONMENT. One stack, three layers: grain on top, grunge under it,
+       the environment underneath both. The last background-position is the
+       asset's measured focus from ASSETS.md, not a guess. */
+    /* The height is declared on the CARD, not left to the grid row. At 1440 the
+       row is taller than this and the line is inert; at 840 the four columns
+       become 2×2 and this card shares a row with the plain one, where nothing
+       has intrinsic height — the row would collapse to the band and the
+       photograph would vanish at exactly one of the three measured viewports. A
+       picture that survives only where a sibling happens to be tall is not a
+       surface. */
+    .crp-stat-tint {
+      padding: 0;
+      min-height: calc(var(--cr-space-2xl) * 3);
+      background-color: var(--cr-bg-dark);
+      /* THE BRAND WASH RIDES THE SAME STACK — directed, DR-52. First layer, so
+         it sits over the treatment rather than under it, and it blends
+         `normal`: an `overlay` here would composite the wash against the
+         environment instead of covering it, and the card would ramp toward a
+         tint rather than toward the ink. Every other list gains a matching
+         first entry — the four are read in parallel and a missing one shifts
+         every layer beneath it.
+
+         THE RAMP FINISHES ABOVE THE BAND, AND THAT IS MEASURED. This card's
+         band starts at 37% of the card at 1440, 47% at 390 and 59% at 1024, so
+         the wash resolves to full ink by 34% and everything below it is one
+         flat surface. Run to 100% instead and the label sits mid-ramp over the
+         lake's bright water: measured 3.56:1, under AA, which is the case
+         DR-46 was written about. Nothing about the wash changes — same
+         direction, same stops, same ink — only where it has finished. */
+      background-image:
+        linear-gradient(180deg,
+          color-mix(in srgb, var(--cr-bg-dark) 0%, transparent) 0%,
+          color-mix(in srgb, var(--cr-bg-dark) 46%, transparent) 19%,
+          var(--cr-bg-dark) 34%),
+        url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+        url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+        url("../../brand-pack/assets/imagery/environments/env-dawn-haze.jpg");
+      background-size: cover, var(--cr-texture-noise-size, auto), cover, cover;
+      background-position: 0 0, 0 0, center, 55% 50%;
+      background-blend-mode: normal, var(--cr-texture-noise-blend, overlay), overlay, normal;
+      background-repeat: no-repeat, repeat, no-repeat, no-repeat;
+    }
+    /* The three children carried ONE continuous opaque band at the foot of the
+       card, assembled from the elements that already exist because the DOM is
+       frozen. The wash now runs the whole card from the rule above, so they
+       carry no surface — a gradient cannot span three siblings, and giving
+       each one its own would restart the ramp three times and draw two seams
+       across the band. */
+    .crp-stat-tint .crp-stat-lbl,
+    .crp-stat-tint .crp-stat-n,
+    .crp-stat-tint .crp-stat-logo {
+      background: var(--cr-bg-dark);
+      padding-left: var(--cr-space-s);
+      padding-right: var(--cr-space-s);
+    }
+    .crp-stat-tint .crp-stat-lbl {
+      padding-top: var(--cr-space-s);
+      margin-bottom: 0;
+      padding-bottom: var(--cr-space-xs);
+      color: var(--cr-text-inverse);
+      /* NO `opacity` here. This element IS part of the band, so opacity would
+         make the band itself translucent and let the photograph through the
+         label — a scrim assembled by accident. Fading is only ever safe on an
+         element whose own background is transparent. */
+    }
+    .crp-stat-tint .crp-stat-n        { color: var(--cr-text-inverse); }
+    /* margin-top:0 — a 12px margin here would let the photograph through the
+       middle of the band, and a band with a hole in it is a scrim by another
+       name. The air the mark needs comes from padding, which is inside the
+       opaque surface. */
+    .crp-stat-tint .crp-stat-logo {
+      border-top-color: var(--cr-line-dark);
+      margin-top: 0;
+      padding-top: var(--cr-space-s);
+      padding-bottom: var(--cr-space-s);
+    }
+    .crp-stat-tint .crp-stat-logo-name { color: var(--cr-text-inverse); }
+    /* CSS fill override for the inline SVG on the dark band */
+    .crp-stat-tint .crp-stat-logo svg rect { fill: var(--cr-text-inverse); }
+
+    .crp-stat-lbl {
+      font-size: var(--cr-text-supporting);
+      font-weight: 400;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--cr-text-secondary);
+      line-height: var(--cr-leading-body);
+      margin-bottom: var(--cr-space-xs);
+    }
+
+    /* Tabular figures so the digits do not wobble while the count runs. */
+    .crp-stat-n {
+      font-family: var(--cr-font-display);
+      font-weight: 400;
+      font-size: var(--cr-text-h1);
+      line-height: var(--cr-leading-heading);
+      letter-spacing: var(--cr-tracking-heading);
+      color: var(--cr-text-primary);
+      font-variant-numeric: tabular-nums;
+      display: block;
+    }
+
+    .crp-stat-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--cr-space-xs);
+      padding-top: var(--cr-space-xs);
+      border-top: var(--cr-stroke) solid var(--cr-border-default);
+      margin-top: var(--cr-space-xs);
+    }
+
+    .crp-stat-logo-name {
+      font-family: var(--cr-font-display);
+      font-weight: 400;
+      font-size: var(--cr-text-supporting);
+      letter-spacing: var(--cr-tracking-heading);
+      color: var(--cr-text-primary);
+    }
+
+    /* ── Responsive — the ORIGINAL's breakpoints and moves ──────── */
+    @media (max-width: 1100px) {
+      .crp { padding: var(--cr-space-xl) var(--cr-page-gutter); }
+    }
+
+    @media (max-width: 840px) {
+      .crp { padding: var(--cr-space-xl) var(--cr-page-gutter); }
+      .crp-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* Stacked, the portrait column loses the height the grid row was giving it
+       too, and a photograph that is only a strip above a band is not a surface
+       — it is the sliver DR-46 exists to prevent. (The environment card already
+       carries its own height, above.) */
+    @media (max-width: 600px) {
+      .crp { padding: var(--cr-space-m) var(--cr-page-gutter); }
+      .crp-title { max-width: none; }
+      .crp-grid { grid-template-columns: 1fr; }
+      .crp-c-photo { min-height: calc(var(--cr-space-2xl) * 3); }
+    }
+  </style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. THREE lines are marked `directed`, and they are one decision:
+     DR-46 required the portrait's caption and the stat card's type to come off
+     the photographs they were sitting on. The DOM is frozen, so the only way to
+     do that is to reflow the two columns — the image becomes an absolutely
+     positioned fill (its min-height), the caption becomes a flex item on a
+     solid band (its min-height), and the measure stops being the flex spacer
+     that pushed the type over the picture (its flex-basis; the mark's
+     margin-top is on the spacing scale). The four unequal tracks, the
+     breakpoints and every other proportion are the original's.
+  .arr                | font-size              | type-ramp
+  .crp-col            | font-size              | type-ramp
+  .crp-col            | min-height             | spacing-scale
+  .crp-col            | padding-bottom         | spacing-scale
+  .crp-col            | padding-left           | spacing-scale
+  .crp-col            | padding-right          | spacing-scale
+  .crp-col            | padding-top            | spacing-scale
+  .crp-company        | column-gap             | spacing-scale
+  .crp-company        | font-size              | type-ramp
+  .crp-company        | row-gap                | spacing-scale
+  .crp-company-name   | font-size              | type-ramp
+  .crp-eyebrow        | column-gap             | spacing-scale
+  .crp-eyebrow        | font-size              | type-ramp
+  .crp-eyebrow        | margin-bottom          | spacing-scale
+  .crp-eyebrow        | row-gap                | spacing-scale
+  .crp-grid           | column-gap             | spacing-scale
+  .crp-grid           | font-size              | type-ramp
+  .crp-grid           | min-height             | spacing-scale
+  .crp-grid           | row-gap                | spacing-scale
+  .crp-head           | font-size              | type-ramp
+  .crp-head           | margin-bottom          | spacing-scale
+  .crp-link           | column-gap             | spacing-scale
+  .crp-link           | font-size              | type-ramp
+  .crp-link           | margin-top             | spacing-scale
+  .crp-link           | row-gap                | spacing-scale
+  .crp-photo-cap      | column-gap             | spacing-scale
+  .crp-photo-cap      | font-size              | type-ramp
+  .crp-photo-cap      | min-height             | directed
+  .crp-photo-cap      | padding-bottom         | spacing-scale
+  .crp-photo-cap      | padding-left           | spacing-scale
+  .crp-photo-cap      | padding-right          | spacing-scale
+  .crp-photo-cap      | padding-top            | spacing-scale
+  .crp-photo-cap      | row-gap                | spacing-scale
+  .crp-photo-name     | font-size              | type-ramp
+  .crp-photo-role     | font-size              | type-ramp
+  .crp-quote          | font-size              | type-ramp
+  .crp-quote          | line-height            | type-ramp
+  .crp-stat-lbl       | font-size              | type-ramp
+  .crp-stat-lbl       | line-height            | type-ramp
+  .crp-stat-lbl       | margin-bottom          | spacing-scale
+  .crp-stat-lbl       | padding-bottom         | spacing-scale
+  .crp-stat-lbl       | padding-left           | spacing-scale
+  .crp-stat-lbl       | padding-right          | spacing-scale
+  .crp-stat-lbl       | padding-top            | spacing-scale
+  .crp-stat-logo      | column-gap             | spacing-scale
+  .crp-stat-logo      | font-size              | type-ramp
+  .crp-stat-logo      | margin-top             | spacing-scale
+  .crp-stat-logo      | padding-bottom         | spacing-scale
+  .crp-stat-logo      | padding-left           | spacing-scale
+  .crp-stat-logo      | padding-right          | spacing-scale
+  .crp-stat-logo      | padding-top            | spacing-scale
+  .crp-stat-logo      | row-gap                | spacing-scale
+  .crp-stat-logo-name | font-size              | type-ramp
+  .crp-stat-n         | flex-basis             | directed
+  .crp-stat-n         | font-size              | type-ramp
+  .crp-stat-n         | line-height            | type-ramp
+  .crp-stat-n         | padding-left           | spacing-scale
+  .crp-stat-n         | padding-right          | spacing-scale
+  .crp-title          | font-size              | type-ramp
+  .crp-title          | line-height            | type-ramp
+  .crp-title          | margin-left            | spacing-scale
+  .crp-title          | margin-right           | spacing-scale
+  .crp-title          | max-width              | measure
+  .crp-well           | font-size              | type-ramp
+  br                  | font-size              | type-ramp
+  br                  | line-height            | type-ramp
+  img                 | font-size              | type-ramp
+  img                 | min-height             | directed
+  path                | font-size              | type-ramp
+  rect                | font-size              | type-ramp
+  svg                 | font-size              | type-ramp
+-->
+
+  <section class="crp" data-screen-label="Results &amp; Case Study"
+           data-archetype="proof-layout" data-hierarchy="proof" data-intent="prove"
+           data-register="confident" data-signature="editorial-photography" data-density="high">
+    <div class="crp-well">
+
+      <!-- Header -->
+      <header class="crp-head">
+        <p class="crp-eyebrow"><span class="crp-dot" aria-hidden="true"></span>Results and Case Studies</p>
+        <h2 class="crp-title">Trusted by Operations<br>Leaders Worldwide.</h2>
+      </header>
+
+      <!-- 4-col open proof grid -->
+      <div class="crp-grid">
+
+        <!-- Col 1: Company + testimonial -->
+        <div class="crp-col crp-c-text">
+          <div class="crp-company">
+            <!-- MedFlow logo mark: medical cross -->
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M10 2v16M2 10h16" stroke="var(--cr-fg)" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+            <span class="crp-company-name">MedFlow</span>
+          </div>
+          <p class="crp-quote">
+            CR completely changed how our billing team operates. Instead of chasing exceptions across four systems, every claim routes automatically — and the ones that need human attention are flagged before they become a problem. We freed up twelve analysts in the first quarter alone.
+          </p>
+          <a href="#" class="crp-link">Read full story <span class="arr">→</span></a>
+        </div>
+
+        <!-- Col 2: Full-bleed portrait -->
+        <div class="crp-col crp-c-photo">
+          <img src="../../brand-pack/assets/imagery/avatars/case-lead.jpg" alt="Vikram Mehta, VP Operations at MedFlow">
+          <div class="crp-photo-cap">
+            <span class="crp-photo-name">Vikram Mehta</span>
+            <span class="crp-photo-role">VP Operations @MedFlow</span>
+          </div>
+        </div>
+
+        <!-- Col 3: Stat — environment behind, type on its own band -->
+        <div class="crp-col crp-c-stat crp-stat-tint">
+          <p class="crp-stat-lbl">Routine Work<br>Automated</p>
+          <div class="crp-stat-n" data-target="80" data-suffix="%">80%</div>
+          <div class="crp-stat-logo">
+            <!-- NovaCorp logo mark: 4-square grid -->
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <rect x="1" y="1" width="6" height="6" rx="1" fill="var(--cr-fg)"/>
+              <rect x="9" y="1" width="6" height="6" rx="1" fill="var(--cr-fg)"/>
+              <rect x="1" y="9" width="6" height="6" rx="1" fill="var(--cr-fg)"/>
+              <rect x="9" y="9" width="6" height="6" rx="1" fill="var(--cr-fg)"/>
+            </svg>
+            <span class="crp-stat-logo-name">NovaCorp</span>
+          </div>
+        </div>
+
+        <!-- Col 4: Stat — page surface -->
+        <div class="crp-col crp-c-stat">
+          <p class="crp-stat-lbl">Operations Cost<br>Removed</p>
+          <div class="crp-stat-n" data-target="92" data-suffix="%">92%</div>
+          <div class="crp-stat-logo">
+            <!-- Meridian logo mark: diamond outline -->
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 1L15 8L8 15L1 8L8 1Z" stroke="var(--cr-fg)" stroke-width="1.5"/>
+            </svg>
+            <span class="crp-stat-logo-name">Meridian</span>
+          </div>
+        </div>
+
+      </div><!-- /crp-grid -->
+
+    </div><!-- /crp-well -->
+  </section>
+
+  <script>
+    /* Stat count-up on scroll entry (progressive enhancement — HTML shows final value without JS) */
+    const canAnim = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const countIO = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        const target = parseInt(el.dataset.target, 10);
+        const suffix = el.dataset.suffix || '';
+        if (!canAnim) { el.textContent = target + suffix; countIO.unobserve(el); return; }
+        let t0 = null;
+        const dur = 1100;
+        const tick = ts => {
+          if (!t0) t0 = ts;
+          const p = Math.min((ts - t0) / dur, 1);
+          el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * target) + suffix;
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+        countIO.unobserve(el);
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('[data-target]').forEach(el => countIO.observe(el));
+  </script>
+</body>
+</html>

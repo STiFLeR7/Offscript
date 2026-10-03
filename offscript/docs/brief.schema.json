@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example-brand.dev/offscript/brief.schema.json",
+  "title": "Offscript Brief frontmatter (schemaVersion 1)",
+  "description": "Machine-readable form of the Offscript Brief Contract (docs/BRIEF-CONTRACT.md). Describes the YAML frontmatter of projects/<client>/references/brief.md. The engine's parser (src/generate/brief.ts) is the authoritative implementation; this artifact lets an external content-engine to brief adapter validate its output before handing off. The brief carries INTENT ONLY — no governance/claims/approval semantics belong here.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schemaVersion", "track", "one-liner"],
+  "properties": {
+    "schemaVersion": {
+      "description": "Contract major version. Must be in the engine's SUPPORTED_BRIEF_VERSIONS.",
+      "type": "integer",
+      "enum": [1]
+    },
+    "track": {
+      "description": "Deliverable track. 'deck' is currently blocked at runtime.",
+      "type": "string",
+      "enum": ["website", "collateral", "deck"]
+    },
+    "one-liner": {
+      "description": "The single reader-outcome the deliverable must land.",
+      "type": "string",
+      "minLength": 1
+    },
+    "brand": {
+      "description": "Display name. Defaults to the titleized client id when absent.",
+      "type": "string"
+    },
+    "audience": {
+      "description": "Who arrives, and what they already believe or doubt.",
+      "type": "string"
+    },
+    "goals": {
+      "description": "Ordered list, most important first.",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "must-include": {
+      "description": "Named sections the deliverable must carry — the job, not a component.",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "tone": {
+      "description": "Voice / register. Taste only — never colours, sizes, or components.",
+      "type": "string"
+    },
+    "success-criteria": {
+      "description": "What a successful encounter ends in.",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "parent_url": {
+      "description": "Parent brand to inherit palette/type/conventions from (Rule 0).",
+      "type": "string"
+    },
+    "source-doc": {
+      "description": "Path (relative to references/) to long-form grounding copy; the sanctioned channel for an adapter to pass a governed packet body as verbatim copy.",
+      "type": "string"
+    },
+    "provenance": {
+      "description": "Opaque, audit-only upstream stamp. Recorded verbatim into manifest.json; never interpreted by the engine. All values coerced to strings. Keys are open — an adapter may add any (e.g. sourceSystem, packetId, packetStatus, packetVersion, sourceHash).",
+      "type": "object",
+      "additionalProperties": { "type": ["string", "number", "boolean"] }
+    }
+  },
+  "$comment": "additionalProperties is true because the engine tolerates (and warns on) unknown frontmatter keys for forward-compatibility. An adapter that wants strict output can set this to false locally."
+}

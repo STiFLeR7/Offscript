@@ -1,0 +1,12 @@
+{
+  "id": "throughput-recovery-summary",
+  "contractVersion": 1,
+  "digest": "sha256:5555555555555555555555555555555555555555555555555555555555555e",
+  "belief": "Recovered operational capacity is visible as a single trend line.",
+  "feature": "analytics",
+  "ratio": "1:1",
+  "camera": "establishing",
+  "mustInclude": ["throughput", "recovery", "trend"],
+  "contentProvenance": "human",
+  "section": "cta"
+}

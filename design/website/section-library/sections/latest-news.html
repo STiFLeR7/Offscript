@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR &middot; Latest news</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css" />
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Latest news                     from component-latest-news.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  A press-coverage grid: three cards, each a logo lockup plate
+                over a date and a headline. Its sibling section carries the
+                same geometry and an entirely different claim — that one
+                offers the company's OWN writing, this one shows who else
+                wrote about it.
+
+  THE CLAIM     **The authority is borrowed, so the voice stays quiet.**
+                Every decision below follows from that one sentence.
+
+  STRUCTURE     Unchanged. Header row, then a three-column grid of three
+                articles, each a fixed-height image region over a body. DOM
+                order, element types and depth are byte-compatible with the
+                frozen original (DR-22).
+
+  ENVIRONMENT   NONE — no abstract background, and this is a REPORT, not a
+                skipped step. Three abstract plates were retired here: two
+                authored washes and one blur plate. None of the three could
+                take an environment photograph in their place, for the reason
+                the rule itself names.
+
+                Each plate's ENTIRE content is a pair of wordmarks — a partner
+                mark, a hairline separator, the Example Brand mark — centred, with
+                nothing else in the region. A photograph behind a wall of
+                wordmarks is the named prohibition, and the split that rescues
+                a type-bearing surface elsewhere in this library does not apply:
+                there is no type-free region to give the picture, because the
+                region's only role IS to hold type. Relocating the lockup to
+                one edge and plating it would manufacture the gap rather than
+                find one, which is a composition change and not a substitution.
+
+                The tell is the third card. Its mark is the WHITE wordmark, a
+                frozen asset; any plate that reads as light erases it. A move
+                that forces three different plate treatments to keep three
+                frozen assets visible has stopped being a substitution. So the
+                three plates become flat governed surfaces: the quiet cream
+                step under the two dark lockups, the dark step under the white
+                one. `env-massif-banded` was available for this file and is
+                deliberately unspent.
+
+                That third plate is a REAL consequence, not a technicality to
+                wave past. One card in three now reads darker than its
+                siblings, permanently, because of which asset file its outlet
+                shipped. It is why this section's signature is a colour
+                interruption: the interruption is genuinely there, it is
+                genuinely load-bearing, and the honest thing is to name it
+                rather than to describe a near-black block as a neutral
+                consequence of legibility.
+
+  IMAGERY       All three images KEPT, and all three are WORDMARKS rather than
+                photographs: logo-color twice, logo-white once. Nothing here is
+                a creative frame, so nothing here is substitutable. Only their
+                directory moved; the basenames are the same files.
+
+  ACCENT        ZERO — and that is the distinction from the sibling grid, made
+                in the one currency the direction has. Both sections are card
+                grids of articles and the profile says the geometry is nearly
+                identical; what differs is that owned writing is offered and
+                borrowed authority is merely shown. A section whose whole
+                argument is other people's mastheads does not also raise a
+                hand. The CTA is the primary control and takes primary ink and
+                a hairline, which is what a quiet control looks like here.
+
+  MOTION        The source's entrance rise had NO reduced-motion guard — the
+                one animation in the file ran unconditionally. A guard is added
+                at the animating selector's own specificity, so the card SNAPS
+                to its final position rather than being re-hidden by a weaker
+                rule.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+/* ── Reset ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--cr-page-ground); font-family: var(--cr-font-body); }
+
+/* ── Section ────────────────────────────────────────────── */
+/* The page ground, with the cards raised on white above it — one page
+   surface and one raised surface, which is the whole vocabulary. */
+.news-section {
+  background: var(--cr-page-ground);
+  padding: var(--cr-space-xl) var(--cr-page-gutter);
+}
+
+/* ── Well ───────────────────────────────────────────────── */
+.news-well {
+  max-width: var(--cr-content-max);
+  margin: 0 auto;
+}
+
+/* ── Header row ─────────────────────────────────────────── */
+.news-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: var(--cr-space-m);
+}
+
+.news-title {
+  font-family: var(--cr-font-display);
+  font-weight: 400;
+  font-size: var(--cr-text-h3);
+  line-height: var(--cr-leading-heading);
+  letter-spacing: var(--cr-tracking-heading);
+  color: var(--cr-text-primary);
+  margin-bottom: var(--cr-space-xs);
+}
+
+.news-sub {
+  font-family: var(--cr-font-body);
+  font-weight: 400;
+  font-size: var(--cr-text-supporting);
+  line-height: var(--cr-leading-body);
+  color: var(--cr-text-secondary);
+}
+
+/* The primary control, and it spends no accent. Primary ink on a hairline is
+   what the eye lands on here because it is the darkest thing on a quiet
+   band — not because it is coloured. */
+.btn-view-all {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--cr-space-xs) var(--cr-space-s);
+  border: var(--cr-stroke) solid var(--cr-text-primary);
+  border-radius: var(--cr-radius-control);
+  font-family: var(--cr-font-body);
+  font-weight: 500;
+  font-size: var(--cr-text-supporting);
+  line-height: var(--cr-leading-body);
+  color: var(--cr-text-primary);
+  background: transparent;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 150ms ease;
+  flex-shrink: 0;
+}
+.btn-view-all:hover { background: var(--cr-surface-5); }
+
+/* ── Card grid ──────────────────────────────────────────── */
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--cr-space-s);
+}
+
+/* ── Card ───────────────────────────────────────────────── */
+.news-card {
+  background: var(--cr-bg-raised);
+  border-radius: var(--cr-radius-card);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  /* transform-only stagger — never hides the card, safe for screenshots */
+  animation: card-rise 400ms ease both;
+}
+.news-card:nth-child(1) { animation-delay: 0ms; }
+.news-card:nth-child(2) { animation-delay: 80ms; }
+.news-card:nth-child(3) { animation-delay: 160ms; }
+
+@keyframes card-rise {
+  from { transform: translateY(20px); }
+  to   { transform: translateY(0); }
+}
+
+/* THE GUARD THE SOURCE DID NOT HAVE. Declared at the animating selector's own
+   specificity so it wins, and the card lands on its final position instead of
+   travelling to it. */
+@media (prefers-reduced-motion: reduce) {
+  .news-card:nth-child(1),
+  .news-card:nth-child(2),
+  .news-card:nth-child(3),
+  .news-card { animation: none; transform: none; }
+}
+
+/* ── Card image region ──────────────────────────────────── */
+.card-image {
+  position: relative;
+  height: 230px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* THE THREE RETIRED PLATES. Each was an abstract creative background — two
+   authored washes and one blur plate — and each holds a wordmark pair and
+   nothing else, which is the one place the blanket rule says a photograph
+   does not go. They become flat governed surfaces instead.
+
+   Cards one and two take the quiet cream step, inset against the white card.
+   Card three takes the dark step because its mark is the WHITE wordmark and a
+   light plate would erase a frozen asset. That is legibility, not a wash. */
+.card-image.bg-blue { background: var(--cr-surface-5); }
+.card-image.bg-cool { background: var(--cr-surface-5); }
+.card-image.bg-navy { background: var(--cr-bg-dark); }
+
+/* ── Badge ──────────────────────────────────────────────── */
+/* Its own opaque surface, so the label reads the same on the cream plate and
+   on the dark one. Supporting text: no uppercase, no tracking. */
+.card-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: var(--cr-space-xs);
+  background: var(--cr-surface-1);
+  border: var(--cr-stroke) solid var(--cr-border-default);
+  border-radius: var(--cr-radius-control);
+  font-family: var(--cr-font-body);
+  font-weight: 500;
+  font-size: var(--cr-text-supporting);
+  line-height: 1;
+  color: var(--cr-text-secondary);
+}
+
+/* ── Logo pair ──────────────────────────────────────────── */
+.logo-pair {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cr-space-s);
+  width: 100%;
+  padding: 0 var(--cr-space-s);
+  position: relative;
+  z-index: 1;
+}
+
+.logo-sep {
+  width: var(--cr-stroke);
+  height: 44px;
+  background: var(--cr-border-default);
+  flex-shrink: 0;
+}
+.bg-navy .logo-sep { background: var(--cr-neutral-400); }
+
+/* CR wordmark */
+.logo-cr {
+  height: 30px;
+  object-fit: contain;
+  flex-shrink: 0;
+  max-width: 140px;
+}
+
+/* Partner marks — set text, not a facsimile. These are words, so they are
+   typeset in the pack's face at the pack's weights; nothing in the system
+   renders at 700 or above, and a heavier weight only ever imitated a logotype
+   the section does not own. The icon takes its colour from the text beside it
+   rather than from an authored value on the element. */
+.logo-partner {
+  display: flex;
+  align-items: center;
+  gap: var(--cr-space-xs);
+  line-height: 1;
+  flex-shrink: 0;
+}
+.logo-partner svg { stroke: currentColor; stroke-width: var(--cr-icon-stroke-md); }
+
+.logo-sap {
+  font-family: var(--cr-font-display);
+  font-weight: 500;
+  font-size: var(--cr-text-h5);
+  letter-spacing: var(--cr-tracking-heading);
+  color: var(--cr-text-primary);
+}
+
+.logo-sf {
+  font-family: var(--cr-font-display);
+  font-weight: 500;
+  font-size: var(--cr-text-h6);
+  letter-spacing: var(--cr-tracking-heading);
+  color: var(--cr-text-primary);
+}
+
+/* On the dark plate, inverse ink at 14.4:1 — the pack's dark-surface pairing. */
+.logo-oracle {
+  font-family: var(--cr-font-display);
+  font-weight: 500;
+  font-size: var(--cr-text-h5);
+  letter-spacing: var(--cr-tracking-heading);
+  color: var(--cr-text-inverse);
+}
+
+/* ── Card content ───────────────────────────────────────── */
+.card-body {
+  padding: var(--cr-space-s);
+  display: flex;
+  flex-direction: column;
+  gap: var(--cr-space-xs);
+  flex: 1;
+}
+
+.card-date {
+  font-family: var(--cr-font-body);
+  font-size: var(--cr-text-supporting);
+  line-height: var(--cr-leading-body);
+  color: var(--cr-text-secondary);
+  font-weight: 400;
+}
+
+.card-title {
+  font-family: var(--cr-font-display);
+  font-weight: 500;
+  font-size: var(--cr-text-h6);
+  line-height: var(--cr-leading-heading);
+  color: var(--cr-text-primary);
+  letter-spacing: var(--cr-tracking-heading);
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+/* NO per-section type breakpoint and no per-section gutter: the ramp steps at
+   the pack's own breakpoints and the gutter token is already responsive. What
+   remains here is column count, which is layout and stays exactly as it was. */
+@media (max-width: 960px) {
+  .news-grid { grid-template-columns: 1fr 1fr; gap: var(--cr-space-s); }
+}
+
+@media (max-width: 640px) {
+  .news-header { flex-direction: column; align-items: flex-start; gap: var(--cr-space-s); }
+  .news-grid   { grid-template-columns: 1fr; gap: var(--cr-space-s); }
+}
+</style>
+</head>
+
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. Three notes on lines that are not plain spacing.
+
+     The two stroke-width rows are the partner icons moving onto the pack's
+     icon weights; 2.2 and 2 are not weights the system has.
+
+     The svg and path font-size and line-height rows are inheritance, not a
+     decision. The icon sits inside the partner lockup as an inline sibling of
+     its text, so re-typesetting that text moves the font metrics the icon box
+     inherits. Nothing about the icon's own drawn size changed.
+
+     Every remaining row is the closed spacing scale, the type ramp or the
+     radius pair. There is no ratio row, because this section owns no creative
+     frame: its three image regions hold wordmarks.
+  .btn-view-all | border-radius          | radius-pair
+  .btn-view-all | font-size              | type-ramp
+  .btn-view-all | line-height            | type-ramp
+  .btn-view-all | padding-bottom         | spacing-scale
+  .btn-view-all | padding-left           | spacing-scale
+  .btn-view-all | padding-right          | spacing-scale
+  .btn-view-all | padding-top            | spacing-scale
+  .card-badge   | border-radius          | radius-pair
+  .card-badge   | font-size              | type-ramp
+  .card-badge   | line-height            | type-ramp
+  .card-badge   | padding-bottom         | spacing-scale
+  .card-badge   | padding-top            | spacing-scale
+  .card-body    | column-gap             | spacing-scale
+  .card-body    | padding-bottom         | spacing-scale
+  .card-body    | row-gap                | spacing-scale
+  .card-date    | font-size              | type-ramp
+  .card-date    | line-height            | type-ramp
+  .card-title   | font-size              | type-ramp
+  .card-title   | line-height            | type-ramp
+  .logo-pair    | column-gap             | spacing-scale
+  .logo-pair    | padding-left           | spacing-scale
+  .logo-pair    | padding-right          | spacing-scale
+  .logo-pair    | row-gap                | spacing-scale
+  .logo-partner | column-gap             | spacing-scale
+  .logo-partner | font-size              | type-ramp
+  .logo-partner | line-height            | type-ramp
+  .logo-partner | row-gap                | spacing-scale
+  .news-card    | border-radius          | radius-pair
+  .news-grid    | column-gap             | spacing-scale
+  .news-grid    | row-gap                | spacing-scale
+  .news-sub     | line-height            | type-ramp
+  .news-title   | font-size              | type-ramp
+  .news-title   | line-height            | type-ramp
+  .news-title   | margin-bottom          | spacing-scale
+  path          | font-size              | type-ramp
+  path          | line-height            | type-ramp
+  path          | stroke-width           | stroke
+  svg           | font-size              | type-ramp
+  svg           | line-height            | type-ramp
+  svg           | stroke-width           | stroke
+-->
+<section class="news-section" data-screen-label="Latest News"
+         data-archetype="proof-layout" data-hierarchy="proof" data-intent="build-trust"
+         data-register="confident" data-signature="colour-interruption" data-density="medium">
+  <div class="news-well">
+
+    <!-- ── Header ─────────────────────────────────────── -->
+    <header class="news-header">
+      <div>
+        <h2 class="news-title">Latest from Example Brand</h2>
+        <p class="news-sub">Insights on AI automation, process transformation, and enterprise outcomes.</p>
+      </div>
+      <a class="btn-view-all" href="#">View All Insights</a>
+    </header>
+
+    <!-- ── Card grid ──────────────────────────────────── -->
+    <div class="news-grid">
+
+      <!-- Card 1 — SAP partnership, cool blue image -->
+      <article class="news-card">
+        <div class="card-image bg-blue">
+          <span class="card-badge">Press Release</span>
+          <div class="logo-pair">
+            <span class="logo-partner logo-sap">SAP</span>
+            <div class="logo-sep"></div>
+            <img class="logo-cr" src="../../brand-pack/assets/logo/logo-color.svg" alt="Example Brand" />
+          </div>
+        </div>
+        <div class="card-body">
+          <time class="card-date">Dec 15, 2025</time>
+          <h3 class="card-title">Example Brand and SAP Partner to Automate Finance Operations at Scale</h3>
+        </div>
+      </article>
+
+      <!-- Card 2 — Salesforce case study (cool atmospheric, blur-7) -->
+      <article class="news-card">
+        <div class="card-image bg-cool">
+          <span class="card-badge">Case Study</span>
+          <div class="logo-pair">
+            <span class="logo-partner logo-sf">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--cr-ink-flat)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+              salesforce
+            </span>
+            <div class="logo-sep"></div>
+            <img class="logo-cr" src="../../brand-pack/assets/logo/logo-color.svg" alt="Example Brand" />
+          </div>
+        </div>
+        <div class="card-body">
+          <time class="card-date">Mar 5, 2025</time>
+          <h3 class="card-title">Example Brand and Salesforce Bring Autonomous CRM Workflows to Mid-Market Operations</h3>
+        </div>
+      </article>
+
+      <!-- Card 3 — Oracle integration, dark navy gradient -->
+      <article class="news-card">
+        <div class="card-image bg-navy">
+          <span class="card-badge">Press Release</span>
+          <div class="logo-pair">
+            <span class="logo-partner logo-oracle">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
+              oracle
+            </span>
+            <div class="logo-sep"></div>
+            <img class="logo-cr" src="../../brand-pack/assets/logo/logo-white.svg" alt="Example Brand" />
+          </div>
+        </div>
+        <div class="card-body">
+          <time class="card-date">Oct 9, 2024</time>
+          <h3 class="card-title">Example Brand Announces Integration with Oracle to Streamline AP Cycle Times with AI Agents</h3>
+        </div>
+      </article>
+
+    </div><!-- /news-grid -->
+  </div><!-- /news-well -->
+</section>
+</body>
+</html>

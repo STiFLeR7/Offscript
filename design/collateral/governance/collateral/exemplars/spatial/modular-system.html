@@ -1,0 +1,335 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../_card.css">
+<link rel="stylesheet" href="../../../../brand-pack/accent-palette.css">
+<style>
+  /* ─────────────────────────────────────────────────────────────────────
+     SPATIAL · MODULAR SYSTEM  (doc-scoped .spatial-* — SVG isometric, no JS)
+     Connected modules on a shared ground, each a distinct populated sub-system (Tier-2). RULES: README-SPATIAL.md.
+     ───────────────────────────────────────────────────────────────────── */
+
+  /* ── SHARED .spatial-* CORE — byte-identical in every specimen (copy verbatim) ──
+     The primitives every spatial visual reuses: the three isometric faces (top +
+     two depth faces), the focal highlight (flat accent + a white-fade sheen — the
+     one sanctioned same-hue gradient, §11), embedded objects, leader lines, and
+     annotation type. Identical everywhere, so two spatial visuals pasted into one
+     document stay consistent and never collide. Family-specific classes
+     (.spatial-<family>-*) layer on top and are namespaced. SVG polygons whose
+     points already encode the fixed iso angle; no JavaScript, no preserve-3d;
+     inherits the system tokens. Depth faces darken the surface/accent toward
+     black via color-mix — quiet, not a render. ── */
+  .spatial-svg        { display: block; width: 100%; height: auto; overflow: visible; }
+  .spatial-face       { stroke: var(--cr-keyline); stroke-width: 1; stroke-linejoin: round; }
+  .spatial-face-top   { fill: var(--surface, var(--cr-tone-sky)); }
+  .spatial-face-left  { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 86%, #000); }
+  .spatial-face-right { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 76%, #000); }
+  /* the ONE selective highlight — flat accent + a quiet white-fade sheen (same-hue, §11) */
+  .spatial-focal .spatial-face-top   { fill: var(--accent, var(--cr-tone-sky-accent)); }
+  .spatial-focal .spatial-face-left  { fill: color-mix(in srgb, var(--accent, var(--cr-tone-sky-accent)) 82%, #000); }
+  .spatial-focal .spatial-face-right { fill: color-mix(in srgb, var(--accent, var(--cr-tone-sky-accent)) 70%, #000); }
+  .spatial-sheen      { fill: url(#spatialSheen); stroke: none; }
+  .spatial-embed      { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 68%, #000); stroke: none; }
+  .spatial-focal .spatial-embed { fill: color-mix(in srgb, #fff 36%, transparent); }
+  .spatial-leader     { stroke: var(--cr-keyline); stroke-width: 1; fill: none; }
+  .spatial-leader--dash { stroke-dasharray: 2 3; }
+  .spatial-dot        { fill: var(--accent, var(--cr-tone-sky-accent)); }
+  .spatial-label      { font: 500 var(--fs-h4)/1.2 var(--font-display); fill: var(--cr-charcoal); letter-spacing: var(--tracking-display); }
+  .spatial-sub        { font: 400 12px/1.4 var(--font-body); fill: var(--cr-graphite); }
+  .spatial-eyebrow    { font: 600 var(--fs-eyebrow)/1 var(--font-body); fill: var(--accent, var(--cr-tone-sky-accent)); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; }
+  /* scoped DARK inversion (navy .cr-band--dark / .cr-page--dark) — strokes & type lift to stay legible */
+  .cr-band--dark .spatial-face,   .cr-page--dark .spatial-face,
+  .cr-band--dark .spatial-leader, .cr-page--dark .spatial-leader { stroke: var(--cr-keyline-dark); }
+  .cr-band--dark .spatial-label,  .cr-page--dark .spatial-label  { fill: var(--fg-inverse); }
+  .cr-band--dark .spatial-sub,    .cr-page--dark .spatial-sub    { fill: var(--cr-stone); }
+  .cr-band--dark .spatial-eyebrow,.cr-page--dark .spatial-eyebrow{ fill: var(--cr-stone); }
+  .spatial-demo    { max-width: 178mm; display: flex; flex-direction: column; gap: 40px; }
+  .spatial-caption { font: 400 13px/1.55 var(--font-body); color: var(--cr-graphite); max-width: 178mm; margin-top: 26px; }
+
+
+  /* ── DETAIL VOCABULARY (Tier-2 — namespaced; copy the parts a doc uses) ──
+     Richer primitives that ENCODE REAL SUB-STRUCTURE (a datastore, a network, a
+     console), never decoration (Rulebook §14). Volumes (cube = the core faces at
+     full height; cylinder = ellipse lid + wall), surface textures (grid-mesh &
+     node-graph = repeated <line> polylines, NOT an SVG <pattern> — patterns flake
+     in PDF), embedded chips, screen UI, ground grid, droplines, curved connector.
+     All hold the fixed 2:1 iso angle; no JS, no preserve-3d. ── */
+  .spatial-cyl-top   { fill: var(--surface, var(--cr-tone-sky)); stroke: var(--cr-keyline); stroke-width: 1; }
+  .spatial-cyl-body  { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 80%, #000); stroke: var(--cr-keyline); stroke-width: 1; }
+  .spatial-focal .spatial-cyl-top  { fill: var(--accent, var(--cr-tone-sky-accent)); }
+  .spatial-focal .spatial-cyl-body { fill: color-mix(in srgb, var(--accent, var(--cr-tone-sky-accent)) 74%, #000); }
+  .spatial-mesh-line { stroke: var(--cr-keyline); stroke-width: 0.75; fill: none; }
+  .spatial-node-link { stroke: var(--cr-keyline); stroke-width: 1; fill: none; }
+  .spatial-chip      { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 64%, #000); stroke: none; }
+  .spatial-focal .spatial-chip { fill: color-mix(in srgb, #fff 42%, transparent); }
+  .spatial-screen-ui { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 60%, #000); stroke: none; }
+  .spatial-grid-line { stroke: var(--cr-keyline); stroke-width: 1; stroke-dasharray: 2 3; fill: none; }
+  .spatial-drop      { stroke: var(--cr-keyline); stroke-width: 1; stroke-dasharray: 2 3; fill: none; }
+  .spatial-link--curve { stroke: var(--cr-graphite); stroke-width: 1.5; fill: none; }
+  .spatial-link-arrow  { fill: var(--cr-graphite); stroke: none; }
+  .cr-band--dark .spatial-cyl-top,  .cr-page--dark .spatial-cyl-top,
+  .cr-band--dark .spatial-cyl-body, .cr-page--dark .spatial-cyl-body,
+  .cr-band--dark .spatial-mesh-line,.cr-page--dark .spatial-mesh-line,
+  .cr-band--dark .spatial-node-link,.cr-page--dark .spatial-node-link,
+  .cr-band--dark .spatial-grid-line,.cr-page--dark .spatial-grid-line,
+  .cr-band--dark .spatial-drop,     .cr-page--dark .spatial-drop { stroke: var(--cr-keyline-dark); }
+  .cr-band--dark .spatial-link--curve, .cr-page--dark .spatial-link--curve { stroke: var(--cr-stone); }
+  .cr-band--dark .spatial-link-arrow,  .cr-page--dark .spatial-link-arrow  { fill: var(--cr-stone); }
+  .spatial-mod-link { stroke: var(--cr-keyline); stroke-width: 1.5; fill: none; }
+  .cr-band--dark .spatial-mod-link, .cr-page--dark .spatial-mod-link { stroke: var(--cr-keyline-dark); }
+</style>
+</head>
+<body style="background:#FFFFFF">
+<div class="spatial-demo">
+
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">1 · Modular system · four connected modules on a shared ground, each with distinct detail · one focal highlight</div>
+    <div style="max-width:150mm">
+      <svg class="spatial-svg" viewBox="0 0 660 430">
+        <defs><linearGradient id="spatialSheenA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="0.34"/></linearGradient></defs>
+      <g style="opacity:.5">
+    <line class="spatial-grid-line" x1="300" y1="175" x2="50" y2="300"/>
+    <line class="spatial-grid-line" x1="300" y1="175" x2="550" y2="300"/>
+    <line class="spatial-grid-line" x1="327.78" y1="188.89" x2="77.78" y2="313.89"/>
+    <line class="spatial-grid-line" x1="272.22" y1="188.89" x2="522.22" y2="313.89"/>
+    <line class="spatial-grid-line" x1="355.56" y1="202.78" x2="105.56" y2="327.78"/>
+    <line class="spatial-grid-line" x1="244.44" y1="202.78" x2="494.44" y2="327.78"/>
+    <line class="spatial-grid-line" x1="383.33" y1="216.67" x2="133.33" y2="341.67"/>
+    <line class="spatial-grid-line" x1="216.67" y1="216.67" x2="466.67" y2="341.67"/>
+    <line class="spatial-grid-line" x1="411.11" y1="230.56" x2="161.11" y2="355.56"/>
+    <line class="spatial-grid-line" x1="188.89" y1="230.56" x2="438.89" y2="355.56"/>
+    <line class="spatial-grid-line" x1="438.89" y1="244.44" x2="188.89" y2="369.44"/>
+    <line class="spatial-grid-line" x1="161.11" y1="244.44" x2="411.11" y2="369.44"/>
+    <line class="spatial-grid-line" x1="466.67" y1="258.33" x2="216.67" y2="383.33"/>
+    <line class="spatial-grid-line" x1="133.33" y1="258.33" x2="383.33" y2="383.33"/>
+    <line class="spatial-grid-line" x1="494.44" y1="272.22" x2="244.44" y2="397.22"/>
+    <line class="spatial-grid-line" x1="105.56" y1="272.22" x2="355.56" y2="397.22"/>
+    <line class="spatial-grid-line" x1="522.22" y1="286.11" x2="272.22" y2="411.11"/>
+    <line class="spatial-grid-line" x1="77.78" y1="286.11" x2="327.78" y2="411.11"/>
+    <line class="spatial-grid-line" x1="550" y1="300" x2="300" y2="425"/>
+    <line class="spatial-grid-line" x1="50" y1="300" x2="300" y2="425"/>
+      </g>
+        <line class="spatial-mod-link" x1="300" y1="150" x2="175" y2="230"/>
+        <line class="spatial-mod-link" x1="300" y1="150" x2="425" y2="230"/>
+        <line class="spatial-mod-link" x1="175" y1="230" x2="300" y2="310"/>
+        <line class="spatial-mod-link" x1="425" y1="230" x2="300" y2="310"/>
+      <g class="tone-sky">
+    <polygon class="spatial-face spatial-face-left" points="214,150 300,193 300,203 214,160"/>
+    <polygon class="spatial-face spatial-face-right" points="300,193 386,150 386,160 300,203"/>
+    <polygon class="spatial-face spatial-face-top" points="300,107 386,150 300,193 214,150"/>
+      <g class="">
+        <polygon class="spatial-face spatial-face-top" points="294.84,118.18 355.04,148.28 324.08,163.76 263.88,133.66"/>
+        <polygon class="spatial-chip" points="299.52,125.47 340.45,145.94 334.88,148.73 293.95,128.26"/>
+        <polygon class="spatial-chip" points="289.61,130.43 330.55,150.89 326.83,152.75 285.9,132.28"/>
+        <circle class="spatial-dot" cx="337.67" cy="147.33" r="2.4"/>
+      </g>
+      <g class="">
+        <polygon class="spatial-face spatial-face-top" points="263.88,142.26 306.88,163.76 282.8,175.8 239.8,154.3"/>
+        <polygon class="spatial-chip" points="266.91,147.63 296.15,162.25 291.81,164.41 262.57,149.79"/>
+      </g>      </g>
+      <g class="tone-sky">
+    <polygon class="spatial-face spatial-face-left" points="89,230 175,273 175,283 89,240"/>
+    <polygon class="spatial-face spatial-face-right" points="175,273 261,230 261,240 175,283"/>
+    <polygon class="spatial-face spatial-face-top" points="175,187 261,230 175,273 89,230"/>
+      <line class="spatial-node-link" x1="161.24" y1="214.52" x2="192.2" y2="221.4"/>
+      <line class="spatial-node-link" x1="192.2" y1="221.4" x2="197.36" y2="237.74"/>
+      <line class="spatial-node-link" x1="161.24" y1="214.52" x2="157.8" y2="233.44"/>
+      <line class="spatial-node-link" x1="157.8" y1="233.44" x2="173.28" y2="244.62"/>
+      <line class="spatial-node-link" x1="173.28" y1="244.62" x2="197.36" y2="237.74"/>
+      <line class="spatial-node-link" x1="157.8" y1="233.44" x2="192.2" y2="221.4"/>
+      <circle class="spatial-dot" cx="161.24" cy="214.52" r="2"/>
+      <circle class="spatial-dot" cx="192.2" cy="221.4" r="2.8"/>
+      <circle class="spatial-dot" cx="197.36" cy="237.74" r="2"/>
+      <circle class="spatial-dot" cx="157.8" cy="233.44" r="2"/>
+      <circle class="spatial-dot" cx="173.28" cy="244.62" r="2"/>
+      </g>
+      <g class="tone-sky">
+    <polygon class="spatial-face spatial-face-left" points="339,230 425,273 425,283 339,240"/>
+    <polygon class="spatial-face spatial-face-right" points="425,273 511,230 511,240 425,283"/>
+    <polygon class="spatial-face spatial-face-top" points="425,187 511,230 425,273 339,230"/>
+      <g class="">
+        <polygon class="spatial-face spatial-face-top" points="425,190.44 446.21,201.05 411.81,218.25 390.6,207.64"/>
+        <polygon class="spatial-chip" points="422.89,194.89 437.32,202.1 431.12,205.2 416.7,197.99"/>
+      </g>
+      <g class="">
+        <polygon class="spatial-face spatial-face-top" points="451.37,203.63 498.96,227.42 464.56,244.62 416.97,220.83"/>
+        <polygon class="spatial-chip" points="453.48,210.19 485.84,226.37 479.65,229.46 447.29,213.28"/>
+        <polygon class="spatial-chip" points="442.48,215.69 474.83,231.87 470.71,233.93 438.35,217.75"/>
+        <circle class="spatial-dot" cx="482.75" cy="227.91" r="2.4"/>
+      </g>
+      <g class="">
+        <polygon class="spatial-face spatial-face-top" points="385.44,210.22 433.03,234.01 398.63,251.21 351.04,227.42"/>
+        <polygon class="spatial-chip" points="387.55,216.78 419.91,232.96 413.72,236.05 381.36,219.87"/>
+        <circle class="spatial-dot" cx="416.81" cy="234.51" r="2.4"/>
+      </g>
+      <g class="">
+        <polygon class="spatial-face spatial-face-top" points="438.19,236.59 459.4,247.2 425,264.4 403.79,253.79"/>
+        <polygon class="spatial-chip" points="436.08,241.04 450.5,248.25 444.31,251.35 429.88,244.14"/>
+      </g>      </g>
+      <g class="tone-teal spatial-focal">
+    <polygon class="spatial-face spatial-face-left" points="214,310 300,353 300,363 214,320"/>
+    <polygon class="spatial-face spatial-face-right" points="300,353 386,310 386,320 300,363"/>
+    <polygon class="spatial-face spatial-face-top" points="300,267 386,310 300,353 214,310"/>
+    <polygon class="spatial-sheen" points="300,267 386,310 300,353 214,310" style="fill:url(#spatialSheenA)"/>
+    <g class=" spatial-focal">
+      <path class="spatial-cyl-body" d="M 273,302 L 273,316 A 11,5.5 0 0 0 295,316 L 295,302 A 11,5.5 0 0 1 273,302 Z"/>
+      <ellipse class="spatial-cyl-top" cx="284" cy="302" rx="11" ry="5.5"/>
+    </g>
+    <g class=" spatial-focal">
+      <path class="spatial-cyl-body" d="M 311,306 L 311,317 A 9,4.5 0 0 0 329,317 L 329,306 A 9,4.5 0 0 1 311,306 Z"/>
+      <ellipse class="spatial-cyl-top" cx="320" cy="306" rx="9" ry="4.5"/>
+    </g>
+
+      <g class=" spatial-focal">
+        <polygon class="spatial-face spatial-face-top" points="263.88,297.1 303.44,316.88 274.2,331.5 234.64,311.72"/>
+        <polygon class="spatial-chip" points="265.53,302.6 292.43,316.05 287.17,318.69 260.27,305.24"/>
+      </g>      </g>
+        <line class="spatial-leader" x1="300" y1="107" x2="300" y2="86"/>
+        <circle class="spatial-dot" cx="300" cy="107" r="3"/>
+        <text class="spatial-eyebrow" x="300" y="64" text-anchor="middle">Channel</text>
+        <text class="spatial-label" x="300" y="82" text-anchor="middle">Customer</text>
+        <line class="spatial-leader" x1="89" y1="230" x2="52" y2="230"/>
+        <circle class="spatial-dot" cx="89" cy="230" r="3"/>
+        <text class="spatial-eyebrow" x="46" y="225" text-anchor="end">Module</text>
+        <text class="spatial-label" x="46" y="243" text-anchor="end">Payment</text>
+        <line class="spatial-leader" x1="511" y1="230" x2="548" y2="230"/>
+        <circle class="spatial-dot" cx="511" cy="230" r="3"/>
+        <text class="spatial-eyebrow" x="556" y="225" text-anchor="start">Module</text>
+        <text class="spatial-label" x="556" y="243" text-anchor="start">Cart</text>
+        <line class="spatial-leader" x1="300" y1="353" x2="300" y2="376"/>
+        <circle class="spatial-dot" cx="300" cy="353" r="3"/>
+        <text class="spatial-eyebrow" x="300" y="392" text-anchor="middle">Core</text>
+        <text class="spatial-label" x="300" y="410" text-anchor="middle">Order engine</text>
+      </svg>
+    </div>
+  </div>
+
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">2 · On navy (.cr-band--dark) · the same cluster; strokes/labels lift, the focal accent leads</div>
+    <div class="cr-band cr-band--dark"><div style="max-width:150mm">
+      <svg class="spatial-svg" viewBox="0 0 660 430">
+        <defs><linearGradient id="spatialSheenB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="0.30"/></linearGradient></defs>
+      <g style="opacity:.5">
+    <line class="spatial-grid-line" x1="300" y1="175" x2="50" y2="300"/>
+    <line class="spatial-grid-line" x1="300" y1="175" x2="550" y2="300"/>
+    <line class="spatial-grid-line" x1="327.78" y1="188.89" x2="77.78" y2="313.89"/>
+    <line class="spatial-grid-line" x1="272.22" y1="188.89" x2="522.22" y2="313.89"/>
+    <line class="spatial-grid-line" x1="355.56" y1="202.78" x2="105.56" y2="327.78"/>
+    <line class="spatial-grid-line" x1="244.44" y1="202.78" x2="494.44" y2="327.78"/>
+    <line class="spatial-grid-line" x1="383.33" y1="216.67" x2="133.33" y2="341.67"/>
+    <line class="spatial-grid-line" x1="216.67" y1="216.67" x2="466.67" y2="341.67"/>
+    <line class="spatial-grid-line" x1="411.11" y1="230.56" x2="161.11" y2="355.56"/>
+    <line class="spatial-grid-line" x1="188.89" y1="230.56" x2="438.89" y2="355.56"/>
+    <line class="spatial-grid-line" x1="438.89" y1="244.44" x2="188.89" y2="369.44"/>
+    <line class="spatial-grid-line" x1="161.11" y1="244.44" x2="411.11" y2="369.44"/>
+    <line class="spatial-grid-line" x1="466.67" y1="258.33" x2="216.67" y2="383.33"/>
+    <line class="spatial-grid-line" x1="133.33" y1="258.33" x2="383.33" y2="383.33"/>
+    <line class="spatial-grid-line" x1="494.44" y1="272.22" x2="244.44" y2="397.22"/>
+    <line class="spatial-grid-line" x1="105.56" y1="272.22" x2="355.56" y2="397.22"/>
+    <line class="spatial-grid-line" x1="522.22" y1="286.11" x2="272.22" y2="411.11"/>
+    <line class="spatial-grid-line" x1="77.78" y1="286.11" x2="327.78" y2="411.11"/>
+    <line class="spatial-grid-line" x1="550" y1="300" x2="300" y2="425"/>
+    <line class="spatial-grid-line" x1="50" y1="300" x2="300" y2="425"/>
+      </g>
+        <line class="spatial-mod-link" x1="300" y1="150" x2="175" y2="230"/>
+        <line class="spatial-mod-link" x1="300" y1="150" x2="425" y2="230"/>
+        <line class="spatial-mod-link" x1="175" y1="230" x2="300" y2="310"/>
+        <line class="spatial-mod-link" x1="425" y1="230" x2="300" y2="310"/>
+      <g class="tone-sky">
+    <polygon class="spatial-face spatial-face-left" points="214,150 300,193 300,203 214,160"/>
+    <polygon class="spatial-face spatial-face-right" points="300,193 386,150 386,160 300,203"/>
+    <polygon class="spatial-face spatial-face-top" points="300,107 386,150 300,193 214,150"/>
+      <g class="">
+        <polygon class="spatial-face spatial-face-top" points="294.84,118.18 355.04,148.28 324.08,163.76 263.88,133.66"/>
+        <polygon class="spatial-chip" points="299.52,125.47 340.45,145.94 334.88,148.73 293.95,128.26"/>
+        <polygon class="spatial-chip" points="289.61,130.43 330.55,150.89 326.83,152.75 285.9,132.28"/>
+        <circle class="spatial-dot" cx="337.67" cy="147.33" r="2.4"/>
+      </g>
+      <g class="">
+        <polygon class="spatial-face spatial-face-top" points="263.88,142.26 306.88,163.76 282.8,175.8 239.8,154.3"/>
+        <polygon class="spatial-chip" points="266.91,147.63 296.15,162.25 291.81,164.41 262.57,149.79"/>
+      </g>      </g>
+      <g class="tone-sky">
+    <polygon class="spatial-face spatial-face-left" points="89,230 175,273 175,283 89,240"/>
+    <polygon class="spatial-face spatial-face-right" points="175,273 261,230 261,240 175,283"/>
+    <polygon class="spatial-face spatial-face-top" points="175,187 261,230 175,273 89,230"/>
+      <line class="spatial-node-link" x1="161.24" y1="214.52" x2="192.2" y2="221.4"/>
+      <line class="spatial-node-link" x1="192.2" y1="221.4" x2="197.36" y2="237.74"/>
+      <line class="spatial-node-link" x1="161.24" y1="214.52" x2="157.8" y2="233.44"/>
+      <line class="spatial-node-link" x1="157.8" y1="233.44" x2="173.28" y2="244.62"/>
+      <line class="spatial-node-link" x1="173.28" y1="244.62" x2="197.36" y2="237.74"/>
+      <line class="spatial-node-link" x1="157.8" y1="233.44" x2="192.2" y2="221.4"/>
+      <circle class="spatial-dot" cx="161.24" cy="214.52" r="2"/>
+      <circle class="spatial-dot" cx="192.2" cy="221.4" r="2.8"/>
+      <circle class="spatial-dot" cx="197.36" cy="237.74" r="2"/>
+      <circle class="spatial-dot" cx="157.8" cy="233.44" r="2"/>
+      <circle class="spatial-dot" cx="173.28" cy="244.62" r="2"/>
+      </g>
+      <g class="tone-sky">
+    <polygon class="spatial-face spatial-face-left" points="339,230 425,273 425,283 339,240"/>
+    <polygon class="spatial-face spatial-face-right" points="425,273 511,230 511,240 425,283"/>
+    <polygon class="spatial-face spatial-face-top" points="425,187 511,230 425,273 339,230"/>
+      <g class="">
+        <polygon class="spatial-face spatial-face-top" points="425,190.44 446.21,201.05 411.81,218.25 390.6,207.64"/>
+        <polygon class="spatial-chip" points="422.89,194.89 437.32,202.1 431.12,205.2 416.7,197.99"/>
+      </g>
+      <g class="">
+        <polygon class="spatial-face spatial-face-top" points="451.37,203.63 498.96,227.42 464.56,244.62 416.97,220.83"/>
+        <polygon class="spatial-chip" points="453.48,210.19 485.84,226.37 479.65,229.46 447.29,213.28"/>
+        <polygon class="spatial-chip" points="442.48,215.69 474.83,231.87 470.71,233.93 438.35,217.75"/>
+        <circle class="spatial-dot" cx="482.75" cy="227.91" r="2.4"/>
+      </g>
+      <g class="">
+        <polygon class="spatial-face spatial-face-top" points="385.44,210.22 433.03,234.01 398.63,251.21 351.04,227.42"/>
+        <polygon class="spatial-chip" points="387.55,216.78 419.91,232.96 413.72,236.05 381.36,219.87"/>
+        <circle class="spatial-dot" cx="416.81" cy="234.51" r="2.4"/>
+      </g>
+      <g class="">
+        <polygon class="spatial-face spatial-face-top" points="438.19,236.59 459.4,247.2 425,264.4 403.79,253.79"/>
+        <polygon class="spatial-chip" points="436.08,241.04 450.5,248.25 444.31,251.35 429.88,244.14"/>
+      </g>      </g>
+      <g class="tone-teal spatial-focal">
+    <polygon class="spatial-face spatial-face-left" points="214,310 300,353 300,363 214,320"/>
+    <polygon class="spatial-face spatial-face-right" points="300,353 386,310 386,320 300,363"/>
+    <polygon class="spatial-face spatial-face-top" points="300,267 386,310 300,353 214,310"/>
+    <polygon class="spatial-sheen" points="300,267 386,310 300,353 214,310" style="fill:url(#spatialSheenB)"/>
+    <g class=" spatial-focal">
+      <path class="spatial-cyl-body" d="M 273,302 L 273,316 A 11,5.5 0 0 0 295,316 L 295,302 A 11,5.5 0 0 1 273,302 Z"/>
+      <ellipse class="spatial-cyl-top" cx="284" cy="302" rx="11" ry="5.5"/>
+    </g>
+    <g class=" spatial-focal">
+      <path class="spatial-cyl-body" d="M 311,306 L 311,317 A 9,4.5 0 0 0 329,317 L 329,306 A 9,4.5 0 0 1 311,306 Z"/>
+      <ellipse class="spatial-cyl-top" cx="320" cy="306" rx="9" ry="4.5"/>
+    </g>
+
+      <g class=" spatial-focal">
+        <polygon class="spatial-face spatial-face-top" points="263.88,297.1 303.44,316.88 274.2,331.5 234.64,311.72"/>
+        <polygon class="spatial-chip" points="265.53,302.6 292.43,316.05 287.17,318.69 260.27,305.24"/>
+      </g>      </g>
+        <line class="spatial-leader" x1="300" y1="107" x2="300" y2="86"/>
+        <circle class="spatial-dot" cx="300" cy="107" r="3"/>
+        <text class="spatial-eyebrow" x="300" y="64" text-anchor="middle">Channel</text>
+        <text class="spatial-label" x="300" y="82" text-anchor="middle">Customer</text>
+        <line class="spatial-leader" x1="89" y1="230" x2="52" y2="230"/>
+        <circle class="spatial-dot" cx="89" cy="230" r="3"/>
+        <text class="spatial-eyebrow" x="46" y="225" text-anchor="end">Module</text>
+        <text class="spatial-label" x="46" y="243" text-anchor="end">Payment</text>
+        <line class="spatial-leader" x1="511" y1="230" x2="548" y2="230"/>
+        <circle class="spatial-dot" cx="511" cy="230" r="3"/>
+        <text class="spatial-eyebrow" x="556" y="225" text-anchor="start">Module</text>
+        <text class="spatial-label" x="556" y="243" text-anchor="start">Cart</text>
+        <line class="spatial-leader" x1="300" y1="353" x2="300" y2="376"/>
+        <circle class="spatial-dot" cx="300" cy="353" r="3"/>
+        <text class="spatial-eyebrow" x="300" y="392" text-anchor="middle">Core</text>
+        <text class="spatial-label" x="300" y="410" text-anchor="middle">Order engine</text>
+      </svg>
+    </div></div>
+  </div>
+
+  <div class="spatial-caption">
+    <strong>Modular system</strong> · connected spatial objects on a shared dashed ground (Rulebook §9), each
+    module a <strong>distinct</strong> sub-system — articulated cards, a node-graph, a chip board, and datastore
+    cylinders in the focal core engine — each encoding something real (§14), no two modules identical. Hairline
+    connectors read as links. <strong>One selective highlight</strong> (focal + sheen). Baked SVG at the fixed
+    2:1 angle; <strong>no JS, no <code>preserve-3d</code>.</strong> Doc-scoped. Illustrative commerce modules.
+  </div>
+
+</div>
+</body></html>

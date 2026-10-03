@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Feature stack · scroll-pinned card deck</title>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<!--
+  COMPONENT   — Feature stack: a scroll-pinned deck of feature cards
+  COMPOSITION — (reference: base44.com "from idea to build" feature section)
+                A centred header (2-line display headline + a single pill CTA)
+                scrolls normally above the deck. Below it, a STACK of large
+                rounded feature cards. Each card = a slim full-width TOP BAR
+                (index + short label) over a 2-column BODY: a light TEXT half
+                (headline + paragraph + a "Learn more →" link) and a CREATIVE
+                half (a light cool pale-blue IMAGE-BACKGROUND card holding a
+                clean white UI mock — the CR "how it works" card style).
+                The text/creative sides ALTERNATE per card. Layout reproduced;
+                only the skin changes.
+  SKIN (inspiration rule) — base44's orange/green/blue gradient cards → CR's
+                "how it works" CARD STYLE: a light image-background creative
+                (`#E9F0FF` cool pale-blue base + an atmospheric blur image from
+                ../assets/creative-background/web/ + soft-light grain + a light
+                cool scrim that lifts it into a soft pastel wash). base44's
+                shadowed floating mocks → flat white mocks separated by 1px
+                borders. base44's black pill → brand-blue pill.
+  CHARTER     — NO shadows anywhere; cards separate from the page and from each
+                other by 1px borders + the stacking offset + contrast. The mock
+                UIs are static illustrations, so they carry NO hover; hover lives
+                only on the real controls (the Get-Started pill + each card's
+                "Learn more →" link). Grain is soft-light + low-opacity over the
+                light image. Body copy stays on the Inter ramp.
+  MOTION      — THE STACK is the motion: each .feature is `position:sticky` with
+                an incrementing `top` (--top + --i·--peek), so as you scroll each
+                card pins and the next, opaque, slides up and covers it — leaving
+                a thin sliver of every earlier card's TOP BAR peeking above (a
+                fanned deck). No ancestor of .feature may clip (overflow/isolation
+                stays off .section/.stack) or sticky dies. The header eyebrow /
+                headline / pill stagger-fade up on first viewport hit
+                (.has-js + IntersectionObserver, --d). prefers-reduced-motion →
+                header snaps in (the stack is layout, not animation, so it stays).
+                Visible without JS. (A depth-recede scale on covered cards was
+                intentionally left out of v1 — the locked "cards stack" read is
+                delivered by the pure sticky mechanic alone.)
+  Standalone: links ../colors_and_type.css only; own <style>; no shared CSS.
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<noscript><style>.head .anim { opacity:1 !important; transform:none !important; }</style></noscript>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #ffffff;
+    font-family: var(--cr-font-body); color: var(--cr-ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* IMPORTANT: no overflow / isolation / clip on .section or .stack — an
+     overflow-other-than-visible ancestor silently kills position:sticky. */
+  .section { padding: 120px var(--cr-page-gutter) 220px; max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ── Header (scrolls normally above the deck) ──────────────────────── */
+  .head { max-width: 860px; margin: 0 auto 88px; text-align: center; }
+  .title {
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(40px, 5.2vw, 68px); line-height: 1.06; letter-spacing: -0.025em;
+    color: var(--cr-ink); margin: 0;
+  }
+  .cta {
+    display: inline-flex; align-items: center; gap: 9px;
+    margin-top: 36px; padding: 16px 30px;
+    background: var(--cr-ink); color: #fff;
+    border: none; border-radius: var(--cr-radius-pill);
+    text-decoration: none; cursor: pointer;
+    font-family: var(--cr-font-display); font-weight: 700; font-size: 16px;
+    letter-spacing: -0.01em; line-height: 1.1;
+    transition: background .2s ease, transform .12s ease;
+  }
+  .cta:hover { background: var(--cr-fg); }
+  .cta:active { transform: scale(.975); }
+  .cta .arrow { display: inline-block; transition: transform .2s ease; }
+  .cta:hover .arrow { transform: translateX(4px); }
+
+  /* ── The deck ──────────────────────────────────────────────────────── */
+  .stack {
+    --top: 80px;          /* where the first card pins */
+    --peek: 16px;         /* sliver of each earlier card's top rounded edge */
+    --tail: 56vh;         /* trailing runway so the fully-fanned deck HOLDS at the end */
+    display: block;       /* plain block flow — most reliable host for sticky */
+  }
+  .feature + .feature { margin-top: 12px; }
+  .stack-tail { height: var(--tail); }
+
+  .feature {
+    position: sticky;
+    top: calc(var(--top) + var(--i, 0) * var(--peek));
+  }
+
+  /* Two SEPARATE equal rounded cards sitting flush — each has its own full
+     border-radius on all 4 corners. gap:0 so they touch; no shared clip. */
+  .feat-body {
+    display: flex; gap: 0;
+    min-height: 520px;
+  }
+  .feature.rev .feat-body { flex-direction: row-reverse; }
+  .text    { flex: 0 0 50%; min-width: 0; border-radius: 28px; }
+  .creative { flex: 0 0 50%; min-width: 0; border-radius: 28px; overflow: hidden; }
+
+  /* ── Text half — its own card with the lighter off-white fill ───────── */
+  .text {
+    background: #F8FAFC;
+    padding: 64px 56px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .text h3 {
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(28px, 3.2vw, 44px); line-height: 1.1; letter-spacing: -0.025em;
+    color: var(--cr-ink); margin: 0 0 18px;
+  }
+  .text p {
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 17px;
+    line-height: 1.65; color: var(--cr-fg-2); margin: 0; max-width: 400px;
+  }
+  .more {
+    display: inline-flex; align-items: center; gap: 7px; margin-top: 28px;
+    font-family: var(--cr-font-body); font-weight: 600; font-size: 15px;
+    color: var(--cr-brand); text-decoration: none; width: fit-content;
+  }
+  .more .arrow { display: inline-block; transition: transform .2s ease; }
+  .more:hover .arrow { transform: translateX(4px); }
+
+  /* ── Creative half — image-background creative (the CR "how it works" card
+     style): var(--cr-bg-tint) cool pale-blue base + atmospheric blur image + soft-light grain
+     + a light cool scrim that lifts it into a pastel wash so the white UI mock
+     dominates and separates by hairline. NO shadow. ───────────────────── */
+  .creative {
+    position: relative; overflow: hidden;      /* parent feat-body handles border-radius */
+    display: flex; align-items: center; justify-content: center; padding: 48px;
+    background: var(--cr-bg-tint) var(--img, none) center/cover no-repeat;
+  }
+  .creative::before {                       /* grain — soft-light, low opacity on the light image */
+    content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-image: url("../assets/texture-grain.png"); background-size: cover;
+    mix-blend-mode: soft-light; opacity: 0.10;
+  }
+  .creative::after {                        /* light cool veil — lifts the image into a soft pastel wash */
+    content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background: linear-gradient(150deg, rgba(246,249,253,0.50) 0%, rgba(246,249,253,0.76) 100%);
+  }
+
+  /* ── Light UI mock (flat white card, border not shadow) ────────────── */
+  .mock {
+    position: relative; z-index: 1;
+    width: calc(100% - 80px); max-width: 420px;   /* wider, more centred presence like Base44 */
+    background: #fff; border: 1px solid var(--cr-line);
+    border-radius: 18px; padding: 26px;
+  }
+  .mock .m-lab {
+    display: block; font-family: var(--cr-font-body); font-weight: 600;
+    font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--cr-fg-3); margin: 0 0 8px;
+  }
+  /* mock 1 — agent "thought" reply */
+  .m-top { display: flex; align-items: center; gap: 9px; margin-bottom: 16px; }
+  .m-mark { width: 20px; height: 20px; border-radius: 6px;
+            background: linear-gradient(135deg, var(--cr-brand), var(--cr-teal)); flex: 0 0 auto; }
+  .m-app { font-family: var(--cr-font-display); font-weight: 700; font-size: 14px; color: var(--cr-ink); }
+  .m-time { margin-left: auto; font-family: var(--cr-font-body); font-size: 12px; color: var(--cr-fg-muted); }
+  .m-think { display: flex; align-items: center; gap: 6px;
+             font-family: var(--cr-font-body); font-weight: 600; font-size: 12px;
+             color: var(--cr-fg-3); margin-bottom: 10px; }
+  .m-think svg { width: 14px; height: 14px; stroke-width: 2; }
+  .m-say { font-family: var(--cr-font-body); font-size: 14px; line-height: 1.5;
+           color: var(--cr-fg); margin: 0 0 16px; }
+  .m-track { height: 6px; border-radius: 4px; background: var(--cr-bg-grey-100); overflow: hidden; }
+  .m-track > span { display: block; width: 72%; height: 100%; border-radius: 4px; background: var(--cr-brand); }
+
+  /* mock 2 — deploy panel */
+  .m-title { font-family: var(--cr-font-display); font-weight: 700; font-size: 15px;
+             color: var(--cr-ink); margin: 0 0 16px; }
+  .m-field { display: flex; align-items: center; gap: 9px;
+             padding: 11px 13px; margin-bottom: 14px;
+             border: 1px solid var(--cr-line); border-radius: var(--cr-radius-sm);
+             background: var(--cr-bg-grey-50);
+             font-family: var(--cr-font-body); font-size: 13px; color: var(--cr-fg); }
+  .m-field svg { width: 15px; height: 15px; stroke-width: 1.75; color: var(--cr-fg-3); flex: 0 0 auto; }
+  .m-field .m-caret { margin-left: auto; color: var(--cr-fg-muted); }
+  .m-field .m-sys { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .m-field .m-more { margin-left: auto; font-weight: 600; color: var(--cr-brand); }
+  .m-btn { width: 100%; margin-top: 4px; padding: 11px;
+           background: var(--cr-brand); color: #fff; border: none;
+           border-radius: var(--cr-radius-sm);
+           font-family: var(--cr-font-display); font-weight: 700; font-size: 14px; }
+
+  /* mock 3 — platform sidebar (static illustration → no hover) */
+  .m3 { padding: 14px; }
+  .m-nav { display: flex; align-items: center; gap: 11px;
+           padding: 9px 12px; border-radius: var(--cr-radius-sm);
+           border-left: 2px solid transparent;          /* all rows reserve the rail width */
+           font-family: var(--cr-font-body); font-weight: 500; font-size: 13px;
+           color: var(--cr-fg-2); }
+  .m-nav svg { width: 16px; height: 16px; stroke-width: 1.75; color: var(--cr-brand); flex: 0 0 auto; }
+  .m-nav.active { background: var(--cr-brand-100); color: var(--cr-ink); font-weight: 600;
+                  border-left-color: var(--cr-brand); }   /* brand rail = border accent, never a shadow */
+
+  /* ── Header entrance (visible without JS via .has-js scope) ────────── */
+  .has-js .head .anim {
+    opacity: 0; transform: translateY(16px);
+    transition: opacity .6s ease var(--d,0ms), transform .6s ease var(--d,0ms);
+  }
+  .revealed .head .anim { opacity: 1; transform: none; }
+
+  /* ── Responsive ────────────────────────────────────────────────────── */
+  @media (max-width: 1200px) {
+    .section { padding: 96px 48px 180px; }
+    .text { padding: 48px 44px; }
+    .text, .creative { border-radius: 22px; }
+  }
+  @media (max-width: 1024px) {
+    .section { padding: 80px 36px 160px; }
+    .stack { --top: 64px; --peek: 22px; }
+    .head { margin-bottom: 64px; }
+    .text { padding: 40px 36px; }
+    .text h3 { font-size: clamp(26px, 3vw, 38px); }
+    .text, .creative { border-radius: 20px; }
+  }
+  @media (max-width: 720px) {
+    .stack { --top: 56px; --peek: 16px; --tail: 32vh; }
+    .feat-body, .feature.rev .feat-body { flex-direction: column; min-height: 0; }
+    .text, .creative { flex: none; width: 100%; border-radius: 18px; }
+    .text { padding: 32px 24px; }
+    .text p { max-width: none; }
+    .creative { padding: 32px 24px; min-height: 280px; }
+    .feat-bar { padding: 14px 0; }
+    .mock { width: calc(100% - 48px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .head .anim { opacity: 1 !important; transform: none !important; transition: none; }
+    .cta, .cta .arrow, .more .arrow { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="section" data-screen-label="Feature stack · scroll-pinned card deck">
+
+  <header class="head" id="head">
+    <h2 class="title anim" style="--d:0ms">From first prompt to<br>live agent, all in Example Brand.</h2>
+    <a class="cta anim" style="--d:110ms" href="#">
+      Get Started <span class="arrow" aria-hidden="true">&rarr;</span>
+    </a>
+  </header>
+
+  <!-- The deck. Each card carries --i so its sticky `top` steps down by --peek;
+       cards are opaque, so a later one covers the body of the one before while
+       its top bar peeks above. -->
+  <div class="stack">
+
+    <!-- 01 — text left / creative right · cool navy -->
+    <article class="feature" style="--i:0">
+      <div class="feat-body">
+        <div class="text">
+          <h3>Describe the workflow. Watch it build.</h3>
+          <p>Write what the process should do in plain language. Example Brand turns it into a working agent — steps, branches and guardrails wired up for you.</p>
+          <a class="more" href="#">Learn more <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        </div>
+        <div class="creative" style="--img:url('../assets/creative-background/web/blur-7.jpg')">
+          <div class="mock m1">
+            <div class="m-top"><span class="m-mark"></span><span class="m-app">Example Brand</span><span class="m-time">now</span></div>
+            <div class="m-think"><i data-lucide="sparkles"></i> Thought for 8s</div>
+            <p class="m-say">Of course — mapping your claims-triage process into six actions and one approval gate.</p>
+            <div class="m-track"><span></span></div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 02 — creative left / text right · deep blue -->
+    <article class="feature rev" style="--i:1">
+      <div class="feat-body">
+        <div class="text">
+          <h3>Live the moment it&rsquo;s built.</h3>
+          <p>Your agent is hosted and ready the instant it&rsquo;s done. Ship it to production in one click, or connect the systems it should run inside.</p>
+          <a class="more" href="#">Learn more <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        </div>
+        <div class="creative" style="--img:url('../assets/creative-background/web/blur-7.jpg')">
+          <div class="mock m2">
+            <p class="m-title">Deploy agent</p>
+            <span class="m-lab">Environment</span>
+            <div class="m-field"><i data-lucide="globe"></i><span>Production</span><i class="m-caret" data-lucide="chevron-down"></i></div>
+            <span class="m-lab">Connected systems</span>
+            <div class="m-field"><span class="m-sys">SAP &middot; Salesforce &middot; NetSuite</span><span class="m-more">+3</span></div>
+            <button class="m-btn" type="button" tabindex="-1" aria-hidden="true">Deploy</button>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 03 — text left / creative right · cool tint -->
+    <article class="feature" style="--i:2">
+      <div class="feat-body">
+        <div class="text">
+          <h3>Backend, already handled.</h3>
+          <p>Auth, databases, storage and an audit trail come built in. Your agents don&rsquo;t just run &mdash; they run with the power to scale your operations.</p>
+          <a class="more" href="#">Learn more <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        </div>
+        <div class="creative" style="--img:url('../assets/creative-background/web/blur-7.jpg')">
+          <div class="mock m3">
+            <div class="m-nav"><i data-lucide="layout-grid"></i> Overview</div>
+            <div class="m-nav active"><i data-lucide="activity"></i> Runs</div>
+            <div class="m-nav"><i data-lucide="database"></i> Data</div>
+            <div class="m-nav"><i data-lucide="bar-chart-3"></i> Analytics</div>
+            <div class="m-nav"><i data-lucide="plug"></i> Connections</div>
+            <div class="m-nav"><i data-lucide="shield"></i> Security</div>
+            <div class="m-nav"><i data-lucide="file-text"></i> Audit log</div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <div class="stack-tail" aria-hidden="true"></div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    // Reveal FIRST (so a blocked Lucide CDN can never stop the header showing),
+    // then draw icons behind a guard.
+    var section = document.querySelector('.section');
+    function reveal() { if (section) section.classList.add('revealed'); }
+
+    if (!('IntersectionObserver' in window)) {
+      reveal();
+    } else {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { reveal(); io.disconnect(); } });
+      }, { threshold: 0.15 });
+      io.observe(section);
+    }
+
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+      window.lucide.createIcons();
+    }
+  })();
+</script>
+</body>
+</html>

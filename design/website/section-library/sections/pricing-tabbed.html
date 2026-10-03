@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CR — Pricing · tabbed split</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Tabs · panel-right        from component-pricing-tabbed.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **The reader identifies themselves before comparing.** The profile
+              says the tabs are only honest when the plans genuinely differ by
+              audience — so the tab bar is the section's first question and the
+              card is the answer to it. The 42/58 split and the two-tab bar are
+              carried over untouched; narrowing either would turn a decision
+              into decoration.
+
+  STRUCTURE   Unchanged. Left column of eyebrow, headline, quote and a trust row
+              of three portraits with a rating; right column of a two-tab bar
+              above one bordered card holding both plans in a single grid cell
+              so the card height never jumps on switch. DOM, both scripts, every
+              id, role, aria attribute and data attribute are byte-compatible
+              with the frozen original.
+
+  ACCENT      One moment: the plan's action. The original spent colour four
+              times over — the active tab, the primary button and five filled
+              rating marks. The tab bar is now ink and quiet surface, which is
+              what a segmented control is, and the rating marks are neutral. A
+              filled tab and a filled button competing in one column is two
+              primaries, and a section has one.
+
+  ENVIRONMENT None, and the report says so rather than inventing a home for one.
+              The section carries no abstract background to retire: the ground
+              is flat, there is no plate and no wash, and the only imagery is
+              three human portraits — which are never substituted. Everything
+              else is type, and type does not sit on a photograph.
+
+  TYPE        Display face at 400 for the headline, the plan name and the price;
+              body face at 400 or 500 for everything else. The eyebrow and the
+              "what's included" label stop being tracked micro-caps. The price
+              takes the top of the ramp, because the large figure IS the
+              section's signature.
+
+  RADIUS      Control radius on every control. The tabs and the button were full
+              pills; the pill is retired.
+
+  MOTION      The original's reduced-motion guard was written one step below the
+              specificity of the trigger it answered, so it lost the cascade and
+              never fired. It is rewritten to name both selectors.
+
+  RESPONSIVE  The original's breakpoints, unchanged. The per-viewport type sizes
+              are gone rather than re-authored — the ramp already steps at the
+              pack's own breakpoints, and a second ladder on top of the first
+              resolves to sizes nobody chose.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  /* Colour only — the document's margins are the original's, untouched, so the
+     band still sits where it sat; only the surround stops being paper-white. */
+  html, body {
+    margin: 0; background: var(--cr-page-ground); }
+  .cr-pts {
+    background: var(--cr-page-ground);
+    padding: var(--cr-space-2xl) var(--cr-page-gutter);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+  }
+  .cr-pts *, .cr-pts *::before, .cr-pts *::after { box-sizing: border-box; }
+
+  /* THE SPLIT IS THE SECTION — 42/58, carried over exactly. */
+  .pts-well {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 42fr 58fr;
+    gap: var(--cr-space-m);
+    align-items: start;
+  }
+
+  /* ── Left column ────────────────────────────────────────── */
+  .pts-left { display: flex; flex-direction: column; min-width: 0; }
+
+  /* Supporting text is never tracked and never uppercased. The bracket marks
+     are content the copy carries; the letter-spacing was costume. */
+  .pts-eyebrow {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    letter-spacing: 0;
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  .pts-headline {
+    margin: var(--cr-space-s) 0 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h1);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .pts-quote {
+    margin: var(--cr-space-xl) 0 0;
+    font-family: var(--cr-font-body);
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  .pts-trust {
+    margin-top: var(--cr-space-s);
+    display: flex;
+    align-items: center;
+    gap: var(--cr-space-xs);
+  }
+  /* HUMAN PORTRAITS ARE NEVER SUBSTITUTED. Only the paths move, and the
+     basenames with them, so the referenced asset is the same file. The
+     separating ring takes the section's own ground and the system stroke. */
+  .pts-avatars { display: flex; }
+  .pts-avatars img {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: var(--cr-stroke) solid var(--cr-page-ground);
+    object-fit: cover;
+    margin-left: calc(var(--cr-space-xs) * -1);
+  }
+  .pts-avatars img:first-child { margin-left: 0; }
+  .pts-trust-meta { display: flex; flex-direction: column; gap: var(--cr-space-xs); }
+  /* FIVE FILLED MARKS IN A HUE IS FIVE ACCENT MOMENTS, against a ceiling of
+     one — and the one is already spent on the plan's action. A rating is a
+     mark, so it takes ink. */
+  .pts-stars { display: flex; gap: 0; }
+  .pts-stars svg { width: 14px; height: 14px; fill: var(--cr-text-secondary); stroke: none; display: block; }
+  .pts-trust-cap { font-size: var(--cr-text-supporting); font-weight: 400; color: var(--cr-text-secondary); }
+
+  /* ── Right column ───────────────────────────────────────── */
+  .pts-right { display: flex; flex-direction: column; gap: var(--cr-space-s); min-width: 0; }
+
+  /* TABS ARE CONTROLS, AND THE CHROME RECEDES. A button does not inherit its
+     face, so the family is stated rather than assumed. */
+  .pts-tabs { display: flex; gap: var(--cr-space-xs); align-self: flex-start; }
+  .pts-tab {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    border-radius: var(--cr-radius-control);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    border: none; cursor: pointer;
+    background: var(--cr-bg-tint);
+    color: var(--cr-text-secondary);
+    transition: background .2s ease, color .2s ease;
+  }
+  .pts-tab svg { width: 15px; height: 15px; flex: 0 0 auto; stroke-width: var(--cr-icon-stroke-sm); }
+  .pts-tab.active { background: var(--cr-text-primary); color: var(--cr-text-inverse); }
+  .pts-tab:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 2px; }
+
+  /* Card */
+  .pts-card {
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-m);
+  }
+
+  /* Both plans stack in the same grid cell for the cross-fade */
+  .pts-plans { display: grid; }
+  .pts-plan {
+    grid-area: 1 / 1;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .32s ease;
+  }
+  .pts-plan.active { opacity: 1; pointer-events: auto; }
+
+  .pts-plan-title {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h5);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .pts-plan-desc {
+    margin: var(--cr-space-xs) 0 0;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  /* THE FIGURE IS THE SIGNATURE, so it takes the top of the ramp rather than a
+     size invented between two of its steps. */
+  .pts-price {
+    margin: var(--cr-space-m) 0 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h1);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+    line-height: 1;
+    display: flex; align-items: baseline; gap: 0;
+  }
+  .pts-price-unit {
+    font-size: var(--cr-text-body);
+    font-weight: 400;
+    color: var(--cr-text-secondary);
+    letter-spacing: 0;
+  }
+  .pts-cta-row {
+    margin-top: var(--cr-space-s);
+    display: flex; align-items: center;
+    gap: var(--cr-space-s); flex-wrap: wrap;
+  }
+  /* THE ONE ACCENT MOMENT. Text on orange is the light-accent foreground — the
+     dark ink; the inverse value on this hue does not clear the contrast floor. */
+  .pts-cta-btn {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    background: var(--cr-accent-orange); color: var(--cr-on-accent-light);
+    border: none; border-radius: var(--cr-radius-control);
+    font-family: var(--cr-font-body);
+    font-weight: 500; font-size: var(--cr-text-supporting);
+    cursor: pointer; text-decoration: none; white-space: nowrap;
+    transition: background .2s ease;
+  }
+  .pts-cta-btn:hover, .pts-cta-btn:focus-visible { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+  .pts-cta-btn:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 3px; border-radius: var(--cr-radius-control); }
+  .pts-cta-btn svg { width: 15px; height: 15px; flex: 0 0 auto; stroke-width: var(--cr-icon-stroke-sm); }
+  .pts-scarcity { font-size: var(--cr-text-supporting); color: var(--cr-text-secondary); }
+  .pts-scarcity strong { color: var(--cr-text-primary); font-weight: 500; }
+
+  .pts-divider {
+    margin: var(--cr-space-m) 0;
+    border: none;
+    border-top: var(--cr-stroke) solid var(--cr-border-default);
+  }
+  .pts-incl-label {
+    margin: 0 0 var(--cr-space-xs);
+    font-size: var(--cr-text-supporting); font-weight: 500;
+    letter-spacing: 0; text-transform: none;
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  .pts-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--cr-space-xs) var(--cr-space-m);
+  }
+  .pts-feat {
+    display: flex; gap: var(--cr-space-xs);
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  .pts-feat::before {
+    content: '+';
+    color: var(--cr-text-secondary);
+    font-weight: 500;
+    flex: 0 0 auto;
+  }
+
+  /* ── Scroll-reveal ──────────────────────────────────────── */
+  .cr-pts.has-js .reveal { opacity: 0; transform: translateY(16px); }
+  .cr-pts.has-js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  /* A guard one step below the trigger it answers loses the cascade and never
+     fires. Both selectors are named. */
+  @media (prefers-reduced-motion: reduce) {
+    .cr-pts.has-js .reveal,
+    .cr-pts.has-js .reveal.in { opacity: 1; transform: none; transition: none; }
+    .pts-plan, .pts-plan.active { transition: none; }
+  }
+
+  /* ── Responsive ─────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .pts-well { grid-template-columns: 1fr; gap: var(--cr-space-m); }
+    .pts-quote { margin-top: var(--cr-space-m); }
+  }
+  @media (max-width: 560px) {
+    .pts-tab { padding: var(--cr-space-xs); gap: var(--cr-space-xs); }
+    .pts-features { grid-template-columns: 1fr; }
+    .pts-cta-row { flex-direction: column; align-items: flex-start; gap: var(--cr-space-xs); }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. Drafted from the measurement and then answered:
+     nothing in it is unexplained, so no line carries the directed reason.
+  .lucide         | font-size              | type-ramp
+  .lucide         | stroke-width           | stroke
+  .pts-cta-btn    | border-radius          | radius-pair
+  .pts-cta-btn    | column-gap             | spacing-scale
+  .pts-cta-btn    | font-size              | type-ramp
+  .pts-cta-btn    | padding-bottom         | spacing-scale
+  .pts-cta-btn    | padding-left           | spacing-scale
+  .pts-cta-btn    | padding-right          | spacing-scale
+  .pts-cta-btn    | padding-top            | spacing-scale
+  .pts-cta-btn    | row-gap                | spacing-scale
+  .pts-cta-row    | column-gap             | spacing-scale
+  .pts-cta-row    | margin-top             | spacing-scale
+  .pts-cta-row    | row-gap                | spacing-scale
+  .pts-divider    | margin-bottom          | spacing-scale
+  .pts-divider    | margin-top             | spacing-scale
+  .pts-eyebrow    | font-size              | type-ramp
+  .pts-eyebrow    | line-height            | type-ramp
+  .pts-feat       | column-gap             | spacing-scale
+  .pts-feat       | font-size              | type-ramp
+  .pts-feat       | line-height            | type-ramp
+  .pts-feat       | row-gap                | spacing-scale
+  .pts-features   | column-gap             | spacing-scale
+  .pts-features   | row-gap                | spacing-scale
+  .pts-headline   | font-size              | type-ramp
+  .pts-headline   | line-height            | type-ramp
+  .pts-incl-label | font-size              | type-ramp
+  .pts-incl-label | line-height            | type-ramp
+  .pts-incl-label | margin-bottom          | spacing-scale
+  .pts-plan-desc  | font-size              | type-ramp
+  .pts-plan-desc  | line-height            | type-ramp
+  .pts-plan-desc  | margin-top             | spacing-scale
+  .pts-plan-title | font-size              | type-ramp
+  .pts-plan-title | line-height            | type-ramp
+  .pts-price      | column-gap             | spacing-scale
+  .pts-price      | font-size              | type-ramp
+  .pts-price      | line-height            | type-ramp
+  .pts-price      | margin-top             | spacing-scale
+  .pts-price      | row-gap                | spacing-scale
+  .pts-price-unit | font-size              | type-ramp
+  .pts-price-unit | line-height            | type-ramp
+  .pts-quote      | font-size              | type-ramp
+  .pts-quote      | line-height            | type-ramp
+  .pts-quote      | margin-top             | spacing-scale
+  .pts-scarcity   | font-size              | type-ramp
+  .pts-stars      | column-gap             | spacing-scale
+  .pts-stars      | row-gap                | spacing-scale
+  .pts-tab        | border-radius          | radius-pair
+  .pts-tab        | column-gap             | spacing-scale
+  .pts-tab        | font-size              | type-ramp
+  .pts-tab        | padding-bottom         | spacing-scale
+  .pts-tab        | padding-left           | spacing-scale
+  .pts-tab        | padding-right          | spacing-scale
+  .pts-tab        | padding-top            | spacing-scale
+  .pts-tab        | row-gap                | spacing-scale
+  .pts-tabs       | column-gap             | spacing-scale
+  .pts-tabs       | row-gap                | spacing-scale
+  .pts-trust      | margin-top             | spacing-scale
+  .pts-trust-cap  | font-size              | type-ramp
+  .pts-trust-meta | column-gap             | spacing-scale
+  .pts-trust-meta | row-gap                | spacing-scale
+  .pts-well       | column-gap             | spacing-scale
+  .pts-well       | row-gap                | spacing-scale
+  br              | font-size              | type-ramp
+  br              | line-height            | type-ramp
+  img             | border-bottom-width    | stroke
+  img             | border-left-width      | stroke
+  img             | border-right-width     | stroke
+  img             | border-top-width       | stroke
+  img             | margin-left            | spacing-scale
+  path            | font-size              | type-ramp
+  path            | stroke-width           | stroke
+  strong          | font-size              | type-ramp
+-->
+
+<section class="cr-pts" data-screen-label="Pricing · tabbed split"
+         data-archetype="feature-comparison" data-hierarchy="technical" data-intent="compare"
+         data-register="technical" data-signature="large-statistic" data-density="high">
+  <div class="pts-well">
+
+    <!-- ── Left column ──────────────────────────────────── -->
+    <div class="pts-left">
+      <p class="pts-eyebrow reveal" style="--d:0ms">[ OUR PLANS ]</p>
+      <h2 class="pts-headline reveal" style="--d:80ms">Plans built<br>around how<br>you work.</h2>
+
+      <p class="pts-quote reveal" style="--d:160ms">"We didn't want a vendor with a playbook. We wanted a team that understood our ops as well as we did. Example Brand became that team."</p>
+
+      <div class="pts-trust reveal" style="--d:240ms">
+        <div class="pts-avatars">
+          <img src="../../brand-pack/assets/imagery/avatars/avatar-carol.jpg" alt="">
+          <img src="../../brand-pack/assets/imagery/avatars/avatar-jason.jpg"  alt="">
+          <img src="../../brand-pack/assets/imagery/avatars/avatar-david.jpg"  alt="">
+        </div>
+        <div class="pts-trust-meta">
+          <div class="pts-stars" aria-label="5 stars">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <span class="pts-trust-cap">Trusted by ops teams worldwide</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Right column ─────────────────────────────────── -->
+    <div class="pts-right">
+
+      <div class="pts-tabs reveal" style="--d:80ms" role="tablist">
+        <button class="pts-tab active" data-plan="retainer"
+                role="tab" aria-selected="true" aria-controls="plan-retainer">
+          <i data-lucide="refresh-cw"></i>APA Retainer
+        </button>
+        <button class="pts-tab" data-plan="enterprise"
+                role="tab" aria-selected="false" aria-controls="plan-enterprise">
+          <i data-lucide="zap"></i>Enterprise
+        </button>
+      </div>
+
+      <div class="pts-card reveal" style="--d:160ms">
+        <div class="pts-plans">
+
+          <!-- Plan ①: APA Retainer -->
+          <div class="pts-plan active" id="plan-retainer" role="tabpanel">
+            <p class="pts-plan-title">APA Monthly Retainer</p>
+            <p class="pts-plan-desc">Ongoing automation deployment and support. Dedicated agent hours every month, priority access, and work that compounds into your operations.</p>
+            <div class="pts-price">$8,000<span class="pts-price-unit">/m</span></div>
+            <div class="pts-cta-row">
+              <a class="pts-cta-btn" href="#">Reserve your spot <i data-lucide="arrow-up-right"></i></a>
+              <span class="pts-scarcity"><strong>3 spots open</strong> for Q3 '26</span>
+            </div>
+            <hr class="pts-divider">
+            <p class="pts-incl-label">What's included</p>
+            <div class="pts-features">
+              <span class="pts-feat">40 automation hours / month</span>
+              <span class="pts-feat">APA, DocXter + Jennie access</span>
+              <span class="pts-feat">Priority deployment queue</span>
+              <span class="pts-feat">Flexible scope per sprint</span>
+              <span class="pts-feat">Dedicated Slack channel</span>
+              <span class="pts-feat">Weekly progress syncs</span>
+              <span class="pts-feat">Roll-over hours (1 month)</span>
+              <span class="pts-feat">Pause or scale anytime</span>
+            </div>
+          </div>
+
+          <!-- Plan ②: Enterprise -->
+          <div class="pts-plan" id="plan-enterprise" role="tabpanel">
+            <p class="pts-plan-title">Enterprise Deployment</p>
+            <p class="pts-plan-desc">Full-scale APA rollout across your org. Scoped to your systems, timelines, and change-management requirements — no off-the-shelf playbook.</p>
+            <div class="pts-price">Custom</div>
+            <div class="pts-cta-row">
+              <a class="pts-cta-btn" href="#">Talk to our team <i data-lucide="arrow-up-right"></i></a>
+              <span class="pts-scarcity">Avg. engagement: <strong>6–12 weeks</strong></span>
+            </div>
+            <hr class="pts-divider">
+            <p class="pts-incl-label">What's included</p>
+            <div class="pts-features">
+              <span class="pts-feat">Unlimited automation scope</span>
+              <span class="pts-feat">SAP / Salesforce / ERP connectors</span>
+              <span class="pts-feat">Dedicated solutions engineer</span>
+              <span class="pts-feat">White-glove onboarding</span>
+              <span class="pts-feat">Custom SLA + uptime commitments</span>
+              <span class="pts-feat">Executive reporting dashboard</span>
+              <span class="pts-feat">Change management support</span>
+              <span class="pts-feat">Annual contract + renewal options</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<script>
+  (function () {
+    if (window.lucide) lucide.createIcons();
+
+    var sec = document.querySelector('.cr-pts');
+    if (!sec) return;
+
+    // ── Tab switching with cross-fade ──
+    var tabs  = sec.querySelectorAll('.pts-tab');
+    var plans = sec.querySelectorAll('.pts-plan');
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var target = tab.dataset.plan;
+        tabs.forEach(function (t) {
+          var on = t.dataset.plan === target;
+          t.classList.toggle('active', on);
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        plans.forEach(function (p) {
+          p.classList.toggle('active', p.id === 'plan-' + target);
+        });
+      });
+    });
+
+    // ── Scroll-reveal ──
+    if (!('IntersectionObserver' in window)) return;
+    sec.classList.add('has-js');
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          sec.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+          io.disconnect();
+        }
+      });
+    }, { threshold: 0.08 });
+    io.observe(sec);
+  })();
+</script>
+</body>
+</html>

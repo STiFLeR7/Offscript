@@ -1,0 +1,12 @@
+{
+  "id": "exception-triage-queue",
+  "contractVersion": 1,
+  "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111a",
+  "belief": "The system surfaces exceptions the moment they need a human, ranked by urgency.",
+  "feature": "ai-intelligence",
+  "ratio": "4:3",
+  "camera": "workflow",
+  "mustInclude": ["exception queue", "urgency ranking", "escalation"],
+  "contentProvenance": "human",
+  "section": "hero"
+}

@@ -1,0 +1,250 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Nav header</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Nav header (atom)                      from component-nav.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  An ATOM PREVIEW, not a band — the same shape `comparison`,
+                `stat-tiles`, `faq`, `buttons` and `footer-links` turned out to
+                be. The v2 file is thirty-nine lines whose only sheet besides
+                the token file is `card.css`, the harness the atom previews
+                inside. That link is kept and repointed; the file it names does
+                not exist anywhere in the repo, so BOTH the control and this
+                specimen resolve it to nothing and the preview shape comes from
+                the stylesheet below rather than from the harness.
+
+  THE CLAIM     **Orientation that persists, and is never a beat of the page.**
+                The profile is blunt that this sits OUTSIDE the progression —
+                it is present regardless of what the page says, which is why it
+                serves no beat and must not be counted as one. So the bar does
+                exactly two things: it says where you are (five destinations)
+                and it holds one way out (one control). Nothing here competes
+                with the band beneath it.
+
+  STRUCTURE     Unchanged. One bar, a mark, five destinations, one control.
+                DOM order, element types and depth are byte-compatible with the
+                frozen original (DR-22).
+
+  THE DECLARATION, and where its archetype comes from. The profile carries NO
+                Envelope archetype — it says the opposite, that this is a
+                structural frame sitting outside the progression rather than in
+                it. An atom inherits the role of its host band, so the
+                declaration names the host SHAPE it contributes into, which is
+                the move `footer-links` made for the same reason. That shape is
+                a split: a mark held to one edge, a run of destinations, and one
+                control held to the other — three groups across one bar, read
+                left to right, which is `editorial-split` and is not a stack.
+                The hierarchy is `supporting` because a frame that serves no
+                beat cannot be a beat's lead, and the signature is
+                `architectural-whitespace` because the only thing separating the
+                three groups is the space between them.
+
+  WHY THE BAR STAYS DARK, and it is forced rather than chosen. The mark's `src`
+                is frozen and the asset it names is the WHITE lockup; an asset
+                path may be repointed only with its basename unchanged, so the
+                mark cannot become the colour lockup. A light bar would ship an
+                invisible mark. The bar therefore takes the pack's governed dark
+                surface and the destinations take inverse ink — 14.4:1 — which
+                is the same relationship v2 had, now expressed in tokens.
+
+  THE ONE CONTROL   `buttons.html` is the canonical source for every action in
+                the library, and its rule for a dark plate is that the default
+                primary INVERTS rather than disappearing: raised-white fill,
+                primary ink, 14.4:1. That is what "the dark primary" resolves to
+                here, and it is what the control already was — a white fill with
+                dark ink. The only thing that moves is the radius: the pill is
+                retired from buttons to the control step, and it survives only
+                for genuinely circular affordances. Hover takes the quiet cream
+                step, focus is a ring of the surface's own inverse ink and never
+                a hue.
+
+  ACCENT        **Zero spent.** A nav spends zero or one, and this one spends
+                zero: the destinations are ink, the control is ink-on-white, and
+                nothing on the bar asks to be looked at before the page does. A
+                hue here would be an emphasis moment paid for above the fold and
+                then repeated on every page of the site, which is the definition
+                of a wash rather than a spark.
+
+  ENVIRONMENT   **None, no abstract background.** There is nothing here to
+                retire — no gradient, no glow, no blur plate, no tint wash. The
+                bar is one flat governed surface, and every box on it holds
+                either words or the mark, so a photograph behind it would be
+                type on a photograph, which the direction refuses. No plate in
+                this atom carries no type, and none is invented.
+
+  WHY NOT THE NAV-NAMED TOKENS   The pack carries `--cr-nav-height` (72px) and
+                `--cr-nav-link-gap` (28px), and this bar takes NEITHER. Both sit
+                off the closed spacing set, and reaching them through `var()`
+                would hide that fact rather than resolve it; 72px also cannot
+                hold a 44px mark inside the bar's own inset. The bar keeps its
+                116px height — the atom's identity, not this pass's to move —
+                and puts its rhythm on the closed scale. `--cr-nav-link-size` IS
+                taken, in substance: the pack annotates it as "the supporting
+                step, on the scale, not off it", so the destinations come down
+                from the body step to supporting, which is where a control-level
+                label belongs.
+
+  TRACKING      The destinations carried hand-set negative tracking. Supporting
+                text is never tracked and never uppercase, so it comes off. The
+                heading tracking token stays where it belongs — on headings,
+                and this atom has none.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/sections/card.css">
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+  }
+  .nav, .nav * { box-sizing: border-box; }
+
+  /* The bar. One flat governed dark surface, the canonical content well as its
+     width, the page gutter as its inset. The 116px height is carried over at
+     its original value — see the head comment for why the nav-named height
+     token is not taken. */
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: var(--cr-content-max);
+    height: 116px;
+    padding: var(--cr-space-s) var(--cr-page-gutter);
+    background: var(--cr-bg-dark);
+  }
+
+  /* The mark. Its height is the atom's identity and is not moved. */
+  .nav-logo { height: 44px; display: block; }
+
+  /* The destinations. Inverse ink on the dark surface at 14.4:1, the supporting
+     step, one weight, no tracking. The rhythm between them comes down from a
+     hand-set 64 to the component step — the distance the scale assigns between
+     sibling components, which is what five peer destinations are. */
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--cr-space-m);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    color: var(--cr-text-inverse);
+  }
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--cr-space-xs);
+    cursor: pointer;
+  }
+  /* The chevron is a disclosure mark, not decoration: it takes the link's own
+     ink through `currentColor` and the small icon stroke. The original held it
+     back with `opacity`, which fades an element's own paint rather than its
+     relationship to the words beside it — a mark at four-fifths strength on a
+     dark surface reads as a rendering artefact. It is held back by NOTHING
+     instead: at 14px it is already subordinate to the word it follows. */
+  .nav-link svg {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+    stroke-width: var(--cr-icon-stroke-sm);
+    fill: none;
+  }
+
+  /* THE ONE CONTROL. The default primary inverted for a dark plate, exactly as
+     `buttons.html` declares it — raised-white fill, primary ink, 14.4:1 — at
+     the control radius rather than the retired pill. A button never inherits
+     `font-family`, so it is stated. The two-size distinction the original made
+     with type is not needed here: there is one control. */
+  .nav-cta {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    background: var(--cr-surface-1);
+    color: var(--cr-text-primary);
+    border: 0;
+    border-radius: var(--cr-radius-control);
+    cursor: pointer;
+    transition: background .18s ease, color .18s ease;
+  }
+  .nav-cta:hover,
+  .nav-cta:active { background: var(--cr-surface-5); }   /* 12.0:1 */
+
+  /* Focus is a ring of the surface's own primary ink, never a hue. On the dark
+     plate that ink is the inverse one, at 14.4:1 — the same choice
+     `buttons.html` records for its dark row. */
+  .nav-cta:focus-visible {
+    outline: 2px solid var(--cr-text-inverse);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-cta { transition: none; }
+  }
+</style>
+</head><body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing.
+
+     NO `directed` line, and that is the point of the file. Every dimension that
+     moves is a scale doing its job: the bar's inset onto the closed spacing set
+     and the page gutter, the destination rhythm onto the component step, the
+     control's inset and radius onto the spacing set and the closed radius pair,
+     and the type onto the ramp. The bar's height, its 1440 width and the mark's
+     44px are the atom's identity and appear nowhere here, because none of them
+     moved.
+
+     The two mark-shaped selectors are the chevron. `font-size` and `line-height` land
+     on `svg` and `path` because the destinations' own type step cascades into
+     them; `stroke-width` is the icon stroke coming off a hand-set 2 onto the
+     small icon step. Nothing about the chevron's 14px box changes.
+  .nav       | padding-bottom         | spacing-scale
+  .nav       | padding-left           | spacing-scale
+  .nav       | padding-right          | spacing-scale
+  .nav       | padding-top            | spacing-scale
+  .nav-cta   | border-radius          | radius-pair
+  .nav-cta   | font-size              | type-ramp
+  .nav-cta   | line-height            | type-ramp
+  .nav-cta   | padding-bottom         | spacing-scale
+  .nav-cta   | padding-left           | spacing-scale
+  .nav-cta   | padding-right          | spacing-scale
+  .nav-cta   | padding-top            | spacing-scale
+  .nav-link  | column-gap             | spacing-scale
+  .nav-link  | font-size              | type-ramp
+  .nav-link  | line-height            | type-ramp
+  .nav-link  | row-gap                | spacing-scale
+  .nav-links | column-gap             | spacing-scale
+  .nav-links | font-size              | type-ramp
+  .nav-links | line-height            | type-ramp
+  .nav-links | row-gap                | spacing-scale
+  path       | font-size              | type-ramp
+  path       | line-height            | type-ramp
+  path       | stroke-width           | stroke
+  svg        | font-size              | type-ramp
+  svg        | line-height            | type-ramp
+  svg        | stroke-width           | stroke
+-->
+<div class="nav"
+     data-archetype="editorial-split" data-hierarchy="supporting" data-intent="orient"
+     data-register="quiet" data-signature="architectural-whitespace" data-density="medium">
+  <img class="nav-logo" src="../../brand-pack/assets/logo/logo-white.svg" alt="Example Brand">
+  <div class="nav-links">
+    <span class="nav-link">AI <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <span class="nav-link">Industry <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <span class="nav-link">FosterX <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <span class="nav-link">About us</span>
+    <span class="nav-link">Resources <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+  </div>
+  <button class="nav-cta">Let's talk</button>
+</div>
+</body></html>

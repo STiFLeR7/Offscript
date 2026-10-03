@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Divider · halftone dot dissolve</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Divider · halftone       from component-divider-halftone.html
+  ════════════════════════════════════════════════════════════════════════
+  THE DOT RAMP IS THE COMPONENT — KEPT AS MECHANISM, NOT REPLACED.
+
+              A halftone IS a dot ramp: dot size encodes tone, and the ramp
+              is what performs the hand-off from a light band into a dark
+              one. There is no content here to sit behind — the strip carries
+              no copy and no controls — so there is no decorative background
+              to replace. Putting a photograph here would delete the
+              component rather than modernize it.
+
+              Environment used: NONE — the ramp is the component, not a
+              background sitting behind content. The assigned environment was
+              not spent.
+
+  WHAT ACTUALLY CHANGED: THE RAMP'S ENDPOINTS ARE NOW TOKENS.
+              v2 baked its two tones INTO the artwork — a single two-colour
+              SVG tile with the light end and the dark end written into the
+              file as literal values. The geometry was right and the palette
+              was frozen: retargeting either end meant re-running a script
+              and pasting a new data-URI.
+
+              The tile is now split into two MASKS carrying only geometry —
+              no colour at all — and the colour comes from the element:
+
+                background-color        the light end   → --cr-page-ground
+                ::before  masked by the rect + growing dots
+                                        the dark end    → --cr-bg-dark
+                ::after   masked by the shrinking speckles
+                                        the light end   → --cr-page-ground
+
+              Same eleven rows, same radii, same crossover, same `auto 100%`
+              tiling that keeps the dots round at any width and any band
+              height. The dissolve renders identically; it is simply no
+              longer a place where two colours hide from the palette.
+
+              The masks are pseudo-elements, so nothing in the frozen DOM
+              moves, and a mask carries no palette claim — the shapes are
+              alpha, not ink.
+
+  SEAMS       Both ends still meet their neighbour on the same token: the
+              light end and `.band-light` are both `--cr-page-ground`; the
+              dark end and `.band-dark` are both `--cr-bg-dark`, with zero
+              gap, so the contrast band reads as one continuous surface.
+
+  ACCENT      Zero, as before — this is punctuation, and it is now zero by
+              construction rather than by restraint, because there is no
+              colour left anywhere in the artwork to spend.
+
+  TYPE        The context bands use the pack's ramp classes and take their
+              colour from it. `.band-dark` carries `.cr-on-dark`, the pack's
+              dark-surface pairing — v2 pointed its supporting line at the
+              muted grey, which on the contrast surface was unreadable.
+
+  MOTION      None, as before. Nothing animates, so there is nothing for the
+              reduced-motion guard to snap.
+
+  RESPONSIVE  The three band heights are untouched; the masks scale with them.
+              The per-breakpoint gutter overrides are gone — the pack's gutter
+              is already responsive, and a second ladder on top of it is a
+              section inventing its own breakpoints.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-primary);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .cr-divider-demo { width: 100%; }
+
+  .demo-inner {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+    padding: 0 var(--cr-page-gutter);
+  }
+
+  /* ── Context band: the LIGHT section above (minimal — not the component) ── */
+  .band-light {
+    background: var(--cr-page-ground);   /* matches the divider's light end */
+    padding: var(--cr-rhythm-content) 0 var(--cr-space-m);
+  }
+  .band-light .eyebrow { margin: 0 0 var(--cr-space-xs); }
+  .band-light .line { margin: 0; max-width: var(--cr-measure-body); }
+
+  /* ── THE DIVIDER ─────────────────────────────────────────────────────────
+     Full-bleed strip, three layers deep and every one of them a token:
+
+       the element   paints the LIGHT end
+       ::before      paints the DARK end, masked to the solid crossover rect
+                     plus the six dots that grow into it
+       ::after       paints the LIGHT end again, masked to the five speckles
+                     that shrink away below the crossover
+
+     `mask-size: auto 100%` locks each mask to the band height, so the dots
+     stay circular and the tile repeats across any width — the same contract
+     the single baked tile had, with the colour taken back out of it. */
+  .cr-divider {
+    --divider-top: var(--cr-page-ground);   /* the surface above; set to another
+                                               token when the band differs */
+    position: relative;
+    height: 240px;
+    /* NAME COLLISION, and it renders. The pack publishes `.cr-divider` as the
+       hairline RULE utility (`border-top: 1px solid --cr-border-default`) for
+       an `<hr>`, and this component's root class is the same name — so linking
+       the pack drew a pale 1px line across the top of the strip. A rule laid
+       across a dissolve is the exact thing the dissolve replaces, so it is
+       reset here. The strip is non-bearing, so no predicate would have caught
+       it; it was found by reading the render. */
+    border: 0;
+    background-color: var(--divider-top);
+  }
+  .cr-divider::before,
+  .cr-divider::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    -webkit-mask-repeat: repeat-x;
+    -webkit-mask-position: top center;
+    -webkit-mask-size: auto 100%;
+    mask-repeat: repeat-x;
+    mask-position: top center;
+    mask-size: auto 100%;
+  }
+  /* the dark end — crossover rect + the six growing dots above it */
+  .cr-divider::before {
+    background-color: var(--cr-bg-dark);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%229%22%20height%3D%22243%22%20viewBox%3D%220%200%209%20243%22%3E%3Crect%20x%3D%220%22%20y%3D%22123.93%22%20width%3D%229%22%20height%3D%22119.07%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%2276.50%22%20r%3D%220.51%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%2285.50%22%20r%3D%221.07%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%2294.50%22%20r%3D%221.79%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%22103.50%22%20r%3D%222.66%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%22112.50%22%20r%3D%223.64%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%22121.50%22%20r%3D%224.73%22%20fill%3D%22%23fff%22%2F%3E%3C%2Fsvg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%229%22%20height%3D%22243%22%20viewBox%3D%220%200%209%20243%22%3E%3Crect%20x%3D%220%22%20y%3D%22123.93%22%20width%3D%229%22%20height%3D%22119.07%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%2276.50%22%20r%3D%220.51%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%2285.50%22%20r%3D%221.07%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%2294.50%22%20r%3D%221.79%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%22103.50%22%20r%3D%222.66%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%22112.50%22%20r%3D%223.64%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%22121.50%22%20r%3D%224.73%22%20fill%3D%22%23fff%22%2F%3E%3C%2Fsvg%3E");
+  }
+  /* the mirrored tail — the light end returning as five shrinking speckles */
+  .cr-divider::after {
+    background-color: var(--cr-page-ground);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%229%22%20height%3D%22243%22%20viewBox%3D%220%200%209%20243%22%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%22130.50%22%20r%3D%224.10%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%22139.50%22%20r%3D%222.92%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%22148.50%22%20r%3D%221.88%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%22157.50%22%20r%3D%221.01%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%22166.50%22%20r%3D%220.34%22%20fill%3D%22%23fff%22%2F%3E%3C%2Fsvg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%229%22%20height%3D%22243%22%20viewBox%3D%220%200%209%20243%22%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%22130.50%22%20r%3D%224.10%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%22139.50%22%20r%3D%222.92%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%22148.50%22%20r%3D%221.88%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%22157.50%22%20r%3D%221.01%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%224.50%22%20cy%3D%22166.50%22%20r%3D%220.34%22%20fill%3D%22%23fff%22%2F%3E%3C%2Fsvg%3E");
+  }
+
+  /* ── Context band: the DARK section below (minimal — not the component) ── */
+  .band-dark {
+    background: var(--cr-bg-dark);       /* matches the divider's dark end */
+    padding: var(--cr-space-m) 0 var(--cr-space-xl);
+  }
+  .band-dark .title { margin: 0 0 var(--cr-space-xs); font-size: var(--cr-text-h5); }
+  .band-dark .sub { margin: 0; max-width: var(--cr-measure-body); }
+
+  /* ── Responsive — band heights untouched; the masks scale with them ── */
+  @media (max-width: 900px) {
+    .cr-divider { height: 190px; }
+    .band-light { padding: var(--cr-space-xl) 0 var(--cr-space-m); }
+    .band-dark  { padding: var(--cr-space-m) 0 var(--cr-space-xl); }
+  }
+  @media (max-width: 600px) {
+    .cr-divider { height: 140px; }
+    .band-light { padding: var(--cr-space-m) 0 var(--cr-space-s); }
+    .band-dark  { padding: var(--cr-space-m) 0 var(--cr-space-m); }
+    .band-dark .title { font-size: var(--cr-text-h6); }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Drafted from measurement and answered by hand; predicate 6 fails on any
+     change not listed and on any line here that moved nothing.
+  .cr-h-eyebrow | font-size              | type-ramp
+  .cr-h-eyebrow | line-height            | type-ramp
+  .cr-h-group   | font-size              | type-ramp
+  .cr-h-group   | line-height            | type-ramp
+  .cr-h-group   | margin-bottom          | spacing-scale
+  .cr-p         | font-size              | type-ramp
+  .cr-p         | line-height            | type-ramp
+  .cr-p         | max-width              | measure
+  .cr-p-lede    | line-height            | type-ramp
+  .cr-p-lede    | max-width              | measure
+  .demo-inner   | padding-left           | spacing-scale
+  .demo-inner   | padding-right          | spacing-scale
+-->
+
+  <section class="cr-divider-demo" data-screen-label="Divider · halftone dot dissolve (light → dark)"
+           data-archetype="editorial-stack" data-hierarchy="supporting" data-intent="orient"
+           data-register="confident" data-signature="architectural-whitespace" data-density="low">
+
+    <!-- Context only: a light section ending. Kept minimal so the divider leads. -->
+    <div class="band-light">
+      <div class="demo-inner">
+        <p class="cr-h-eyebrow eyebrow">Section above</p>
+        <p class="cr-p-lede line">A light section closes here, then dissolves into the dark band below.</p>
+      </div>
+    </div>
+
+    <!-- THE COMPONENT: the halftone dissolve strip. Inert, decorative. -->
+    <div class="cr-divider" role="presentation" aria-hidden="true"></div>
+
+    <!-- Context only: a dark section beginning. Kept minimal so the divider leads. -->
+    <div class="band-dark cr-on-dark">
+      <div class="demo-inner">
+        <h2 class="cr-h-group title">The dark section begins.</h2>
+        <p class="cr-p sub">Use this dissolve sparingly — for the occasional move into a CTA or a major dark band, not between every section.</p>
+      </div>
+    </div>
+
+  </section>
+
+</body>
+</html>

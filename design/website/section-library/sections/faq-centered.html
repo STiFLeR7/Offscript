@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FAQ — centered single column</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<script>document.documentElement.className = 'has-js';</script>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Editorial stack · centred FAQ   from component-faq-centered.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **Centring a short list near the page end says these are the last
+              few things.** The profile is explicit that this is a placement
+              claim as much as a layout one — it settles rather than opens, and
+              it is the reason this section reads as a closing beat where
+              `faq-single` reads as a body one. So nothing here widens the well,
+              left-aligns the head, or lets the list grow past the small set the
+              centring is sized for.
+
+  STRUCTURE   Unchanged. Centred two-tone headline · a full-width single column
+              of six rows, each a question button over a collapsing answer. DOM
+              order, element types and depth, both scripts, every `data-reveal`,
+              every `aria-expanded` and the per-row `--d` delay are
+              byte-compatible with the frozen original (DR-22).
+
+  ENVIRONMENT **None, no abstract background.** There is nothing here to retire:
+              the section carries no gradient, no plate and no glow — a centred
+              heading, a hairline-ruled list, and type end to end. A photograph
+              behind an FAQ would be a surface under words rather than a
+              subject, and the direction refuses that. Nothing is invented to
+              satisfy the rule.
+
+  ACCENT      Zero, and that is the rule rather than a shortage. An FAQ answers
+              doubt; it asks for nothing, so it has no moment to spend. The only
+              state change in the section — the toggle crisping from secondary
+              ink to primary as a row opens — is a step on the two-value text
+              ramp, not a colour.
+
+  STROKE      The dividers were a faint DOTTED hairline mixed by hand in an
+              alpha value. Dotted is a second stroke vocabulary running beside
+              the system's one, and the alpha was a colour the pack already
+              holds, so both go: one solid hairline at the default border value,
+              above the first row and under every row after it, exactly as the
+              original ruled them.
+
+  TYPE        Display face at 400 for the headline, 500 for the questions;
+              nothing else. The two-tone head keeps its split, which is a value
+              step rather than a hue. `clamp()` is gone rather than re-authored
+              — the pack already steps the ramp at its own breakpoints, and a
+              second ladder on top of the first resolves to sizes nobody chose.
+
+  RESPONSIVE  The original's breakpoints (1024 / 640), unchanged; only the
+              rungs they land on move onto the scale. The reduced-motion guard
+              is kept and extended to match the specificity of every transition
+              it answers.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  * { box-sizing: border-box; }
+  /* EVERY SECTION DECLARES ITS OWN BACKGROUND (COMPOSE.md §C.5). This root was
+     transparent, so it rendered correctly only because the specimen chrome sets a
+     ground on <body> — which retrieval strips. Composed onto a page it took
+     whatever surface happened to be underneath: "a section with no declaration is
+     a section nobody decided." Declaring the page ground changes nothing that is
+     rendered and makes the decision the section's own. (LIBRARY-AUDIT.md C-4.) */
+  .faq { background: var(--cr-page-ground); }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body); color: var(--cr-text-secondary);
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  }
+
+  /* THE CENTRING IS THE SECTION, so the well and the alignment are carried
+     over untouched; only the band's own padding comes onto the scale, with the
+     gutter taking the horizontal inset the pack already makes responsive. */
+  .faq {
+    padding-block: var(--cr-space-2xl);
+    padding-inline: var(--cr-page-gutter);
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+  }
+  .wrap { max-width: var(--cr-content-narrow); margin: 0 auto; }
+
+  /* ── Centred two-tone headline ─────────────────────────────── */
+  /* The gap between the head and the list is the named rhythm rather than a
+     measured one: the headline is the cluster, the list is the primary content
+     it introduces. */
+  .head { text-align: center; margin: 0 0 var(--cr-rhythm-content); }
+  .title {
+    margin: 0;
+    font-family: var(--cr-font-display); font-weight: 400;
+    font-size: var(--cr-text-h2);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+  }
+  .title span { display: block; }
+  /* The two-tone split survives as a VALUE step on the two-value text ramp —
+     focal line in primary ink, supporting line in secondary. It was never a
+     hue and it does not become one. */
+  .t-ink  { color: var(--cr-text-primary); }
+  .t-mute { color: var(--cr-text-secondary); }
+
+  /* ── List ──────────────────────────────────────────────────── */
+  /* ONE STROKE VOCABULARY. The original ruled these in a dotted hairline mixed
+     from a hand-written alpha; dotted is a second vocabulary beside the
+     system's one, and the alpha is a value the pack already holds. Solid, at
+     the default border, above the first row and under each row after it. */
+  .list { border-top: var(--cr-stroke) solid var(--cr-border-default); }
+  .qa   { border-bottom: var(--cr-stroke) solid var(--cr-border-default); }
+
+  /* Question row. `font: inherit` is already on the button, so the face is
+     carried rather than reset — the one control here that does not need the
+     explicit family a button otherwise demands. */
+  .q {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    gap: var(--cr-space-m); padding: var(--cr-space-s) 0;
+    background: transparent; border: 0; cursor: pointer;
+    font: inherit; color: inherit; text-align: left;
+  }
+  /* The reference keeps every question equally dark, open or closed, and that
+     is preserved: this list is read as a scan of six things, not as one thing
+     with five behind it. */
+  .qt {
+    font-family: var(--cr-font-display); font-weight: 500;
+    font-size: var(--cr-text-h6);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+
+  /* Plus → minus morph toggle (pure CSS, no icon). The bars keep their
+     original 17 by 1.6 geometry — that is the mark's drawing, not a spacing
+     decision. Only the hand-set 2px corner goes: the radius pair is closed, and
+     on a 1.6px bar the rounding was never visible anyway. */
+  .toggle {
+    position: relative; flex-shrink: 0;
+    width: 22px; height: 22px;
+    color: var(--cr-text-secondary);
+    transition: color .2s ease;
+  }
+  .toggle::before, .toggle::after {
+    content: ""; position: absolute; left: 50%; top: 50%;
+    background: currentColor; border-radius: 0;
+    transition: transform .32s cubic-bezier(.4,0,.2,1);
+  }
+  .toggle::before { width: 17px; height: 1.6px; transform: translate(-50%,-50%); }
+  .toggle::after  { width: 1.6px; height: 17px; transform: translate(-50%,-50%); }
+  .qa.open .toggle::after { transform: translate(-50%,-50%) rotate(90deg); }
+  /* The one state change in the section, and it is a step on the text ramp. */
+  .q:hover .toggle, .q:focus-visible .toggle, .qa.open .toggle { color: var(--cr-text-primary); }
+  /* A focus indicator that is not a hue: the question underlines. Kept as
+     authored — the ring is only ever replaced by another achromatic signal. */
+  .q:focus-visible { outline: none; }
+  .q:focus-visible .qt { text-decoration: underline; text-underline-offset: 4px; }
+
+  /* Answer — height transition via the grid 0fr→1fr trick (scoped to JS) */
+  .a-in   { min-height: 0; }
+  .a-body {
+    margin: 0; padding: 0 var(--cr-space-xl) var(--cr-space-s) 0;
+    max-width: var(--cr-measure-body);
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  .has-js .a {
+    display: grid; grid-template-rows: 0fr;
+    transition: grid-template-rows .38s ease;
+  }
+  .has-js .a-in   { overflow: hidden; }
+  .has-js .qa.open .a { grid-template-rows: 1fr; }
+  .has-js .a-body {
+    opacity: 0; transform: translateY(-4px);
+    transition: opacity .35s ease .04s, transform .35s ease .04s;
+  }
+  .has-js .qa.open .a-body { opacity: 1; transform: none; }
+
+  /* ── Scroll-reveal (scoped to JS; content visible without it) ─ */
+  .has-js [data-reveal] { opacity: 0; transform: translateY(16px); }
+  .has-js [data-reveal].in {
+    opacity: 1; transform: none;
+    transition: opacity .55s ease var(--d, 0ms), transform .55s ease var(--d, 0ms);
+  }
+
+  /* ── Responsive ────────────────────────────────────────────── */
+  /* The original's breakpoints and reflow. The type sizes it re-authored at
+     each one are gone: the ramp steps at the pack's breakpoints, and the
+     gutter is already a responsive clamp, so the inline inset never needs a
+     per-viewport rung of its own. */
+  @media (max-width: 1024px) {
+    .faq { padding-block: var(--cr-space-xl); }
+    .head { margin-bottom: var(--cr-space-m); }
+    .a-body { padding-right: var(--cr-space-m); }
+  }
+  @media (max-width: 640px) {
+    .faq { padding-block: var(--cr-space-m); }
+    .head { margin-bottom: var(--cr-space-m); }
+    .q { padding: var(--cr-space-xs) 0; gap: var(--cr-space-s); }
+    .toggle { width: 19px; height: 19px; }
+    .toggle::before { width: 15px; }
+    .toggle::after  { height: 15px; }
+    .a-body { padding: 0 0 var(--cr-space-xs) 0; }
+  }
+
+  /* A guard that loses the cascade is not a guard, so each rule here matches
+     the specificity of the one it answers. The reveal snaps, the morph snaps,
+     and every answer stays operable. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js [data-reveal] { opacity: 1 !important; transform: none !important; }
+    .has-js [data-reveal].in { transition: none; }
+    .toggle, .toggle::before, .toggle::after { transition: none; }
+    .q:hover .toggle, .q:focus-visible .toggle, .qa.open .toggle { transition: none; }
+    .has-js .a, .has-js .a-body, .has-js .qa.open .a-body { transition: none; }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. Drafted from the measurement and then answered:
+     nothing in it is unexplained, so no line carries the directed reason.
+     The two margin lines on the well are the section's own inline padding
+     coming onto the responsive gutter — the centred well recentres inside a
+     narrower band, which is the padding change surfacing one level down.
+  .a-body | font-size              | type-ramp
+  .a-body | line-height            | type-ramp
+  .a-body | max-width              | measure
+  .a-body | padding-bottom         | spacing-scale
+  .a-body | padding-right          | spacing-scale
+  .q      | column-gap             | spacing-scale
+  .q      | padding-bottom         | spacing-scale
+  .q      | padding-top            | spacing-scale
+  .q      | row-gap                | spacing-scale
+  .qt     | font-size              | type-ramp
+  .qt     | line-height            | type-ramp
+  .t-ink  | font-size              | type-ramp
+  .t-ink  | line-height            | type-ramp
+  .t-mute | font-size              | type-ramp
+  .t-mute | line-height            | type-ramp
+  .title  | font-size              | type-ramp
+  .title  | line-height            | type-ramp
+  .wrap   | margin-left            | spacing-scale
+  .wrap   | margin-right           | spacing-scale
+-->
+
+<section class="faq" data-screen-label="FAQ — centered single column"
+         data-archetype="editorial-stack" data-hierarchy="closing" data-intent="educate"
+         data-register="instructional" data-signature="architectural-whitespace" data-density="low">
+  <div class="wrap">
+
+    <header class="head" data-reveal style="--d:0ms">
+      <h2 class="title">
+        <span class="t-ink">Still Have Questions?</span>
+        <span class="t-mute">Here's What Teams Ask Most.</span>
+      </h2>
+    </header>
+
+    <div class="list" id="list">
+
+      <!-- open by default -->
+      <div class="qa open" data-reveal style="--d:90ms">
+        <button class="q" aria-expanded="true">
+          <span class="qt">Is our data safe? What's the security model?</span>
+          <span class="toggle" aria-hidden="true"></span>
+        </button>
+        <div class="a"><div class="a-in">
+          <p class="a-body">Your data stays in your environment. We deploy inside your VPC or on-prem, never train on your data, and ship with SOC&nbsp;2 and HIPAA available on request. Every agent action is logged and auditable end to end.</p>
+        </div></div>
+      </div>
+
+      <div class="qa" data-reveal style="--d:150ms">
+        <button class="q" aria-expanded="false">
+          <span class="qt">What happens if the agent makes a mistake?</span>
+          <span class="toggle" aria-hidden="true"></span>
+        </button>
+        <div class="a"><div class="a-in">
+          <p class="a-body">Every action carries a confidence score. Below the threshold the agent escalates to a human; above it, the agent acts but flags a sample for review. You see every decision it makes — nothing happens in the dark.</p>
+        </div></div>
+      </div>
+
+      <div class="qa" data-reveal style="--d:210ms">
+        <button class="q" aria-expanded="false">
+          <span class="qt">Which systems do you integrate with?</span>
+          <span class="toggle" aria-hidden="true"></span>
+        </button>
+        <div class="a"><div class="a-in">
+          <p class="a-body">SAP, Salesforce, Zoho, Oracle, Epic, Cerner, and custom spreadsheets — connected by API or browser automation. We deploy parallel to your current workflow, so there's no rip-and-replace to absorb.</p>
+        </div></div>
+      </div>
+
+      <div class="qa" data-reveal style="--d:270ms">
+        <button class="q" aria-expanded="false">
+          <span class="qt">How fast does a pilot go live?</span>
+          <span class="toggle" aria-hidden="true"></span>
+        </button>
+        <div class="a"><div class="a-in">
+          <p class="a-body">Four weeks. Week&nbsp;1 is a process audit, week&nbsp;2 a signed blueprint, and weeks&nbsp;3–4 run the agent in shadow mode beside your existing workflow. On day&nbsp;30 you cut over or extend.</p>
+        </div></div>
+      </div>
+
+      <div class="qa" data-reveal style="--d:330ms">
+        <button class="q" aria-expanded="false">
+          <span class="qt">How are you billed?</span>
+          <span class="toggle" aria-hidden="true"></span>
+        </button>
+        <div class="a"><div class="a-in">
+          <p class="a-body">On outcomes, not seats. You pay against the measurable result — cost removed, cycle time cut, work automated — so the price tracks the value the agent actually delivers, not the number of licences.</p>
+        </div></div>
+      </div>
+
+      <div class="qa" data-reveal style="--d:390ms">
+        <button class="q" aria-expanded="false">
+          <span class="qt">Do we need to add headcount to run this?</span>
+          <span class="toggle" aria-hidden="true"></span>
+        </button>
+        <div class="a"><div class="a-in">
+          <p class="a-body">No. The agents absorb the routine work your team already owns and escalate only the exceptions that need judgment. Your best people manage the agents instead of the busywork.</p>
+        </div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  // ── Single-open accordion (exactly one open at a time) ──────────
+  const list = document.getElementById('list');
+  list.addEventListener('click', e => {
+    const btn = e.target.closest('.q');
+    if (!btn) return;
+    const item = btn.parentElement;
+    const wasOpen = item.classList.contains('open');
+    list.querySelectorAll('.qa').forEach(el => {
+      el.classList.remove('open');
+      el.querySelector('.q').setAttribute('aria-expanded', 'false');
+    });
+    if (!wasOpen) {
+      item.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  });
+
+  // ── Scroll-reveal: stagger-fade rows in on first viewport hit ───
+  const reveals = document.querySelectorAll('[data-reveal]');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce || !('IntersectionObserver' in window)) {
+    reveals.forEach(el => el.classList.add('in'));
+  } else {
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach(en => {
+        if (en.isIntersecting) { en.target.classList.add('in'); obs.unobserve(en.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    reveals.forEach(el => io.observe(el));
+  }
+</script>
+</body>
+</html>

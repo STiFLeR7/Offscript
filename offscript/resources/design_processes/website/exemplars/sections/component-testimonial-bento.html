@@ -1,0 +1,534 @@
+<!doctype html>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Testimonial bento          from component-testimonial-bento.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  The v2 section authored under the v3 editorial-restraint
+                direction. DOM, both scripts, every id / `data-*` / `aria-*`
+                and every image `src` basename are byte-compatible with the
+                frozen original (DR-22, the Pilot Constraint). The v2 file
+                sits beside this one in `_v2/`.
+
+  THE CLAIM     **Unequal cells let one endorsement lead while the others
+                establish it is not the only one.** The profile is explicit
+                that this is the section's whole argument, so the diagonal of
+                wide cells and the two-row rhythm are untouched — and the lead
+                voice is given the one instrument the direction leaves for
+                emphasis: SCALE. `.c-a`'s quote sits a rung above the others
+                on the ramp; everything else about it is identical. A bento of
+                six equal voices is a different section.
+
+  ENVIRONMENTS  Three, all `env-cliffside-muted`, replacing three abstract
+                creative frames — v2 painted every image cell with the same
+                blurred bitmap under a grain layer and a tinted veil, which is
+                exactly the idiom the blanket rule retires. One approved
+                environment, one texture stack, three different crops of it
+                because `cover` resolves against three different boxes.
+
+                THE ONE REAL DESIGN DECISION is card D. v2 put a dark numeral
+                and its caption directly ON that image and won the contrast
+                back with a white scrim ramping across the corner. DR-46
+                refuses exactly that: *if the type was readable only because a
+                veil sat on top, the photograph was a surface.* The DOM is
+                frozen, so the type cannot move to another element — but it
+                can move off the image. `.cell--imgfull` becomes a column that
+                pushes `.stat-body` to the bottom on a SOLID card surface; the
+                photograph fills the cell behind it and is seen above the
+                band. Remove the photograph and not one word changes
+                legibility — by construction rather than by measurement, which
+                is why the veil could go rather than be re-tuned.
+
+                The two dissolve layers on cards C and F go with it. They
+                existed to melt an image into white so no seam showed; a
+                stated edge between a photograph and a card body is not a
+                fault to be hidden, and a ramp that eats the bottom half of a
+                132px band is most of the picture.
+
+  PORTRAITS     The four customer headshots STAY. Human, portrait and customer
+                photography is never substituted — only abstract creative
+                frames are, and an avatar is neither abstract nor creative.
+
+  ACCENT        NONE spent, and that is the decision. Six voices are peers;
+                marking one with hue would say a different thing from marking
+                it with scale, and the section already says it with scale. The
+                only control here is the feature card's ghost arrow — promoting
+                it to the accent would name the wrong thing as the section's
+                ask. Every mark is neutral ink.
+
+  MOTION        Unchanged in kind: cards stagger in once and the two measures
+                count up on entry. The reduced-motion guard keeps the
+                original's specificity and its `!important`, so it still wins.
+
+  RESPONSIVE    The original's breakpoints (960 / 600), unchanged. `clamp()`
+                is gone throughout — it resolves to sizes nobody authored —
+                so type steps on the pack's own ramp.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CR · Testimonial bento</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<script>document.documentElement.className = 'has-js';</script>
+<style>
+  * { box-sizing: border-box; }
+  /* EVERY SECTION DECLARES ITS OWN BACKGROUND (COMPOSE.md §C.5). This root was
+     transparent, so it rendered correctly only because the specimen chrome sets a
+     ground on <body> — which retrieval strips. Composed onto a page it took
+     whatever surface happened to be underneath: "a section with no declaration is
+     a section nobody decided." Declaring the page ground changes nothing that is
+     rendered and makes the decision the section's own. (LIBRARY-AUDIT.md C-4.) */
+  .tm { background: var(--cr-page-ground); }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body); color: var(--cr-text-primary);
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  }
+
+  /* Section padding is the band's; content width is the well's. A section may
+     not carry both on one element. */
+  .tm { padding: var(--cr-space-2xl) var(--cr-page-gutter); }
+  .tm-wrap { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ── Header ─────────────────────────────────────────────────── */
+  .tm-head {
+    text-align: center;
+    margin: 0 auto var(--cr-rhythm-content);
+    max-width: var(--cr-measure-title);
+  }
+  .tm-title {
+    margin: 0 0 var(--cr-rhythm-cluster);
+    font-family: var(--cr-font-display); font-weight: 400;
+    font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .tm-sub {
+    margin: 0 auto; max-width: var(--cr-measure-body);
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-body); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* ── Bento grid — the diagonal of wide cells is the section ─── */
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: minmax(238px, auto) minmax(400px, auto);  /* grows, never clips */
+    gap: var(--cr-space-xs);
+  }
+  .c-a { grid-column: 1 / span 2; grid-row: 1; }   /* wide testimonial */
+  .c-b { grid-column: 3;          grid-row: 1; }   /* testimonial      */
+  .c-c { grid-column: 4;          grid-row: 1; }   /* stat 85%         */
+  .c-d { grid-column: 1;          grid-row: 2; }   /* stat 10,000+     */
+  .c-e { grid-column: 2;          grid-row: 2; }   /* testimonial      */
+  .c-f { grid-column: 3 / span 2; grid-row: 2; }   /* feature card     */
+
+  .cell {
+    position: relative;
+    background: var(--cr-surface-1);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  /* ── Quote testimonial card ─────────────────────────────────── */
+  .cell--quote { display: flex; flex-direction: column; padding: var(--cr-space-s); }
+  .qmark {
+    font-family: var(--cr-font-display); font-weight: 400;
+    font-size: var(--cr-text-h4); line-height: 0.6;
+    color: var(--cr-text-secondary);
+    margin: 0 0 var(--cr-space-xs);
+  }
+  .q-body {
+    margin: 0;
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  /* THE LEAD VOICE, and the only thing that makes it lead. Emphasis comes from
+     scale, not from a heavier face or a second colour — so the widest cell
+     also holds the largest quote, one rung up the ramp. */
+  .c-a .q-body { font-size: var(--cr-text-body); max-width: var(--cr-measure-body); }
+
+  .tm-foot {
+    margin-top: auto; padding-top: var(--cr-space-s);
+    display: flex; align-items: center; gap: var(--cr-space-xs);
+  }
+  /* Real customer headshots — kept, and never substituted. */
+  .avatar {
+    flex-shrink: 0; width: 38px; height: 38px; border-radius: 50%;
+    object-fit: cover; display: block;
+    background: var(--cr-surface-5);   /* shows only if the photo fails to load */
+  }
+  /* Name and company sit at one size and separate by WEIGHT and INK — the ramp's
+     next rung down is not a step, it is a smaller kind of text. */
+  .who-name {
+    font-family: var(--cr-font-body); font-weight: 500;
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    color: var(--cr-text-primary);
+  }
+  .who-co {
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* ── Shared measure ─────────────────────────────────────────── */
+  .stat-num {
+    font-family: var(--cr-font-display); font-weight: 400;
+    line-height: 1; letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary); font-variant-numeric: tabular-nums;
+  }
+  .stat-cap {
+    margin-top: var(--cr-space-xs);
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* THE STANDARD CREATIVE TREATMENT — one background stack, three layers, in
+     this order: grain on top, grunge under it, the environment underneath
+     both. It has to be ONE stack: a blend mode composites against what is
+     beneath it in the SAME background, so moving the grain onto a child
+     element resolves `overlay` against transparency and renders the texture at
+     full strength as grey static. That is also why the v2 `.grain` children
+     are retired rather than re-tuned. The URLs are written out rather than
+     reached through a `--cr-env-*` custom property, because a `url()` inside a
+     custom property resolves against the CONSUMING document and fails
+     silently. The last position is the asset's measured focus. */
+  .stat-band,
+  .cell--imgfull,
+  .feat-img {
+    background-color: var(--cr-bg-dark);
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-cliffside-muted.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 50% 42%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+  }
+  /* The grain layers, the veils and the two white dissolves are retired
+     together: the stack above carries the grain correctly, and a photograph
+     is never a surface to be faded out from under type. */
+  .grain, .scrim, .fade { display: none; }
+
+  /* ── Card C: photographic band on top, measure below ────────── */
+  .cell--stat { display: flex; flex-direction: column; }
+  .stat-band {
+    height: 132px; flex-shrink: 0; position: relative; overflow: hidden;
+  }
+  .stat-foot {
+    flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
+    padding: var(--cr-space-s);
+  }
+  .cell--stat .stat-num { font-size: var(--cr-text-h4); }
+
+  /* ── Card D: full-bleed photograph, measure on its OWN surface ─
+     The card is a COLUMN. That is what lets the numeral sit on an opaque band
+     while the photograph fills the cell behind it — the whole DR-46 move, made
+     without touching one element of the DOM. */
+  .cell--imgfull {
+    position: relative;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0;
+  }
+  .cell--imgfull .stat-body {
+    position: relative; z-index: 1;
+    background: var(--cr-surface-1);
+    border-top: var(--cr-stroke) solid var(--cr-border-default);
+    padding: var(--cr-space-s);
+  }
+  .cell--imgfull .stat-num { font-size: var(--cr-text-h3); }
+  .cell--imgfull .stat-cap { color: var(--cr-text-secondary); max-width: var(--cr-measure-body); }
+
+  /* ── Card F: photographic band + heading + ghost control ────── */
+  .cell--feature { display: flex; flex-direction: column; }
+  .feat-img {
+    position: relative; flex-shrink: 0; height: 200px;
+    overflow: hidden;
+  }
+  .feat-body {
+    flex: 1; display: flex; flex-direction: column;
+    padding: var(--cr-space-s);
+  }
+  .feat-h {
+    margin: 0 0 var(--cr-space-xs);
+    font-family: var(--cr-font-display); font-weight: 400;
+    font-size: var(--cr-text-h6); line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading); color: var(--cr-text-primary);
+  }
+  .feat-p {
+    margin: 0;
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary); max-width: var(--cr-measure-body);
+  }
+  /* A <button> inherits neither face nor size — both are stated. A true circle
+     is a circle, not a retired pill radius. */
+  .arrow-btn {
+    margin-top: auto; align-self: flex-end;
+    width: 46px; height: 46px; border-radius: 50%;
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    background: var(--cr-surface-1);
+    color: var(--cr-text-primary); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-body); line-height: 1;
+    transition: border-color .2s ease, color .2s ease;
+  }
+  .arrow-btn .ar { display: inline-block; transition: transform .2s ease; }
+  .arrow-btn:hover, .arrow-btn:focus-visible {
+    border-color: var(--cr-text-primary); color: var(--cr-text-primary); outline: none;
+  }
+  .arrow-btn:hover .ar, .arrow-btn:focus-visible .ar { transform: translateX(4px); }
+
+  /* ── Scroll-reveal (scoped to JS; visible without it) ───────── */
+  .has-js [data-reveal] { opacity: 0; transform: translateY(20px); }
+  .has-js [data-reveal].in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease var(--d, 0ms), transform .6s ease var(--d, 0ms);
+  }
+
+  /* ── Responsive — the ORIGINAL's breakpoints ────────────────── */
+  @media (max-width: 960px) {
+    .tm { padding: var(--cr-space-xl) var(--cr-page-gutter); }
+    .bento { grid-template-columns: repeat(2, 1fr); grid-template-rows: none; }
+    .c-a, .c-b, .c-c, .c-d, .c-e, .c-f { grid-column: auto; grid-row: auto; min-height: 230px; }
+    .c-a, .c-f { grid-column: 1 / span 2; }          /* wide cards stay full-width */
+    .stat-band { height: 116px; }
+    .feat-img { height: 184px; }
+  }
+  @media (max-width: 600px) {
+    .tm { padding: var(--cr-space-m) var(--cr-page-gutter); }
+    .bento { grid-template-columns: 1fr; gap: var(--cr-space-xs); }
+    .c-a, .c-f { grid-column: auto; }
+    .c-a, .c-b, .c-c, .c-d, .c-e, .c-f { min-height: 0; }
+    .cell--imgfull { min-height: 188px; }
+    .stat-band { height: 104px; }
+    .feat-img { height: 168px; }
+    .c-a .q-body, .feat-p { max-width: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js [data-reveal] { opacity: 1 !important; transform: none !important; }
+    .has-js [data-reveal].in { transition: none; }
+    .arrow-btn, .arrow-btn .ar { transition: none; }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. Nothing is marked `directed`: the 4-column envelope, the two
+     spans on the diagonal and both row tracks are exactly where v2 left them —
+     the asymmetry IS the section and this pass does not touch it.
+
+     Three lines are worth reading twice. The cell padding goes to zero on card
+     D only, which is what lets `.stat-body` carry a full-bleed opaque band at
+     the bottom of the photographic cell — the type coming off the picture,
+     which is the file's one real design decision. The stat-body border-top is
+     the stroke that band takes where it meets the photograph, and it is the
+     section's one new rule rather than a restated one. And the quote-body
+     max-width is the lead voice being given its own measure.
+  .ar        | font-size              | type-ramp
+  .ar        | line-height            | type-ramp
+  .bento     | column-gap             | spacing-scale
+  .bento     | row-gap                | spacing-scale
+  .cell      | border-radius          | radius-pair
+  .cell      | padding-bottom         | spacing-scale
+  .cell      | padding-left           | spacing-scale
+  .cell      | padding-right          | spacing-scale
+  .cell      | padding-top            | spacing-scale
+  .feat-body | padding-bottom         | spacing-scale
+  .feat-body | padding-left           | spacing-scale
+  .feat-body | padding-right          | spacing-scale
+  .feat-body | padding-top            | spacing-scale
+  .feat-h    | font-size              | type-ramp
+  .feat-h    | line-height            | type-ramp
+  .feat-h    | margin-bottom          | spacing-scale
+  .feat-p    | font-size              | type-ramp
+  .feat-p    | line-height            | type-ramp
+  .feat-p    | max-width              | measure
+  .q-body    | font-size              | type-ramp
+  .q-body    | line-height            | type-ramp
+  .q-body    | max-width              | measure
+  .qmark     | font-size              | type-ramp
+  .qmark     | line-height            | type-ramp
+  .qmark     | margin-top             | spacing-scale
+  .stat-body | border-top-width       | stroke
+  .stat-body | padding-bottom         | spacing-scale
+  .stat-body | padding-left           | spacing-scale
+  .stat-body | padding-right          | spacing-scale
+  .stat-body | padding-top            | spacing-scale
+  .stat-cap  | font-size              | type-ramp
+  .stat-cap  | line-height            | type-ramp
+  .stat-cap  | margin-top             | spacing-scale
+  .stat-cap  | max-width              | measure
+  .stat-foot | padding-bottom         | spacing-scale
+  .stat-foot | padding-left           | spacing-scale
+  .stat-foot | padding-right          | spacing-scale
+  .stat-foot | padding-top            | spacing-scale
+  .stat-num  | font-size              | type-ramp
+  .stat-num  | line-height            | type-ramp
+  .tm-foot   | margin-top             | spacing-scale
+  .tm-foot   | padding-top            | spacing-scale
+  .tm-head   | margin-bottom          | spacing-scale
+  .tm-head   | margin-left            | spacing-scale
+  .tm-head   | margin-right           | spacing-scale
+  .tm-head   | max-width              | measure
+  .tm-sub    | font-size              | type-ramp
+  .tm-sub    | line-height            | type-ramp
+  .tm-sub    | margin-left            | spacing-scale
+  .tm-sub    | margin-right           | spacing-scale
+  .tm-sub    | max-width              | measure
+  .tm-title  | font-size              | type-ramp
+  .tm-title  | line-height            | type-ramp
+  .tm-title  | margin-bottom          | spacing-scale
+  .who-co    | font-size              | type-ramp
+  .who-co    | line-height            | type-ramp
+  .who-name  | font-size              | type-ramp
+  .who-name  | line-height            | type-ramp
+-->
+
+<section class="tm" data-screen-label="Testimonials — bento grid"
+         data-archetype="proof-layout" data-hierarchy="proof" data-intent="build-trust"
+         data-register="human" data-signature="pull-quote" data-density="high">
+  <div class="tm-wrap">
+
+    <header class="tm-head" data-reveal style="--d:0ms">
+      <h2 class="tm-title">Trusted in Production, Not in Demos.</h2>
+      <p class="tm-sub">Across BFSI, healthcare and logistics — here's what changed once Example Brand agents went live.</p>
+    </header>
+
+    <div class="bento">
+
+      <!-- A — wide testimonial (the lead voice) -->
+      <article class="cell cell--quote c-a" data-reveal style="--d:0ms">
+        <div class="qmark" aria-hidden="true">&ldquo;</div>
+        <p class="q-body">Example Brand dropped agents into our existing stack and cleared the invoice backlog in weeks — no rip-and-replace, no new headcount.</p>
+        <footer class="tm-foot">
+          <img class="avatar" src="../../brand-pack/assets/imagery/avatars/avatar-daniel.jpg" alt="" width="38" height="38" loading="lazy">
+          <span>
+            <span class="who-name">Daniel Okafor</span><br>
+            <span class="who-co">VP Operations, Meridian Bank</span>
+          </span>
+        </footer>
+      </article>
+
+      <!-- B — compact testimonial -->
+      <article class="cell cell--quote c-b" data-reveal style="--d:80ms">
+        <div class="qmark" aria-hidden="true">&ldquo;</div>
+        <p class="q-body">It paid for itself in the first quarter — and freed our team from the busywork.</p>
+        <footer class="tm-foot">
+          <img class="avatar" src="../../brand-pack/assets/imagery/avatars/avatar-carol.jpg" alt="" width="38" height="38" loading="lazy">
+          <span>
+            <span class="who-name">Carol Nardelli</span><br>
+            <span class="who-co">CFO, Volta Logistics</span>
+          </span>
+        </footer>
+      </article>
+
+      <!-- C — measure under a photographic band -->
+      <div class="cell cell--stat c-c" data-reveal style="--d:160ms">
+        <div class="stat-band" aria-hidden="true">
+          <div class="grain"></div>
+          <div class="fade"></div>
+        </div>
+        <div class="stat-foot">
+          <div class="stat-num count" data-target="85" data-suffix="%">85%</div>
+          <div class="stat-cap">Exceptions resolved without a human.</div>
+        </div>
+      </div>
+
+      <!-- D — full-bleed photograph; the measure sits on its own opaque band -->
+      <div class="cell cell--imgfull c-d" data-reveal style="--d:120ms">
+        <div class="grain" aria-hidden="true"></div>
+        <div class="scrim" aria-hidden="true"></div>
+        <div class="stat-body">
+          <div class="stat-num count" data-target="10000" data-suffix="+">10,000+</div>
+          <div class="stat-cap">Hours of manual work removed every month.</div>
+        </div>
+      </div>
+
+      <!-- E — tall testimonial -->
+      <article class="cell cell--quote c-e" data-reveal style="--d:200ms">
+        <div class="qmark" aria-hidden="true">&ldquo;</div>
+        <p class="q-body">We piloted in four weeks and never looked back. Example Brand reads the task, not the screen, so it keeps working when our systems change — it's become the way our ops team runs.</p>
+        <footer class="tm-foot">
+          <img class="avatar" src="../../brand-pack/assets/imagery/avatars/avatar-martha.jpg" alt="" width="38" height="38" loading="lazy">
+          <span>
+            <span class="who-name">Martha Reyes</span><br>
+            <span class="who-co">Head of Ops, Unicell Health</span>
+          </span>
+        </footer>
+      </article>
+
+      <!-- F — feature card -->
+      <article class="cell cell--feature c-f" data-reveal style="--d:280ms">
+        <div class="feat-img" aria-hidden="true">
+          <div class="grain"></div>
+          <div class="scrim"></div>
+          <div class="fade"></div>
+        </div>
+        <div class="feat-body">
+          <h3 class="feat-h">Enterprise-Grade Security and Privacy</h3>
+          <p class="feat-p">Your data stays in your environment — deployed inside your VPC, never trained on. SOC&nbsp;2 and HIPAA available on request.</p>
+          <button class="arrow-btn" type="button" aria-label="Read how Example Brand secures your data">
+            <span class="ar">&rarr;</span>
+          </button>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hasIO  = 'IntersectionObserver' in window;
+  const canAnimate = !reduce && hasIO;
+
+  // Count-up (ease-out cubic), comma-formatted. Rendered text is already the
+  // final value, so no-JS / reduced-motion need no override.
+  function countUp(el) {
+    const target = parseFloat(el.dataset.target);
+    const suffix = el.dataset.suffix || '';
+    const dur = 1500; let start = null;
+    function tick(ts) {
+      if (start === null) start = ts;
+      const p = Math.min((ts - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(eased * target).toLocaleString() + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+      else el.textContent = target.toLocaleString() + suffix;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  const counts = document.querySelectorAll('.count');
+  if (canAnimate) counts.forEach(c => { c.textContent = '0' + (c.dataset.suffix || ''); });
+
+  const reveals = document.querySelectorAll('[data-reveal]');
+  if (!canAnimate) {
+    reveals.forEach(el => el.classList.add('in'));        // snap in; numbers stay final
+  } else {
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach(en => {
+        if (!en.isIntersecting) return;
+        en.target.classList.add('in');
+        en.target.querySelectorAll('.count').forEach(countUp);
+        obs.unobserve(en.target);
+      });
+    }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+    reveals.forEach(el => io.observe(el));
+  }
+</script>
+</body>
+</html>

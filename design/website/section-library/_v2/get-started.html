@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Features — Get started in minutes</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — Features · Get started in minutes        component-get-started.html
+  ════════════════════════════════════════════════════════════════════════
+  COMPOSITION  A two-column "get started / how-it-works" section on a white
+               surface, LEFT ~40% / RIGHT ~60%.
+               • LEFT: an oversized headline pinned TOP-LEFT → a big vertical
+                 void → THREE numbered steps stacked vertically (large numeral
+                 `1.` `2.` `3.` over a 1–2-line label), DIVIDED BY HAIRLINE
+                 RULES BETWEEN STEPS ONLY (none after step 3). Content volume
+                 matches the source: step 2 = 2 lines, steps 1 & 3 = 1 line.
+                 Then a void → a solid pill CTA → a small grey reassurance line.
+               • RIGHT: a LAYERED product creative, CROPPED so the UI bleeds
+                 off the right + bottom (3 stacked layers, back→front):
+                   (1) a cream offset BACKDROP panel (rounded, bleeds right);
+                   (2) an APP SCREENSHOT — a flat dark nav rail (logo + 4 items,
+                       "Knowledge" active) beside a light "Knowledge & assets"
+                       content panel (Knowledge-sources / Asset-library tabs, a
+                       Website row + "Add website", an Integrations row + "Add
+                       integration"); offset down/right on the backdrop so the
+                       cream shows as a top + left + bottom margin;
+                   (3) a floating CODE-SNIPPET card overlapping the app's right
+                       portion (an <iframe>+<script> embed snippet + a "Copy
+                       embed code" control).
+
+  INSPIRATION  "Get started in minutes" section (handhold.io) — numbered steps
+               left, layered product mock right. Layout / proportions / region
+               vocabulary / content volume reproduced; colours / fonts / copy
+               re-skinned to the CR brand.
+
+  RE-SKIN      Serif headline → Urbanist; "Get Started in Minutes" (Title Case).
+               handhold → Example Brand; www.handhold.io → www.example-brand.com; the
+               embed-card domain → example-brand.com. The integration row's logo →
+               a clean recognizable mark (Notion-style; swap for a real partner
+               SVG). The source's plain BLACK CTA → the canonical CR brand-blue
+               primary pill "Get Started →" (the action colour pops on white).
+               Voice: no exclamation / hype.
+
+  NO SHADOW    The source floats its three layers with drop shadows; the CR
+               charter forbids shadows, so the layers separate by OVERLAP +
+               cream-vs-white CONTRAST + 1px `--cr-line` hairline borders (the
+               inspiration-6 depth technique). The cream panel IS the faithful
+               backdrop — no `creative-background/blur` image, no `__scrim`
+               (those lift a photo into neutral; over flat cream they'd only
+               gray it). A dark rail beside a light content panel is an in-
+               component product panel (its own spec, not the creatives "clean
+               light theme" rule), so the rail is flat `--cr-ink` (a brand token,
+               matching the source's near-black) — NOT the cool navy band.
+
+  MOTION       (user choice) "Layered reveal + step stagger" — on first viewport
+               entry: headline fades up, then steps 1→2→3 stagger-fade with
+               their hairline dividers DRAWING IN left→right, then the CTA + the
+               reassurance line; the right creative ASSEMBLES back→front (cream
+               backdrop → app screenshot → floating code card, ~100ms stagger).
+               Static afterward — the source shows one creative state, so no
+               per-step swap. CSS `animation` gated on `.in-view` (anti-race),
+               IntersectionObserver fires once then disconnects. No-JS safe: the
+               hidden reveal-state is scoped to `.has-js`, so without JS every-
+               thing shows. `prefers-reduced-motion` snaps content in. Hover
+               lives only on real controls (the CTA pill + the Copy button +
+               the nav rail items + the in-mock "Add" links). Lucide loaded +
+               drawn once (guarded).
+
+  RESPONSIVE   2-col → single column at 1024px (text on top, creative below,
+               capped width, loses its top offset); at 640px tighter padding,
+               headline / numerals scale down, and the creative's layer offsets
+               + code-card size step down (all via CSS-var knobs) so the crop
+               still reads and nothing causes horizontal scroll (media clips).
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  /* ─── scope reset ─────────────────────────────────────────────── */
+  .gs-section, .gs-section * { box-sizing: border-box; }
+  .gs-section {
+    background: var(--cr-bg);
+    padding: 120px 100px;
+    font-family: var(--cr-font-body);
+    overflow: hidden;                 /* crops the creative's right/bottom bleed */
+  }
+  .gs-wrap {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+    display: grid;
+    /* minmax(0,…) so the creative column can't force a min-content blow-out */
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);   /* ~40 / 60 split, per source */
+    column-gap: 64px;
+    align-items: center;              /* vertically centre the two columns against each other */
+  }
+
+  /* ─── LEFT column ─────────────────────────────────────────────── */
+  .gs-left { max-width: 460px; min-width: 0; }
+
+  .gs-head {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(38px, 4.6vw, 56px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--cr-fg);              /* plain — the source headline has no emphasis split */
+  }
+
+  .gs-steps {
+    margin: clamp(72px, 9vw, 116px) 0 0;
+    padding: 0;
+    list-style: none;                 /* reset <ol> markers — the big numerals are the markers */
+  }
+
+  .gs-step {
+    position: relative;
+    padding: 28px 0;
+  }
+  .gs-step:first-child { padding-top: 0; }
+  /* hairline divider BETWEEN steps only (none after the last) */
+  .gs-step:not(:last-child)::after {
+    content: "";
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 1px; background: var(--cr-line);
+    transform-origin: left center;          /* visible (scaleX 1) by default → present without JS */
+  }
+  .gs-num {
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(34px, 3.6vw, 44px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--cr-fg);
+  }
+  .gs-label {
+    margin: 32px 0 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 1.45;
+    color: var(--cr-fg);
+    max-width: 22em;
+  }
+
+  /* ─── CTA + reassurance ───────────────────────────────────────── */
+  .gs-cta-row { margin-top: 48px; }
+  .gs-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: 17px;
+    line-height: 1;
+    color: #fff;
+    background: var(--cr-brand);      /* brand-blue primary — pops on white */
+    border: none;
+    border-radius: var(--cr-radius-pill);
+    padding: 15px 28px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform .15s ease;
+  }
+  .gs-cta .gs-arrow { transition: transform .2s ease; }      /* nudges 4px on hover */
+  .gs-cta:hover .gs-arrow { transform: translateX(4px); }
+  .gs-cta:active { transform: scale(.97); }
+  .gs-reassure {
+    margin: 24px 0 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--cr-fg-3);
+  }
+
+  /* ─── RIGHT column · layered product creative ─────────────────── */
+  .gs-media {
+    /* per-instance offset knobs (tuned to the source crop) */
+    --stage-h: 600px;
+    --bd-l: 6px;   --bd-t: 32px;                 /* cream backdrop offset      */
+    --app-l: 56px; --app-t: 76px; --app-h: 478px;/* app screenshot offset/size */
+    --side-w: 152px;                             /* dark nav-rail width         */
+    --code-l: 372px; --code-t: 128px; --code-w: 430px; --code-h: 388px;
+
+    position: relative;
+    min-width: 0;
+    overflow: hidden;                 /* crops layers' right + bottom bleed */
+    min-height: var(--stage-h);
+    /* no top offset on desktop — the grid's align-items:center handles vertical position
+       (tablet/mobile re-add a stacked top margin below) */
+  }
+  .gs-layer { position: absolute; }
+
+  /* (1) cream offset backdrop — bleeds right + bottom */
+  .gs-backdrop {
+    left: var(--bd-l); top: var(--bd-t);
+    width: calc(100% + 70px);
+    height: calc(var(--stage-h) + 24px);
+    background: var(--cr-bg-warm-2);          /* var(--cr-bg-grey-100) warm cream */
+    border-radius: var(--cr-radius-xl);
+    z-index: 1;
+  }
+  .gs-backdrop .gs-grain {
+    position: absolute; inset: 0; border-radius: inherit;
+    background-image: url("../assets/../../brand-pack/assets/imagery/textures/texture-grain.png");   /* native tile — no background-size */
+    opacity: .05; mix-blend-mode: multiply; pointer-events: none;
+  }
+
+  /* (2) app screenshot — dark rail + light content panel */
+  .gs-app {
+    left: var(--app-l); top: var(--app-t);
+    width: calc(100% + 120px);
+    height: var(--app-h);
+    display: flex;
+    background: var(--cr-bg);
+    border: 1px solid var(--cr-line);
+    border-radius: var(--cr-radius-lg);       /* 20px */
+    overflow: hidden;                         /* clips rail corners + right bleed */
+    z-index: 2;
+  }
+
+  /* dark nav rail */
+  .gs-rail {
+    flex: none; width: var(--side-w);
+    background: var(--cr-ink);                /* flat var(--cr-ink-flat) — see NO SHADOW note */
+    padding: 20px 12px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .gs-rail-logo { display: flex; align-items: center; height: 17px; margin: 2px 6px 22px; }
+  .gs-rail-logo img { height: 16px; width: auto; display: block; }
+  .gs-rail-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 10px; border-radius: var(--cr-radius-sm);
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 13px;
+    color: var(--cr-fg-muted);
+    background: none; border: none; width: 100%; text-align: left;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+  }
+  .gs-rail-item .gs-i { width: 16px; height: 16px; stroke-width: 1.4; flex: none; }
+  .gs-rail-item:hover { color: #fff; background: rgba(255,255,255,0.06); }
+  .gs-rail-item.is-active { color: #fff; background: rgba(255,255,255,0.10); }
+
+  /* light content panel */
+  .gs-panel {
+    flex: 1 1 auto; min-width: 0;
+    padding: 22px 24px;
+    overflow: hidden;
+  }
+  .gs-panel-title {
+    margin: 0 0 16px;
+    font-family: var(--cr-font-display); font-weight: 700; font-size: 18px;
+    color: var(--cr-fg); white-space: nowrap;
+  }
+  .gs-tabs {
+    display: flex; gap: 22px;
+    border-bottom: 1px solid var(--cr-line);
+    margin-bottom: 20px;
+  }
+  .gs-tab {
+    padding: 0 1px 11px; margin-bottom: -1px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 13px;
+    color: var(--cr-fg-3); white-space: nowrap;
+    border-bottom: 2px solid transparent;
+  }
+  .gs-tab.is-active { color: var(--cr-fg); border-bottom-color: var(--cr-fg); }
+
+  .gs-sub { margin-bottom: 18px; }
+  .gs-sub-label {
+    margin: 0 0 3px;
+    font-family: var(--cr-font-display); font-weight: 700; font-size: 14px;
+    color: var(--cr-fg);
+  }
+  .gs-sub-help {
+    margin: 0 0 12px;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 12px;
+    line-height: 1.4; color: var(--cr-fg-3); white-space: nowrap;
+  }
+  .gs-rowcard {
+    display: flex; align-items: center; gap: 11px;
+    padding: 10px 12px;
+    border: 1px solid var(--cr-line); border-radius: 10px;
+    white-space: nowrap;
+  }
+  .gs-tile {
+    flex: none; width: 30px; height: 30px; border-radius: var(--cr-radius-sm);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .gs-tile--globe { background: var(--cr-bg-grey-50); border: 1px solid var(--cr-line); color: var(--cr-fg-2); }
+  .gs-tile--globe .gs-i { width: 16px; height: 16px; stroke-width: 1.5; }
+  .gs-tile--logo { background: var(--cr-ink); }      /* third-party mark tile (placeholder) */
+  .gs-rowcard-name {
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 13px; color: var(--cr-fg);
+  }
+  .gs-rowcard-sub {
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 11px; color: var(--cr-fg-3); margin-top: 1px;
+  }
+  .gs-add {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 12px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 13px;
+    color: var(--cr-brand);                         /* brand-blue action accent */
+    background: none; border: none; padding: 4px 2px; cursor: pointer;
+    transition: color .2s ease;
+  }
+  .gs-add .gs-i { width: 15px; height: 15px; stroke-width: 1.8; }
+  .gs-add:hover { color: var(--cr-brand-700); }
+
+  /* (3) floating code-snippet card */
+  .gs-code {
+    left: var(--code-l); top: var(--code-t);
+    width: var(--code-w); height: var(--code-h);
+    background: var(--cr-bg);
+    border: 1px solid var(--cr-line);
+    border-radius: var(--cr-radius-lg);
+    padding: 18px;
+    overflow: hidden;
+    z-index: 3;
+    display: flex; flex-direction: column;
+  }
+  .gs-code pre {
+    margin: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+    background: var(--cr-bg-grey-50);               /* differentiates the snippet from surrounding white */
+    border-radius: var(--cr-radius-md);
+    padding: 14px 16px;
+    font-family: var(--cr-font-mono);
+    font-size: 12.5px; line-height: 1.85;
+    color: var(--cr-fg-3);
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .gs-code-copy {
+    display: inline-flex; align-items: center; gap: 9px;
+    align-self: flex-start;
+    margin-top: 14px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 14px;
+    color: var(--cr-fg);
+    background: none; border: none; padding: 6px 4px; cursor: pointer;
+    border-radius: var(--cr-radius-xs);
+    transition: color .2s ease;
+  }
+  .gs-code-copy .gs-i { width: 18px; height: 18px; stroke-width: 1.5; }
+  .gs-code-copy:hover { color: var(--cr-brand); }
+
+  /* ─── MOTION: layered reveal + step stagger (anti-race, fires once) ── */
+  .has-js .gs-section [data-reveal] { opacity: 0; transform: translateY(20px); }
+  .has-js .gs-section [data-reveal].in-view {
+    animation: gsRise .7s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes gsRise { to { opacity: 1; transform: none; } }
+
+  /* with JS, dividers START collapsed (scaleX 0) and then DRAW IN left→right when
+     their step reveals; without JS this hidden state never applies, so the rules show */
+  .has-js .gs-section .gs-step:not(:last-child)::after { transform: scaleX(0); }
+  .has-js .gs-section .gs-step.in-view:not(:last-child)::after {
+    animation: gsDraw .6s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: calc(var(--d, 0s) + .12s);
+  }
+  @keyframes gsDraw { to { transform: scaleX(1); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .gs-section [data-reveal],
+    .has-js .gs-section [data-reveal].in-view {
+      opacity: 1; transform: none; animation: none;
+    }
+    .has-js .gs-section .gs-step::after { transform: scaleX(1); animation: none; }
+  }
+
+  /* ─── responsive ──────────────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .gs-section { padding: 88px 56px; }
+    .gs-wrap { grid-template-columns: minmax(0, 1fr); row-gap: 8px; }
+    .gs-left { max-width: 620px; }
+    .gs-steps { margin-top: clamp(48px, 7vw, 80px); }
+    .gs-media {
+      margin-top: 40px;
+      max-width: 720px;
+      --stage-h: 560px;
+    }
+  }
+  @media (max-width: 640px) {
+    .gs-section { padding: 64px 24px; }
+    .gs-head { font-size: clamp(30px, 8.4vw, 40px); }
+    .gs-num { font-size: clamp(30px, 9vw, 40px); }
+    .gs-label { font-size: 16px; margin-top: 24px; }
+    .gs-step { padding: 24px 0; }
+    .gs-cta-row { margin-top: 40px; }
+    .gs-cta { width: 100%; justify-content: center; }
+    .gs-media {
+      margin-top: 36px;
+      --stage-h: 440px;
+      --bd-l: 4px;   --bd-t: 24px;
+      --app-l: 28px; --app-t: 56px; --app-h: 356px;
+      --side-w: 124px;
+      --code-l: 196px; --code-t: 96px; --code-w: 300px; --code-h: 286px;
+    }
+    .gs-rail { padding: 16px 9px; }
+    .gs-panel { padding: 18px 18px; }
+    .gs-code { padding: 14px; }
+    .gs-code pre { font-size: 11.5px; padding: 12px 13px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- The two-column split + left-headline placement follow the SOURCE — not a
+     hardcoded house rule (the rule is intentionally per-composition). -->
+<section class="gs-section" data-screen-label="Features · Get started in minutes">
+  <div class="gs-wrap">
+
+    <!-- ── LEFT: headline + numbered steps + CTA ───────────────── -->
+    <div class="gs-left">
+      <h2 class="gs-head" data-reveal style="--d:0s">Get Started<br>in Minutes</h2>
+
+      <ol class="gs-steps">
+        <li class="gs-step" data-reveal style="--d:.12s">
+          <div class="gs-num">1.</div>
+          <p class="gs-label">Link your website &amp; knowledge base</p>
+        </li>
+        <li class="gs-step" data-reveal style="--d:.20s">
+          <div class="gs-num">2.</div>
+          <p class="gs-label">Example Brand generates the agents, you refine their goals and messaging</p>
+        </li>
+        <li class="gs-step" data-reveal style="--d:.28s">
+          <div class="gs-num">3.</div>
+          <p class="gs-label">Deploy with a simple code snippet</p>
+        </li>
+      </ol>
+
+      <div class="gs-cta-row" data-reveal style="--d:.36s">
+        <a class="gs-cta" href="#">Get Started <span class="gs-arrow">&rarr;</span></a>
+      </div>
+      <p class="gs-reassure" data-reveal style="--d:.42s">First version ready in minutes &middot; Live in 1&ndash;3 days</p>
+    </div>
+
+    <!-- ── RIGHT: layered product creative (cropped) ───────────── -->
+    <div class="gs-media" aria-label="Example Brand knowledge console — connect a website and embed the agent">
+
+      <!-- (1) cream offset backdrop -->
+      <div class="gs-layer gs-backdrop" data-reveal style="--d:.16s" aria-hidden="true">
+        <div class="gs-grain"></div>
+      </div>
+
+      <!-- (2) app screenshot -->
+      <div class="gs-layer gs-app" data-reveal style="--d:.26s" aria-hidden="true">
+        <!-- dark nav rail -->
+        <nav class="gs-rail">
+          <div class="gs-rail-logo"><img src="../assets/../../brand-pack/assets/logo/logo-white.svg" alt="Example Brand" /></div>
+          <button class="gs-rail-item"><i data-lucide="layout-dashboard" class="gs-i"></i>Overview</button>
+          <button class="gs-rail-item"><i data-lucide="bot" class="gs-i"></i>Agents</button>
+          <button class="gs-rail-item is-active"><i data-lucide="book-open" class="gs-i"></i>Knowledge</button>
+          <button class="gs-rail-item"><i data-lucide="settings" class="gs-i"></i>Settings</button>
+        </nav>
+        <!-- light content panel -->
+        <div class="gs-panel">
+          <h3 class="gs-panel-title">Knowledge &amp; assets</h3>
+          <div class="gs-tabs">
+            <span class="gs-tab is-active">Knowledge sources</span>
+            <span class="gs-tab">Asset library</span>
+          </div>
+
+          <div class="gs-sub">
+            <p class="gs-sub-label">Website</p>
+            <p class="gs-sub-help">Add your website so the agents can use it as a source</p>
+            <div class="gs-rowcard">
+              <span class="gs-tile gs-tile--globe"><i data-lucide="globe" class="gs-i"></i></span>
+              <span>
+                <span class="gs-rowcard-name">www.example-brand.com</span>
+                <span class="gs-rowcard-sub">Last scraped 2 days ago</span>
+              </span>
+            </div>
+            <button class="gs-add"><i data-lucide="plus" class="gs-i"></i>Add website</button>
+          </div>
+
+          <div class="gs-sub">
+            <p class="gs-sub-label">Integrations</p>
+            <p class="gs-sub-help">Connect your knowledge base from a third-party source</p>
+            <div class="gs-rowcard">
+              <!-- placeholder third-party mark (swap for a real partner SVG) -->
+              <span class="gs-tile gs-tile--logo" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 18V6h2.6l6.8 8.4V6H18v12h-2.6L8.6 9.6V18H6Z" fill="#fff"/></svg>
+              </span>
+              <span>
+                <span class="gs-rowcard-name">Notion</span>
+                <span class="gs-rowcard-sub">Last synced 2 days ago</span>
+              </span>
+            </div>
+            <button class="gs-add"><i data-lucide="plus" class="gs-i"></i>Add integration</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- (3) floating code-snippet card -->
+      <div class="gs-layer gs-code" data-reveal style="--d:.36s">
+<pre>&lt;iframe
+  src="https://example-brand.com/demo/019d0675-acf1-763c-93fb-379714df9224/embedded?theme=dark&amp;locale=en"
+  allow="autoplay"
+  style="width:100%;height:100%;overflow:hidden;border:none;border-radius:12px;"
+&gt;&lt;/iframe&gt;
+
+&lt;script src="https://example-brand.com/demo/embed.js"&gt;&lt;/script&gt;</pre>
+        <button class="gs-code-copy" type="button"><i data-lucide="copy" class="gs-i"></i>Copy embed code</button>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.gs-section');
+
+  // Lucide — draw once, guarded (a blocked CDN must not break the section)
+  if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
+
+  if (!sec) return;
+
+  function reveal() {
+    sec.querySelectorAll('[data-reveal]').forEach(function (n) { n.classList.add('in-view'); });
+    sec.querySelectorAll('.gs-step').forEach(function (n) { n.classList.add('in-view'); });
+  }
+
+  if (reduce) { reveal(); return; }      // CSS snaps everything in
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) {
+        if (en.isIntersecting) { reveal(); io.disconnect(); }
+      });
+    }, { threshold: 0.2 });
+    io.observe(sec);
+  } else {
+    reveal();
+  }
+})();
+</script>
+
+</body>
+</html>

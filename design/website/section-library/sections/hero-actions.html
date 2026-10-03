@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CR — Hero · AI Actions</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Hero · AI actions            from component-hero-actions.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **One product state is staged and held, and the copy attends it.**
+              The profile is explicit that this structure *requires* a real
+              artifact — it has nothing to say without one — so the panel is the
+              subject and the sentence beside it is short on purpose. The reader
+              believes the capability because they are looking at it.
+
+  STRUCTURE   Unchanged. Nav band · two-column hero (copy 1fr / framed artifact
+              1.06fr) · trust bar. DOM, both scripts, ids, `data-*`, `src` and
+              every behavioural hook are byte-compatible with the frozen original
+              (DR-22). The v2 file is beside this one in `_v2/`.
+
+  THE CREATIVE FRAME. v2 staged the panel on a blurred abstract image under a
+              white veil, with a second element tiling grain on top of it. Both
+              go. The frame takes an approved environment — `env-massif-banded`,
+              one per section — carrying the texture stack in a SINGLE background
+              so the blend modes composite against the photograph rather than
+              against transparency. The grain element stays in the DOM (it is
+              frozen) and stops painting, because the stack already carries it.
+
+              NO TYPE SITS ON THE PHOTOGRAPH. Everything readable in that column
+              is inside `.ha-panel`, which is an OPAQUE surface with a hairline —
+              the permitted case, and the thing that makes it read as the product
+              artifact rather than as decoration. Remove the photograph and not
+              one word changes legibility. No scrim, no veil: if the type needed
+              one, the photograph would have been a surface.
+
+  ACCENT      One moment: `Book a Demo Call`. v2 also spent colour on the nav
+              pill, the second action's chip and two green toggles — four marks
+              competing with the one thing the section wants clicked. They are
+              ink now. The toggle track takes the control radius with every other
+              control: the pack still defines a pill for lozenge affordances, but
+              this language standardizes on two radii and a true circle, and a
+              third value introduced by drift is how a closed set stops being one.
+
+  RESPONSIVE  The original's breakpoints (900 / 860 / 780 / 480), unchanged.
+              Type steps down the pack's ramp at each; `clamp()` is gone from
+              type, and the responsive gutter literals fold into the one page
+              gutter.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  .cr-ha { background: var(--cr-page-ground); font-family: var(--cr-font-body); color: var(--cr-text-secondary); }
+  .cr-ha *, .cr-ha *::before, .cr-ha *::after { box-sizing: border-box; }
+  .cr-ha [data-lucide] { width: 1em; height: 1em; display: inline-block; vertical-align: middle; }
+
+  /* ── (0) Canonical nav — LIGHT, because the hero surface is light ─────── */
+  .ha-navband { background: var(--cr-page-ground); border-bottom: var(--cr-stroke) solid var(--cr-border-default); }
+  .ha-nav {
+    max-width: var(--cr-content-max); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: var(--cr-space-s) var(--cr-page-gutter); gap: var(--cr-space-s);
+  }
+  .ha-logo { height: 30px; width: auto; display: block; flex: 0 0 auto; }
+  .ha-links {
+    display: flex; gap: var(--cr-space-s); align-items: center;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: var(--cr-text-supporting);
+    color: var(--cr-text-secondary); letter-spacing: 0;
+  }
+  .ha-link { display: inline-flex; align-items: center; gap: var(--cr-space-xs); cursor: pointer; white-space: nowrap; }
+  .ha-link svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: var(--cr-icon-stroke-sm); fill: none; }
+  /* Dark ink, not accent — the accent is a page's single emphasis and it is
+     spent below, on the demo call. */
+  .ha-navcta {
+    flex: 0 0 auto; background: var(--cr-text-primary); color: var(--cr-text-inverse);
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+    padding: var(--cr-space-xs) var(--cr-space-s); border-radius: var(--cr-radius-control);
+    border: 0; cursor: pointer;
+    letter-spacing: 0; transition: background .18s ease;
+  }
+  .ha-navcta:hover { background: var(--cr-ink); }
+
+  /* ── Well ─────────────────────────────────────────────────────────────── */
+  .ha-wrap { max-width: var(--cr-content-max); margin: 0 auto; padding: 0 var(--cr-page-gutter); }
+
+  /* ── (1)+(2) Hero grid — the tracks are the original's ────────────────── */
+  .ha-hero {
+    display: grid; grid-template-columns: 1fr 1.06fr;
+    gap: var(--cr-space-m); align-items: center;
+    padding: var(--cr-rhythm-content) 0;
+  }
+  .ha-col-text { min-width: 0; }
+
+  .ha-title {
+    margin: 0; font-family: var(--cr-font-display); font-weight: 400;
+    font-size: var(--cr-text-h1);
+    line-height: var(--cr-leading-heading); letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .ha-sub {
+    margin: var(--cr-rhythm-cluster) 0 0; max-width: var(--cr-measure-body);
+    font-size: var(--cr-text-body); line-height: var(--cr-leading-body); color: var(--cr-text-secondary);
+  }
+  .ha-cta-row {
+    display: flex; align-items: center; gap: var(--cr-space-s);
+    margin-top: var(--cr-space-m); flex-wrap: wrap;
+  }
+  /* THE SECTION'S ONE ACCENT MOMENT. */
+  .ha-cta {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    background: var(--cr-accent-orange); color: var(--cr-on-accent-light); border: 0; cursor: pointer;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+    padding: var(--cr-space-xs) var(--cr-space-s); border-radius: var(--cr-radius-control); text-decoration: none;
+    letter-spacing: 0;
+    transition: background .2s ease, transform .15s ease;
+  }
+  .ha-cta:hover { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+  .ha-cta:active { transform: scale(.97); }
+  .ha-cta .ar { transition: transform .16s ease; }
+  .ha-cta:hover .ar { transform: translateX(4px); }
+  .ha-reassure {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    font-size: var(--cr-text-supporting); color: var(--cr-text-secondary); white-space: nowrap;
+  }
+  .ha-reassure svg { width: 16px; height: 16px; color: var(--cr-text-secondary); stroke-width: var(--cr-icon-stroke-sm); }
+
+  /* ── (2) The framed artifact ──────────────────────────────────────────────
+     THE STANDARD CREATIVE TREATMENT. One stack, three layers, in this order:
+     grain on top, grunge under it, the environment underneath both. It has to be
+     ONE stack — a blend mode composites against what is beneath it in the SAME
+     background, so putting the grain on a separate element resolves `overlay`
+     against transparency and renders the texture at full strength as grey
+     static. The last position is the asset's measured focus, not a guess.
+
+     The URLs are written out rather than reached through `--cr-env-*`, because a
+     `url()` inside a custom property resolves against the CONSUMING document,
+     not the sheet that declared it, and fails silently.
+
+     There is no `background:` shorthand on this element: the shorthand resets
+     `background-image` and would drop the whole stack. */
+  .ha-card {
+    position: relative; overflow: hidden;
+    min-height: calc(var(--cr-space-2xl) * 5);
+    border-radius: var(--cr-radius-card);
+    background-color: var(--cr-bg-dark);
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-massif-banded.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 40% 45%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+    padding: var(--cr-space-m) var(--cr-space-s) var(--cr-space-xl);
+    display: flex;
+  }
+  /* The grain element is frozen in the DOM and now inert — the stack above
+     already carries the grain, in the one place a blend mode can resolve it. */
+  .ha-card-grain {
+    position: absolute; inset: 0; z-index: 0;
+    pointer-events: none;
+  }
+  /* OPAQUE, which is the whole reason it may sit over a photograph — and it is
+     the artifact this section exists to show. */
+  .ha-panel {
+    position: relative; z-index: 1; width: 100%; align-self: flex-start;
+    background: var(--cr-surface-1); border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card); padding: var(--cr-space-s);
+  }
+  .ha-panel-title {
+    margin: 0 0 var(--cr-space-s); font-family: var(--cr-font-display);
+    font-weight: 400; font-size: var(--cr-text-h6);
+    line-height: var(--cr-leading-heading); letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .ha-actions { display: flex; flex-direction: column; gap: var(--cr-space-xs); }
+
+  .ha-action {
+    border: var(--cr-stroke) solid var(--cr-border-default); border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-xs); position: relative;
+  }
+  .ha-action-head { display: flex; align-items: center; justify-content: space-between; }
+  .ha-chip {
+    width: 42px; height: 42px; border-radius: var(--cr-radius-control); flex: 0 0 auto;
+    display: flex; align-items: center; justify-content: center; color: var(--cr-text-inverse);
+  }
+  .ha-chip svg { width: 21px; height: 21px; stroke-width: var(--cr-icon-stroke-md); }
+  .ha-chip-dark { background: var(--cr-text-primary); }
+  /* The second chip kept the source's circle; it loses the colour. Two chips in
+     two hues was two accent moments inside the one panel. */
+  .ha-chip-blue { background: var(--cr-text-primary); border-radius: 50%; }
+
+  /* The direction closes the radius set to the card and the control, plus a true
+     circle. The pack still defines a pill for lozenge affordances, but nothing in
+     this language may introduce a third value by drift — so the toggle track
+     takes the control radius like every other control. The green ON state
+     becomes ink. */
+  .ha-toggle {
+    width: 46px; height: 26px; border-radius: var(--cr-radius-control); background: var(--cr-text-primary);
+    position: relative; flex: 0 0 auto;
+  }
+  .ha-knob {
+    position: absolute; top: 3px; left: 23px; width: 20px; height: 20px;
+    border-radius: 50%; background: var(--cr-surface-1);
+  }
+  .ha-action-label {
+    margin: var(--cr-space-xs) 0; font-family: var(--cr-font-body);
+    font-weight: 500; font-size: var(--cr-text-supporting); color: var(--cr-text-primary);
+    letter-spacing: 0;
+  }
+  .ha-skel { height: 10px; border-radius: var(--cr-radius-control); background: var(--cr-surface-5); }
+  .ha-skel + .ha-skel { margin-top: var(--cr-space-xs); }
+  .ha-skel.w1 { width: 86%; }
+  .ha-skel.w2 { width: 54%; }
+
+  /* cursor on the 2nd toggle */
+  .ha-cursor { position: absolute; top: 30px; right: 4px; z-index: 2; pointer-events: none; }
+  .ha-cursor svg { width: 23px; height: 23px; display: block; }
+
+  /* pause control — an OPAQUE control on the frame, not a translucent one */
+  .ha-pause { position: absolute; left: var(--cr-space-s); bottom: var(--cr-space-s); z-index: 2; width: 54px; height: 54px; }
+  .ha-pause-ring { position: absolute; inset: 0; width: 54px; height: 54px; transform: rotate(-90deg); }
+  .ha-pause-btn {
+    position: absolute; inset: 6px; border-radius: 50%; background: var(--cr-bg-dark);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ha-pause-btn svg { width: 17px; height: 17px; color: var(--cr-text-inverse); fill: var(--cr-text-inverse); stroke: var(--cr-text-inverse); }
+
+  /* ── (3) Trust bar — attribution, at the lowest weight in the section ─── */
+  .ha-trust {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--cr-space-m);
+    padding: var(--cr-space-m) 0 var(--cr-rhythm-content); flex-wrap: wrap;
+  }
+  .ha-trust-label { font-size: var(--cr-text-supporting); color: var(--cr-text-secondary); flex: 0 0 auto; }
+  .ha-trust-label strong { font-family: var(--cr-font-body); font-weight: 500; color: var(--cr-text-primary); }
+  .ha-logos { display: flex; align-items: center; gap: var(--cr-space-s); flex-wrap: wrap; }
+  .ha-logo-item { display: inline-flex; align-items: center; gap: var(--cr-space-xs); opacity: 0.42; }
+  .ha-logo-item svg { height: 21px; width: auto; display: block; }
+  .ha-logo-item svg * { fill: var(--cr-text-primary) !important; stroke: var(--cr-text-primary) !important; }
+  .ha-logo-wm {
+    font-family: var(--cr-font-display); font-weight: 400; font-size: var(--cr-text-body);
+    color: var(--cr-text-primary); letter-spacing: var(--cr-tracking-heading);
+  }
+
+  /* ── Motion — unchanged in kind ───────────────────────────────────────── */
+  /* entrance: transform-only (opacity stays 1 → preview-safe, never blank) */
+  .ha-reveal { animation: haRise .7s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--d, 0s); }
+  @keyframes haRise { from { transform: translateY(16px); } to { transform: none; } }
+  /* demo loop: subtle cursor tap; both toggles stay ON every frame */
+  .ha-cursor { animation: haTap 2.8s ease-in-out infinite; }
+  @keyframes haTap { 0%, 38%, 100% { transform: translate(0,0); } 48%, 56% { transform: translate(-3px,-4px); } }
+  .ha-action--live .ha-knob { animation: haBounce 2.8s ease-in-out infinite; }
+  @keyframes haBounce { 0%, 40%, 100% { transform: scale(1); } 50% { transform: scale(.9); } }
+  /* Matched to the triggers' own specificity — a guard that loses the cascade is
+     not a guard. */
+  @media (prefers-reduced-motion: reduce) {
+    .ha-reveal, .ha-cursor, .ha-action--live .ha-knob { animation: none; }
+  }
+
+  /* ── Responsive — the ORIGINAL's breakpoints; type steps on the ramp ──── */
+  @media (max-width: 900px) {
+    .ha-hero { grid-template-columns: 1fr; gap: var(--cr-space-m); }
+    .ha-title { font-size: var(--cr-text-h2); }
+    .ha-col-text { text-align: center; }
+    .ha-sub { margin-left: auto; margin-right: auto; }
+    .ha-cta-row { justify-content: center; }
+    .ha-card { max-width: 560px; margin: 0 auto; width: 100%; }
+  }
+  @media (max-width: 860px) { .ha-links { display: none; } }
+  @media (max-width: 780px) {
+    .ha-trust { justify-content: center; text-align: center; }
+    .ha-title { font-size: var(--cr-text-h3); }
+  }
+  @media (max-width: 480px) {
+    .ha-card { padding: var(--cr-space-s) var(--cr-space-xs) var(--cr-space-xl); min-height: 0; }
+    .ha-panel { padding: var(--cr-space-xs); }
+    .ha-title { font-size: var(--cr-text-h4); }
+    .ha-sub { font-size: var(--cr-text-supporting); }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. Every reason is one of the closed six; there is no `directed`
+     line, because the two-column tracks and the panel's arrangement are the
+     original's — what moved is scale, ramp, radius and stroke.
+     `.ha-card min-height` is composed from the closed spacing scale, not picked.
+  .ha-action       | border-radius          | radius-pair
+  .ha-action       | padding-bottom         | spacing-scale
+  .ha-action       | padding-left           | spacing-scale
+  .ha-action       | padding-right          | spacing-scale
+  .ha-action       | padding-top            | spacing-scale
+  .ha-action-label | font-size              | type-ramp
+  .ha-action-label | margin-bottom          | spacing-scale
+  .ha-action-label | margin-top             | spacing-scale
+  .ha-actions      | column-gap             | spacing-scale
+  .ha-actions      | row-gap                | spacing-scale
+  .ha-card         | border-radius          | radius-pair
+  .ha-card         | min-height             | spacing-scale
+  .ha-card         | padding-bottom         | spacing-scale
+  .ha-card         | padding-left           | spacing-scale
+  .ha-card         | padding-right          | spacing-scale
+  .ha-card         | padding-top            | spacing-scale
+  .ha-cta          | border-radius          | radius-pair
+  .ha-cta          | column-gap             | spacing-scale
+  .ha-cta          | padding-bottom         | spacing-scale
+  .ha-cta          | padding-left           | spacing-scale
+  .ha-cta          | padding-right          | spacing-scale
+  .ha-cta          | padding-top            | spacing-scale
+  .ha-cta          | row-gap                | spacing-scale
+  .ha-cta-row      | column-gap             | spacing-scale
+  .ha-cta-row      | margin-top             | spacing-scale
+  .ha-cta-row      | row-gap                | spacing-scale
+  .ha-hero         | column-gap             | spacing-scale
+  .ha-hero         | padding-bottom         | spacing-scale
+  .ha-hero         | padding-top            | spacing-scale
+  .ha-hero         | row-gap                | spacing-scale
+  .ha-link         | column-gap             | spacing-scale
+  .ha-link         | row-gap                | spacing-scale
+  .ha-links        | column-gap             | spacing-scale
+  .ha-links        | row-gap                | spacing-scale
+  .ha-logo-item    | column-gap             | spacing-scale
+  .ha-logo-item    | row-gap                | spacing-scale
+  .ha-logo-wm      | font-size              | type-ramp
+  .ha-logos        | column-gap             | spacing-scale
+  .ha-logos        | row-gap                | spacing-scale
+  .ha-nav          | column-gap             | spacing-scale
+  .ha-nav          | padding-left           | spacing-scale
+  .ha-nav          | padding-right          | spacing-scale
+  .ha-nav          | row-gap                | spacing-scale
+  .ha-navcta       | border-radius          | radius-pair
+  .ha-navcta       | font-size              | type-ramp
+  .ha-navcta       | padding-left           | spacing-scale
+  .ha-navcta       | padding-right          | spacing-scale
+  .ha-panel        | border-radius          | radius-pair
+  .ha-panel        | padding-bottom         | spacing-scale
+  .ha-panel        | padding-left           | spacing-scale
+  .ha-panel        | padding-right          | spacing-scale
+  .ha-panel        | padding-top            | spacing-scale
+  .ha-panel-title  | font-size              | type-ramp
+  .ha-panel-title  | line-height            | type-ramp
+  .ha-panel-title  | margin-bottom          | spacing-scale
+  .ha-panel-title  | margin-top             | spacing-scale
+  .ha-reassure     | column-gap             | spacing-scale
+  .ha-reassure     | font-size              | type-ramp
+  .ha-reassure     | row-gap                | spacing-scale
+  .ha-sub          | font-size              | type-ramp
+  .ha-sub          | line-height            | type-ramp
+  .ha-sub          | margin-top             | spacing-scale
+  .ha-sub          | max-width              | measure
+  .ha-title        | font-size              | type-ramp
+  .ha-title        | line-height            | type-ramp
+  .ha-trust        | column-gap             | spacing-scale
+  .ha-trust        | padding-bottom         | spacing-scale
+  .ha-trust        | padding-top            | spacing-scale
+  .ha-trust        | row-gap                | spacing-scale
+  .ha-wrap         | padding-left           | spacing-scale
+  .ha-wrap         | padding-right          | spacing-scale
+  .lucide          | font-size              | type-ramp
+  .lucide          | stroke-width           | stroke
+  circle           | font-size              | type-ramp
+  circle           | stroke-width           | stroke
+  path             | font-size              | type-ramp
+  path             | stroke-width           | stroke
+  svg              | stroke-width           | stroke
+-->
+
+
+<section class="cr-ha" data-screen-label="Hero · AI Actions"
+         data-archetype="product-showcase" data-hierarchy="hero" data-intent="orient"
+         data-register="confident" data-signature="embedded-screenshot" data-density="medium">
+
+  <!-- ── (0) Canonical CR nav — light variant ─────────────────────────── -->
+  <div class="ha-navband">
+    <nav class="ha-nav">
+      <img class="ha-logo" src="../../brand-pack/assets/logo/logo-color.svg" alt="Example Brand">
+      <div class="ha-links">
+        <span class="ha-link">AI <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ha-link">Industry <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ha-link">FosterX <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ha-link">About us</span>
+        <span class="ha-link">Resources <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+      <button class="ha-navcta">Let's talk</button>
+    </nav>
+  </div>
+
+  <div class="ha-wrap">
+
+    <!-- ── (1)+(2) Hero ───────────────────────────────────────────────── -->
+    <div class="ha-hero">
+
+      <!-- LEFT — copy -->
+      <div class="ha-col-text">
+        <h1 class="ha-title ha-reveal" style="--d:.05s">AI Agents That Make No Mistakes.</h1>
+        <p class="ha-sub ha-reveal" style="--d:.16s">Example Brand deploys production AI agents into your existing stack to absorb routine operational work &mdash; every workflow running, every exception caught.</p>
+        <div class="ha-cta-row ha-reveal" style="--d:.26s">
+          <a class="ha-cta" href="#">Book a Demo Call <span class="ar" aria-hidden="true">&rarr;</span></a>
+          <span class="ha-reassure"><i data-lucide="clock"></i>30 minutes &middot; No commitment</span>
+        </div>
+      </div>
+
+      <!-- RIGHT — environment frame + the opaque AI Actions panel -->
+      <div class="ha-card ha-reveal" style="--d:.2s">
+        <span class="ha-card-grain" aria-hidden="true"></span>
+
+        <div class="ha-panel">
+          <h2 class="ha-panel-title">AI Actions</h2>
+          <div class="ha-actions">
+
+            <!-- action 1 -->
+            <div class="ha-action">
+              <div class="ha-action-head">
+                <span class="ha-chip ha-chip-dark"><i data-lucide="receipt"></i></span>
+                <span class="ha-toggle"><span class="ha-knob"></span></span>
+              </div>
+              <div class="ha-action-label">Reconcile invoices</div>
+              <div class="ha-skel w1"></div>
+              <div class="ha-skel w2"></div>
+            </div>
+
+            <!-- action 2 (cursor sits on its toggle) -->
+            <div class="ha-action ha-action--live">
+              <div class="ha-action-head">
+                <span class="ha-chip ha-chip-blue"><i data-lucide="split"></i></span>
+                <span class="ha-toggle"><span class="ha-knob"></span></span>
+                <span class="ha-cursor" aria-hidden="true">
+                  <svg viewBox="0 0 16 16"><path d="M1 1 L1 13.2 L4.3 9.9 L6.5 14.7 L8.4 13.85 L6.2 9.1 L10.7 9.1 Z" fill="var(--cr-text-primary)" stroke="var(--cr-text-inverse)" stroke-width="1.1" stroke-linejoin="round"/></svg>
+                </span>
+              </div>
+              <div class="ha-action-label">Route exceptions</div>
+              <div class="ha-skel w1"></div>
+              <div class="ha-skel w2"></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- pause control -->
+        <span class="ha-pause" aria-hidden="true">
+          <svg class="ha-pause-ring" viewBox="0 0 54 54">
+            <circle cx="27" cy="27" r="25" fill="none" stroke="var(--cr-border-default)" stroke-width="3"/>
+            <circle cx="27" cy="27" r="25" fill="none" stroke="var(--cr-text-inverse)" stroke-width="3" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="62"/>
+          </svg>
+          <span class="ha-pause-btn"><i data-lucide="pause"></i></span>
+        </span>
+      </div>
+
+    </div>
+
+    <!-- ── (3) Trust bar ──────────────────────────────────────────────── -->
+    <div class="ha-trust ha-reveal" style="--d:.34s" aria-label="Trusted by">
+      <div class="ha-trust-label"><strong>Trusted in production</strong> &middot; 4M+ tasks automated</div>
+      <div class="ha-logos">
+        <span class="ha-logo-item">
+          <svg viewBox="0 0 122.8 122.8" aria-hidden="true"><path d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9zm6.5 0c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z"/><path d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2zm0 6.5c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 51.1 0 45.3 0 38.2s5.8-12.9 12.9-12.9h32.3z"/><path d="M97 38.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97V38.2zm-6.5 0c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V5.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9v25.3z"/><path d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9zm0-6.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z"/></svg>
+          <span class="ha-logo-wm">slack</span>
+        </span>
+        <span class="ha-logo-item">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.78 12.653a5.22 5.22 0 1 0 0 10.44 5.22 5.22 0 0 0 0-10.44zm-13.56 0a5.22 5.22 0 1 0 0 10.44 5.22 5.22 0 0 0 0-10.44zM12 .908a5.22 5.22 0 1 0 0 10.44A5.22 5.22 0 0 0 12 .908z"/></svg>
+          <span class="ha-logo-wm">asana</span>
+        </span>
+        <span class="ha-logo-item">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 1.807 0 5.629l6 3.822 6.001-3.822zM18 1.807l-6 3.822 6 3.822 6-3.822zM0 13.274l6 3.822 6.001-3.822L6 9.452zM18 9.452l-6.001 3.822L18 17.096l6-3.822zM6 18.371l6.001 3.822 6-3.822-6-3.822z"/></svg>
+          <span class="ha-logo-wm">Dropbox</span>
+        </span>
+        <span class="ha-logo-item">
+          <svg viewBox="0 0 23 23" aria-hidden="true"><rect x="1" y="1" width="10" height="10"/><rect x="12" y="1" width="10" height="10"/><rect x="1" y="12" width="10" height="10"/><rect x="12" y="12" width="10" height="10"/></svg>
+          <span class="ha-logo-wm">Microsoft</span>
+        </span>
+        <span class="ha-logo-item"><span class="ha-logo-wm">stripe</span></span>
+        <span class="ha-logo-item"><span class="ha-logo-wm">zoom</span></span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

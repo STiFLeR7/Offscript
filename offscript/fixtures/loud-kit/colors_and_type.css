@@ -1,0 +1,18 @@
+/* offscript/fixtures/loud-kit/colors_and_type.css
+ * A deliberately LOUD, high-saturation, multi-accent brand ARCHETYPE — the
+ * counter-fixture to CR's restrained single accent. This posture is NOT tied
+ * to any one sector: it shows up across entertainment, sports, gaming,
+ * kids/toys, events, promotional retail, beverages, and more. The point is the
+ * POSTURE (loud, energetic, multiple saturated accents), which Offscript must honor
+ * for any brand that declares it — never drag toward premium restraint.
+ *
+ * Vivid magenta + electric cyan: two saturated, far-apart hues so the brand
+ * derives two accents (allowedAccentCount = 2). Any loud multi-accent palette
+ * would do; these are deliberately not a recognizable single brand's colours.
+ */
+:root {
+  --brand-magenta: #e6007e;
+  --brand-cyan: #00b4d8;
+  --fg: #1a1a1a;
+  --bg: #ffffff;
+}

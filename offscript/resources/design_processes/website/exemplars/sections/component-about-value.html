@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Split · asymmetric — about value</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Split · asymmetric              from component-about-value.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **Prose that carries its own evidence.** The profile is explicit
+              that this is the library's one structure where an argument is
+              allowed to run in paragraphs and still hold measures — the numbers
+              sit inside the passage rather than interrupting it. So the lede
+              keeps the reading measure, and the three rows below it are
+              separated by hairlines rather than boxed into cards: a card would
+              turn a continuous argument into a set of claims.
+
+  STRUCTURE   Unchanged. A 30fr / 70fr split — eyebrow pinned top and portrait
+              pinned bottom on the left, lede → link → three stat rows on the
+              right. DOM, scripts, ids, `data-*`, `aria-*`, `src` and every
+              behavioural hook are byte-compatible with the frozen original
+              (DR-22). The v2 file is beside this one in `_v2/`.
+
+  NO ENVIRONMENT — and that is a finding, not an omission.
+              v2 has **no abstract creative background**: no gradient, no blur
+              plate, no tint wash. Its only image is `leader-1.jpg`, a human
+              portrait, which is a SUBJECT and is never substituted. The profile
+              agrees — `Media presence s, anchor left · right` allocates the one
+              position the portrait already occupies. DR-46 says a photograph
+              occupies a position the composition allocates to it; this
+              composition allocates one, and it is filled. Nothing was invented
+              to fill a rule that had nothing to bite on.
+
+  ACCENT      **Zero.** v2 spent the brand blue on a single hover state on
+              "More About Us". This section has no primary CTA — it hands the
+              reader on rather than closing them — so the accent is not its to
+              spend, and the link resolves in ink.
+
+  TYPE        The eyebrow and the link were 13px/12px, weight 600, UPPERCASE and
+              tracked at 0.08em. All four are retired: supporting text is never
+              uppercased and never tracked, the ramp has one supporting step, and
+              the system has two weights. The numerals drop from 600 to 400 and
+              land on the section step — a measure does not need to shout to be
+              the loudest thing in its row; it already is, by size.
+
+  RESPONSIVE  The original's breakpoints (819 / 520), unchanged. The stacked
+              photo re-crops to `4/3` rather than v2's `16/10`, which is off the
+              approved ratio vocabulary by ~11% — the crop was never one the
+              system offered. Type steps on the pack's ramp; `clamp()` is gone
+              throughout — it resolves to sizes nobody authored.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  .cr-abv {
+    background: var(--cr-page-ground);
+    padding: var(--cr-space-2xl) var(--cr-page-gutter);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+    font-size: var(--cr-text-body);
+  }
+  .cr-abv *, .cr-abv *::before, .cr-abv *::after { box-sizing: border-box; }
+  .abv-well { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* The 30/70 split is the section — it is what lets a tall portrait stand
+     beside a running argument without either one shrinking the other. Left
+     untouched: a track change here is a different composition. */
+  .abv-grid {
+    display: grid;
+    grid-template-columns: 30fr 70fr;
+    gap: var(--cr-space-xl);
+    /* align-items defaults to stretch → left col matches right col height */
+  }
+
+  /* ── Left column — label at the top, subject at the bottom ─────────── */
+  .abv-left {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  /* Supporting text, at the supporting size, in sentence case. The uppercase +
+     0.08em tracking is retired: an eyebrow earns its place by position, not by
+     being shouted. */
+  .abv-eyebrow {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  /* The human subject. Kept exactly — DR-46: portrait photography is never
+     substituted for an environment. `margin-top:auto` still pins its base to
+     the last stat row's baseline, which is the whole reason the split reads. */
+  .abv-photo {
+    margin-top: auto;            /* pin to bottom of the column */
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border-radius: var(--cr-radius-card);
+    object-fit: cover;
+    object-position: center 22%;
+    display: block;
+  }
+
+  /* ── Right column — the argument ───────────────────────────────────── */
+  .abv-right { min-width: 0; }
+
+  .abv-lede {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-h6);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-primary);
+    max-width: var(--cr-measure-body);
+  }
+  /* Ink, not accent. A hand-off link is not the page's one emphasis. */
+  .abv-more {
+    display: inline-block;
+    margin: var(--cr-space-m) 0 0;
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-primary);
+    text-decoration: none;
+    transition: color .18s ease;
+  }
+  .abv-more:hover, .abv-more:focus-visible { color: var(--cr-text-secondary); }
+  .abv-more .arr { transition: transform .2s ease; display: inline-block; }
+  .abv-more:hover .arr, .abv-more:focus-visible .arr { transform: translateX(3px); }
+
+  /* ── The measures — rows in a passage, not cards in a grid ─────────── */
+  .abv-stats { margin-top: var(--cr-rhythm-content); }
+  .abv-stat {
+    display: grid;
+    grid-template-columns: 1fr minmax(240px, 300px);
+    align-items: center;
+    gap: var(--cr-space-m);
+    padding: var(--cr-space-m) 0;
+    border-top: var(--cr-stroke) solid var(--cr-border-default);
+  }
+  .abv-num {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h2);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .abv-cap {
+    margin: 0;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* ── Scroll-reveal — unchanged in kind ─────────────────────────────── */
+  .cr-abv.has-js .reveal { opacity: 0; transform: translateY(16px); }
+  .cr-abv.has-js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  /* Matched to the trigger's specificity. v2's guard named `.reveal` only, one
+     class short of `.reveal.in` — a guard that loses the cascade is not a guard. */
+  @media (prefers-reduced-motion: reduce) {
+    .cr-abv.has-js .reveal,
+    .cr-abv.has-js .reveal.in { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ── Responsive — the ORIGINAL's breakpoints ───────────────────────── */
+  /* No type step is authored at 1024. The pack's ramp already walks H2 down
+     (56 → 44 → 36) at its own breakpoints, and a second step on top of it lands
+     the measures at caption size on a phone. */
+  @media (max-width: 819px) {
+    .abv-grid { grid-template-columns: 1fr; gap: var(--cr-space-m); }
+    .abv-photo {
+      margin-top: var(--cr-space-m);
+      aspect-ratio: 4 / 3;       /* an approved landscape crop; v2's 16/10 was not one */
+      object-position: center 30%;
+      /* v2 capped this crop with `max-height: 360px`, which BEATS a declared
+         aspect-ratio — the frame then renders whatever proportion the width
+         leaves it (2.0 at 819px), which is how a section declares one ratio and
+         shows another. The cap is re-expressed on the WIDTH instead: 480 × 3/4
+         is the same 360px ceiling, reached with the ratio still governing. */
+      max-width: 480px;
+    }
+  }
+  @media (max-width: 520px) {
+    .cr-abv { padding: var(--cr-space-xl) var(--cr-page-gutter); }
+    .abv-stat {
+      grid-template-columns: 1fr;
+      gap: var(--cr-space-xs);
+      align-items: start;
+    }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. Everything below realizes a scale the pack already holds —
+     there is no `directed` line, because the Pilot Constraint was not asked to
+     yield anywhere in this section. The one ratio row is the stacked photo
+     crop: v2's 16/10 is ~11% off the nearest approved ratio, so 4/3 is not a
+     re-crop by preference, it is the crop the vocabulary offers.
+  .abv-cap     | font-size              | type-ramp
+  .abv-cap     | line-height            | type-ramp
+  .abv-eyebrow | font-size              | type-ramp
+  .abv-eyebrow | line-height            | type-ramp
+  .abv-grid    | column-gap             | spacing-scale
+  .abv-grid    | font-size              | type-ramp
+  .abv-grid    | row-gap                | spacing-scale
+  .abv-lede    | font-size              | type-ramp
+  .abv-lede    | line-height            | type-ramp
+  .abv-lede    | max-width              | measure
+  .abv-left    | font-size              | type-ramp
+  .abv-more    | font-size              | type-ramp
+  .abv-more    | line-height            | type-ramp
+  .abv-more    | margin-top             | spacing-scale
+  .abv-num     | font-size              | type-ramp
+  .abv-num     | line-height            | type-ramp
+  .abv-photo   | aspect-ratio           | ratio-vocabulary
+  .abv-photo   | border-radius          | radius-pair
+  .abv-photo   | font-size              | type-ramp
+  .abv-photo   | margin-top             | spacing-scale
+  .abv-photo   | max-width              | measure
+  .abv-right   | font-size              | type-ramp
+  .abv-stat    | column-gap             | spacing-scale
+  .abv-stat    | font-size              | type-ramp
+  .abv-stat    | padding-bottom         | spacing-scale
+  .abv-stat    | padding-top            | spacing-scale
+  .abv-stat    | row-gap                | spacing-scale
+  .abv-stats   | font-size              | type-ramp
+  .abv-stats   | margin-top             | spacing-scale
+  .arr         | font-size              | type-ramp
+  .arr         | line-height            | type-ramp
+-->
+
+<section class="cr-abv" data-screen-label="About · value proposition"
+         data-archetype="editorial-split" data-hierarchy="secondary" data-intent="persuade"
+         data-register="editorial" data-signature="large-statistic" data-density="medium">
+  <div class="abv-well">
+    <div class="abv-grid">
+
+      <!-- ── Left column ───────────────────────────────────── -->
+      <div class="abv-left">
+        <p class="abv-eyebrow reveal" style="--d:0ms">About Us</p>
+        <img class="abv-photo reveal" style="--d:240ms"
+             src="../../brand-pack/assets/imagery/avatars/leader-1.jpg"
+             alt="A Example Brand operations lead at work">
+      </div>
+
+      <!-- ── Right column ──────────────────────────────────── -->
+      <div class="abv-right">
+        <p class="abv-lede reveal" style="--d:80ms">Designed for the high-volume, exception-heavy work real businesses run on, Example Brand brings agents, integration, and strategy together under one accountable team.</p>
+
+        <a class="abv-more reveal" style="--d:160ms" href="#">More About Us <span class="arr">&rarr;</span></a>
+
+        <div class="abv-stats">
+
+          <div class="abv-stat reveal" style="--d:200ms">
+            <p class="abv-num" data-target="4" data-suffix="M+" data-decimals="0">4M+</p>
+            <p class="abv-cap">Operational tasks automated across our clients.</p>
+          </div>
+
+          <div class="abv-stat reveal" style="--d:280ms">
+            <p class="abv-num" data-target="11.3" data-suffix="&times;" data-decimals="1">11.3&times;</p>
+            <p class="abv-cap">Average return delivered on every engagement.</p>
+          </div>
+
+          <div class="abv-stat reveal" style="--d:360ms">
+            <p class="abv-num" data-target="92" data-suffix="%" data-decimals="0">92%</p>
+            <p class="abv-cap">Of routine operational cost removed per deployment.</p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var sec = document.querySelector('.cr-abv');
+    if (!sec || !('IntersectionObserver' in window)) return;
+    sec.classList.add('has-js');
+
+    var nums = sec.querySelectorAll('.abv-num');
+
+    // Prime numbers to 0 (final value stays in HTML for no-JS)
+    nums.forEach(function (el) {
+      var dec = parseInt(el.getAttribute('data-decimals'), 10) || 0;
+      var suf = el.getAttribute('data-suffix') || '';
+      el.textContent = (0).toFixed(dec) + suf.replace('&times;', '×');
+    });
+
+    function countUp(el) {
+      var target  = parseFloat(el.getAttribute('data-target'));
+      var dec     = parseInt(el.getAttribute('data-decimals'), 10) || 0;
+      var suf     = (el.getAttribute('data-suffix') || '').replace('&times;', '×');
+      var dur     = 1400, start = null;
+
+      function frame(ts) {
+        if (start === null) start = ts;
+        var p = Math.min((ts - start) / dur, 1);
+        var eased = 1 - Math.pow(1 - p, 3);       // easeOutCubic
+        el.textContent = (target * eased).toFixed(dec) + suf;
+        if (p < 1) requestAnimationFrame(frame);
+        else el.textContent = target.toFixed(dec) + suf;
+      }
+      requestAnimationFrame(frame);
+    }
+
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        sec.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+        nums.forEach(function (el) {
+          if (reduce) {
+            var dec = parseInt(el.getAttribute('data-decimals'), 10) || 0;
+            var suf = (el.getAttribute('data-suffix') || '').replace('&times;', '×');
+            el.textContent = parseFloat(el.getAttribute('data-target')).toFixed(dec) + suf;
+          } else {
+            countUp(el);
+          }
+        });
+        io.disconnect();
+      });
+    }, { threshold: 0.12 });
+
+    io.observe(sec);
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!-- CURATED EXEMPLAR — archetype: process. Distilled from apa-landing.html #how. Match the rhythm/discipline; do NOT clone. -->
+<section id="process" class="cr-band-warm cr-section" aria-label="How it works">
+  <style>
+    /* SECTION-UNIQUE LAYOUT ONLY — heads/body/cards/chips/buttons/surfaces/motion
+       come from the house sheet (.cr-*). This style governs just the numbered-steps
+       flow: the row, the per-step framing, the arrow connectors, and the collapse. */
+    #process .pr-flow { display: flex; align-items: stretch; gap: var(--cr-space-4);
+      margin-top: var(--cr-space-12); }
+    /* a house .cr-card laid out as a vertical flow step (card skin stays the house's) */
+    #process .pr-step { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; }
+    #process .pr-marker { display: flex; align-items: center; justify-content: space-between;
+      gap: var(--cr-space-3); margin-bottom: var(--cr-space-5); }
+    #process .pr-num { font-family: var(--cr-font-display); font-weight: 700; font-size: 15px;
+      letter-spacing: 0.04em; color: var(--cr-fg-muted); }
+    #process .pr-step .cr-h-card { margin: 0 0 var(--cr-space-3); }
+    #process .pr-step .cr-p { margin: 0; }
+    /* arrow connector — pure inline-SVG, colour via CSS (never an svg attribute) */
+    #process .pr-conn { flex: 0 0 auto; display: flex; align-items: center; justify-content: center;
+      color: var(--cr-fg-muted); }
+    #process .pr-conn .cr-ico { width: 22px; height: 22px; }
+    @media (max-width: 900px) {
+      #process .pr-flow { flex-direction: column; gap: var(--cr-space-3); margin-top: var(--cr-space-8); }
+      #process .pr-conn .cr-ico { transform: rotate(90deg); }
+    }
+  </style>
+
+  <div class="cr-container">
+    <header class="cr-head" data-reveal style="--d:.05s">
+      <span class="cr-eyebrow">How it works</span>
+      <h2 class="cr-h-section">From Bottleneck to Live Agent in Weeks &mdash; Not Quarters.</h2>
+      <p class="cr-p-lede">We start with one high-value process, prove it in production alongside your team, then expand. Little disruption, measurable from day one.</p>
+    </header>
+
+    <div class="pr-flow">
+      <div class="cr-card pr-step" data-reveal style="--d:.12s">
+        <div class="pr-marker">
+          <span class="cr-chip" aria-hidden="true"><svg class="cr-ico" viewBox="0 0 24 24" style="stroke:var(--cr-brand)"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          <span class="pr-num">01</span>
+        </div>
+        <h3 class="cr-h-card">Find the Process</h3>
+        <p class="cr-p">We audit your operation and pinpoint the highest-friction, highest-cost workflow worth automating first &mdash; the one bleeding hours every week.</p>
+      </div>
+
+      <span class="pr-conn" aria-hidden="true"><svg class="cr-ico" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+
+      <div class="cr-card pr-step" data-reveal style="--d:.2s">
+        <div class="pr-marker">
+          <span class="cr-chip" aria-hidden="true"><svg class="cr-ico" viewBox="0 0 24 24" style="stroke:var(--cr-brand)"><circle cx="5" cy="6" r="2.2"/><circle cx="5" cy="18" r="2.2"/><circle cx="19" cy="12" r="2.2"/><path d="M7 7l10 4M7 17l10-4"/></svg></span>
+          <span class="pr-num">02</span>
+        </div>
+        <h3 class="cr-h-card">Map the Agentic Solution</h3>
+        <p class="cr-p">We design the agent taskforce, the decisions it owns, and the guardrails it works within &mdash; mapped onto the tools you already run.</p>
+      </div>
+
+      <span class="pr-conn" aria-hidden="true"><svg class="cr-ico" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+
+      <div class="cr-card pr-step" data-reveal style="--d:.28s">
+        <div class="pr-marker">
+          <span class="cr-chip" aria-hidden="true"><svg class="cr-ico" viewBox="0 0 24 24" style="stroke:var(--cr-brand)"><path d="M13 2L4 14h7l-1 8 10-12h-7z"/></svg></span>
+          <span class="pr-num">03</span>
+        </div>
+        <h3 class="cr-h-card">Deploy in Weeks</h3>
+        <p class="cr-p">Your first agent goes live in production in about three weeks, working alongside your team. No rip-and-replace, no six-month project.</p>
+      </div>
+
+      <span class="pr-conn" aria-hidden="true"><svg class="cr-ico" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+
+      <div class="cr-card pr-step" data-reveal style="--d:.36s">
+        <div class="pr-marker">
+          <span class="cr-chip" aria-hidden="true"><svg class="cr-ico" viewBox="0 0 24 24" style="stroke:var(--cr-brand)"><path d="M3 21h18"/><rect x="6" y="11" width="3.4" height="7" rx="1"/><rect x="11.3" y="7" width="3.4" height="11" rx="1"/><rect x="16.6" y="4" width="3.4" height="14" rx="1"/></svg></span>
+          <span class="pr-num">04</span>
+        </div>
+        <h3 class="cr-h-card">Measure the ROI</h3>
+        <p class="cr-p">We track cycle time, cost, and throughput against your baseline &mdash; so the value shows up where it counts: on your next P&amp;L.</p>
+      </div>
+    </div>
+  </div>
+</section>

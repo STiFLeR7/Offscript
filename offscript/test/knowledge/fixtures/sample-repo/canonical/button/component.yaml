@@ -1,0 +1,23 @@
+schema_version: "1.0"
+kind: component
+identity:
+  id: "canonical::button"
+  title: "Button"
+ownership:
+  owner: "offscript-authority"
+scope:
+  class: canonical
+  identity: "offscript"
+governance:
+  authority: canonical-global
+dependencies:
+  realizes:
+    - "guarantee:legible-actions"
+semantics:
+  produces:
+    - "concept:interactive-affordance"
+capabilities:
+  communicates:
+    - "capability:action-surface"
+  satisfies:
+    - "obligation:primary-action-legibility"

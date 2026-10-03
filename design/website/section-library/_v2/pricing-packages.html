@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR — Pricing &amp; Packages (asymmetric bento)</title>
+
+<!--
+  ────────────────────────────────────────────────────────────────────────────
+  COMPONENT: Pricing & Packages — asymmetric 3-card bento
+  ────────────────────────────────────────────────────────────────────────────
+  INSPIRATION: Maze "Pricing & Packages" section (Mobbin curation).
+    Faithful reproduction of the COMPOSITION; re-skinned to the CR brand on
+    hue / font / voice only. The Mobbin watermark bar is a curation overlay, NOT
+    part of the section — correctly dropped.
+
+  COMPOSITION (matched exactly — geometry, ratios, region vocabulary, counts):
+    • CENTRED header — an oversized Urbanist display title ("Pricing & Packages")
+      over a 3-line muted Inter sub-line. The sub is SUPPORTING text → stays on
+      the Inter body ramp (~19px), never inflated to a display size (charter).
+    • An ASYMMETRIC BENTO on a flat warm-cream band:
+        LEFT column  = two STACKED, EQUAL-HEIGHT cards (Process Audit / Pilot).
+        RIGHT column = ONE TALL card (Enterprise) spanning the full left height.
+      Built so the two left cards are *guaranteed* equal and together match the
+      Enterprise height: a flex column holds them, each `flex:1 1 0`; Enterprise
+      (the tallest, 12-item list) sets the row height; the left column stretches
+      to match and splits exactly in half. (NOT a grid-row span — that would let
+      the 3-vs-4-feature content difference make the left cards unequal.)
+      NB: this equal split holds *because Enterprise is the tallest card* — if its
+      list is ever trimmed below the two left cards' natural sum, the `flex:1 1 0`
+      split flips to unequal; keep Enterprise the height-driver.
+    • Each PLAN card has a 2-column inner split divided by a FULL-HEIGHT vertical
+      hairline: LEFT = grey badge pill → large plan name → 2–3 line description →
+      a tertiary GHOST (outline) CTA pill pinned to the BOTTOM (margin-top:auto,
+      so short cards carry trailing whitespace exactly like the source); RIGHT = an uppercase
+      "… INCLUDES:" label → a list of check-circle feature rows. (The source's two
+      icon meta rows — workflow / seats — were dropped at the user's request, so
+      the right column now leads straight with the INCLUDES list.) The divider is
+      a `border-left` on the STRETCHED right column so it runs the full card
+      height even though its content is short.
+    • ENTERPRISE card = a TOP region (text | accent tile) → a FULL-WIDTH
+      horizontal hairline → a FULL-WIDTH single-column 12-item feature list. Its
+      top-right accent tile is an atmospheric blue creative-background image.
+    • A centred OUTLINE PILL ("View all features") closes the section.
+
+  FEATURE COUNTS: Audit 3; Pilot 4; Enterprise 12 (first item a 2-line wrap).
+    (The source's 2 meta rows per card were removed at the user's request.)
+
+  RE-SKIN (brand wins on hue / voice ONLY — geometry & ratios match the source):
+    • Copy → CR's outcome-numeric voice + Example Brand's real engagement ladder
+      (CR is outcome-billed, pilots live in 4 weeks): Maze "Free / Starter /
+      Enterprise" → "Process Audit (no cost) / Pilot (fixed · 4 weeks) /
+      Enterprise (custom)". Feature lists name CR's real products & systems
+      (CR-DocXter, CR-Jennie, Dr.Scribe; SAP / Oracle / Epic / Cerner). CTAs take
+      the CR "→" arrow (voice rule) the source pills lack.
+    • The source's bright LIME halftone-dot globe → an ATMOSPHERIC BLUE
+      creative-background image (the single ≤20% accent) — the README Creatives
+      "atmospheric image" mode: a soft blue fluid-art tile
+      (assets/creative-background/web/blur-7.jpg, object-fit cover) with faint
+      white ORBIT-RING arcs overlaid (the CR orbit motif — two large off-canvas
+      circles sweeping across the tile as gentle crossing curves), brand blue as
+      the fallback colour under the image. (This replaced an earlier pure-CSS
+      navy dot-globe at the user's request — the atmospheric image is the more
+      on-brand Creatives treatment.)
+    • Fonts → Urbanist (display) / Inter (body). Icons → Lucide, inlined as SVG
+      (no-JS safe), kept NEUTRAL grey.
+    • CTAs → CANONICAL CR PILLS (radius 500). The source's three identical dark
+      pills become a CR ladder: Enterprise "Contact Sales" is the brand-blue
+      PRIMARY pill (the action colour pops on white); Audit & Pilot are tertiary
+      GHOST (hairline outline, dark text) pills, so the headline plan's action
+      leads. Arrow nudges 4px on hover, press scales to .97 (CR button spec).
+      The closing "View all features" is the tertiary outline pill. (Earlier
+      these were dark-ink rounded-rect to match the source; corrected to the CR
+      button system at the user's request — the kit has no dark-filled button.)
+
+  DELIBERATE DEVIATIONS FROM THE KIT DEFAULTS (noted per the fidelity contract):
+    • Warm-cream band carries white cards separated by a SOFT hairline
+      (--cr-line-soft), not the heavier #E4E4E6 — white-on-cream already steps.
+
+  MOTION: one-time staggered scroll-reveal (header → left cards → Enterprise →
+    "View all features" fade-up 600ms ease-out, `--d` delays). JS-gated behind
+    `.has-js` + a single IntersectionObserver that fires once then disconnects;
+    content is fully visible WITHOUT JS. prefers-reduced-motion → snap (no fade).
+    HOVER lives ONLY on real controls (CTAs nudge their arrow 4px; the outline
+    pill tints) — card surfaces never react (charter).
+
+  DISTINCT FROM `component-pricing.html` (a 4-up single-row plan grid with a
+    Monthly/Yearly toggle, different inspiration). This is the asymmetric bento.
+
+  Responsive: bento → single column ≤980px (cards become content-height); the
+    inner 2-col split + Enterprise top region stack ≤680px (vertical hairline →
+    horizontal). Screenshot-verified at 1440 / 768 / ~482 (headless floor).
+  ────────────────────────────────────────────────────────────────────────────
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--cr-bg-warm); font-family: var(--cr-font-body); }
+
+  /* ── Section: full-bleed flat warm band ──────────────────────────────── */
+  .pk {
+    position: relative;
+    width: 100%;
+    background: var(--cr-bg-warm);                /* var(--cr-bg-grey-50) — flat proof surface */
+    padding: clamp(72px, 9vw, 120px) 0;
+    overflow: hidden;                              /* contain reveal transforms */
+  }
+  .pk-inner {
+    max-width: var(--cr-content-max);                 /* content well (1440) */
+    margin: 0 auto;
+    padding: 0 var(--cr-page-gutter);              /* 100 */
+  }
+
+  /* ── Header ──────────────────────────────────────────────────────────── */
+  .pk-head { text-align: center; max-width: 780px; margin: 0 auto clamp(48px, 6vw, 76px); }
+  .pk-title {
+    margin: 0;
+    font-family: var(--cr-font-display);           /* Urbanist */
+    font-weight: 700;
+    font-size: clamp(42px, 6.2vw, 76px);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    color: var(--cr-fg);
+  }
+  .pk-sub {
+    margin: 20px auto 0;
+    max-width: 46ch;
+    font-family: var(--cr-font-body);              /* Inter — supporting text, body ramp */
+    font-weight: 400;
+    font-size: clamp(16px, 1.7vw, 19px);
+    line-height: 1.55;
+    color: var(--cr-fg-3);
+  }
+
+  /* ── Bento grid ──────────────────────────────────────────────────────── */
+  .pk-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: stretch;                          /* left column stretches to Enterprise height */
+  }
+  .pk-col {                                        /* holds the two stacked left cards */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .pk-col > .card { flex: 1 1 0; }                 /* exact equal halves of Enterprise's height */
+
+  /* ── Card shell (shared) ─────────────────────────────────────────────── */
+  .card {
+    background: var(--cr-bg);                       /* white card on cream band */
+    border: 1px solid var(--cr-line-soft);          /* soft hairline — charter (no shadow) */
+    border-radius: var(--cr-radius-lg);             /* 20 */
+    padding: clamp(24px, 2.4vw, 32px);
+  }
+  .card--plan {
+    display: grid;
+    grid-template-columns: 1.32fr 1fr;              /* text wider than feature column (source ratio) */
+    align-items: stretch;                           /* both inner columns full card height */
+  }
+  .card--ent { display: flex; flex-direction: column; }
+
+  /* ── Left inner column: badge → name → desc → CTA(bottom) ────────────── */
+  .pk-left {
+    display: flex;
+    flex-direction: column;
+    padding-right: clamp(22px, 2.2vw, 32px);
+  }
+  .card--ent .ent-top .pk-left { padding-right: 0; }   /* tile sits to the right, no divider */
+
+  .pk-badge {
+    align-self: flex-start;
+    display: inline-block;
+    padding: 6px 11px;
+    background: var(--cr-bg-grey-100);              /* var(--cr-bg-grey-100) light grey pill */
+    color: var(--cr-fg-2);
+    font-family: var(--cr-font-body);
+    font-weight: 600;
+    font-size: 11.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: 1;
+    border-radius: 7px;
+    white-space: nowrap;
+  }
+  .pk-name {
+    margin: clamp(20px, 2.4vw, 28px) 0 0;
+    font-family: var(--cr-font-display);           /* Urbanist Bold */
+    font-weight: 700;
+    font-size: clamp(28px, 3vw, 40px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    color: var(--cr-fg);
+  }
+  .pk-desc {
+    margin: 14px 0 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: var(--cr-fg-2);
+    max-width: 32ch;
+  }
+
+  /* CTA — canonical CR pill (radius 500). Enterprise = brand-blue PRIMARY;
+     Audit & Pilot = tertiary GHOST (hairline outline, dark text) so the
+     headline plan's action leads. Arrow nudges 4px; press scales to .97. */
+  .pk-cta {
+    margin-top: auto;                              /* pin to bottom → trailing whitespace */
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 24px;
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 1;
+    text-decoration: none;
+    border: 1px solid transparent;                 /* transparent on primary → equal box height vs ghost */
+    border-radius: var(--cr-radius-pill);          /* pill — CR canonical */
+    cursor: pointer;
+    transition: transform .15s ease, background .2s ease;
+  }
+  .pk-cta--primary { background: var(--cr-brand); color: #FFFFFF; }   /* brand-blue primary — pops on white */
+  .pk-cta--ghost {
+    background: transparent;
+    color: var(--cr-fg);
+    border-color: var(--cr-line);                  /* hairline outline — tertiary on light */
+  }
+  .pk-cta--ghost:hover { background: var(--cr-bg-grey-50); }
+  .pk-cta .pk-arrow { transition: transform .2s ease; }
+  .pk-cta:hover .pk-arrow { transform: translateX(4px); }   /* arrow nudges 4px — no colour shift */
+  .pk-cta:active { transform: scale(.97); }                  /* press snap — CR spec */
+  .pk-cta:focus-visible { outline: 2px solid var(--cr-brand); outline-offset: 3px; }
+
+  /* ── Right inner column: INCLUDES label → feature list ───────────────── */
+  .pk-right {
+    border-left: 1px solid var(--cr-line-soft);    /* full-height vertical divider */
+    padding-left: clamp(22px, 2.2vw, 32px);
+  }
+
+  .pk-incl-label {
+    margin: 22px 0 14px;                            /* Enterprise: sits below the horizontal rule */
+    font-family: var(--cr-font-body);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--cr-fg-3);
+  }
+  .pk-incl-label--first { margin-top: 0; }          /* plan cards: tops the column, aligns with the badge */
+  .pk-feat { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  .pk-feat li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 14.5px;
+    line-height: 1.45; color: var(--cr-fg-2);
+  }
+
+  /* Inlined Lucide check glyph — neutral grey, no fill */
+  .pk-chk { flex: none; width: 18px; height: 18px; color: var(--cr-fg-3); margin-top: 1px; }
+
+  /* ── Enterprise card ─────────────────────────────────────────────────── */
+  .ent-top {
+    display: grid;
+    grid-template-columns: 1fr minmax(150px, 190px);
+    gap: clamp(20px, 2.4vw, 30px);
+    align-items: stretch;
+  }
+  .ent-rule { height: 1px; background: var(--cr-line-soft); margin: clamp(22px, 2.4vw, 30px) 0; }
+  .ent-body { /* full-width single column */ }
+
+  /* ── Accent tile: brand-blue dotted sphere (CR constellation/orbit motif) ── */
+  .pk-sphere {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    /* Atmospheric blue fluid-art from assets/creative-background/ (the single
+       ≤20% accent) — the README Creatives "atmospheric image" mode; brand blue
+       is the fallback colour under the image. */
+    background: var(--cr-brand) url('../assets/creative-background/web/blur-7.jpg') center / cover no-repeat;
+    border-radius: var(--cr-radius-md);             /* 12 */
+    overflow: hidden;
+  }
+  /* Faint white "orbit" arcs overlaid on the atmospheric image — the CR orbit
+     motif (README Creatives → optional white orbit rings). Two large off-canvas
+     circles whose edges sweep across the tile as gentle crossing arcs. */
+  .pk-orbit {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* ── Closing outline pill ────────────────────────────────────────────── */
+  .pk-more { display: flex; justify-content: center; margin-top: clamp(36px, 4.5vw, 56px); }
+  .pk-more a {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 26px;
+    background: var(--cr-bg);
+    border: 1px solid var(--cr-line);
+    border-radius: var(--cr-radius-pill);           /* this one IS a pill (matches source) */
+    color: var(--cr-fg);
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 15px; line-height: 1;
+    text-decoration: none;
+    transition: background .2s ease;
+  }
+  .pk-more a:hover { background: var(--cr-bg-grey-50); }
+  .pk-more a:focus-visible { outline: 2px solid var(--cr-brand); outline-offset: 3px; }
+
+  /* ── Entrance reveal (JS-gated, fires once) ──────────────────────────── */
+  .has-js .pk-head,
+  .has-js .card,
+  .has-js .pk-more {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity .6s cubic-bezier(.22, .61, .36, 1),
+                transform .6s cubic-bezier(.22, .61, .36, 1);
+    transition-delay: var(--d, 0ms);
+  }
+  .has-js .pk.in .pk-head,
+  .has-js .pk.in .card,
+  .has-js .pk.in .pk-more { opacity: 1; transform: none; }
+
+  /* ── Responsive ──────────────────────────────────────────────────────── */
+  @media (max-width: 980px) {
+    .pk-inner { padding: 0 56px; }
+    .pk-grid { grid-template-columns: 1fr; gap: 20px; }   /* stack: Audit → Pilot → Enterprise */
+    .pk-col > .card { flex: 1 1 auto; }                   /* content-height once stacked */
+  }
+  @media (max-width: 680px) {
+    .pk-inner { padding: 0 22px; }
+    .card { padding: 24px 22px; }
+    .card--plan { grid-template-columns: 1fr; }           /* inner split stacks */
+    .pk-left { padding-right: 0; }
+    .pk-cta { margin-top: 22px; }                         /* not pinned when stacked */
+    .pk-right {
+      border-left: none;
+      border-top: 1px solid var(--cr-line-soft);          /* vertical divider → horizontal */
+      padding-left: 0;
+      padding-top: 22px;
+      margin-top: 22px;
+    }
+    .ent-top { grid-template-columns: 1fr; gap: 20px; }
+    .pk-sphere { aspect-ratio: 16 / 9; }                  /* shorter, full-width tile (image re-covers) */
+  }
+
+  /* ── Reduced motion: snap, no fade ───────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .pk-head,
+    .has-js .card,
+    .has-js .pk-more { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .pk-cta .pk-arrow { transition: none !important; }
+  }
+</style>
+</head>
+
+<body>
+<section class="pk" data-screen-label="Pricing &amp; Packages — bento">
+  <div class="pk-inner">
+
+    <!-- ── Header ──────────────────────────────────────────────────────── -->
+    <header class="pk-head" style="--d:0ms">
+      <h2 class="pk-title">Pricing &amp; Packages</h2>
+      <p class="pk-sub">Autonomous agents pay back in outcomes, not seats. Start with a no-cost audit, prove value in a four-week pilot, then scale across your operations.</p>
+    </header>
+
+    <!-- ── Bento ───────────────────────────────────────────────────────── -->
+    <div class="pk-grid">
+
+      <!-- LEFT column: two stacked, equal-height plan cards -->
+      <div class="pk-col">
+
+        <!-- ── Process Audit ────────────────────────────────────────────── -->
+        <article class="card card--plan" style="--d:120ms">
+          <div class="pk-left">
+            <span class="pk-badge">No Cost</span>
+            <h3 class="pk-name">Process Audit</h3>
+            <p class="pk-desc">For ops leaders mapping where autonomous agents pay back first — before committing budget or headcount.</p>
+            <a href="#" class="pk-cta pk-cta--ghost">Book My Audit <span class="pk-arrow" aria-hidden="true">&rarr;</span></a>
+          </div>
+          <div class="pk-right">
+            <p class="pk-incl-label pk-incl-label--first">Audit includes:</p>
+            <ul class="pk-feat">
+              <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Process &amp; systems walkthrough</li>
+              <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>ROI and payback model</li>
+              <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Automation roadmap</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- ── Pilot ────────────────────────────────────────────────────── -->
+        <article class="card card--plan" style="--d:210ms">
+          <div class="pk-left">
+            <span class="pk-badge">Fixed &middot; 4 Weeks</span>
+            <h3 class="pk-name">Pilot</h3>
+            <p class="pk-desc">For teams putting one production agent into a live workflow, billed on the outcome it delivers.</p>
+            <a href="#" class="pk-cta pk-cta--ghost">Start a Pilot <span class="pk-arrow" aria-hidden="true">&rarr;</span></a>
+          </div>
+          <div class="pk-right">
+            <p class="pk-incl-label pk-incl-label--first">Everything in Audit, and:</p>
+            <ul class="pk-feat">
+              <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Production agent in your stack</li>
+              <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>SAP / Salesforce / Zoho integration</li>
+              <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Outcome-based pricing</li>
+              <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Weekly performance reporting</li>
+            </ul>
+          </div>
+        </article>
+
+      </div><!-- /.pk-col -->
+
+      <!-- RIGHT column: tall Enterprise card -->
+      <article class="card card--ent" style="--d:170ms">
+        <div class="ent-top">
+          <div class="pk-left">
+            <span class="pk-badge">Custom</span>
+            <h3 class="pk-name">Enterprise</h3>
+            <p class="pk-desc">For organisations scaling autonomous operations across teams and systems.</p>
+            <a href="#" class="pk-cta pk-cta--primary">Contact Sales <span class="pk-arrow" aria-hidden="true">&rarr;</span></a>
+          </div>
+          <div class="pk-sphere" aria-hidden="true">
+            <svg class="pk-orbit" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+              <g fill="none" stroke="#FFFFFF" stroke-linecap="round">
+                <circle cx="60" cy="540" r="360" stroke-width="1.2" stroke-opacity="0.42"/>
+                <circle cx="330" cy="40" r="250" stroke-width="1.2" stroke-opacity="0.26"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="ent-rule"></div>
+
+        <div class="ent-body">
+          <p class="pk-incl-label">Enterprise includes:</p>
+          <ul class="pk-feat">
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Access to all Example Brand agents, or bring your own workflows for free</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Moderated rollout with a dedicated pod</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Multi-system orchestration (SAP, Oracle, Epic, Cerner)</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Exception handling with human-in-the-loop</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Document &amp; knowledge agents (CR-DocXter)</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Sales outreach agents (CR-Jennie)</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Clinical documentation (Dr.Scribe)</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Audit trails and decision logging</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Automated reporting and live dashboards</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>SOC 2 controls and data residency</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Enterprise SSO and role-based access</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Priority support, dedicated CSM, and solution architects</li>
+          </ul>
+        </div>
+      </article>
+
+    </div><!-- /.pk-grid -->
+
+    <!-- ── Closing outline pill ──────────────────────────────────────────── -->
+    <div class="pk-more" style="--d:300ms">
+      <a href="#">View all features</a>
+    </div>
+
+  </div><!-- /.pk-inner -->
+</section>
+
+<script>
+  /* Progressive enhancement: content is fully visible without JS. */
+  document.documentElement.classList.add('has-js');
+  (function () {
+    var section = document.querySelector('.pk');
+    if (!section) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      section.classList.add('in');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { section.classList.add('in'); io.disconnect(); }
+      });
+    }, { threshold: 0.15 });
+    io.observe(section);
+  })();
+</script>
+</body>
+</html>

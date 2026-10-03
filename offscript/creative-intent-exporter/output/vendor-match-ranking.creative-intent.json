@@ -1,0 +1,11 @@
+{
+  "id": "vendor-match-ranking",
+  "contractVersion": 1,
+  "digest": "sha256:68f8887cd529286f22cbb61834fb0f3867d723c47c44234f1fc23d0c74cc73ea",
+  "belief": "filtered vendor search surfaces the right vendor first every time",
+  "feature": "search",
+  "ratio": "3:4",
+  "camera": "component",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

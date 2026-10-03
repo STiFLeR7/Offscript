@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Split · editorial — footer orbit</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Split · editorial              from component-footer-orbit.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **The one footer whose emphasis is creative rather than
+              structural.** The profile says it directly — Emphasis `creative`,
+              Media presence `s` anchored `right`, "decorated, so it is a moment
+              rather than an exit" — and that is the whole of what separates
+              this close from `footer-dark` beside it. So the right track had to
+              keep carrying a subject. What changed is that the subject is now
+              real.
+
+  STRUCTURE   Unchanged. A full-bleed dark band → a centred well holding a
+              hairline newsletter card (ask left, creative right) over the
+              footer proper (brand + copyright left, two link columns right),
+              with the faint wordmark resting at the band's foot. DOM, scripts,
+              ids, `data-*`, `aria-*`, `href`, `src` and every behavioural hook
+              are byte-compatible with the frozen original (DR-22). The v2 file
+              is beside this one in `_v2/`.
+
+  FIVE GRADIENTS, AND ALL FIVE ARE GONE
+              v2 built this section out of five abstract creative fills: a
+              two-stop wash on the band, a second two-stop wash on the card, a
+              radial navy glow under the orbit, a three-stop translucent fill on
+              each of the four floating tiles, and a fourth ramp on each tile's
+              rim-light sheen. That is a depth simulation standing in for a
+              subject nobody supplied.
+
+              The band and the card return to the governed dark surface —
+              `--cr-bg-dark`, flat, with a hairline doing the separating that a
+              fill difference used to do. The environment goes exactly where the
+              profile already puts the media: presence `s`, anchor `right`, onto
+              `.fo-orbit`. `cliffside-muted` is the library's most restrained
+              member — the one that recedes furthest — which is what a small
+              plate beside a reading column wants, and its measured focus
+              `50% 42%` travels with it.
+
+              ONE STACK, three layers: grain on top, grunge under it, the
+              environment underneath both. It has to be one stack — a blend mode
+              composites against what is beneath it in the SAME background, so
+              the grain on a pseudo-element resolves `overlay` against
+              transparency and renders at full strength as grey static. The URLs
+              are written out rather than reached through `--cr-env-*`, because a
+              `url()` inside a custom property resolves against the CONSUMING
+              document and fails silently.
+
+  THE DECORATION  The glow plate, the four concentric rings, the central globe
+              and the four glass tiles are the abstract decoration this pass
+              removes — and glass was already outside the language. They are
+              frozen DOM, so they go INERT rather than away: `display:none`, and
+              their rule bodies go with them, because a hidden rule is still a
+              rule (a 14px tile radius is off the radius pair whether or not
+              anybody sees it). Precedent: `tabs-panel-below`.
+
+  NO TYPE ON THE PHOTOGRAPH  Not one word sits on the plate. `.fo-orbit` is
+              `aria-hidden` and carries no content at all — it is a decorative
+              region by construction, which is the only place in a footer an
+              environment may go. Remove the photograph and nothing changes
+              legibility, and no scrim was ever needed to say so. A footer is
+              otherwise a wall of link columns, and no photograph goes behind
+              those.
+
+  DARK, AND GOVERNED  The band stays dark — that is the section's identity and
+              the direction permits a dark band for a footer. It is expressed as
+              `--cr-bg-dark` with `--cr-text-inverse` over it, never a
+              hand-mixed near-black; the muted tier that the page ground gets
+              from `--cr-text-secondary` is a page-ground value here and would
+              measure ~2.3:1, so held-back text on this surface reads
+              `--cr-neutral-500` (~8.4:1) instead.
+
+  ACCENT      ONE moment, and it is the submit. A footer spends zero or one, and
+              the newsletter submit is the ceiling — so `Sign up` takes the
+              emphasis fill with its paired dark label, and its hover step
+              inverts the label because the deep step is dark enough that the
+              light pairing stops measuring on it. v2 also spent four data-viz
+              hues on four tiles and a fifth on the glow; the link columns'
+              three social marks arrived carrying their own brand hexes in
+              `fill` attributes, which is three more colour events inside a list
+              of links. They are `currentColor` now — link columns are ink.
+
+  RESPONSIVE  The original's breakpoints (879 / 759 / 460), unchanged. Type
+              steps on the pack's ramp; `clamp()` is gone throughout — the pack
+              already steps the ramp at its own breakpoints, and a per-section
+              type breakpoint is a second ramp nobody authored. The reduce guard
+              names the `.in` variant as well as the hidden state, because a
+              guard that loses the cascade is not a guard.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  .cr-fo, .cr-fo * { box-sizing: border-box; }
+
+  /* ── The band — a governed dark surface, flat ────────────────────────
+     v2's two-stop vertical wash is retired to the one governed dark token.
+     Dark is not a theme here; it is one section background, selected for a
+     communicative reason, which a closing band is. */
+  .cr-fo {
+    position: relative;
+    overflow: hidden;
+    background: var(--cr-bg-dark);
+    font-family: var(--cr-font-body);
+    color: var(--cr-neutral-500);
+    font-size: var(--cr-text-body);
+  }
+
+  /* ── Full-bleed band → centred content well ─────────────────────────
+     The well reads the pack's own alignment edge and gutter; horizontal
+     layout is a page concern and a section never redeclares it. */
+  .fo-shell {
+    position: relative;
+    z-index: 1;
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+    padding: var(--cr-space-2xl) var(--cr-page-gutter) 0;
+  }
+
+  /* ── The newsletter card ─────────────────────────────────────────────
+     The card's own two-stop fill is gone. It sits on the same governed dark
+     as the band and separates by a hairline and by space — which is what
+     the direction says hierarchy comes from. */
+  .fo-cta {
+    position: relative;
+    border: var(--cr-stroke) solid var(--cr-neutral-800);
+    border-radius: var(--cr-radius-card);
+    background: var(--cr-bg-dark);
+    padding: var(--cr-space-m);
+    display: grid;
+    grid-template-columns: 1.08fr 0.92fr;   /* the split IS the composition — untouched */
+    gap: var(--cr-space-m);
+    align-items: center;
+    overflow: hidden;
+  }
+  .fo-cta-left { min-width: 0; }
+
+  .fo-title {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-inverse);
+  }
+  /* Held back by COLOUR, not by opacity — the page-ground secondary token
+     measures ~2.3:1 on this surface and is not a dark-surface value. */
+  .fo-sub {
+    margin: var(--cr-space-s) 0 0;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-neutral-500);
+    max-width: var(--cr-measure-body);
+  }
+
+  /* ── Form row — restyled, never rewired ─────────────────────────────
+     Names, types, labels and submit behaviour are frozen. What moves is the
+     radius (the pill is retired for controls), the fill, and the fact that
+     a control does not inherit `font-family` and so states it. */
+  .fo-form {
+    margin-top: var(--cr-space-m);
+    display: flex;
+    align-items: center;
+    gap: var(--cr-space-xs);
+    flex-wrap: wrap;
+  }
+  .fo-input-wrap {
+    position: relative;
+    flex: 1 1 240px;
+    min-width: 0;
+  }
+  .fo-input-wrap .fo-mail {
+    position: absolute;
+    left: var(--cr-space-s); top: 50%;
+    transform: translateY(-50%);
+    width: 17px; height: 17px;
+    color: var(--cr-neutral-500);
+    stroke-width: var(--cr-icon-stroke-sm);
+    pointer-events: none;
+  }
+  .fo-input {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-inverse);
+    padding: var(--cr-space-xs) var(--cr-space-s) var(--cr-space-xs) var(--cr-space-m);
+    background: var(--cr-neutral-900);
+    border: var(--cr-stroke) solid var(--cr-neutral-800);
+    border-radius: var(--cr-radius-control);
+    outline: none;
+    transition: border-color .18s ease, background .18s ease;
+  }
+  .fo-input::placeholder { color: var(--cr-neutral-500); }
+  /* THE FILL DOES NOT MOVE ON FOCUS, and that is measured rather than tidy.
+     v2 lightened it (the token translation of that step is neutral-800), which
+     takes the placeholder from 6.26:1 to 3.83:1 — under AA, on an empty focused
+     field, which is exactly when the placeholder is the only text present. The
+     border and the ring carry the state instead. */
+  .fo-input:focus { border-color: var(--cr-text-inverse); }
+  /* The ring stays a value contrast, never a hue. On the page ground that is
+     dark ink at ~13:1; on this surface the same job is the inverse at ~15:1. */
+  .fo-input:focus-visible {
+    outline: var(--cr-stroke) solid var(--cr-text-inverse);
+    outline-offset: var(--cr-stroke);
+  }
+
+  /* THE SECTION'S ONE ACCENT MOMENT. */
+  .fo-signup {
+    flex: 0 0 auto;
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-on-accent-light);
+    background: var(--cr-accent-orange);
+    border: none;
+    border-radius: var(--cr-radius-control);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    cursor: pointer;
+    transition: background .18s ease, color .18s ease;
+  }
+  /* The deep emphasis step is dark enough that the light pairing stops
+     measuring on it, so the label inverts with the fill. */
+  .fo-signup:hover { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+  .fo-signup:focus-visible {
+    outline: var(--cr-stroke) solid var(--cr-text-inverse);
+    outline-offset: var(--cr-stroke);
+  }
+
+  /* ── The creative plate — presence `s`, anchor `right`, per the profile ──
+     THE STANDARD CREATIVE TREATMENT. One stack, three layers, in this order:
+     grain on top, grunge under it, the environment underneath both. It has to
+     be ONE stack — a blend mode composites against what is beneath it in the
+     SAME background, so putting the grain on a child resolves `overlay`
+     against transparency and renders as grey static. The last position is the
+     asset's measured focus, not a guess.
+
+     The frame takes an approved ratio rather than the authored 1 / 0.86, which
+     was off the vocabulary of four for as long as the section existed. */
+  .fo-orbit {
+    position: relative;
+    justify-self: center;
+    align-self: center;                     /* centred, never stretched — a stretching
+                                               grid row beats a declared aspect-ratio */
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: var(--cr-ratio-landscape);
+    border-radius: var(--cr-radius-card);
+    overflow: hidden;
+    background-color: var(--cr-bg-dark);
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-cliffside-muted.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 50% 42%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+  }
+
+  /* The glow, the rings, the globe and the glass tiles are the abstract
+     decoration this pass removes. Frozen DOM, so they go inert rather than
+     away — and their rule bodies go with them, because a hidden declaration
+     is still a declaration. */
+  .fo-orbit-glow,
+  .fo-ring,
+  .fo-globe,
+  .fo-tile { display: none; }
+
+  /* ── Footer proper ──────────────────────────────────────────────────── */
+  .fo-main {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--cr-space-m);
+    padding: var(--cr-space-xl) 0 var(--cr-space-2xl);
+  }
+  .fo-brand-logo { height: 26px; width: auto; display: block; }
+  .fo-copy {
+    margin: var(--cr-space-s) 0 0;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-neutral-500);
+  }
+
+  .fo-cols { display: flex; gap: var(--cr-space-xl); }
+  /* A column label is supporting text: one ramp step, one weight, no tracking
+     and no case transform. */
+  .fo-col-head {
+    margin: 0 0 var(--cr-space-s);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    color: var(--cr-text-inverse);
+  }
+  .fo-col a {
+    display: flex;
+    align-items: center;
+    gap: var(--cr-space-xs);
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-neutral-500);
+    text-decoration: none;
+    padding: var(--cr-space-xs) 0;
+    transition: color .18s ease;
+  }
+  /* A hover in a link column is a presence change, not a colour event. */
+  .fo-col a:hover, .fo-col a:focus-visible { color: var(--cr-text-inverse); }
+  /* The three social marks arrived with their own brand hexes in a `fill`
+     attribute — three colour events inside a list of links. A rule outranks a
+     presentation attribute, so they follow the link's ink. */
+  .fo-col a svg { width: 16px; height: 16px; flex: 0 0 auto; fill: currentColor; }
+
+  /* ── The wordmark — identity, resting at the band's foot ─────────────
+     It stays; a wordmark is not abstract decoration. What goes is the
+     authored colour function and the display weight the system does not
+     have. On the ramp it is a watermark rather than a slab. */
+  .fo-wordmark {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h1);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-neutral-900);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+
+  /* ── Scroll-reveal — default-VISIBLE, unchanged in kind ─────────────── */
+  .cr-fo.has-js .reveal { opacity: 0; transform: translateY(16px); }
+  .cr-fo.has-js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  /* Matched to the trigger's specificity — v2's guard named the hidden state
+     but not the `.in` variant that animates over it. Both are named now. */
+  @media (prefers-reduced-motion: reduce) {
+    .cr-fo.has-js .reveal,
+    .cr-fo.has-js .reveal.in { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ── Responsive — the ORIGINAL's breakpoints ────────────────────────── */
+  @media (max-width: 879px) {
+    .fo-cta { grid-template-columns: 1fr; gap: var(--cr-space-s); }
+    .fo-orbit { max-width: 340px; margin-top: var(--cr-space-xs); }
+    .fo-sub { max-width: none; }
+  }
+  @media (max-width: 759px) {
+    .fo-main { grid-template-columns: 1fr; gap: var(--cr-space-m); }
+  }
+  @media (max-width: 460px) {
+    .fo-form { flex-direction: column; align-items: stretch; }
+    /* A flex-basis is a MAIN-AXIS size. The row becomes a column here, so the
+       wrap's 240px basis stopped being a width and became a 240px HEIGHT — and
+       the leading mail glyph, positioned at 50% of it, floated off the field
+       into empty space. Measured on the frozen original at 390: same drift.
+       This is the one declared layout change in the section. */
+    .fo-input-wrap { flex: 0 0 auto; }
+    .fo-signup { width: 100%; }
+    .fo-cols { gap: var(--cr-space-m); }
+  }
+</style>
+</head>
+<body>
+
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. Two lines need saying out loud.
+
+     The grid-template-columns line on .fo-main claims a track pair of 1fr and
+     auto, and the auto track is content-sized: it is the two link columns plus
+     the gap between them, and that gap came off a fluid clamp onto the closed
+     scale. The track ratio therefore moved without the track declaration being
+     touched — the proportion is a consequence of the spacing, which is why it
+     reads spacing-scale rather than a layout decision.
+
+     Two directed lines. The min-height line on .lucide is the orbit motif going
+     inert: that is a deliberate change the Pilot Constraint would otherwise
+     forbid, and an inert element resolves its box differently from a rendered
+     one. Nothing visible moves, because nothing there is visible.
+
+     The flex-basis line on .fo-input-wrap is a defect the original carried and
+     this specimen does not. Below 460 the form row becomes a column, so the
+     wrap's 240px basis stopped being a width and became a 240px height, and the
+     leading mail glyph — absolutely positioned at half of it — floated off the
+     field. Measured on the frozen original at 390: the same drift. The basis is
+     released rather than retuned, so the field sizes to its content.
+  .cr-fo         | font-size              | type-ramp
+  .fo-brand      | font-size              | type-ramp
+  .fo-brand-logo | font-size              | type-ramp
+  .fo-col        | font-size              | type-ramp
+  .fo-col-head   | line-height            | type-ramp
+  .fo-col-head   | margin-bottom          | spacing-scale
+  .fo-cols       | column-gap             | spacing-scale
+  .fo-cols       | font-size              | type-ramp
+  .fo-cols       | row-gap                | spacing-scale
+  .fo-copy       | font-size              | type-ramp
+  .fo-copy       | line-height            | type-ramp
+  .fo-copy       | margin-top             | spacing-scale
+  .fo-cta        | border-radius          | radius-pair
+  .fo-cta        | column-gap             | spacing-scale
+  .fo-cta        | font-size              | type-ramp
+  .fo-cta        | padding-bottom         | spacing-scale
+  .fo-cta        | padding-left           | spacing-scale
+  .fo-cta        | padding-right          | spacing-scale
+  .fo-cta        | padding-top            | spacing-scale
+  .fo-cta        | row-gap                | spacing-scale
+  .fo-cta-left   | font-size              | type-ramp
+  .fo-form       | font-size              | type-ramp
+  .fo-form       | margin-top             | spacing-scale
+  .fo-input      | border-radius          | radius-pair
+  .fo-input      | font-size              | type-ramp
+  .fo-input      | line-height            | type-ramp
+  .fo-input      | padding-bottom         | spacing-scale
+  .fo-input      | padding-left           | spacing-scale
+  .fo-input      | padding-right          | spacing-scale
+  .fo-input      | padding-top            | spacing-scale
+  .fo-input-wrap | flex-basis             | directed
+  .fo-input-wrap | font-size              | type-ramp
+  .fo-main       | column-gap             | spacing-scale
+  .fo-main       | font-size              | type-ramp
+  .fo-main       | grid-template-columns  | spacing-scale
+  .fo-main       | padding-bottom         | spacing-scale
+  .fo-main       | padding-top            | spacing-scale
+  .fo-main       | row-gap                | spacing-scale
+  .fo-orbit      | aspect-ratio           | ratio-vocabulary
+  .fo-orbit      | border-radius          | radius-pair
+  .fo-orbit      | font-size              | type-ramp
+  .fo-shell      | font-size              | type-ramp
+  .fo-shell      | padding-left           | spacing-scale
+  .fo-shell      | padding-right          | spacing-scale
+  .fo-shell      | padding-top            | spacing-scale
+  .fo-signup     | border-radius          | radius-pair
+  .fo-signup     | font-size              | type-ramp
+  .fo-signup     | line-height            | type-ramp
+  .fo-signup     | padding-bottom         | spacing-scale
+  .fo-signup     | padding-left           | spacing-scale
+  .fo-signup     | padding-right          | spacing-scale
+  .fo-signup     | padding-top            | spacing-scale
+  .fo-sub        | font-size              | type-ramp
+  .fo-sub        | line-height            | type-ramp
+  .fo-sub        | margin-top             | spacing-scale
+  .fo-sub        | max-width              | measure
+  .fo-title      | font-size              | type-ramp
+  .fo-title      | line-height            | type-ramp
+  .fo-wordmark   | font-size              | type-ramp
+  .fo-wordmark   | line-height            | type-ramp
+  .lucide        | font-size              | type-ramp
+  .lucide        | min-height             | directed
+  .lucide        | stroke-width           | stroke
+  a              | column-gap             | spacing-scale
+  a              | font-size              | type-ramp
+  a              | line-height            | type-ramp
+  a              | padding-bottom         | spacing-scale
+  a              | padding-top            | spacing-scale
+  a              | row-gap                | spacing-scale
+  circle         | font-size              | type-ramp
+  circle         | stroke-width           | stroke
+  path           | font-size              | type-ramp
+  path           | line-height            | type-ramp
+  path           | stroke-width           | stroke
+  rect           | font-size              | type-ramp
+  rect           | stroke-width           | stroke
+  svg            | font-size              | type-ramp
+  svg            | line-height            | type-ramp
+-->
+
+<section class="cr-fo" data-screen-label="Footer · orbit (newsletter CTA)"
+         data-archetype="editorial-split" data-hierarchy="closing" data-intent="orient"
+         data-register="immersive" data-signature="editorial-photography" data-density="medium">
+  <div class="fo-shell">
+
+    <!-- ── Newsletter CTA card ───────────────────────────── -->
+    <div class="fo-cta">
+      <div class="fo-cta-left">
+        <h2 class="fo-title reveal" style="--d:0ms">Subscribe to our newsletter</h2>
+        <p class="fo-sub reveal" style="--d:80ms">One email a month on what we&rsquo;re shipping, what&rsquo;s working in production, and the automation plays moving the needle for ops teams. No fluff.</p>
+
+        <form class="fo-form reveal" style="--d:160ms" novalidate>
+          <span class="fo-input-wrap">
+            <i class="fo-mail" data-lucide="mail"></i>
+            <input class="fo-input" type="email" name="email"
+                   placeholder="name@company.com" aria-label="Email address">
+          </span>
+          <button type="submit" class="fo-signup">Sign up</button>
+        </form>
+      </div>
+
+      <!-- Creative plate — presence `s`, anchor `right`. Carries no content. -->
+      <div class="fo-orbit" aria-hidden="true">
+        <div class="fo-orbit-glow"></div>
+        <div class="fo-ring r4 anim" style="--d:360ms"></div>
+        <div class="fo-ring r3 anim" style="--d:280ms"></div>
+        <div class="fo-ring r2 anim" style="--d:200ms"></div>
+        <div class="fo-ring r1 anim" style="--d:120ms"></div>
+        <div class="fo-globe"><i data-lucide="globe"></i></div>
+        <div class="fo-tile t1 anim" style="--d:300ms"><i data-lucide="sparkles"></i></div>
+        <div class="fo-tile t2 anim" style="--d:360ms"><i data-lucide="bot"></i></div>
+        <div class="fo-tile t3 anim" style="--d:420ms"><i data-lucide="zap"></i></div>
+        <div class="fo-tile t4 anim" style="--d:480ms"><i data-lucide="file-text"></i></div>
+      </div>
+    </div>
+
+    <!-- ── Footer main ───────────────────────────────────── -->
+    <div class="fo-main">
+      <div class="fo-brand">
+        <img class="fo-brand-logo reveal" style="--d:80ms"
+             src="../../brand-pack/assets/logo/logo-white.svg" alt="Example Brand">
+        <p class="fo-copy reveal" style="--d:160ms">&copy; Copyright 2026 Example Brand, Inc. All rights reserved.</p>
+      </div>
+
+      <div class="fo-cols">
+        <nav class="fo-col reveal" style="--d:240ms" aria-label="Useful links">
+          <p class="fo-col-head">Useful links</p>
+          <a href="#">Careers</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Privacy Policy</a>
+        </nav>
+
+        <nav class="fo-col reveal" style="--d:320ms" aria-label="Follow us">
+          <p class="fo-col-head">Follow us</p>
+          <a href="#">
+            <svg viewBox="0 0 24 24" fill="#1DA1F2" aria-hidden="true"><path d="M23.953 4.57a10 10 0 0 1-2.825.775 4.958 4.958 0 0 0 2.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 0 0-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 0 0-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 0 1-2.228-.616v.06a4.923 4.923 0 0 0 3.946 4.827 4.996 4.996 0 0 1-2.212.085 4.937 4.937 0 0 0 4.604 3.417 9.868 9.868 0 0 1-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 0 0 7.557 2.209c9.054 0 13.999-7.496 13.999-13.986 0-.21 0-.42-.015-.63A9.936 9.936 0 0 0 24 4.59z"/></svg>
+            Twitter
+          </a>
+          <a href="#">
+            <svg viewBox="0 0 24 24" fill="#0A66C2" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            LinkedIn
+          </a>
+          <a href="#">
+            <svg viewBox="0 0 24 24" fill="#FF0000" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            YouTube
+          </a>
+        </nav>
+      </div>
+    </div>
+
+  </div><!-- /.fo-shell -->
+
+  <!-- Giant faint wordmark — spans the full-bleed band, clipped at its edges -->
+  <p class="fo-wordmark" aria-hidden="true">example-brand</p>
+</section>
+
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<script>
+  (function () {
+    if (window.lucide) lucide.createIcons();
+
+    var sec = document.querySelector('.cr-fo');
+    if (!sec || !('IntersectionObserver' in window)) return;
+    sec.classList.add('has-js');
+
+    var done = false;
+    function revealAll() {
+      if (done) return;
+      done = true;
+      sec.querySelectorAll('.reveal, .fo-ring.anim, .fo-tile.anim')
+         .forEach(function (el) { el.classList.add('in'); });
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        revealAll();
+        io.disconnect();
+      });
+    }, { threshold: 0.06 });
+    io.observe(sec);
+
+    // Safety net: some snapshot/headless contexts never fire IO — never leave
+    // the footer gated blank. Reveal after a short delay regardless.
+    setTimeout(revealAll, 1200);
+  })();
+</script>
+</body>
+</html>

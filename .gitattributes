@@ -1,0 +1,5 @@
+# Governance reference docs are parsed line-by-line (offscript/src/playbook.ts).
+# The parser is CRLF-tolerant, but we still pin these to LF so a Windows
+# checkout with `core.autocrlf=true` keeps them byte-stable and never
+# reintroduces the loader hazard. (v2: moved from references/ to resources/.)
+offscript/resources/**/*.md text eol=lf

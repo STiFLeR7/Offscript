@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CTA banner</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — CTA banner                        from component-cta-banner.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **The shortest possible close.** The profile is explicit: one line,
+              one action, and the footer next. Brevity is what makes it read as
+              arrival rather than as another section — so nothing was added, and
+              the only question worth answering was what the band is MADE of.
+
+  STRUCTURE   Unchanged. Band · two-line headline · two controls. DOM, scripts,
+              ids, `data-*`, `aria-*` and every behavioural hook are
+              byte-compatible with the frozen original (DR-22). The v2 file is
+              beside this one in `_v2/`.
+
+  THE SURFACE v2 built the band from a flat near-black plus an abstract dot-grid
+              generated in CSS — a decorative field standing in for a subject.
+              It is replaced by an approved environment, `massif-banded`, focus
+              `40% 45%`, carried as ONE background stack. It has to be one stack:
+              a blend mode composites against what is beneath it in the SAME
+              background, so moving the grain onto a pseudo-element resolves
+              `overlay` against transparency and renders as grey static. The URLs
+              are written out rather than reached through `--cr-env-*`, because a
+              `url()` inside a custom property resolves against the CONSUMING
+              document and fails silently.
+
+  DR-46, AND IT IS THE WHOLE COMPOSITION
+              A closing band is headline and button and nothing else, so there is
+              no region that already carries no type — one has to be MADE. The
+              band becomes a column that pushes its three children to the
+              bottom, and each of them carries the same opaque dark surface with
+              zero space between them, so they read as ONE solid band. The
+              environment fills the card behind and is seen above that band.
+
+              Remove the photograph now and not one word changes legibility.
+              That is the test, and it passes by construction rather than by
+              measurement — no veil, no ramp, nothing laid over the picture to
+              win contrast back. DR-7's scrim retirement stands untouched.
+
+  ACCENT      One moment. The demo control. DR-25 forbids a field of emphasis, so
+              the band's surface is the environment on dark ink and the orange is
+              spent once, on the thing you click. The second control is a
+              hairline ghost; the icon chip inside the first stops being a
+              lighter disc and becomes the glyph alone, because a chip that is
+              only a tint is decoration on the one element that should be pure
+              affordance. The hover step also takes the inverse label — the deep
+              emphasis step is dark enough that the paired light foreground
+              stops measuring, which the flat rest state does not have.
+
+  RESPONSIVE  The original's breakpoints (1024 / 640), unchanged. Type steps DOWN
+              the pack's ramp rather than being re-sized; `clamp()` never appears,
+              because the pack already steps the ramp at its own breakpoints.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+    font-size: var(--cr-text-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* The section is the page ground; the BAND sits inside the one alignment
+     edge, at the page's own gutter. */
+  .section {
+    padding: var(--cr-space-2xl) var(--cr-page-gutter);
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }
+
+  /* ── The band ────────────────────────────────────────────────────────
+     A COLUMN, justified to the end. That is the entire DR-46 move: the
+     three frozen children stack at the bottom on their own opaque surface
+     and the environment is seen above them. */
+  .banner {
+    position: relative; overflow: hidden;
+    border-radius: var(--cr-radius-card);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    min-height: calc(var(--cr-space-3xl) * 4);
+    text-align: center;
+    /* THE STANDARD CREATIVE TREATMENT. One stack, three layers, in this
+       order: grain on top, grunge under it, the environment underneath
+       both. The last position is the asset's measured focus, not a guess. */
+    background-color: var(--cr-bg-dark);
+    /* NO WASH AND NO PLATE — directed. The card is the environment, whole, and
+       the type sits on it. DR-52's ramp is refused here for the reason it was
+       built: this band takes between a quarter and a half of the card, so a
+       wash clearing it had to finish by 22%, which is a hard edge with a
+       feather on it rather than a wash. The flat plate is refused too. What is
+       left is the picture. */
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-massif-banded.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 40% 45%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+  }
+
+  /* ── The three children carry no surface at all ──────────────────────
+     There is no band any more, opaque or washed. The type is on the
+     photograph, which is the arrangement DR-46 refused and which direction has
+     now called for; the contrast that costs is measured and recorded rather
+     than assumed. */
+  .h-strong, .h-muted {
+    margin: 0;
+    background: transparent;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h2);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-inverse);
+  }
+  .h-strong { padding: var(--cr-space-xl) var(--cr-space-m) 0; }
+  /* The second line is the same voice, held back. It is held back by COLOUR and
+     not by opacity, and that distinction is the whole reason this band works:
+     this element carries the opaque surface itself, so fading the element fades
+     the surface with it and the photograph comes through behind the words —
+     which is the failure DR-46 names, arrived at from the other direction. It
+     takes a canonical neutral step instead (8.4:1 here), never the secondary
+     text token, which is a page-ground value and measures ~2.3:1 on dark. */
+  .h-muted  { padding: 0 var(--cr-space-m); color: var(--cr-neutral-500); }
+
+  /* Still block-level and still full-width, but carrying no surface — there
+     is no plate here for it to span. */
+  .actions {
+    position: relative;
+    display: flex; justify-content: center; align-items: center;
+    gap: var(--cr-space-xs);
+    margin-top: 0;
+    padding: var(--cr-space-m) var(--cr-space-m) var(--cr-space-xl);
+    background: transparent;
+  }
+
+  /* ── The one accent moment ───────────────────────────────────────────
+     Emphasis fill, paired foreground. The pill radius is retired for
+     controls (DR-25); this takes the control radius like every other. */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    background: var(--cr-accent-orange); color: var(--cr-on-accent-light);
+    border: 0; border-radius: var(--cr-radius-control); cursor: pointer;
+    font-family: var(--cr-font-body); font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    letter-spacing: 0;
+    transition: background .18s ease, color .18s ease, transform .15s ease;
+  }
+  /* The deep emphasis step is dark enough that the light paired foreground
+     stops measuring on it, so the label inverts with the fill. */
+  .btn-primary:hover { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+  .btn-primary:hover .chip svg { color: var(--cr-text-inverse); }
+  .btn-primary:active { transform: scale(.97); }
+  /* The chip was a lighter disc inside the control — a tint doing no work on
+     the one element that should be pure affordance. It carries the glyph now. */
+  .btn-primary .chip {
+    width: 20px; height: 20px;
+    background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .btn-primary .chip svg {
+    width: 16px; height: 16px;
+    stroke-width: var(--cr-icon-stroke-sm);
+    color: var(--cr-on-accent-light);
+    transition: color .18s ease;
+  }
+
+  /* ── The secondary control — hairline ghost on the dark band ─────────── */
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    background: transparent; color: var(--cr-text-inverse);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-control); cursor: pointer;
+    font-family: var(--cr-font-body); font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    letter-spacing: 0;
+    transition: border-color .18s ease, transform .15s ease;
+  }
+  .btn-ghost:hover { border-color: var(--cr-text-inverse); }
+  .btn-ghost:active { transform: scale(.97); }
+  .btn-ghost svg { color: var(--cr-text-inverse); }
+
+  /* The default ring is the primary ink at ~13:1, and it would disappear
+     into this band. The inverse ink is the same indicator read the other
+     way round — 14:1 on the dark surface, and still not a hue. */
+  .btn-primary:focus-visible, .btn-ghost:focus-visible {
+    outline: var(--cr-stroke) solid var(--cr-text-inverse);
+    outline-offset: var(--cr-stroke);
+  }
+
+  /* ── Responsive — the ORIGINAL's breakpoints; type steps on the ramp ── */
+  @media (max-width: 1024px) {
+    .h-strong, .h-muted { font-size: var(--cr-text-h3); }
+  }
+  @media (max-width: 640px) {
+    .banner { min-height: calc(var(--cr-space-3xl) * 3); }
+    .h-strong { padding: var(--cr-space-m) var(--cr-space-s) 0; }
+    .h-muted  { padding: 0 var(--cr-space-s); }
+    .actions {
+      flex-direction: column; align-items: stretch;
+      padding: var(--cr-space-m) var(--cr-space-s);
+    }
+    .btn-primary, .btn-ghost { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. `directed` marks the three changes the Pilot Constraint would
+     otherwise forbid, and they are one decision: DR-46 required the type to come
+     off the photograph, so the band became a flex column and its three frozen
+     children became flex items. Their floor moves from 0 to auto as a consequence
+     of that, not as a layout choice of its own.
+  .actions     | column-gap             | spacing-scale
+  .actions     | font-size              | type-ramp
+  .actions     | margin-top             | spacing-scale
+  .actions     | min-height             | directed
+  .actions     | padding-bottom         | spacing-scale
+  .actions     | padding-left           | spacing-scale
+  .actions     | padding-right          | spacing-scale
+  .actions     | padding-top            | spacing-scale
+  .actions     | row-gap                | spacing-scale
+  .banner      | border-radius          | radius-pair
+  .banner      | font-size              | type-ramp
+  .banner      | min-height             | spacing-scale
+  .banner      | padding-bottom         | spacing-scale
+  .banner      | padding-left           | spacing-scale
+  .banner      | padding-right          | spacing-scale
+  .banner      | padding-top            | spacing-scale
+  .btn-ghost   | border-radius          | radius-pair
+  .btn-ghost   | column-gap             | spacing-scale
+  .btn-ghost   | padding-bottom         | spacing-scale
+  .btn-ghost   | padding-left           | spacing-scale
+  .btn-ghost   | padding-right          | spacing-scale
+  .btn-ghost   | padding-top            | spacing-scale
+  .btn-ghost   | row-gap                | spacing-scale
+  .btn-primary | border-radius          | radius-pair
+  .btn-primary | padding-bottom         | spacing-scale
+  .btn-primary | padding-left           | spacing-scale
+  .btn-primary | padding-right          | spacing-scale
+  .btn-primary | padding-top            | spacing-scale
+  .h-muted     | font-size              | type-ramp
+  .h-muted     | line-height            | type-ramp
+  .h-muted     | margin-top             | spacing-scale
+  .h-muted     | min-height             | directed
+  .h-muted     | padding-left           | spacing-scale
+  .h-muted     | padding-right          | spacing-scale
+  .h-strong    | font-size              | type-ramp
+  .h-strong    | line-height            | type-ramp
+  .h-strong    | min-height             | directed
+  .h-strong    | padding-left           | spacing-scale
+  .h-strong    | padding-right          | spacing-scale
+  .h-strong    | padding-top            | spacing-scale
+-->
+
+<section class="section"
+         data-archetype="editorial-stack" data-hierarchy="closing" data-intent="close"
+         data-register="closing" data-signature="colour-interruption" data-density="low"
+         data-screen-label="CTA banner">
+  <div class="banner">
+    <h2 class="h-strong">Autonomous Operations, In Production.</h2>
+    <h2 class="h-muted">No Platform Shopping. No Long Roadmaps.</h2>
+
+    <div class="actions">
+      <button class="btn-primary">
+        <span class="chip"><i data-lucide="sparkles"></i></span>
+        Book a Demo Call
+      </button>
+      <button class="btn-ghost">
+        Talk to Sales <i data-lucide="arrow-right" style="width:16px;height:16px;stroke-width:1.5"></i>
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

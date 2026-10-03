@@ -1,0 +1,75 @@
+<!-- CURATED EXEMPLAR — archetype: case-study. Authored on the house .cr-* system (v2 re-theme); rhythm referenced from Website-offscript-v2/fragments/customer-story.html. Match the rhythm/discipline; do NOT clone. -->
+<section id="case-study" class="cr-band-light cr-section" aria-label="Customer story">
+  <style>
+    /* doc-scoped: two-column story layout + the situation→change→result rail +
+       outcome stat panel ONLY. Headings, .cr-quote, .cr-num-display, chips,
+       links, cards are house-defined (colors_and_type.css). */
+    #case-study .cs-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: var(--cr-space-12);
+      align-items: start; margin-top: var(--cr-space-10); }
+    #case-study .cs-whead { display: flex; align-items: center; gap: var(--cr-space-3); }
+    #case-study .cs-mono { width: 46px; height: 46px; flex: none; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--cr-brand-100); color: var(--cr-brand-700);
+      font-family: var(--cr-font-display); font-weight: 800; font-size: 16px; }
+    /* narrative rail — three labelled beats, divided by a hairline */
+    #case-study .cs-rail { margin-top: var(--cr-space-8); display: flex; flex-direction: column; }
+    #case-study .cs-beat { padding: var(--cr-space-5) 0; border-top: 1px solid var(--cr-line); }
+    #case-study .cs-beat:first-child { border-top: 0; padding-top: 0; }
+    #case-study .cs-label { display: block; font-family: var(--cr-font-body); font-weight: 600;
+      font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--cr-fg-3);
+      margin-bottom: var(--cr-space-2); }
+    /* outcome panel — tonal teal surface, two big figures + pull-quote */
+    #case-study .cs-panel { background: var(--cr-bg-warm); border: 1px solid var(--cr-line);
+      border-radius: var(--cr-radius-xl); padding: var(--cr-space-8); display: flex; flex-direction: column; gap: var(--cr-space-6); }
+    #case-study .cs-figs { display: grid; grid-template-columns: 1fr 1fr; gap: var(--cr-space-6); }
+    #case-study .cs-fig .cr-num-display { color: var(--cr-teal); }
+    #case-study .cs-quote { border-top: 1px solid var(--cr-line); padding-top: var(--cr-space-6); }
+    #case-study .cs-reveal { animation: csRise .65s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--d, 0s); }
+    @keyframes csRise { from { transform: translateY(14px); } to { transform: none; } }
+    @media (prefers-reduced-motion: reduce) { #case-study .cs-reveal { animation: none; } }
+    @media (max-width: 900px) { #case-study .cs-grid { grid-template-columns: 1fr; gap: var(--cr-space-8); } }
+  </style>
+
+  <div class="cr-container">
+    <div class="cr-head cs-reveal" style="--d:.04s">
+      <span class="cr-eyebrow">Customer story</span>
+      <h2 class="cr-h-section">How Meridian Cleared a 3-Week Backlog in Nine Days.</h2>
+    </div>
+
+    <div class="cs-grid">
+      <div class="cs-reveal" style="--d:.1s">
+        <div class="cs-whead">
+          <span class="cs-mono" aria-hidden="true">MH</span>
+          <span class="cr-h-card">Meridian Health</span>
+          <span class="cr-chip"><span class="cr-dot"></span>Healthcare</span>
+        </div>
+        <div class="cs-rail">
+          <div class="cs-beat">
+            <span class="cs-label">The situation</span>
+            <p class="cr-p">Prior-authorization requests piled up faster than a four-person team could read them. Turnaround stretched past three weeks, and clinicians felt it.</p>
+          </div>
+          <div class="cs-beat">
+            <span class="cs-label">What changed</span>
+            <p class="cr-p">Acme read each request against policy, drafted the decision, and routed only the genuine edge cases to a human reviewer — inside the systems the team already used.</p>
+          </div>
+          <div class="cs-beat">
+            <span class="cs-label">The result</span>
+            <p class="cr-p">Backlog cleared in nine days. The same team now handles double the volume with no added headcount.</p>
+          </div>
+        </div>
+      </div>
+
+      <aside class="cs-panel cs-reveal" style="--d:.18s">
+        <div class="cs-figs">
+          <div class="cs-fig"><span class="cr-num-display">9</span><span class="cr-caption">days to clear the backlog</span></div>
+          <div class="cs-fig"><span class="cr-num-display">2&times;</span><span class="cr-caption">volume, same team</span></div>
+        </div>
+        <blockquote class="cs-quote">
+          <p class="cr-quote">&ldquo;It did the reading we never had time for, and left us the calls that actually needed a person.&rdquo;</p>
+          <p class="cr-caption">Dana Reyes &middot; VP Operations, Meridian Health</p>
+        </blockquote>
+        <a class="cr-link" href="#">Read the full story <span class="cr-arrow" aria-hidden="true">&rarr;</span></a>
+      </aside>
+    </div>
+  </div>
+</section>

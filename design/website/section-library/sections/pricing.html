@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR — Pricing (plans + monthly/yearly toggle)</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Pricing · plans + toggle          from component-pricing.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **Equal cards are what make plans comparable.** The profile
+              calls this the one place in the library where an identical
+              repeated grid is correct, because comparison is the declared
+              purpose — and the toggle adds a second axis of choice without
+              adding a second structure. Everything below follows from that:
+              four cards that differ only in their content, one rhythm, one
+              text step, and exactly one thing on the page that is louder
+              than its neighbours.
+
+  STRUCTURE   Unchanged. Two screen-reader-only radios at the top of the
+              section (the pure-CSS toggle's state), then header, segmented
+              control, a four-card grid and a trust strip. DOM order, element
+              types, ids, the `for`/`id` pairing the toggle depends on, every
+              `aria-label` and the reveal script are byte-compatible with the
+              frozen original (DR-22). The toggle still works with no JS at
+              all.
+
+  ACCENT      **One moment, and it is a control.** v2 spent colour six times
+              in this section — four plan icons in four different hues, a
+              coloured border on the recommended card, and a filled button.
+              Six accents in one section is a section with none. What
+              survives is the single filled action on the recommended plan;
+              the icons become ink, the "Popular" chip becomes ink, and the
+              recommended card is marked by a border in the primary ink
+              rather than by a second hue. The text on that filled control is
+              the pack's own pairing for what sits on orange — the dark ink,
+              measured at 5.48:1, where white measures 2.6 and fails.
+
+  ENVIRONMENT **None, and deliberately.** There is no abstract background in
+              this section to retire — the band is a flat surface, the cards
+              are flat, and the source's faint guide-lines were already
+              dropped. Every element here carries type end to end; a price
+              list is words and numerals from edge to edge, and a photograph
+              behind it would be type on a photograph, which the direction
+              refuses. There is no plate in this composition that carries no
+              type, so nothing is invented to satisfy the rule.
+
+  SURFACE     The band and the cards swap. v2 put a white band on the page
+              and cream cards on top of it; the pack's hierarchy is the other
+              way round — the cream field is the page ground and white is the
+              ELEVATION that sits on it. Four raised white cards on the
+              editorial cream is the pack's routine card treatment, and it is
+              what makes the cards read as objects to be compared rather than
+              as holes cut in a panel.
+
+  SCALE       `clamp()` is gone throughout — six of them, each resolving to
+              sizes nobody authored. The headline steps H2 → H3 → H4 across
+              the original's own breakpoints, the prices sit at H3, and every
+              other line in the section — plan name excepted — lands on the
+              supporting step. A comparison grid read across four columns is
+              set at ONE size; the differences are carried by weight,
+              alignment and surface.
+
+  RESPONSIVE  The original's breakpoints (1080 / 600), unchanged: four cards
+              become 2x2, then a single column. The horizontal gutter is the
+              pack's one responsive spacing token, so the two hand-authored
+              inner paddings it used to carry are gone rather than restated.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--cr-page-ground); font-family: var(--cr-font-body); }
+
+  /* ── Section: full-bleed editorial band ──────────────────────────────
+     The cream field IS the page ground, and the cards are the elevation
+     that sits on it. v2 had this inverted. */
+  .pr {
+    position: relative;
+    width: 100%;
+    background: var(--cr-page-ground);
+    padding: var(--cr-rhythm-opening) 0;
+    overflow: hidden;                          /* contain reveal transforms */
+  }
+  .pr-inner {
+    max-width: var(--cr-content-max);          /* content well */
+    margin: 0 auto;
+    padding: 0 var(--cr-page-gutter);
+  }
+
+  /* The pure-CSS toggle's radios — sr-only but focusable; kept as the FIRST
+     children of .pr so `:checked ~ .pr-inner …` reaches the whole subtree. */
+  .pr-radio {
+    position: absolute;
+    width: 1px; height: 1px;
+    opacity: 0;
+    pointer-events: none;                      /* labels drive the checks */
+  }
+
+  /* ── Header ──────────────────────────────────────────────────────────── */
+  .pr-head { text-align: center; }
+  .pr-title {
+    margin: 0 auto;
+    max-width: var(--cr-measure-title);
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h2);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .pr-sub {
+    margin: var(--cr-space-s) auto 0;
+    max-width: var(--cr-measure-body);
+    font-family: var(--cr-font-body);          /* supporting text, body ramp */
+    font-weight: 400;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* ── Monthly / Yearly toggle (pure-CSS segmented control) ────────────
+     The track takes the CONTROL radius. The retired pill is not replaced
+     by a third value invented for this one component — the pair is two
+     radii and a segmented control is a control. */
+  .pr-toggle {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: max-content;
+    margin: var(--cr-space-m) auto 0;
+    padding: var(--cr-space-xs);
+    background: var(--cr-surface-5);           /* quiet track so the raised thumb reads */
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-control);
+  }
+  .pr-thumb {
+    position: absolute;
+    top: var(--cr-space-xs); bottom: var(--cr-space-xs); left: var(--cr-space-xs);
+    /* 50% resolves against the track's PADDING box, but the segments are the
+       grid's content-box halves — so a bare 50% overhangs by the inset and
+       `translateX(100%)` compounds it. Subtracting the inset is what keeps
+       the thumb framing its label in BOTH states. */
+    width: calc(50% - var(--cr-space-xs));
+    background: var(--cr-bg-raised);            /* raised thumb */
+    border: var(--cr-stroke) solid var(--cr-border-default);  /* a border, never depth */
+    border-radius: var(--cr-radius-control);
+    transition: transform .35s cubic-bezier(.4, 0, .2, 1);
+  }
+  .pr-seg {
+    position: relative;
+    z-index: 1;
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    text-align: center;
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: 1;
+    letter-spacing: 0;
+    color: var(--cr-text-secondary);            /* inactive = quiet ink */
+    cursor: pointer;
+    user-select: none;
+    border-radius: var(--cr-radius-control);
+    transition: color .25s ease;
+  }
+  /* active label → primary ink; thumb slides under it */
+  #bill-mo:checked ~ .pr-inner .pr-seg--mo { color: var(--cr-text-primary); }
+  #bill-yr:checked ~ .pr-inner .pr-seg--yr { color: var(--cr-text-primary); }
+  #bill-yr:checked ~ .pr-inner .pr-thumb   { transform: translateX(100%); }
+  /* keyboard focus ring on the whole control — the pack's default ring is
+     the primary ink, which is the only one that measures for the job. */
+  .pr-radio:focus-visible ~ .pr-inner .pr-toggle {
+    outline: 2px solid var(--cr-text-primary);
+    outline-offset: 3px;
+  }
+
+  /* ── Cards grid ──────────────────────────────────────────────────────── */
+  .pr-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--cr-space-s);
+    align-items: stretch;                       /* equal-height cards */
+    margin-top: var(--cr-space-m);
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: var(--cr-bg-raised);             /* the raised card on the cream field */
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-s);
+  }
+  /* The recommended card is marked in INK, not in a second hue. The
+     section's one accent is spent on its control, below. */
+  .card--popular { border-color: var(--cr-text-primary); }
+
+  /* card head: icon + name (+ Popular badge) */
+  .card-top { display: flex; align-items: center; gap: var(--cr-space-xs); }
+  /* Four plan icons in four hues was four accent moments in one row,
+     against a section budget of one. A plan glyph is an identifier, and an
+     identifier is ink. */
+  .card-ic { width: 25px; height: 25px; flex: none; color: var(--cr-text-primary); }
+  .card-ic svg {
+    width: 100%; height: 100%; display: block;
+    fill: currentColor; stroke: currentColor;    /* both → solid body + visible stroke-only accents */
+    stroke-width: var(--cr-icon-stroke-md); stroke-linejoin: round; stroke-linecap: round;
+  }
+  .card-name {
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .card-badge {
+    margin-left: 0;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 var(--cr-space-xs);
+    border-radius: var(--cr-radius-control);
+    background: var(--cr-text-primary);           /* an ink chip */
+    color: var(--cr-text-inverse);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+
+  /* price */
+  .card-price { margin-top: var(--cr-space-s); }
+  .amt {
+    display: inline-grid;                         /* stack mo/yr in ONE cell → stable width, crossfade */
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h3);
+    line-height: 1;
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  /* mo/yr stacked in one cell. visibility (NOT just opacity) flips so the
+     inactive price leaves the a11y tree (no "$150 $120" double-read) — and it
+     still occupies its grid cell, so width stays stable. The HIDING span delays
+     its visibility flip until AFTER the fade; the SHOWING span flips at once. */
+  .amt > span {
+    grid-area: 1 / 1;
+    transition: opacity .3s ease, transform .3s ease, visibility 0s linear .3s;
+  }
+  .amt .amt--mo {                                  /* monthly = active by default → shown */
+    opacity: 1; transform: none; visibility: visible;
+    transition: opacity .3s ease, transform .3s ease, visibility 0s;
+  }
+  .amt .amt--yr { opacity: 0; transform: translateY(8px); visibility: hidden; }
+  #bill-yr:checked ~ .pr-inner .amt .amt--mo {     /* yearly chosen → monthly hides */
+    opacity: 0; transform: translateY(-8px); visibility: hidden;
+    transition: opacity .3s ease, transform .3s ease, visibility 0s linear .3s;
+  }
+  #bill-yr:checked ~ .pr-inner .amt .amt--yr {     /* yearly chosen → yearly shows */
+    opacity: 1; transform: none; visibility: visible;
+    transition: opacity .3s ease, transform .3s ease, visibility 0s;
+  }
+  .card-per {
+    margin-top: var(--cr-space-xs);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: 1;
+    color: var(--cr-text-secondary);
+  }
+
+  /* CTA */
+  .card-cta {
+    margin-top: var(--cr-space-s);
+    display: block;
+    width: 100%;
+    padding: var(--cr-space-xs);
+    text-align: center;
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    color: var(--cr-text-primary);
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-control);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .2s ease, border-color .2s ease, color .2s ease;
+  }
+  .card-cta:hover { background: var(--cr-surface-3); border-color: var(--cr-text-secondary); }
+  /* THE SECTION'S ONE ACCENT MOMENT. The foreground is the pack's own
+     measured pairing for what sits on the emphasis accent — the primary
+     ink at 5.48:1. The inverse pairing measures 2.6:1 and is an AA
+     failure, so it is not available here whatever it looks like. */
+  .card-cta--primary {
+    background: var(--cr-accent-orange);
+    border-color: var(--cr-accent-orange);
+    color: var(--cr-on-accent-light);
+  }
+  .card-cta--primary:hover { background: var(--cr-orange-400); border-color: var(--cr-orange-400); }
+
+  /* divider */
+  .card-rule { height: 1px; background: var(--cr-border-default); margin: var(--cr-space-s) 0; }
+
+  /* feature "Everything in X +" lead */
+  .card-lead {
+    margin: 0 0 var(--cr-space-s);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-primary);
+  }
+
+  /* feature list */
+  .feat { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--cr-space-xs); }
+  .feat li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--cr-space-xs);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  .feat-check {
+    flex: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--cr-text-primary);           /* an ink mark, not a colour */
+    display: grid;
+    place-items: center;
+  }
+  .feat-check svg { width: 11px; height: 11px; fill: none; stroke: var(--cr-text-inverse); stroke-width: var(--cr-icon-stroke-md); stroke-linecap: round; stroke-linejoin: round; }
+  /* underlined feature = a real link (doc); the underline carries the
+     affordance, so the hover firms it rather than changing hue. */
+  .feat-link {
+    color: var(--cr-text-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-color: var(--cr-border-default);
+    transition: color .2s ease, text-decoration-color .2s ease;
+  }
+  .feat-link:hover { color: var(--cr-text-primary); text-decoration-color: currentColor; }
+
+  /* free-plan footnote */
+  .card-note {
+    margin-top: var(--cr-space-s);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* ── Trust strip ─────────────────────────────────────────────────────── */
+  .pr-trust {
+    margin-top: var(--cr-rhythm-content);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--cr-space-s) var(--cr-space-m);
+    flex-wrap: wrap;
+  }
+  .pr-trust-label {
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  .pr-trust-label strong { font-weight: 500; color: var(--cr-text-primary); }
+  .pr-trust-logos {
+    display: flex;
+    align-items: center;
+    gap: var(--cr-space-m);
+    flex-wrap: wrap;
+  }
+  /* Placeholder customer wordmarks. They keep their typographic variety
+     because that variety is what says "several different companies" — it
+     is identity, not supporting text being decorated. */
+  .tlogo {
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-body);
+    line-height: 1;
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-secondary);
+    white-space: nowrap;
+  }
+  .tlogo--caps { text-transform: uppercase; letter-spacing: 0.14em; font-size: var(--cr-text-supporting); }
+  .tlogo--low  { text-transform: lowercase; letter-spacing: -0.01em; font-weight: 500; }
+
+  /* ── Entrance reveal (JS-gated, fires once) ──────────────────────────── */
+  .has-js .pr-head,
+  .has-js .pr-toggle,
+  .has-js .card,
+  .has-js .pr-trust {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity .6s cubic-bezier(.22, .61, .36, 1),
+                transform .6s cubic-bezier(.22, .61, .36, 1);
+    transition-delay: var(--d, 0ms);
+  }
+  .has-js .pr.in .pr-head,
+  .has-js .pr.in .pr-toggle,
+  .has-js .pr.in .card,
+  .has-js .pr.in .pr-trust { opacity: 1; transform: none; }
+
+  /* ── Responsive — the ORIGINAL's breakpoints; type steps on the ramp ─── */
+  @media (max-width: 1080px) {
+    .pr-title { font-size: var(--cr-text-h3); }
+    .pr-grid { grid-template-columns: repeat(2, 1fr); }   /* 2×2 */
+  }
+  @media (max-width: 600px) {
+    .pr-title { font-size: var(--cr-text-h4); }
+    .pr-grid { grid-template-columns: 1fr; }              /* stacked */
+    .pr-trust { flex-direction: column; align-items: flex-start; gap: var(--cr-space-s); }
+    .pr-trust-logos { gap: var(--cr-space-s); }
+  }
+
+  /* ── Reduced motion: keep the toggle functional, drop the animation ────
+     Matched to the trigger's specificity — a guard that loses the cascade
+     is not a guard. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .pr-head,
+    .has-js .pr-toggle,
+    .has-js .card,
+    .has-js .pr-trust { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .has-js .pr.in .pr-head,
+    .has-js .pr.in .pr-toggle,
+    .has-js .pr.in .card,
+    .has-js .pr.in .pr-trust { transition: none !important; }
+    .pr-thumb, .amt > span { transition: none !important; }
+  }
+</style>
+</head>
+
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. There is no `directed` line: every dimension below
+     moves because a hand-authored value (six of them `clamp()`) is being
+     replaced by the closed scale, the ramp, the radius pair or the single
+     stroke — not because a layout decision was taken. The grid tracks,
+     the toggle mechanism and the breakpoints are untouched.
+  .amt            | font-size              | type-ramp
+  .amt            | line-height            | type-ramp
+  .amt--mo        | font-size              | type-ramp
+  .amt--mo        | line-height            | type-ramp
+  .amt--yr        | font-size              | type-ramp
+  .amt--yr        | line-height            | type-ramp
+  .card           | border-radius          | radius-pair
+  .card           | padding-bottom         | spacing-scale
+  .card           | padding-left           | spacing-scale
+  .card           | padding-right          | spacing-scale
+  .card           | padding-top            | spacing-scale
+  .card-badge     | border-radius          | radius-pair
+  .card-badge     | font-size              | type-ramp
+  .card-badge     | line-height            | type-ramp
+  .card-badge     | margin-left            | spacing-scale
+  .card-badge     | padding-bottom         | spacing-scale
+  .card-badge     | padding-left           | spacing-scale
+  .card-badge     | padding-right          | spacing-scale
+  .card-badge     | padding-top            | spacing-scale
+  .card-cta       | border-radius          | radius-pair
+  .card-cta       | font-size              | type-ramp
+  .card-cta       | line-height            | type-ramp
+  .card-cta       | margin-top             | spacing-scale
+  .card-cta       | padding-bottom         | spacing-scale
+  .card-cta       | padding-left           | spacing-scale
+  .card-cta       | padding-right          | spacing-scale
+  .card-cta       | padding-top            | spacing-scale
+  .card-lead      | font-size              | type-ramp
+  .card-lead      | line-height            | type-ramp
+  .card-lead      | margin-bottom          | spacing-scale
+  .card-name      | font-size              | type-ramp
+  .card-name      | line-height            | type-ramp
+  .card-note      | font-size              | type-ramp
+  .card-note      | line-height            | type-ramp
+  .card-note      | margin-bottom          | spacing-scale
+  .card-note      | margin-top             | spacing-scale
+  .card-per       | font-size              | type-ramp
+  .card-per       | line-height            | type-ramp
+  .card-per       | margin-top             | spacing-scale
+  .card-price     | margin-top             | spacing-scale
+  .card-top       | column-gap             | spacing-scale
+  .card-top       | row-gap                | spacing-scale
+  .feat           | column-gap             | spacing-scale
+  .feat           | row-gap                | spacing-scale
+  .feat-link      | font-size              | type-ramp
+  .feat-link      | line-height            | type-ramp
+  .pr             | padding-bottom         | spacing-scale
+  .pr             | padding-top            | spacing-scale
+  .pr-grid        | column-gap             | spacing-scale
+  .pr-grid        | margin-top             | spacing-scale
+  .pr-grid        | row-gap                | spacing-scale
+  .pr-inner       | padding-left           | spacing-scale
+  .pr-inner       | padding-right          | spacing-scale
+  .pr-seg         | border-radius          | radius-pair
+  .pr-seg         | font-size              | type-ramp
+  .pr-seg         | line-height            | type-ramp
+  .pr-seg         | padding-bottom         | spacing-scale
+  .pr-seg         | padding-left           | spacing-scale
+  .pr-seg         | padding-right          | spacing-scale
+  .pr-seg         | padding-top            | spacing-scale
+  .pr-sub         | font-size              | type-ramp
+  .pr-sub         | line-height            | type-ramp
+  .pr-sub         | margin-left            | spacing-scale
+  .pr-sub         | margin-right           | spacing-scale
+  .pr-sub         | margin-top             | spacing-scale
+  .pr-sub         | max-width              | measure
+  .pr-title       | font-size              | type-ramp
+  .pr-title       | line-height            | type-ramp
+  .pr-title       | margin-left            | spacing-scale
+  .pr-title       | margin-right           | spacing-scale
+  .pr-title       | max-width              | measure
+  .pr-toggle      | border-radius          | radius-pair
+  .pr-toggle      | margin-left            | spacing-scale
+  .pr-toggle      | margin-right           | spacing-scale
+  .pr-toggle      | margin-top             | spacing-scale
+  .pr-toggle      | padding-bottom         | spacing-scale
+  .pr-toggle      | padding-left           | spacing-scale
+  .pr-toggle      | padding-right          | spacing-scale
+  .pr-toggle      | padding-top            | spacing-scale
+  .pr-trust       | column-gap             | spacing-scale
+  .pr-trust       | margin-top             | spacing-scale
+  .pr-trust       | row-gap                | spacing-scale
+  .pr-trust-label | font-size              | type-ramp
+  .pr-trust-label | line-height            | type-ramp
+  .pr-trust-label | margin-bottom          | spacing-scale
+  .pr-trust-label | margin-top             | spacing-scale
+  .pr-trust-logos | column-gap             | spacing-scale
+  .pr-trust-logos | row-gap                | spacing-scale
+  .tlogo          | font-size              | type-ramp
+  .tlogo          | line-height            | type-ramp
+  br              | font-size              | type-ramp
+  br              | line-height            | type-ramp
+  li              | column-gap             | spacing-scale
+  li              | font-size              | type-ramp
+  li              | line-height            | type-ramp
+  li              | row-gap                | spacing-scale
+  path            | font-size              | type-ramp
+  path            | line-height            | type-ramp
+  path            | stroke-width           | stroke
+  strong          | font-size              | type-ramp
+  strong          | line-height            | type-ramp
+  svg             | font-size              | type-ramp
+  svg             | line-height            | type-ramp
+  svg             | stroke-width           | stroke
+-->
+<section class="pr" data-screen-label="Pricing — plans"
+         data-archetype="feature-comparison" data-hierarchy="technical" data-intent="compare"
+         data-register="technical" data-signature="large-statistic" data-density="high">
+
+  <!-- pure-CSS toggle state (sr-only radios; Monthly default) -->
+  <input type="radio" name="pr-bill" id="bill-mo" class="pr-radio" checked aria-label="Bill monthly" />
+  <input type="radio" name="pr-bill" id="bill-yr" class="pr-radio" aria-label="Bill yearly (save 20%)" />
+
+  <div class="pr-inner">
+
+    <!-- Header -->
+    <header class="pr-head" style="--d:0ms">
+      <h2 class="pr-title">Predictable pricing<br />scalable plans</h2>
+      <p class="pr-sub">Designed for every stage of your journey.</p>
+    </header>
+
+    <!-- Monthly / Yearly toggle -->
+    <div class="pr-toggle" style="--d:90ms">
+      <span class="pr-thumb" aria-hidden="true"></span>
+      <label for="bill-mo" class="pr-seg pr-seg--mo">Monthly</label>
+      <label for="bill-yr" class="pr-seg pr-seg--yr">Yearly</label>
+    </div>
+
+    <!-- Plans -->
+    <div class="pr-grid">
+
+      <!-- ── Free ─────────────────────────────────────────────────────── -->
+      <article class="card" style="--d:150ms">
+        <div class="card-top">
+          <span class="card-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
+          </span>
+          <span class="card-name">Free</span>
+        </div>
+
+        <div class="card-price">
+          <span class="amt"><span class="amt--mo">$0</span><span class="amt--yr">$0</span></span>
+          <div class="card-per">per month</div>
+        </div>
+
+        <a href="#" class="card-cta">Get started</a>
+        <div class="card-rule"></div>
+
+        <ul class="feat">
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><a href="#" class="feat-link">Access to fast models</a></li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>100 message credits/month</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>400,000 characters/agent</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>1 team member</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>1 agent</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Limit of 10 links to train on</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Embed on unlimited websites</li>
+        </ul>
+
+        <p class="card-note">Agents get deleted after 14 days of inactivity on the free plan.</p>
+      </article>
+
+      <!-- ── Starter ──────────────────────────────────────────────────── -->
+      <article class="card" style="--d:220ms">
+        <div class="card-top">
+          <span class="card-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          </span>
+          <span class="card-name">Starter</span>
+        </div>
+
+        <div class="card-price">
+          <span class="amt"><span class="amt--mo">$40</span><span class="amt--yr">$32</span></span>
+          <div class="card-per">per month</div>
+        </div>
+
+        <a href="#" class="card-cta">Subscribe</a>
+        <div class="card-rule"></div>
+
+        <p class="card-lead">Everything in Free +</p>
+        <ul class="feat">
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><a href="#" class="feat-link">Access to advanced models</a></li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>2,000 message credits/month</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>1 agent</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>5 AI Actions per agent</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>11,000,000 characters/agent</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Unlimited links to train on</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>API access</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><a href="#" class="feat-link">Integrations</a></li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Basic analytics</li>
+        </ul>
+      </article>
+
+      <!-- ── Standard (Popular) ───────────────────────────────────────── -->
+      <article class="card card--popular" style="--d:290ms">
+        <div class="card-top">
+          <span class="card-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          </span>
+          <span class="card-name">Standard</span>
+          <span class="card-badge">Popular</span>
+        </div>
+
+        <div class="card-price">
+          <span class="amt"><span class="amt--mo">$150</span><span class="amt--yr">$120</span></span>
+          <div class="card-per">per month</div>
+        </div>
+
+        <a href="#" class="card-cta card-cta--primary">Subscribe</a>
+        <div class="card-rule"></div>
+
+        <p class="card-lead">Everything in Starter +</p>
+        <ul class="feat">
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>12,000 message credits/month</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>10 AI Actions per agent</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>3 team members</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>2 agents</li>
+        </ul>
+      </article>
+
+      <!-- ── Pro ──────────────────────────────────────────────────────── -->
+      <article class="card" style="--d:360ms">
+        <div class="card-top">
+          <span class="card-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+              <path d="M20 3v4" fill="none"/><path d="M22 5h-4" fill="none"/>
+              <path d="M4 17v2" fill="none"/><path d="M5 18H3" fill="none"/>
+            </svg>
+          </span>
+          <span class="card-name">Pro</span>
+        </div>
+
+        <div class="card-price">
+          <span class="amt"><span class="amt--mo">$500</span><span class="amt--yr">$400</span></span>
+          <div class="card-per">per month</div>
+        </div>
+
+        <a href="#" class="card-cta">Subscribe</a>
+        <div class="card-rule"></div>
+
+        <p class="card-lead">Everything in Standard +</p>
+        <ul class="feat">
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>40,000 message credits/month</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>15 AI Actions per agent</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><a href="#" class="feat-link">5+ team members</a></li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>3 agents</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><a href="#" class="feat-link">Advanced analytics</a></li>
+        </ul>
+      </article>
+
+    </div><!-- /.pr-grid -->
+
+    <!-- Trust strip (part of this composition; static) -->
+    <div class="pr-trust" style="--d:430ms">
+      <p class="pr-trust-label"><strong>Trusted by 9000+</strong> businesses worldwide</p>
+      <div class="pr-trust-logos" aria-label="Customer logos (placeholders)">
+        <span class="tlogo tlogo--caps">NORTHWIND</span>
+        <span class="tlogo">Vantage</span>
+        <span class="tlogo tlogo--low">fluxio</span>
+        <span class="tlogo">+meridian</span>
+        <span class="tlogo">Onyx</span>
+        <span class="tlogo tlogo--caps">ALTAIR</span>
+      </div>
+    </div>
+
+  </div><!-- /.pr-inner -->
+</section>
+
+<script>
+  // JS adds ONLY the one-time entrance reveal. The Monthly/Yearly toggle is
+  // pure CSS, so it works (and all content shows) without JS.
+  (function () {
+    var root = document.documentElement;
+    root.classList.add('has-js');
+    var sec = document.querySelector('.pr');
+    if (!sec) return;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) { sec.classList.add('in'); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { sec.classList.add('in'); io.disconnect(); }
+      });
+    }, { threshold: 0.18 });
+    io.observe(sec);
+  })();
+</script>
+</body>
+</html>

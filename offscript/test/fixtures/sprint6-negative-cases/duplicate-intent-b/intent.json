@@ -1,0 +1,8 @@
+{
+  "id": "shared-intent",
+  "digest": "sha256:c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4",
+  "belief": "two rendered variants can legitimately exist for one approved intent",
+  "feature": "automation",
+  "mustInclude": ["variant b"],
+  "section": "feature"
+}

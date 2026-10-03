@@ -1,0 +1,8 @@
+{
+  "id": "digest-mismatch",
+  "digest": "sha256:c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3",
+  "belief": "an artifact whose declared digest does not match its own content is a real, currently unenforced gap",
+  "feature": "automation",
+  "mustInclude": ["expose the gap, do not fabricate a fix"],
+  "section": "feature"
+}

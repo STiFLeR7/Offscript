@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Integrations · CTA + bordered logo marquee</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Integrations marquee            from component-integrations.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  The v2 section authored under the v3 editorial-restraint
+                direction. DOM, the reveal script, the `panel` and `track` ids,
+                the word-roll delay hooks and every behavioural contract are
+                byte-compatible with the frozen original (DR-22, the Pilot
+                Constraint). The v2 file sits beside this one in `_v2/`.
+
+  THE CLAIM     **Breadth is the argument, and a count reads better moving than
+                still.** The profile is explicit: this section answers *how
+                many*, where its sibling `integration-grid` answers *what does
+                it do with each*. So the marks carry no copy, the row never
+                stops for one of them, and the band's whole job is to feel
+                large. Density stays low on purpose — a fast rail that is also
+                busy reads as noise rather than reach.
+
+  ENVIRONMENT   NONE — and the assigned environment is DECLINED on purpose.
+                There IS an abstract creative background here: the band was a
+                three-stop diagonal wash between ink steps that now resolve to
+                one value, plus a grain raster laid over it. The wash retires
+                to the flat dark token and the grain layer goes inert. What
+                does not follow is a photograph. The profile records
+                `Media presence none`, and the band is a centred column of type
+                above a wall of wordmark cells — type end to end, with no
+                type-free region to split off. An environment here would break
+                the two hard constraints at once (type on a photograph, a
+                photograph behind wordmarks), and no split exists that does not
+                change the composition. The two finished logo walls in this
+                library reached the same answer for the same reason.
+
+                There is no edge-fade mask in this file to keep or remove — the
+                marquee crops with `overflow`, not with an alpha ramp. None is
+                invented here; a mask is a fix for a problem this composition
+                does not have.
+
+  ACCENT        ZERO. v2 lifted every cell's border to the brand hue on hover
+                and washed the cell in the same hue at 5%. A wall of marks is
+                read one mark at a time, and colour there turns the row into
+                scenery; the hover is now a neutral surface step and an ink
+                lift on the wordmark, which is what "you can click this" needs
+                to say. The pale control is an INK INVERSION on a dark band —
+                the light surface is the contrast, not a colour spend.
+
+  TYPE          The eyebrow stops being uppercase and tracked: supporting text
+                is supporting text, and a label set in caps at a display
+                tracking is a second heading pretending to be metadata. The
+                marks collapse to one weight and one ramp step and separate by
+                their own wording. The word-roll's word gap was a five-pixel
+                flex gap — word spacing is typography, not layout, so the rows
+                flow as text and the gap is gone rather than rounded onto the
+                spacing scale.
+
+  MOTION        Unchanged in kind — an infinite leftward rail that pauses on
+                hover so a reader can stop it and read a mark. Reduced motion
+                stops it outright at the trigger's own specificity, and the
+                header snaps rather than fades.
+
+  RESPONSIVE    The original's breakpoints (900 / 560), unchanged. `clamp()` is
+                gone — it resolves to sizes nobody authored — so the headline
+                steps on the pack's ramp and the supporting line stays where
+                the ramp leaves it.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body); color: var(--cr-text-primary);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .section { padding: 0; max-width: none; margin: 0; }   /* full-bleed band — edge to edge */
+
+  /* ── Dark full-bleed band (no rounded corners — spans edge to edge) ────
+     v2's diagonal wash ran between two ink steps that now resolve to the same
+     value: a gradient with nothing left to traverse. Flat dark token. */
+  .panel {
+    position: relative; overflow: hidden; isolation: isolate;
+    border-radius: 0;
+    background: var(--cr-bg-dark);
+    color: var(--cr-text-inverse);
+    padding: var(--cr-space-xl) 0;   /* horizontal padding 0 so the marquee spans full width */
+  }
+  /* The grain existed to give the wash tooth. The wash is gone, so the layer
+     has nothing left to do — it stays in place and carries nothing, rather
+     than becoming decoration for its own sake on a flat token surface. */
+  .panel::after {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background-image: none;
+  }
+
+  /* ── Header column ─────────────────────────────────────────────────── */
+  .head {
+    position: relative; z-index: 2;
+    max-width: 692px; margin: 0 auto;
+    padding: 0 var(--cr-page-gutter);
+    text-align: center;
+  }
+
+  /* Supporting text, and it stays supporting: never uppercased, never tracked. */
+  .eyebrow {
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--cr-neutral-500);
+    margin: 0 0 var(--cr-space-xs);
+  }
+  .title {
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-inverse);
+    margin: 0;
+  }
+  .sub {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    color: var(--cr-neutral-500);
+    margin: var(--cr-rhythm-cluster) auto 0;   /* heading → supporting copy */
+    max-width: 600px;
+  }
+
+  /* ── CTA — an ink inversion on a dark band, not an accent spend ─────── */
+  .cta {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    margin-top: var(--cr-space-m);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    background: var(--cr-surface-1); color: var(--cr-text-primary);
+    border: 0;
+    border-radius: var(--cr-radius-control);   /* the pill is retired for controls */
+    text-decoration: none; cursor: pointer;
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    letter-spacing: 0;
+    line-height: var(--cr-leading-body);
+    transition: background .2s ease, transform .12s ease;
+  }
+  .cta:hover { background: var(--cr-surface-5); }
+  .cta:active { transform: scale(.975); }
+  /* On a dark band the default dark ring disappears — the pack's accent ring
+     is the one authored for a dark surface. */
+  .cta:focus-visible {
+    outline: 2px solid var(--cr-focus-ring-accent);
+    outline-offset: 3px;
+  }
+
+  /* word-roll: front words slide up & out, identical back words roll in from
+     top. The five-pixel word gap moves onto the closed scale. A flex gap IS a
+     layout decision by construction — the whitespace in the markup is dropped
+     by the flex formatting context, so this gap is the only thing separating
+     the words, and a hand-tuned number is exactly what the scale exists to
+     replace. Both rows carry the same value, which is what keeps the front and
+     the back registered while they roll. */
+  .roll { position: relative; display: inline-flex; gap: var(--cr-space-xs); overflow: hidden; }
+  .roll .back { position: absolute; inset: 0; display: inline-flex; gap: var(--cr-space-xs); }
+  .roll span span {
+    display: inline-block;
+    transition: transform .4s cubic-bezier(.94,-0.11,.35,.93);
+    transition-delay: var(--delay, 0s);
+  }
+  .roll .front span { transform: translateY(0); }
+  .roll .back span  { transform: translateY(-165%); }
+  .cta:hover .roll .front span { transform: translateY(165%); }
+  .cta:hover .roll .back span  { transform: translateY(0); }
+
+  .cta .arrow { display: inline-block; transition: transform .2s ease; }
+  .cta:hover .arrow { transform: translateX(3px); }
+
+  /* ── Marquee — bordered logo cells ─────────────────────────────────── */
+  .marquee { position: relative; z-index: 2; margin-top: var(--cr-space-m); overflow: hidden; }
+  .track {
+    display: flex; width: max-content;
+    animation: scroll 52s linear infinite;
+  }
+  .marquee:hover .track { animation-play-state: paused; }
+  @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* Cell dimensions are the composition and are left exactly as authored — the
+     row's rhythm is what makes the count legible at speed. */
+  .cell {
+    flex: 0 0 auto;
+    width: 243px; height: 143px;
+    border: var(--cr-stroke) solid var(--cr-line-dark);
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none; cursor: pointer;
+    transition: border-color .3s ease, background-color .3s ease;
+  }
+  /* Hover is a neutral surface step and an ink lift — a real affordance, and
+     no colour, because a wall of marks that spends colour stops being read one
+     mark at a time. */
+  .cell:hover { border-color: var(--cr-neutral-500); background: var(--cr-neutral-900); }
+  .cell:focus-visible {
+    outline: 2px solid var(--cr-focus-ring-accent);
+    outline-offset: -3px;
+  }
+  .wm {
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-h6);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-neutral-500);
+    transition: color .3s ease; white-space: nowrap;
+  }
+  .cell:hover .wm { color: var(--cr-text-inverse); }
+
+  /* ── Scroll-in reveal (header only; visible without JS) ─────────────── */
+  .has-js .anim { opacity: 0; transform: translateY(16px); transition: opacity .6s ease var(--d,0ms), transform .6s ease var(--d,0ms); }
+  .revealed .anim { opacity: 1; transform: none; }
+
+  /* ── Responsive — the ORIGINAL's breakpoints; type steps on the ramp ── */
+  @media (max-width: 900px) {
+    .section { padding: 0; }
+    .panel { padding: var(--cr-space-m) 0; }
+    .title { font-size: var(--cr-text-h4); }
+    .cell { width: 200px; height: 120px; }
+    .wm { font-size: var(--cr-text-body); }
+  }
+  @media (max-width: 560px) {
+    .section { padding: 0; }
+    .panel { padding: var(--cr-space-m) 0; }
+    .head { padding: 0 var(--cr-page-gutter); }
+    .title { font-size: var(--cr-text-h5); }
+    /* No supporting step is authored — the ramp leaves the body step where it
+       is at every width, because that step IS the reading floor. */
+    .cell { width: 168px; height: 104px; }
+    .wm { font-size: var(--cr-text-supporting); }
+  }
+
+  /* A marquee must STOP under a reduce preference, and the guard keeps the
+     trigger's own specificity so it still wins the cascade. */
+  @media (prefers-reduced-motion: reduce) {
+    .track { animation: none; }
+    .has-js .anim { opacity: 1 !important; transform: none !important; transition: none; }
+    .roll span span, .cta .arrow, .cta, .cell, .wm { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. There is no `directed` line: the Pilot Constraint was not
+     asked to yield anywhere in this section. The cell dimensions, the header
+     column's cap and the marquee's own offset are untouched, which is why they
+     do not appear at all — the band kept its geometry and changed its skin.
+  .arrow   | font-size              | type-ramp
+  .arrow   | line-height            | type-ramp
+  .back    | column-gap             | spacing-scale
+  .back    | font-size              | type-ramp
+  .back    | line-height            | type-ramp
+  .back    | row-gap                | spacing-scale
+  .cta     | border-radius          | radius-pair
+  .cta     | column-gap             | spacing-scale
+  .cta     | font-size              | type-ramp
+  .cta     | line-height            | type-ramp
+  .cta     | margin-top             | spacing-scale
+  .cta     | padding-bottom         | spacing-scale
+  .cta     | padding-left           | spacing-scale
+  .cta     | padding-right          | spacing-scale
+  .cta     | padding-top            | spacing-scale
+  .cta     | row-gap                | spacing-scale
+  .eyebrow | font-size              | type-ramp
+  .eyebrow | line-height            | type-ramp
+  .eyebrow | margin-bottom          | spacing-scale
+  .front   | font-size              | type-ramp
+  .front   | line-height            | type-ramp
+  .head    | padding-left           | spacing-scale
+  .head    | padding-right          | spacing-scale
+  .panel   | padding-bottom         | spacing-scale
+  .panel   | padding-top            | spacing-scale
+  .roll    | column-gap             | spacing-scale
+  .roll    | font-size              | type-ramp
+  .roll    | line-height            | type-ramp
+  .roll    | row-gap                | spacing-scale
+  .sub     | font-size              | type-ramp
+  .sub     | line-height            | type-ramp
+  .sub     | margin-left            | spacing-scale
+  .sub     | margin-right           | spacing-scale
+  .sub     | margin-top             | spacing-scale
+  .title   | font-size              | type-ramp
+  .title   | line-height            | type-ramp
+  .wm      | font-size              | type-ramp
+  .wm      | line-height            | type-ramp
+  span     | font-size              | type-ramp
+  span     | line-height            | type-ramp
+-->
+
+<section class="section" data-screen-label="Integrations · CTA + bordered logo marquee"
+         data-archetype="editorial-stack" data-hierarchy="supporting" data-intent="build-trust"
+         data-register="confident" data-signature="colour-interruption" data-density="low">
+  <div class="panel" id="panel">
+
+    <div class="head">
+      <p class="eyebrow anim" style="--d:0ms">Integrations</p>
+      <h2 class="title anim" style="--d:80ms">We Work With The Tools You Already Use.</h2>
+      <p class="sub anim" style="--d:150ms">
+        Your agents plug into the systems you already run — use our off-the-shelf
+        integrations, or build a custom one on our REST API.
+      </p>
+      <a class="cta anim" style="--d:220ms" href="#" aria-label="Explore all integrations">
+        <span class="roll" aria-hidden="true">
+          <span class="front"><span style="--delay:0s">Explore</span> <span style="--delay:.06s">All</span> <span style="--delay:.12s">Integrations</span></span>
+          <span class="back"><span style="--delay:0s">Explore</span> <span style="--delay:.06s">All</span> <span style="--delay:.12s">Integrations</span></span>
+        </span>
+        <span class="arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+
+    <!-- Marquee — set rendered twice for a seamless −50% loop -->
+    <div class="marquee">
+      <div class="track" id="track">
+        <a class="cell" href="#"><span class="wm">SAP</span></a>
+        <a class="cell" href="#"><span class="wm">Salesforce</span></a>
+        <a class="cell" href="#"><span class="wm">Oracle</span></a>
+        <a class="cell" href="#"><span class="wm">NetSuite</span></a>
+        <a class="cell" href="#"><span class="wm">Epic</span></a>
+        <a class="cell" href="#"><span class="wm">Cerner</span></a>
+        <a class="cell" href="#"><span class="wm">Workday</span></a>
+        <a class="cell" href="#"><span class="wm">ServiceNow</span></a>
+        <a class="cell" href="#"><span class="wm">Snowflake</span></a>
+        <a class="cell" href="#"><span class="wm">Zoho</span></a>
+        <!-- duplicate set -->
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">SAP</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Salesforce</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Oracle</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">NetSuite</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Epic</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Cerner</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Workday</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">ServiceNow</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Snowflake</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Zoho</span></a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  (function () {
+    var panel = document.getElementById('panel');
+    if (!panel) return;
+    function reveal() { panel.classList.add('revealed'); }
+    if (!('IntersectionObserver' in window)) { reveal(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { reveal(); io.disconnect(); } });
+    }, { threshold: 0.2 });
+    io.observe(panel);
+  })();
+</script>
+</body>
+</html>

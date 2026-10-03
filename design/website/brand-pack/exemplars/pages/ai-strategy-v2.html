@@ -1,0 +1,1612 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Example Brand — AI Strategy &amp; Integration</title>
+<style>
+  /* Urbanist = display · Inter = body (charter) */
+  @font-face{font-family:"Urbanist";src:url("../fonts/Urbanist-Light.ttf")    format("truetype");font-weight:300;font-display:swap;}
+  @font-face{font-family:"Urbanist";src:url("../fonts/Urbanist-Regular.ttf")  format("truetype");font-weight:400;font-display:swap;}
+  @font-face{font-family:"Urbanist";src:url("../fonts/Urbanist-Medium.ttf")   format("truetype");font-weight:500;font-display:swap;}
+  @font-face{font-family:"Urbanist";src:url("../fonts/Urbanist-SemiBold.ttf") format("truetype");font-weight:600;font-display:swap;}
+  @font-face{font-family:"Urbanist";src:url("../fonts/Urbanist-Bold.ttf")     format("truetype");font-weight:700;font-display:swap;}
+  @font-face{font-family:"Urbanist";src:url("../fonts/Urbanist-ExtraBold.ttf")format("truetype");font-weight:800;font-display:swap;}
+  @font-face{font-family:"Inter";src:url("../fonts/Inter-Regular.ttf")  format("truetype");font-weight:400;font-display:swap;}
+  @font-face{font-family:"Inter";src:url("../fonts/Inter-Medium.ttf")   format("truetype");font-weight:500;font-display:swap;}
+  @font-face{font-family:"Inter";src:url("../fonts/Inter-SemiBold.ttf") format("truetype");font-weight:600;font-display:swap;}
+  @font-face{font-family:"Inter";src:url("../fonts/Inter-Bold.ttf")     format("truetype");font-weight:700;font-display:swap;}
+</style>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--cr-bg); font-family: var(--cr-font-body); color: var(--cr-fg); }
+  [data-lucide] { display: inline-block; stroke-width: 1.8; color: currentColor; }
+</style>
+</head>
+<body>
+<main>
+
+<!--
+  CURATION TABLE — Example Brand · AI Strategy & Integration (REBUILD of the page-1 brief)
+  Built per SKILL.md "Building a page". SAME brief + SAME intent skeleton as pages/ai-strategy.html,
+  but every slot ROTATED to a fresh, equally-fitting component per `node tools/selection-diversity.js`
+  (anti-default-collapse demo): all 7 picks are unused on the prior two pages. Each row's reason names
+  the rotated-off alternate (SKILL.md rule c). >=2 candidates per row, all serve the intent by meta.
+
+  | # | intent | surface | candidates (>=2, filtered by serves) | chosen | mode | reason |
+  | - | ------ | ------- | ------------------------------------ | ------ | ---- | ------ |
+  | 1 | hero | light | hero-agent, hero-lending, hero-bento | hero-agent | as-is | Rotated off hero-lending/hero-bento (both used on prior pages); for this advisory "Let's Talk" brief hero-agent's intent-capture form + advisory chat opens the consultation, an equal-fit lead-gen take; light surface opens the page. |
+  | 2 | process | light | sticky-cards, how-it-works, feature-steps, get-started | sticky-cards | as-is | Rotated off feature-steps/how-it-works (used on prior pages); the engagement is a 3-move walk, so sticky-cards' sticky-aside+stack fits; layout differs from band 1's two-col hero so the shared light surface is fine. |
+  | 3 | feature | warm | faq-split, feature-accordion, feature-trio | faq-split | as-is | The leader anxieties are FAQ-shaped, so faq-split's accordion-aside beats feature-accordion/feature-trio (both used) for this brief; warm surface differs from band 2 light. |
+  | 4 | integrations | ink | integrations, integration-grid, feature-bento | integrations | as-is | Rotated off integration-grid (used on page 1); the ink marquee lets the real systems speak without per-item copy; ink differs from both neighbours. |
+  | 5 | outcomes | light | value-stats, outcome-stats, stat-cards, stat-band | value-stats | as-is | Rotated off outcome-stats/stat-cards (both used); value-stats' proof-bento carries the measurable-results argument with count-up numbers; light differs from band 4 ink. |
+  | 6 | cta | ink | cta-band, cta-footer-reveal, cta-orbit, cta-banner | cta-band | as-is | Rotated off cta-footer-reveal/cta-orbit (both used); cta-band's ink close + service rail suits a low-pressure "Let's Talk"; ink differs from band 5 light. |
+  | 7 | footer | gradient | footer-cta, footer-dark, footer-mega, footer-orbit | footer-cta | as-is | Rotated off footer-dark/footer-mega (both used); footer-cta's gradient CTA+footer fusion closes the page; gradient surface differs from band 6 ink. |
+-->
+
+<!-- ════════════════ BAND 1 · HERO (hero-agent) ════════════════ -->
+<style>
+[data-crf="hero-agent"] .cr-ha {
+    background: var(--cr-bg);
+    font-family: var(--cr-font-body);
+  }[data-crf="hero-agent"] .cr-ha *,
+[data-crf="hero-agent"] .cr-ha *::before,
+[data-crf="hero-agent"] .cr-ha *::after { box-sizing: border-box; }[data-crf="hero-agent"] /* ── (0) Canonical nav — LIGHT variant (per the nav-surface rule) ── */
+  .ha-navband { background: var(--cr-bg); border-bottom: 1px solid rgba(14,14,14,0.08); }[data-crf="hero-agent"] .ha-nav {
+    max-width: var(--cr-content-max); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px clamp(20px, 4vw, 48px); gap: 24px;
+  }[data-crf="hero-agent"] .ha-logo { height: 30px; width: auto; display: block; flex: 0 0 auto; }[data-crf="hero-agent"] .ha-links {
+    display: flex; gap: clamp(20px, 2.6vw, 38px); align-items: center;
+    font-family: var(--cr-font-display); font-weight: 500; font-size: 16px;
+    color: var(--cr-fg); letter-spacing: -0.01em;
+  }[data-crf="hero-agent"] .ha-link { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; white-space: nowrap; }[data-crf="hero-agent"] .ha-link svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 2; fill: none; opacity: .85; }[data-crf="hero-agent"] .ha-navcta {
+    flex: 0 0 auto; background: var(--cr-ink); color: #fff;
+    font-family: var(--cr-font-display); font-weight: 700; font-size: 15px;
+    padding: 12px 26px; border-radius: var(--cr-radius-pill); border: 0; cursor: pointer;
+    letter-spacing: -0.01em; transition: background .18s ease;
+  }[data-crf="hero-agent"] .ha-navcta:hover { background: var(--cr-fg); }[data-crf="hero-agent"] /* ── Body ── */
+  .ha-body {
+    max-width: var(--cr-content-max); margin: 0 auto;
+    padding: clamp(40px, 6vw, 76px) clamp(20px, 4vw, 48px) clamp(56px, 8vw, 100px);
+    display: grid;
+    grid-template-columns: 44fr 56fr;
+    gap: clamp(36px, 5vw, 72px);
+    align-items: center;
+  }[data-crf="hero-agent"] /* ── LEFT column ── */
+  .ha-left { min-width: 0; }[data-crf="hero-agent"] .ha-title {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(38px, 5vw, 62px);
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    color: var(--cr-fg);
+  }[data-crf="hero-agent"] .ha-sub {
+    margin: clamp(22px, 2.4vw, 30px) 0 0;
+    max-width: 460px;
+    font-size: clamp(16px, 1.4vw, 18px);
+    line-height: 1.6;
+    color: var(--cr-fg-3);
+  }[data-crf="hero-agent"] /* email + CTA pill */
+  .ha-form {
+    display: flex; align-items: center;
+    margin-top: clamp(28px, 3vw, 40px);
+    max-width: 470px;
+    background: #fff;
+    border: 1px solid var(--cr-line);
+    border-radius: var(--cr-radius-pill);
+    padding: 6px 6px 6px 22px;
+    gap: 10px;
+  }[data-crf="hero-agent"] .ha-email {
+    flex: 1 1 auto; min-width: 0;
+    border: 0; background: transparent; outline: 0;
+    font-family: var(--cr-font-body); font-size: 15px; color: var(--cr-fg);
+  }[data-crf="hero-agent"] .ha-email::placeholder { color: var(--cr-fg-3); }[data-crf="hero-agent"] .ha-form-btn {
+    flex: 0 0 auto;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--cr-ink); color: #fff;
+    border: 0; border-radius: var(--cr-radius-pill);
+    padding: 14px 24px; cursor: pointer;
+    font-family: var(--cr-font-display); font-weight: 600; font-size: 15px;
+    white-space: nowrap; text-decoration: none;
+    transition: background .18s ease;
+  }[data-crf="hero-agent"] .ha-form-btn:hover { background: var(--cr-fg); }[data-crf="hero-agent"] .ha-form-btn svg { width: 16px; height: 16px; stroke-width: 2.2; }[data-crf="hero-agent"] /* ── RIGHT column — chat demo ── */
+  .ha-right { min-width: 0; }[data-crf="hero-agent"] .ha-demo {
+    background: var(--cr-bg-grey-100);
+    border-radius: 22px;
+    padding: clamp(16px, 1.8vw, 22px);
+  }[data-crf="hero-agent"] /* tabs */
+  .ha-tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }[data-crf="hero-agent"] .ha-tab {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 16px; border-radius: var(--cr-radius-pill);
+    background: #fff; border: 1px solid rgba(14,14,14,0.06);
+    font-size: 14px; font-weight: 500; color: var(--cr-fg-2);
+    white-space: nowrap;
+  }[data-crf="hero-agent"] .ha-tab svg { width: 15px; height: 15px; color: var(--cr-fg-3); }[data-crf="hero-agent"] .ha-tab.active {
+    background: var(--cr-brand-100);
+    border-color: rgba(20,157,255,0.35);
+    color: var(--cr-brand-700);
+  }[data-crf="hero-agent"] .ha-tab.active svg { color: var(--cr-brand); }[data-crf="hero-agent"] /* chat card */
+  .ha-chat {
+    background: #fff;
+    border-radius: 16px;
+    padding: clamp(18px, 2vw, 26px);
+    min-height: clamp(440px, 50vw, 600px);
+    display: flex; flex-direction: column;
+  }[data-crf="hero-agent"] .ha-msgs { display: flex; flex-direction: column; gap: 14px; flex: 1 1 auto; }[data-crf="hero-agent"] .ha-user {
+    align-self: flex-end; max-width: 72%;
+    padding: 12px 18px; border-radius: 16px 16px 4px 16px;
+    background: linear-gradient(120deg, #E7EEFF 0%, var(--cr-bg-tint) 100%);
+    font-size: 15px; color: var(--cr-fg); line-height: 1.4;
+  }[data-crf="hero-agent"] .ha-think { display: flex; align-items: center; gap: 9px; font-size: 14px; color: var(--cr-fg-3); }[data-crf="hero-agent"] .ha-think svg { width: 16px; height: 16px; color: var(--cr-brand); flex: 0 0 auto; }[data-crf="hero-agent"] .ha-ai {
+    align-self: flex-start; max-width: 78%;
+    margin-top: 4px;
+  }[data-crf="hero-agent"] .ha-ai-bubble {
+    padding: 14px 18px; border-radius: 4px 16px 16px 16px;
+    background: #fff; border: 1px solid rgba(14,14,14,0.08);
+    font-size: 15px; color: var(--cr-fg); line-height: 1.45;
+  }[data-crf="hero-agent"] .ha-ai-tag { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 13px; color: var(--cr-fg-3); }[data-crf="hero-agent"] .ha-ai-tag svg { width: 14px; height: 14px; color: var(--cr-fg-3); }[data-crf="hero-agent"] .ha-input {
+    margin-top: 16px;
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 12px 12px 18px;
+    background: #fff; border: 1px solid rgba(14,14,14,0.08);
+    border-radius: 14px;
+  }[data-crf="hero-agent"] .ha-input-txt { flex: 1 1 auto; min-width: 0; font-size: 15px; color: var(--cr-fg-2); }[data-crf="hero-agent"] .ha-send {
+    flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%;
+    background: var(--cr-ink); border: 0; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }[data-crf="hero-agent"] .ha-send svg { width: 17px; height: 17px; color: #fff; stroke-width: 2.2; }[data-crf="hero-agent"] /* ── Reveal ── */
+  .cr-ha.has-js .reveal { opacity: 0; transform: translateY(16px); }[data-crf="hero-agent"] .cr-ha.has-js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  @media (prefers-reduced-motion: reduce) {[data-crf="hero-agent"] .cr-ha.has-js .reveal { opacity: 1; transform: none; transition: none; }
+  }[data-crf="hero-agent"] /* ── Responsive ── */
+  @media (max-width: 899px) {
+    .ha-body { grid-template-columns: 1fr; gap: 40px; }
+    .ha-sub, .ha-form { max-width: none; }
+  }
+  @media (max-width: 860px) {[data-crf="hero-agent"] .ha-links { display: none; }
+  }
+  @media (max-width: 480px) {[data-crf="hero-agent"] .ha-form { flex-wrap: wrap; border-radius: 22px; padding: 14px; gap: 12px; }[data-crf="hero-agent"] .ha-email { flex-basis: 100%; padding: 4px 0; }[data-crf="hero-agent"] .ha-form-btn { flex: 1 1 auto; justify-content: center; }[data-crf="hero-agent"] .ha-user,
+[data-crf="hero-agent"] .ha-ai { max-width: 90%; }
+  }
+</style>
+<div data-crf="hero-agent">
+<section class="cr-ha" data-screen-label="Hero · agent (chat demo)">
+
+  <!-- ── (0) Canonical CR nav (light variant) ── -->
+  <div class="ha-navband">
+    <nav class="ha-nav">
+      <img class="ha-logo" src="../assets/logo-color.svg" alt="Example Brand">
+      <div class="ha-links">
+        <span class="ha-link">AI <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ha-link">Industry <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ha-link">FosterX <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ha-link">About us</span>
+        <span class="ha-link">Resources <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+      <button class="ha-navcta">Let's talk</button>
+    </nav>
+  </div>
+
+  <!-- ── Body ── -->
+  <div class="ha-body">
+
+    <!-- LEFT -->
+    <div class="ha-left">
+      <h1 class="ha-title reveal" style="--d:0ms">Turn AI Into a Measurable Growth Engine</h1>
+      <p class="ha-sub reveal" style="--d:80ms">AI strategy, assessment, and integration for teams that want real operational value &mdash; not another innovation project. Tell us where you are; we'll help you make AI work inside your existing systems.</p>
+
+      <form class="ha-form reveal" style="--d:160ms" novalidate>
+        <input class="ha-email" type="email" placeholder="Your work email" aria-label="Work email">
+        <a class="ha-form-btn" href="#contact">Let's Talk <i data-lucide="arrow-right"></i></a>
+      </form>
+    </div>
+
+    <!-- RIGHT — advisory chat demo -->
+    <div class="ha-right reveal" style="--d:160ms">
+      <div class="ha-demo">
+
+        <div class="ha-tabs">
+          <span class="ha-tab active"><i data-lucide="compass"></i>Where to start</span>
+          <span class="ha-tab"><i data-lucide="plug"></i>Will it integrate?</span>
+          <span class="ha-tab"><i data-lucide="bar-chart-3"></i>How to measure ROI</span>
+        </div>
+
+        <div class="ha-chat">
+          <div class="ha-msgs">
+            <div class="ha-user">Where should we even start with AI?</div>
+
+            <div class="ha-think"><i data-lucide="sparkles"></i>Reviewing your systems</div>
+            <div class="ha-think"><i data-lucide="sparkles"></i>Scoring use cases by ROI</div>
+
+            <div class="ha-ai">
+              <div class="ha-ai-bubble">Start with a no-cost assessment &mdash; we'll shortlist the 2&ndash;3 use cases with measurable ROI and a roadmap to integrate them into your stack.</div>
+              <span class="ha-ai-tag"><i data-lucide="message-circle"></i>AI strategy assistant</span>
+            </div>
+          </div>
+
+          <div class="ha-input">
+            <span class="ha-input-txt">Will it work with our legacy systems?</span>
+            <button class="ha-send" type="button" aria-label="Send"><i data-lucide="arrow-up"></i></button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+</div>
+<script>
+(function(){
+var __crf_hero_agent = document.querySelector('[data-crf="hero-agent"]');
+if(!__crf_hero_agent) return;
+(function () {
+    if (window.lucide) lucide.createIcons();
+    var sec = __crf_hero_agent.querySelector('.cr-ha');
+    if (!sec || !('IntersectionObserver' in window)) return;
+    sec.classList.add('has-js');
+    var done = false;
+    function revealAll() {
+      if (done) return; done = true;
+      sec.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { revealAll(); io.disconnect(); } });
+    }, { threshold: 0.04 });
+    io.observe(sec);
+    setTimeout(revealAll, 1200);
+  })();
+})();
+</script>
+
+
+<!-- ════════════════ BAND 2 · PROCESS (sticky-cards) ════════════════ -->
+<style>
+[data-crf="sticky-cards"] .item { opacity: 1 !important; transform: none !important; }[data-crf="sticky-cards"], [data-crf="sticky-cards"] * { box-sizing: border-box; }[data-crf="sticky-cards"],
+[data-crf="sticky-cards"] {
+    margin: 0; padding: 0; background: #FFFFFF;
+    font-family: var(--cr-font-body); color: var(--cr-ink-flat);
+    -webkit-font-smoothing: antialiased;
+  }[data-crf="sticky-cards"] .section {
+    padding: 120px 100px;
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }[data-crf="sticky-cards"] .section-header {
+    margin-bottom: 80px;
+    max-width: 720px;
+  }[data-crf="sticky-cards"] .section-header .eyebrow {
+    font-family: "Inter", sans-serif;
+    font-weight: 600; font-size: 13px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--cr-fg-3);
+    margin: 0 0 24px;
+  }[data-crf="sticky-cards"] .section-header .headline {
+    font-family: "Urbanist", sans-serif;
+    font-weight: 700; font-size: 48px;
+    line-height: 1.1; letter-spacing: -0.02em;
+    color: var(--cr-ink-flat);
+    margin: 0 0 20px;
+  }[data-crf="sticky-cards"] .section-header .intro {
+    font-family: "Inter", sans-serif;
+    font-weight: 400; font-size: 16px;
+    line-height: 1.6;
+    color: var(--cr-fg-2);
+    margin: 0;
+    max-width: 560px;
+  }[data-crf="sticky-cards"] .wrap {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    column-gap: 80px;
+    align-items: start;
+  }[data-crf="sticky-cards"] .aside {
+    position: sticky;
+    top: calc(50vh - var(--aside-half, 75px));
+    align-self: start;
+  }[data-crf="sticky-cards"] .nav { display: flex; flex-direction: column; }[data-crf="sticky-cards"] .nav-item {
+    display: flex; align-items: baseline; gap: 16px;
+    padding: 12px 20px;
+    border-left: 2px solid var(--cr-line);
+    color: var(--cr-fg-muted);
+    text-decoration: none;
+    font-family: "Urbanist", sans-serif;
+    font-weight: 600; font-size: 16px;
+    transition: color .2s ease, border-color .2s ease;
+  }[data-crf="sticky-cards"] .nav-item:hover { color: var(--cr-ink-flat); }[data-crf="sticky-cards"] .nav-item.active {
+    color: var(--cr-ink-flat);
+    border-left-color: var(--cr-brand);
+  }[data-crf="sticky-cards"] .nav-item .num {
+    font-family: "Inter", sans-serif;
+    font-weight: 600; font-size: 12px;
+    letter-spacing: 0.04em;
+    opacity: 0.5;
+    min-width: 24px;
+    transition: opacity .2s ease, color .2s ease;
+  }[data-crf="sticky-cards"] .nav-item.active .num { opacity: 1; color: var(--cr-brand); }[data-crf="sticky-cards"] .cards {
+    display: flex; flex-direction: column;
+    gap: 80px;
+  }[data-crf="sticky-cards"] .item {
+    display: flex; flex-direction: column;
+    gap: 32px;
+  }[data-crf="sticky-cards"] .creative {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    border-radius: 24px;
+    background: linear-gradient(135deg,
+      var(--right-1, var(--cr-brand-700)) 0%,
+      var(--right-2, #0F2A2E) 70%,
+      var(--right-3, var(--cr-ink-cool)) 100%);
+  }[data-crf="sticky-cards"] .creative::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: url("../assets/texture-grain.png");
+    background-size: cover;
+    mix-blend-mode: overlay;
+    opacity: 0.35;
+    pointer-events: none;
+  }[data-crf="sticky-cards"] .creative::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(105deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0) 50%);
+    pointer-events: none;
+  }[data-crf="sticky-cards"] .orbit {
+    position: absolute;
+    border: 1px solid rgba(255,255,255,0.20);
+    border-radius: 50%;
+    pointer-events: none;
+  }[data-crf="sticky-cards"] .orbit.o1 { right: -240px; top: -180px; width: 720px; height: 720px; }[data-crf="sticky-cards"] .orbit.o2 { right: -160px; top: -100px; width: 540px; height: 540px; opacity: 0.6; }[data-crf="sticky-cards"] .mock {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    background: #FFFFFF;
+    border-radius: 14px;
+    border: 1px solid var(--cr-line);
+    padding: 24px;
+    width: calc(100% - 96px);
+    max-width: 460px;
+    z-index: 1;
+  }[data-crf="sticky-cards"] .mock-title {
+    font-family: "Urbanist", sans-serif;
+    font-weight: 700; font-size: 15px;
+    color: var(--cr-ink-flat);
+    margin: 0 0 16px;
+  }[data-crf="sticky-cards"] .mock-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    background: var(--cr-bg-grey-100);
+    color: var(--cr-fg-2);
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }[data-crf="sticky-cards"] .mock-row.is-active {
+    background: var(--cr-brand-100);
+    color: var(--cr-ink-flat);
+    font-weight: 600;
+  }[data-crf="sticky-cards"] .mock-row .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--dot, var(--cr-brand));
+    flex-shrink: 0;
+  }[data-crf="sticky-cards"] .mock-row .label { flex: 1; min-width: 0; }[data-crf="sticky-cards"] .mock-row .meta { font-size: 11px; color: var(--cr-fg-muted); font-weight: 500; }[data-crf="sticky-cards"] .mock-row.is-active .meta { color: var(--cr-fg-2); }[data-crf="sticky-cards"] .mock-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }[data-crf="sticky-cards"] .mock-tile {
+    aspect-ratio: 1;
+    background: var(--cr-bg-grey-100);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--cr-fg-3);
+  }[data-crf="sticky-cards"] .mock-tile svg { width: 22px; height: 22px; stroke-width: 1.5; }[data-crf="sticky-cards"] .mock-foot {
+    margin-top: 14px;
+    font-family: "Inter", sans-serif;
+    font-size: 11px;
+    color: var(--cr-fg-3);
+    font-weight: 500;
+  }[data-crf="sticky-cards"] .text-block h3 {
+    font-family: "Urbanist", sans-serif;
+    font-weight: 700; font-size: 28px;
+    line-height: 1.2; letter-spacing: -0.02em;
+    color: var(--cr-ink-flat);
+    margin: 0 0 16px;
+  }[data-crf="sticky-cards"] .text-block p {
+    font-family: "Inter", sans-serif;
+    font-weight: 400; font-size: 16px;
+    line-height: 1.6;
+    color: var(--cr-fg-2);
+    margin: 0;
+    max-width: 540px;
+  }[data-crf="sticky-cards"] .item {
+    opacity: 0;
+    transform: translateY(12px);
+  }[data-crf="sticky-cards"] .section.in-view .item {
+    animation: sticky-cards-kf-item-in .55s ease forwards;
+    animation-delay: var(--delay, 0ms);
+  }
+  @keyframes sticky-cards-kf-item-in {
+    to { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {[data-crf="sticky-cards"] .item { opacity: 1; transform: none; animation: none; }[data-crf="sticky-cards"] .section.in-view .item { animation: none; }
+  }[data-crf="sticky-cards"] @media (max-width: 1024px) {
+    .section { padding: 80px 60px; }
+    .section-header { margin-bottom: 64px; }
+    .section-header .headline { font-size: 40px; }
+    .wrap { grid-template-columns: 240px 1fr; column-gap: 48px; }
+    .cards { gap: 64px; }
+    .item { gap: 28px; }
+    .creative { aspect-ratio: 16 / 9; }
+    .text-block h3 { font-size: 24px; }
+  }
+  @media (max-width: 640px) {
+    .section { padding: 56px 20px; }
+    .section-header { margin-bottom: 48px; }
+    .section-header .headline { font-size: 30px; }
+    .section-header .intro { font-size: 15px; }
+    .wrap { grid-template-columns: 1fr; column-gap: 0; }
+    .aside { display: none; }
+    .cards { gap: 48px; }
+    .item { gap: 20px; }
+    .creative { border-radius: 18px; }
+    .text-block h3 { font-size: 22px; }
+    .text-block p { font-size: 15px; }
+    .mock { width: calc(100% - 48px); padding: 18px; }
+    .mock-title { font-size: 14px; }
+    .mock-row { font-size: 12px; padding: 8px 10px; }
+    .mock-tile svg { width: 18px; height: 18px; }
+    .orbit.o1 { right: -160px; top: -120px; width: 480px; height: 480px; }
+    .orbit.o2 { right: -100px; top: -60px; width: 320px; height: 320px; }
+  }
+</style>
+<div data-crf="sticky-cards">
+<section class="section" id="how" data-screen-label="Sticky cards">
+
+  <header class="section-header">
+    <p class="eyebrow">The Engagement</p>
+    <h2 class="headline">From Assessment To Integration, In Three Moves.</h2>
+    <p class="intro">We cover both the planning and the implementation &mdash; assessment, strategy, and full integration into your stack and your processes.</p>
+  </header>
+
+  <div class="wrap">
+    <aside class="aside">
+      <nav class="nav">
+        <a class="nav-item active" href="#card-1"><span class="num">01</span><span class="lbl">Assess where AI pays off</span></a>
+        <a class="nav-item"        href="#card-2"><span class="num">02</span><span class="lbl">Build the strategy &amp; roadmap</span></a>
+        <a class="nav-item"        href="#card-3"><span class="num">03</span><span class="lbl">Integrate &amp; enable</span></a>
+      </nav>
+    </aside>
+
+    <div class="cards">
+      <article class="item">
+        <div class="creative" id="card-1" style="--right-1:var(--cr-brand-700); --right-2:#0F2A2E; --right-3:var(--cr-ink-cool)">
+          <div class="orbit o1"></div>
+          <div class="orbit o2"></div>
+          <div class="mock">
+            <p class="mock-title">Use-case shortlist</p>
+            <div class="mock-row"           style="--dot:var(--cr-brand)"><span class="dot"></span><span class="label">Claims triage</span><span class="meta">High ROI</span></div>
+            <div class="mock-row is-active" style="--dot:var(--cr-brand)"><span class="dot"></span><span class="label">Invoice reconciliation</span><span class="meta">Highest ROI</span></div>
+            <div class="mock-row"           style="--dot:var(--cr-success)"><span class="dot"></span><span class="label">Status &amp; reporting</span><span class="meta">Med ROI</span></div>
+            <div class="mock-row"           style="--dot:var(--cr-amber)"><span class="dot"></span><span class="label">Net-new model</span><span class="meta">Defer</span></div>
+          </div>
+        </div>
+        <div class="text-block">
+          <h3>Assess where AI actually pays off.</h3>
+          <p>We assess your data, systems, and processes to find the few use cases where AI creates real, measurable value &mdash; and, just as important, where it won't.</p>
+        </div>
+      </article>
+
+      <article class="item">
+        <div class="creative" id="card-2" style="--right-1:#1F8A5B; --right-2:#0E4A33; --right-3:#03261A">
+          <div class="orbit o1"></div>
+          <div class="orbit o2"></div>
+          <div class="mock">
+            <p class="mock-title">Systems in scope</p>
+            <div class="mock-grid">
+              <div class="mock-tile"><i data-lucide="database"></i></div>
+              <div class="mock-tile"><i data-lucide="cloud"></i></div>
+              <div class="mock-tile"><i data-lucide="plug"></i></div>
+              <div class="mock-tile"><i data-lucide="mail"></i></div>
+              <div class="mock-tile"><i data-lucide="file-text"></i></div>
+              <div class="mock-tile"><i data-lucide="message-square"></i></div>
+            </div>
+            <p class="mock-foot">6 systems mapped · roadmap drafted</p>
+          </div>
+        </div>
+        <div class="text-block">
+          <h3>Build the strategy and the roadmap.</h3>
+          <p>We turn the assessment into a prioritized roadmap tied to business outcomes &mdash; growth and competitive edge, not technology for its own sake.</p>
+        </div>
+      </article>
+
+      <article class="item">
+        <div class="creative" id="card-3" style="--right-1:var(--cr-amber); --right-2:var(--cr-fg-2); --right-3:var(--cr-fg)">
+          <div class="orbit o1"></div>
+          <div class="orbit o2"></div>
+          <div class="mock">
+            <p class="mock-title">Measured outcomes</p>
+            <div class="mock-row"           style="--dot:var(--cr-success)"><span class="dot"></span><span class="label">Cost removed</span><span class="meta">92%</span></div>
+            <div class="mock-row is-active" style="--dot:var(--cr-success)"><span class="dot"></span><span class="label">Cycle time down</span><span class="meta">−73%</span></div>
+            <div class="mock-row"           style="--dot:var(--cr-brand)"><span class="dot"></span><span class="label">ROI tracked</span><span class="meta">11.3×</span></div>
+            <div class="mock-row"           style="--dot:var(--cr-amber)"><span class="dot"></span><span class="label">Adoption rate</span><span class="meta">88%</span></div>
+          </div>
+        </div>
+        <div class="text-block">
+          <h3>Integrate, enable your teams, and measure.</h3>
+          <p>We build AI into the systems you already run &mdash; legacy included &mdash; get your teams using it, and put the metrics in place so success stays measurable.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+</div>
+<script>
+(function(){
+var __crf_sticky_cards = document.querySelector('[data-crf="sticky-cards"]');
+if(!__crf_sticky_cards) return;
+lucide.createIcons();
+
+  const section   = __crf_sticky_cards.querySelector('.section');
+  const aside     = section.querySelector('.aside');
+  const items     = section.querySelectorAll('.item');
+  const creatives = section.querySelectorAll('.creative');
+  const navItems  = section.querySelectorAll('.nav-item');
+
+  items.forEach((it, i) => it.style.setProperty('--delay', (i * 80) + 'ms'));
+
+  function updateAsideHalf() {
+    if (!aside) return;
+    aside.style.setProperty('--aside-half', (aside.offsetHeight / 2) + 'px');
+  }
+  updateAsideHalf();
+  window.addEventListener('resize', updateAsideHalf);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(updateAsideHalf);
+  }
+
+  if ('IntersectionObserver' in window) {
+    const sectionIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          section.classList.add('in-view');
+          sectionIO.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    sectionIO.observe(section);
+
+    const navIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const id = '#' + e.target.id;
+        navItems.forEach(n =>
+          n.classList.toggle('active', n.getAttribute('href') === id));
+      });
+    }, { rootMargin: '-30% 0px -45% 0px' });
+    creatives.forEach(c => navIO.observe(c));
+  } else {
+    section.classList.add('in-view');
+  }
+
+  navItems.forEach(n => {
+    n.addEventListener('click', e => {
+      e.preventDefault();
+      const target = section.querySelector(n.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+})();
+</script>
+
+
+<!-- ════════════════ BAND 3 · ANXIETIES (faq-split) ════════════════ -->
+<style>
+[data-crf="faq-split"], [data-crf="faq-split"] * { box-sizing: border-box; }[data-crf="faq-split"],
+[data-crf="faq-split"] {
+    margin: 0; padding: 0; background: var(--cr-bg-grey-50);
+    font-family: var(--cr-font-body); color: var(--cr-ink-flat);
+    -webkit-font-smoothing: antialiased;
+  }[data-crf="faq-split"] .section {
+    padding: 120px 100px;
+    max-width: var(--cr-content-max); margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 120px;
+    align-items: start;
+  }[data-crf="faq-split"] .eyebrow {
+    font-family: "Inter", sans-serif; font-weight: 600; font-size: 13px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--cr-fg-3);
+    margin: 0 0 24px;
+  }[data-crf="faq-split"] .headline {
+    font-family: "Urbanist", sans-serif; font-weight: 700;
+    font-size: 48px; line-height: 1.1; letter-spacing: -0.02em;
+    color: var(--cr-ink-flat); margin: 0; max-width: 420px;
+  }[data-crf="faq-split"] .list { border-top: 1px solid var(--cr-line); }[data-crf="faq-split"] .qa {
+    border-bottom: 1px solid var(--cr-line);
+  }[data-crf="faq-split"] .q {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    gap: 32px; padding: 28px 0;
+    background: transparent; border: 0; cursor: pointer;
+    font: inherit; color: inherit; text-align: left;
+  }[data-crf="faq-split"] .qt {
+    font-family: "Urbanist", sans-serif; font-weight: 600; font-size: 22px;
+    letter-spacing: -0.01em; line-height: 1.35;
+    color: var(--cr-fg-muted);
+    transition: color .2s ease;
+  }[data-crf="faq-split"] .qa:hover .qt { color: var(--cr-ink-flat); }[data-crf="faq-split"] .qa:hover .qi { border-color: var(--cr-fg-3); }[data-crf="faq-split"] .qa.open .qt { color: var(--cr-ink-flat); }[data-crf="faq-split"] .qi {
+    flex-shrink: 0;
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 1px solid var(--cr-line); background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--cr-ink-flat);
+    transition: transform .3s ease, background .2s ease, border-color .2s ease, color .2s ease;
+  }[data-crf="faq-split"] .qi svg { width: 14px; height: 14px; stroke-width: 1.5; transition: transform .25s ease; }[data-crf="faq-split"] .qa.open .qi {
+    transform: rotate(45deg);
+    background: var(--cr-ink-flat); border-color: var(--cr-ink-flat); color: #fff;
+  }[data-crf="faq-split"] .a {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .35s ease;
+  }[data-crf="faq-split"] .a-inner { overflow: hidden; min-height: 0; }[data-crf="faq-split"] .qa.open .a { grid-template-rows: 1fr; }[data-crf="faq-split"] .a-body {
+    padding: 0 80px 32px 0;
+    font-family: "Inter", sans-serif; font-weight: 400; font-size: 16px;
+    line-height: 1.65; color: var(--cr-fg-2);
+    opacity: 0; transform: translateY(-4px);
+    transition: opacity .35s ease .05s, transform .35s ease .05s;
+  }[data-crf="faq-split"] .qa.open .a-body { opacity: 1; transform: none; }[data-crf="faq-split"] @media (max-width: 1100px) {
+    .section { padding: 80px 60px; gap: 60px; grid-template-columns: 1fr 1.4fr; }
+    .headline { font-size: 40px; }
+    .qt { font-size: 19px; }
+  }
+  @media (max-width: 800px) {[data-crf="faq-split"] .section { grid-template-columns: 1fr; gap: 40px; padding: 64px 32px; }[data-crf="faq-split"] .headline { font-size: 32px; max-width: none; }[data-crf="faq-split"] .qt { font-size: 18px; }[data-crf="faq-split"] .a-body { padding-right: 0; }
+  }
+  @media (max-width: 480px) {[data-crf="faq-split"] .section { padding: 48px 20px; }[data-crf="faq-split"] .headline { font-size: 26px; }[data-crf="faq-split"] .qt { font-size: 16px; }[data-crf="faq-split"] .q { padding: 22px 0; gap: 20px; }[data-crf="faq-split"] .qi { width: 28px; height: 28px; }
+  }
+</style>
+<div data-crf="faq-split">
+<section class="section" data-screen-label="FAQ — split column">
+  <!-- LEFT -->
+  <div>
+    <div class="eyebrow">Before you start</div>
+    <h2 class="headline">The questions every leader asks</h2>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="list" id="faqsplit-list">
+    <!-- items rendered by JS -->
+  </div>
+</section>
+</div>
+<script>
+(function(){
+var __crf_faq_split = document.querySelector('[data-crf="faq-split"]');
+if(!__crf_faq_split) return;
+const ITEMS = [
+    {
+      q: "Where do we even start?",
+      a: "Start with an assessment, not a tool. We map your data, systems, and processes, then shortlist the few use cases where AI creates measurable value — so you begin with clarity, not guesswork."
+    },
+    {
+      q: "Will it work with our existing systems?",
+      a: "Yes. We integrate into the stack you already run — SAP, Salesforce, Oracle, Epic, plus legacy and custom tools — via API or browser automation. No rip-and-replace, no licence shuffle."
+    },
+    {
+      q: "Can our team actually use it?",
+      a: "Adoption is part of the work, not an afterthought. We design around how your people already work, train the teams, and roll out gradually so it sticks instead of stalling."
+    },
+    {
+      q: "How do we measure success?",
+      a: "Every engagement is tied to business metrics agreed up front — cost, cycle time, ROI — and tracked over time, so you can see whether AI is actually paying off."
+    },
+    {
+      q: "How long until we see value?",
+      a: "About four weeks to an actionable roadmap, with the first integrated use case live shortly after. We measure against your baseline from day one."
+    },
+    {
+      q: "Do you understand our business, not just the tech?",
+      a: "We build around your goals and real-world constraints — tech and business imperatives together — not technology for its own sake."
+    },
+  ];
+
+  const list = document.getElementById('faqsplit-list');
+  list.innerHTML = ITEMS.map((it, i) => `
+    <div class="qa ${i === 0 ? 'open' : ''}" data-i="${i}">
+      <button class="q" aria-expanded="${i === 0}">
+        <span class="qt">${it.q}</span>
+        <span class="qi"><i data-lucide="plus"></i></span>
+      </button>
+      <div class="a"><div class="a-inner"><div class="a-body">${it.a}</div></div></div>
+    </div>
+  `).join('');
+  lucide.createIcons();
+
+  list.addEventListener('click', e => {
+    const btn = e.target.closest('.q');
+    if (!btn) return;
+    const item = btn.parentElement;
+    const wasOpen = item.classList.contains('open');
+    list.querySelectorAll('.qa').forEach(el => {
+      el.classList.remove('open');
+      el.querySelector('.q').setAttribute('aria-expanded', 'false');
+    });
+    if (!wasOpen) {
+      item.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  });
+})();
+</script>
+
+
+<!-- ════════════════ BAND 4 · INTEGRATIONS (integrations) ════════════════ -->
+<!-- NOTE: pasted verbatim incl. the build's first-<style> quirk; content renders, only the
+     in-fragment has-js reveal degrades. id="panel" → "integrations-panel" to avoid colliding
+     with cta-band's #panel further down the page. -->
+<style>
+[data-crf="integrations"] ; no shared CSS.
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<style>
+  * { box-sizing: border-box; }[data-crf="integrations"],
+[data-crf="integrations"] {
+    margin: 0; padding: 0;
+    background: var(--cr-bg-grey-50);
+    font-family: var(--cr-font-body); color: var(--cr-ink);
+    -webkit-font-smoothing: antialiased;
+  }[data-crf="integrations"] .section { padding: 0; max-width: none; margin: 0; }[data-crf="integrations"] .panel {
+    position: relative; overflow: hidden; isolation: isolate;
+    border-radius: 0;
+    background: linear-gradient(135deg, var(--cr-ink-cool) 0%, var(--cr-ink-cool) 58%, var(--cr-ink-card) 100%);
+    color: #fff;
+    padding: 88px 0 64px;
+  }[data-crf="integrations"] .panel::after {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: url("../assets/texture-grain.png"); opacity: 0.06;
+  }[data-crf="integrations"] .head { position: relative; z-index: 2; max-width: 692px; margin: 0 auto; padding: 0 32px; text-align: center; }[data-crf="integrations"] .eyebrow {
+    font-family: var(--cr-font-body); font-weight: 600; font-size: 13px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: rgba(255,255,255,0.5); margin: 0 0 16px;
+  }[data-crf="integrations"] .title {
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(26px, 3.2vw, 32px); line-height: 1.2; letter-spacing: -0.02em;
+    color: #fff; margin: 0;
+  }[data-crf="integrations"] .sub {
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 18px;
+    line-height: 1.45; letter-spacing: 0.01em; color: rgba(255,255,255,0.7);
+    margin: 14px auto 0; max-width: 600px;
+  }[data-crf="integrations"] .cta {
+    display: inline-flex; align-items: center; gap: 9px;
+    margin-top: 32px; padding: 14px 24px;
+    background: #fff; color: var(--cr-ink);
+    border-radius: var(--cr-radius-pill); text-decoration: none; cursor: pointer;
+    font-family: var(--cr-font-display); font-weight: 700; font-size: 15px;
+    letter-spacing: -0.01em; line-height: 1.1;
+    transition: background .2s ease, transform .12s ease;
+  }[data-crf="integrations"] .cta:hover { background: var(--cr-bg-warm-2); }[data-crf="integrations"] .cta:active { transform: scale(.975); }[data-crf="integrations"] .roll { position: relative; display: inline-flex; gap: 5px; overflow: hidden; }[data-crf="integrations"] .roll .back { position: absolute; inset: 0; display: inline-flex; gap: 5px; }[data-crf="integrations"] .roll span span {
+    display: inline-block;
+    transition: transform .4s cubic-bezier(.94,-0.11,.35,.93);
+    transition-delay: var(--delay, 0s);
+  }[data-crf="integrations"] .roll .front span { transform: translateY(0); }[data-crf="integrations"] .roll .back span { transform: translateY(-165%); }[data-crf="integrations"] .cta:hover .roll .front span { transform: translateY(165%); }[data-crf="integrations"] .cta:hover .roll .back span { transform: translateY(0); }[data-crf="integrations"] .cta .arrow { display: inline-block; transition: transform .2s ease; }[data-crf="integrations"] .cta:hover .arrow { transform: translateX(3px); }[data-crf="integrations"] .marquee { position: relative; z-index: 2; margin-top: 40px; overflow: hidden; }[data-crf="integrations"] .track {
+    display: flex; width: max-content;
+    animation: integrations-kf-scroll 52s linear infinite;
+  }[data-crf="integrations"] .marquee:hover .track { animation-play-state: paused; }
+  @keyframes integrations-kf-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }[data-crf="integrations"] .cell {
+    flex: 0 0 auto;
+    width: 243px; height: 143px;
+    border: 1px solid var(--cr-line-dark);
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none; cursor: pointer;
+    transition: border-color .3s ease, background-color .3s ease;
+  }[data-crf="integrations"] .cell:hover { border-color: var(--cr-brand); background: rgba(20,157,255,0.05); }[data-crf="integrations"] .wm {
+    font-family: var(--cr-font-display); font-weight: 700; font-size: 21px;
+    letter-spacing: -0.01em; color: rgba(255,255,255,0.55);
+    transition: color .3s ease; white-space: nowrap;
+  }[data-crf="integrations"] .cell:hover .wm { color: #fff; }[data-crf="integrations"] .has-js .anim { opacity: 0; transform: translateY(16px); transition: opacity .6s ease var(--d,0ms), transform .6s ease var(--d,0ms); }[data-crf="integrations"] .revealed .anim { opacity: 1; transform: none; }[data-crf="integrations"] @media (max-width: 900px) {
+    .section { padding: 0; }
+    .panel { padding: 64px 0 48px; }
+    .cell { width: 200px; height: 120px; }
+    .wm { font-size: 19px; }
+  }
+  @media (max-width: 560px) {[data-crf="integrations"] .section { padding: 0; }[data-crf="integrations"] .panel { padding: 52px 0 40px; }[data-crf="integrations"] .head { padding: 0 22px; }[data-crf="integrations"] .sub { font-size: 16px; }[data-crf="integrations"] .cell { width: 168px; height: 104px; }[data-crf="integrations"] .wm { font-size: 17px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {[data-crf="integrations"] .track { animation: none; }.has-js [data-crf="integrations"] .anim { opacity: 1 !important; transform: none !important; transition: none; }[data-crf="integrations"] .roll span span,
+[data-crf="integrations"] .cta .arrow,
+[data-crf="integrations"] .cta,
+[data-crf="integrations"] .cell,
+[data-crf="integrations"] .wm { transition: none; }
+  }
+</style>
+<div data-crf="integrations">
+<section class="section" data-screen-label="Integrations · CTA + bordered logo marquee">
+  <div class="panel" id="integrations-panel">
+
+    <div class="head">
+      <p class="eyebrow anim" style="--d:0ms">Integration</p>
+      <h2 class="title anim" style="--d:80ms">We Make AI Work Inside Your Stack.</h2>
+      <p class="sub anim" style="--d:150ms">
+        AI has to live inside the systems and constraints you already run &mdash; legacy
+        included. We integrate into your stack and build around your real processes.
+      </p>
+      <a class="cta anim" style="--d:220ms" href="#contact" aria-label="See how we integrate">
+        <span class="roll" aria-hidden="true">
+          <span class="front"><span style="--delay:0s">See</span> <span style="--delay:.06s">How</span> <span style="--delay:.12s">We</span> <span style="--delay:.18s">Integrate</span></span>
+          <span class="back"><span style="--delay:0s">See</span> <span style="--delay:.06s">How</span> <span style="--delay:.12s">We</span> <span style="--delay:.18s">Integrate</span></span>
+        </span>
+        <span class="arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+
+    <!-- Marquee — set rendered twice for a seamless −50% loop -->
+    <div class="marquee">
+      <div class="track" id="track">
+        <a class="cell" href="#"><span class="wm">SAP</span></a>
+        <a class="cell" href="#"><span class="wm">Salesforce</span></a>
+        <a class="cell" href="#"><span class="wm">Oracle</span></a>
+        <a class="cell" href="#"><span class="wm">NetSuite</span></a>
+        <a class="cell" href="#"><span class="wm">Epic</span></a>
+        <a class="cell" href="#"><span class="wm">Cerner</span></a>
+        <a class="cell" href="#"><span class="wm">Workday</span></a>
+        <a class="cell" href="#"><span class="wm">ServiceNow</span></a>
+        <a class="cell" href="#"><span class="wm">Snowflake</span></a>
+        <a class="cell" href="#"><span class="wm">Zoho</span></a>
+        <!-- duplicate set -->
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">SAP</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Salesforce</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Oracle</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">NetSuite</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Epic</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Cerner</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Workday</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">ServiceNow</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Snowflake</span></a>
+        <a class="cell" href="#" aria-hidden="true" tabindex="-1"><span class="wm">Zoho</span></a>
+      </div>
+    </div>
+
+  </div>
+</section>
+</div>
+<script>
+(function(){
+var __crf_integrations = document.querySelector('[data-crf="integrations"]');
+if(!__crf_integrations) return;
+(function () {
+    var panel = document.getElementById('integrations-panel');
+    if (!panel) return;
+    function reveal() { panel.classList.add('revealed'); }
+    if (!('IntersectionObserver' in window)) { reveal(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { reveal(); io.disconnect(); } });
+    }, { threshold: 0.2 });
+    io.observe(panel);
+  })();
+})();
+</script>
+
+
+<!-- ════════════════ BAND 5 · OUTCOMES (value-stats) ════════════════ -->
+<style>
+[data-crf="value-stats"] .vs-section,
+[data-crf="value-stats"] .vs-section * { box-sizing: border-box; }[data-crf="value-stats"] .vs-section {
+    background: var(--cr-bg);
+    padding: 104px 100px;
+    font-family: var(--cr-font-body);
+    color: var(--cr-fg);
+  }[data-crf="value-stats"] .vs-wrap {
+    max-width: var(--cr-content-max); margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+    column-gap: 56px;
+    align-items: stretch;
+  }[data-crf="value-stats"] .vs-left { display: flex; flex-direction: column; min-width: 0; }[data-crf="value-stats"] .vs-eyebrow {
+    display: inline-flex; align-items: center; gap: 7px; align-self: flex-start;
+    background: var(--cr-bg-grey-100);
+    border-radius: var(--cr-radius-pill);
+    padding: 6px 13px 6px 11px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 13px;
+    color: var(--cr-fg);
+  }[data-crf="value-stats"] .vs-eyebrow i { width: 15px; height: 15px; color: var(--cr-brand); stroke-width: 2; }[data-crf="value-stats"] .vs-head {
+    margin: 22px 0 0;
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(33px, 3.6vw, 44px); line-height: 1.12; letter-spacing: -0.02em;
+    color: var(--cr-fg);
+  }[data-crf="value-stats"] .vs-sub {
+    margin: 22px 0 0; max-width: 24em;
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: 18px; line-height: 1.5;
+    color: var(--cr-fg-2);
+  }[data-crf="value-stats"] .vs-sub .vs-muted { color: var(--cr-fg-3); }[data-crf="value-stats"] .vs-link {
+    margin-top: 22px; align-self: flex-start;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 15px;
+    color: var(--cr-brand); text-decoration: none;
+  }[data-crf="value-stats"] .vs-link .vs-arr { transition: transform .2s ease; }[data-crf="value-stats"] .vs-link:hover .vs-arr { transform: translate(3px, -3px); }[data-crf="value-stats"] .vs-foot { margin-top: auto; padding-top: 56px; }[data-crf="value-stats"] .vs-foot-txt {
+    margin: 0 0 16px;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 14px; line-height: 1.55;
+    color: var(--cr-fg-3); max-width: 30em;
+  }[data-crf="value-stats"] .vs-foot-txt strong { font-weight: 600; color: var(--cr-fg); }[data-crf="value-stats"] .vs-rated { display: flex; align-items: center; gap: 12px; }[data-crf="value-stats"] .vs-avatars { position: relative; width: 96px; height: 28px; flex: none; }[data-crf="value-stats"] .vs-avatars img {
+    position: absolute; top: 0; width: 28px; height: 28px;
+    border-radius: 50%; border: 2px solid var(--cr-bg); object-fit: cover; object-position: center 28%;
+  }[data-crf="value-stats"] .vs-rated-txt { font-family: var(--cr-font-body); font-size: 14px; color: var(--cr-fg-3); }[data-crf="value-stats"] .vs-bento {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: minmax(248px, auto) minmax(204px, auto);
+    gap: 18px;
+  }[data-crf="value-stats"] .vs-card {
+    display: flex; flex-direction: column; justify-content: space-between;
+    min-width: 0;
+    background: var(--cr-bg-grey-100);
+    border-radius: var(--cr-radius-xl);
+    padding: 28px 30px;
+  }[data-crf="value-stats"] .vs-card--wide { grid-column: 1 / -1; }[data-crf="value-stats"] .vs-card-top {
+    display: flex; align-items: center; gap: 9px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 15px;
+    color: var(--cr-fg-2);
+  }[data-crf="value-stats"] .vs-card-top i { width: 18px; height: 18px; color: var(--cr-brand); stroke-width: 2; flex: none; }[data-crf="value-stats"] .vs-num {
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(44px, 4.6vw, 58px); line-height: 1; letter-spacing: -0.02em;
+    color: var(--cr-ink);
+  }[data-crf="value-stats"] .vs-cap {
+    margin: 12px 0 0;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 15px; line-height: 1.4;
+    color: var(--cr-fg-3);
+  }[data-crf="value-stats"] .has-js .vs-section [data-reveal] { opacity: 0; transform: translateY(18px); }.has-js [data-crf="value-stats"] .vs-section [data-reveal].in-view {
+    animation: value-stats-kf-vsRise .7s cubic-bezier(.16,1,.3,1) forwards; animation-delay: var(--d, 0s);
+  }
+  @keyframes value-stats-kf-vsRise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {.has-js [data-crf="value-stats"] .vs-section [data-reveal],
+.has-js [data-crf="value-stats"] .vs-section [data-reveal].in-view { opacity: 1; transform: none; animation: none; }
+  }[data-crf="value-stats"] @media (max-width: 900px) {
+    .vs-section { padding: 80px 56px; }
+    .vs-wrap { grid-template-columns: minmax(0, 1fr); row-gap: 48px; }
+    .vs-foot { margin-top: 0; padding-top: 8px; }
+    .vs-bento { grid-template-rows: minmax(220px, auto) minmax(190px, auto); }
+  }
+  @media (max-width: 560px) {[data-crf="value-stats"] .vs-section { padding: 60px 24px; }[data-crf="value-stats"] .vs-bento { grid-template-columns: 1fr; grid-template-rows: none; gap: 14px; }[data-crf="value-stats"] .vs-card--wide { grid-column: auto; }[data-crf="value-stats"] .vs-card { min-height: 188px; padding: 24px; }
+  }
+</style>
+<div data-crf="value-stats">
+<section class="vs-section" data-screen-label="Value prop · Proof stats">
+  <div class="vs-wrap">
+
+    <!-- ── LEFT ── -->
+    <div class="vs-left">
+      <div class="vs-eyebrow" data-reveal style="--d:0s">
+        <i data-lucide="bar-chart-3"></i><span>Measurable outcomes</span>
+      </div>
+      <h2 class="vs-head" data-reveal style="--d:.06s">Growth you can<br>actually measure</h2>
+      <p class="vs-sub" data-reveal style="--d:.12s"><span class="vs-muted">AI should deliver measurable results</span> — growth, competitive edge, and lasting capability, not a vague innovation project.</p>
+      <a class="vs-link" href="#how" data-reveal style="--d:.18s">See how we work <span class="vs-arr">&rarr;</span></a>
+
+      <div class="vs-foot" data-reveal style="--d:.24s">
+        <p class="vs-foot-txt"><strong>Measured against your KPIs</strong> &mdash; cost, cycle time, and ROI, tracked from day one and compounding as adoption grows.</p>
+        <div class="vs-rated">
+          <div class="vs-avatars">
+            <img src="../assets/avatars/leader-2.jpg" alt="" style="left:0" decoding="async" />
+            <img src="../assets/avatars/team-1.jpg" alt="" style="left:17px" decoding="async" />
+            <img src="../assets/avatars/team-jessica.jpg" alt="" style="left:34px" decoding="async" />
+            <img src="../assets/avatars/team-dami.jpg" alt="" style="left:51px" decoding="async" />
+            <img src="../assets/avatars/avatar-olivia.jpg" alt="" style="left:68px" decoding="async" />
+          </div>
+          <span class="vs-rated-txt">&mdash; rated 4.8/5</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT bento ── -->
+    <div class="vs-bento">
+
+      <div class="vs-card vs-card--wide" data-reveal style="--d:.1s">
+        <div class="vs-card-top"><i data-lucide="wallet"></i><span>Higher ROI</span></div>
+        <div>
+          <div class="vs-num" data-to="11.3" data-decimals="1" data-suffix="&times;">11.3&times;</div>
+          <p class="vs-cap">Average return on AI investment</p>
+        </div>
+      </div>
+
+      <div class="vs-card" data-reveal style="--d:.18s">
+        <div class="vs-card-top"><i data-lucide="zap"></i><span>More automated</span></div>
+        <div>
+          <div class="vs-num" data-to="80" data-decimals="0" data-suffix="%">80%</div>
+          <p class="vs-cap">Of routine work AI can take on</p>
+        </div>
+      </div>
+
+      <div class="vs-card" data-reveal style="--d:.26s">
+        <div class="vs-card-top"><i data-lucide="trending-down"></i><span>Cost removed</span></div>
+        <div>
+          <div class="vs-num" data-to="92" data-decimals="0" data-suffix="%">92%</div>
+          <p class="vs-cap">Of operational cost per process</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+</div>
+<script>
+(function(){
+var __crf_value_stats = document.querySelector('[data-crf="value-stats"]');
+if(!__crf_value_stats) return;
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = __crf_value_stats.querySelector('.vs-section');
+  if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
+  if (!sec) return;
+
+  var nums = Array.prototype.slice.call(sec.querySelectorAll('.vs-num'));
+
+  function fmt(v, dec, suf) { return v.toFixed(dec) + suf; }
+  function countUp(el) {
+    var to = parseFloat(el.getAttribute('data-to'));
+    var dec = parseInt(el.getAttribute('data-decimals'), 10) || 0;
+    var suf = el.getAttribute('data-suffix') || '';
+    var dur = 1200, t0 = null;
+    function step(ts) {
+      if (t0 === null) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = fmt(to * eased, dec, suf);
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = fmt(to, dec, suf);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function revealOnly() {
+    sec.querySelectorAll('[data-reveal]').forEach(function (el) { el.classList.add('in-view'); });
+  }
+
+  if (reduce || !('IntersectionObserver' in window)) { revealOnly(); return; }
+
+  nums.forEach(function (el) {
+    var dec = parseInt(el.getAttribute('data-decimals'), 10) || 0;
+    el.textContent = fmt(0, dec, el.getAttribute('data-suffix') || '');
+  });
+  var io = new IntersectionObserver(function (ents) {
+    ents.forEach(function (en) {
+      if (en.isIntersecting) {
+        revealOnly();
+        nums.forEach(countUp);
+        io.disconnect();
+      }
+    });
+  }, { threshold: 0.25 });
+  io.observe(sec);
+})();
+})();
+</script>
+
+
+<!-- ════════════════ BAND 6 · CTA "LET'S TALK" (cta-band) ════════════════ -->
+<!-- NOTE: pasted verbatim incl. the build's first-<style> quirk; content renders. ids
+     panel/dotfield → ctaband-panel/ctaband-dotfield (CSS #, markup, and JS) to avoid the
+     #panel collision with the integrations band above. -->
+<style>
+[data-crf="cta-band"] ; no shared CSS.
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<style>
+  * { box-sizing: border-box; }[data-crf="cta-band"],
+[data-crf="cta-band"] {
+    margin: 0; padding: 0;
+    background: var(--cr-bg-grey-50);
+    font-family: var(--cr-font-body); color: var(--cr-ink);
+    -webkit-font-smoothing: antialiased;
+  }[data-crf="cta-band"] .section {
+    padding: 80px 100px;
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }[data-crf="cta-band"] .cta-panel {
+    position: relative; overflow: hidden; isolation: isolate;
+    border-radius: 32px;
+    min-height: clamp(500px, 50vw, 580px);
+    background-color: var(--cr-ink-card);
+    background-image: radial-gradient(142% 132% at 34% 114%,
+      #EFF7FF 0%,
+      #CDE8FF 5%,
+      #8FCBFF 12%,
+      #2BA3FF 22%,
+      #0E7BE6 32%,
+      #0A50B8 43%,
+      #0A2A78 54%,
+      #0B1142 66%,
+      #08092A 80%,
+      var(--cr-ink-card) 100%);
+  }[data-crf="cta-band"] #ctaband-dotfield {
+    position: absolute; inset: 0; z-index: 0;
+    display: block; pointer-events: none;
+  }[data-crf="cta-band"] .scrim {
+    position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    background: linear-gradient(102deg,
+      rgba(5,4,16,0.52) 0%, rgba(5,4,16,0.16) 30%, rgba(5,4,16,0) 54%);
+  }[data-crf="cta-band"] .cta-panel::after {
+    content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+    background: url("../assets/texture-grain.png");
+    opacity: 0.10;
+  }[data-crf="cta-band"] .cta-inner {
+    position: relative; z-index: 4;
+    display: flex; flex-direction: column;
+    min-height: clamp(500px, 50vw, 580px);
+    padding: 56px;
+  }[data-crf="cta-band"] .cta-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 48px; flex: 1 1 auto;
+  }[data-crf="cta-band"] .cta-head { min-width: 0; max-width: 600px; }[data-crf="cta-band"] .cta-h {
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(31px, 4.2vw, 45px);
+    line-height: 1.07; letter-spacing: -0.025em;
+    color: #fff; margin: 0;
+  }[data-crf="cta-band"] .cta-sub {
+    font-family: var(--cr-font-body);
+    font-weight: 400; font-size: 16px; line-height: 1.55;
+    color: rgba(255,255,255,0.72);
+    margin: 22px 0 0; max-width: 408px;
+  }[data-crf="cta-band"] .cta-rail {
+    flex-shrink: 0; align-self: center;
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: 16px; text-align: right;
+  }[data-crf="cta-band"] .cta-rail a {
+    font-family: var(--cr-font-body);
+    font-weight: 600; font-size: 14px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: rgba(255,255,255,0.86);
+    text-decoration: none; cursor: pointer; white-space: nowrap;
+    transition: color .16s ease, transform .2s ease;
+  }[data-crf="cta-band"] .cta-rail a:hover { color: var(--cr-brand-300); transform: translateX(-4px); }[data-crf="cta-band"] .cta-bar {
+    margin-top: 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 24px;
+    background: var(--cr-bg-warm);
+    border: 1px solid rgba(255,255,255,0.55);
+    border-radius: 20px;
+    padding: 25px 27px 25px 35px;
+  }[data-crf="cta-band"] .cta-q {
+    font-family: var(--cr-font-display);
+    font-weight: 700; font-size: clamp(18px, 1.7vw, 22px);
+    line-height: 1.2; letter-spacing: -0.015em;
+    color: var(--cr-ink); margin: 0;
+  }[data-crf="cta-band"] .cta-pill {
+    display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0;
+    background: var(--cr-brand); color: #fff;
+    border: 0; border-radius: var(--cr-radius-pill); cursor: pointer; text-decoration: none;
+    padding: 16px 30px;
+    font-family: var(--cr-font-display);
+    font-weight: 700; font-size: 16px; letter-spacing: -0.01em;
+    transition: background .16s ease, transform .12s ease;
+  }[data-crf="cta-band"] .cta-pill .arrow { display: inline-block; transition: transform .16s ease; }[data-crf="cta-band"] .cta-pill:hover { background: var(--cr-brand-700); }[data-crf="cta-band"] .cta-pill:hover .arrow { transform: translateX(4px); }[data-crf="cta-band"] .cta-pill:active { transform: scale(.97); }[data-crf="cta-band"] .has-js .anim {
+    opacity: 0; transform: translateY(26px);
+    transition: opacity .7s cubic-bezier(.2,.7,.2,1) var(--d, 0ms),
+                transform .7s cubic-bezier(.2,.7,.2,1) var(--d, 0ms);
+  }[data-crf="cta-band"] .cta-panel.reveal .anim { opacity: 1; transform: none; }[data-crf="cta-band"] @media (max-width: 1100px) {
+    .section { padding: 60px 40px; }
+    .cta-inner { padding: 44px; }
+    .cta-top { gap: 32px; }
+    .cta-rail { gap: 14px; }
+  }
+  @media (max-width: 760px) {[data-crf="cta-band"] .section { padding: 40px 18px; }[data-crf="cta-band"] .cta-panel,
+[data-crf="cta-band"] .cta-inner { min-height: 0; }[data-crf="cta-band"] .cta-inner { padding: 36px 26px; }[data-crf="cta-band"] .cta-top { flex-direction: column; align-items: flex-start; gap: 30px; }[data-crf="cta-band"] .cta-sub { max-width: 100%; }[data-crf="cta-band"] .cta-rail {
+      align-self: stretch; align-items: flex-start; text-align: left; gap: 12px;
+    }[data-crf="cta-band"] .cta-rail a:hover { transform: translateX(4px); }[data-crf="cta-band"] .cta-bar {
+      margin-top: 38px; flex-direction: column; align-items: stretch;
+      gap: 20px; padding: 28px 24px;
+    }[data-crf="cta-band"] .cta-pill { justify-content: center; }
+  }
+  @media (max-width: 440px) {[data-crf="cta-band"] .cta-h { font-size: 27px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {.has-js [data-crf="cta-band"] .anim { opacity: 1 !important; transform: none !important; transition: none; }[data-crf="cta-band"] .cta-rail a,
+[data-crf="cta-band"] .cta-pill,
+[data-crf="cta-band"] .cta-pill .arrow { transition: none; }
+  }
+</style>
+<div data-crf="cta-band">
+<section class="section" id="contact" data-screen-label="CTA · Headline band + atmospheric glow + accent bar">
+  <div class="cta-panel" id="ctaband-panel">
+    <canvas id="ctaband-dotfield" aria-hidden="true"></canvas>
+    <div class="scrim" aria-hidden="true"></div>
+
+    <div class="cta-inner">
+
+      <!-- Upper region: headline + body (left) · service rail (right) -->
+      <div class="cta-top">
+        <div class="cta-head">
+          <h2 class="cta-h anim" style="--d:0ms">Let's Make AI<br>Work For You.</h2>
+          <p class="cta-sub anim" style="--d:110ms">
+            Tell us where you are. We'll find the few use cases worth pursuing,
+            build the roadmap, and make AI work inside your systems &mdash; low
+            pressure, no obligation.
+          </p>
+        </div>
+
+        <nav class="cta-rail anim" style="--d:220ms" aria-label="What we do">
+          <a>AI Strategy</a>
+          <a>Assessment</a>
+          <a>Integration</a>
+          <a>Enablement</a>
+        </nav>
+      </div>
+
+      <!-- Accent bar: question (left) + blue pill action (right) -->
+      <div class="cta-bar anim" style="--d:300ms">
+        <p class="cta-q">Not Sure Where AI Fits Yet?</p>
+        <a class="cta-pill" href="mailto:inquiries@example-brand.com">Let's Talk <span class="arrow" aria-hidden="true">&rarr;</span></a>
+      </div>
+
+    </div>
+  </div>
+</section>
+</div>
+<script>
+(function(){
+var __crf_cta_band = document.querySelector('[data-crf="cta-band"]');
+if(!__crf_cta_band) return;
+  (function () {
+    var panel  = document.getElementById('ctaband-panel');
+    var canvas = document.getElementById('ctaband-dotfield');
+    var ctx    = canvas.getContext('2d');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var SPACING = 18, THRESH = 0.72, DOT_MIN = 0.8, DOT_MAX = 2.3;
+    var W = 0, H = 0, dpr = 1, dots = [];
+    var ptr = { x: -9999, y: -9999, tx: -9999, ty: -9999, active: false };
+
+    function buildNoise(cols, rows) {
+      function lattice(rx, ry) {
+        var g = [];
+        for (var i = 0; i <= rx + 1; i++) { g[i] = []; for (var j = 0; j <= ry + 1; j++) g[i][j] = Math.random(); }
+        return g;
+      }
+      var rxA = Math.max(2, Math.round(cols / 9)), ryA = Math.max(2, Math.round(rows / 6));
+      var rxB = rxA * 2, ryB = ryA * 2;
+      var A = lattice(rxA, ryA), B = lattice(rxB, ryB);
+      function sample(g, fx, fy) {
+        var x0 = Math.floor(fx), y0 = Math.floor(fy);
+        var xf = fx - x0, yf = fy - y0;
+        var sx = xf * xf * (3 - 2 * xf), sy = yf * yf * (3 - 2 * yf);
+        var top = g[x0][y0] + (g[x0 + 1][y0] - g[x0][y0]) * sx;
+        var bot = g[x0][y0 + 1] + (g[x0 + 1][y0 + 1] - g[x0][y0 + 1]) * sx;
+        return top + (bot - top) * sy;
+      }
+      return function (nx, ny) {
+        return sample(A, nx * rxA, ny * ryA) * 0.7 + sample(B, nx * rxB, ny * ryB) * 0.3;
+      };
+    }
+
+    function build() {
+      var rect = panel.getBoundingClientRect();
+      W = rect.width; H = rect.height;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var cols = Math.ceil(W / SPACING) + 1, rows = Math.ceil(H / SPACING) + 1;
+      var noise = buildNoise(cols, rows);
+      dots = [];
+      for (var c = 0; c < cols; c++) for (var r = 0; r < rows; r++) {
+        var x = c * SPACING, y = r * SPACING;
+        if (x > W + 2 || y > H + 2) continue;
+        var nx = x / W, ny = y / H;
+        var dxc = 1 - nx, dyc = 1 - ny;
+        var fall = 1 - Math.sqrt(dxc * dxc + dyc * dyc) / 1.05;
+        if (fall <= 0) continue;
+        var d = noise(nx, ny) * 0.5 + fall;
+        if (d < THRESH) continue;
+        var intensity = Math.min(1, (d - THRESH) / (1.5 - THRESH));
+        dots.push({ x: x, y: y, base: 0.30 + intensity * 0.70, r: DOT_MIN + intensity * (DOT_MAX - DOT_MIN),
+                    ph: Math.random() * 6.2832, tw: 0.10 + Math.random() * 0.20 });
+      }
+    }
+
+    function draw(t) {
+      ctx.clearRect(0, 0, W, H);
+      ptr.x += (ptr.tx - ptr.x) * 0.12; ptr.y += (ptr.ty - ptr.y) * 0.12;
+      var R = 150, R2 = R * R;
+      for (var i = 0; i < dots.length; i++) {
+        var dt = dots[i], b = dt.base, rr = dt.r;
+        if (!reduce) {
+          b += Math.sin(t * 0.0016 + dt.ph) * dt.tw;
+          b += Math.sin(t * 0.0006 + (dt.x + dt.y) * 0.012) * 0.06;
+        }
+        if (ptr.active) {
+          var dx = dt.x - ptr.x, dy = dt.y - ptr.y, dd = dx * dx + dy * dy;
+          if (dd < R2) { var f = 1 - Math.sqrt(dd) / R; b += f * 0.9; rr += f * 1.6; }
+        }
+        if (b <= 0.04) continue; if (b > 1) b = 1;
+        var rC = Math.round(150 + 95 * b);
+        var gC = Math.round(200 + 50 * b);
+        ctx.fillStyle = 'rgba(' + rC + ',' + gC + ',255,' + (0.16 + 0.56 * b).toFixed(3) + ')';
+        ctx.beginPath(); ctx.arc(dt.x, dt.y, rr, 0, 6.2832); ctx.fill();
+      }
+    }
+
+    var raf = null;
+    function loop(t) { draw(t); raf = requestAnimationFrame(loop); }
+    function start() {
+      build();
+      if (raf) cancelAnimationFrame(raf);
+      if (reduce) { draw(0); return; }
+      raf = requestAnimationFrame(loop);
+    }
+    panel.addEventListener('pointermove', function (e) {
+      var rect = panel.getBoundingClientRect();
+      ptr.tx = e.clientX - rect.left; ptr.ty = e.clientY - rect.top;
+      if (ptr.x < -1000) { ptr.x = ptr.tx; ptr.y = ptr.ty; }
+      ptr.active = true;
+    });
+    panel.addEventListener('pointerleave', function () { ptr.active = false; ptr.tx = -9999; ptr.ty = -9999; });
+    var rt = null;
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(start, 180); });
+    start();
+
+    if (!('IntersectionObserver' in window)) { panel.classList.add('reveal'); }
+    else {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) { if (en.isIntersecting) { panel.classList.add('reveal'); io.disconnect(); } });
+      }, { threshold: 0.15 });
+      io.observe(panel);
+    }
+  })();
+})();
+</script>
+
+
+<!-- ════════════════ BAND 7 · FOOTER (footer-cta) ════════════════ -->
+<style>
+[data-crf="footer-cta"], [data-crf="footer-cta"] *,
+[data-crf="footer-cta"] *::before,
+[data-crf="footer-cta"] *::after { box-sizing: border-box; margin: 0; padding: 0; }[data-crf="footer-cta"] {
+      background: var(--cr-bg);
+      font-family: var(--cr-font-body);
+      -webkit-font-smoothing: antialiased;
+    }[data-crf="footer-cta"] @keyframes footer-cta-kf-fc-rise {
+      from { transform: translateY(12px); }
+      to   { transform: none; }
+    }
+    @media (prefers-reduced-motion: no-preference) {[data-crf="footer-cta"] .cr-rise {
+        animation: footer-cta-kf-fc-rise .6s cubic-bezier(.16,1,.3,1) both;
+        animation-delay: var(--d, 0s);
+      }
+    }[data-crf="footer-cta"] .fc {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(80% 110% at 0% 0%, #E6EFFE 0%, rgba(230,239,254,0) 50%),
+        radial-gradient(80% 120% at 100% 100%, #E6F8FC 0%, rgba(230,248,252,0) 54%),
+        linear-gradient(180deg, #F6FAFF 0%, #FCFEFF 100%);
+    }[data-crf="footer-cta"] .fc-deco {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 480px;
+      height: 400px;
+      pointer-events: none;
+      z-index: 0;
+    }[data-crf="footer-cta"] .fc-deco svg { width: 100%; height: 100%; display: block; }[data-crf="footer-cta"] .fc-panel {
+      position: relative;
+      z-index: 1;
+      max-width: var(--cr-content-max);
+      margin: 0 auto;
+      padding: 0 var(--cr-page-gutter);
+    }[data-crf="footer-cta"] .fc-cta {
+      text-align: center;
+      padding: 96px 0 84px;
+    }[data-crf="footer-cta"] .fc-cta-title {
+      font-family: var(--cr-font-display);
+      font-weight: 700;
+      font-size: 44px;
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+      color: var(--cr-fg);
+      margin-bottom: 20px;
+    }[data-crf="footer-cta"] .fc-cta-sub {
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--cr-fg-2);
+      max-width: 520px;
+      margin: 0 auto 34px;
+    }[data-crf="footer-cta"] .fc-cta-btns {
+      display: inline-flex;
+      gap: 12px;
+    }[data-crf="footer-cta"] .fc-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 13px 28px;
+      border-radius: var(--cr-radius-pill);
+      font-family: var(--cr-font-display);
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background .2s ease, border-color .2s ease, color .2s ease;
+    }[data-crf="footer-cta"] .fc-btn-primary {
+      background: var(--cr-brand);
+      color: #fff;
+    }[data-crf="footer-cta"] .fc-btn-primary:hover { background: var(--cr-brand-700); }[data-crf="footer-cta"] .fc-btn-ghost {
+      background: var(--cr-bg);
+      color: var(--cr-fg);
+      border-color: var(--cr-line);
+    }[data-crf="footer-cta"] .fc-btn-ghost:hover { border-color: var(--cr-fg-muted); background: #fff; }[data-crf="footer-cta"] .fc-foot {
+      padding: 48px 0 40px;
+      border-top: 1px solid rgba(210,224,240,0.7);
+    }[data-crf="footer-cta"] .fc-foot-top {
+      display: grid;
+      grid-template-columns: minmax(280px, 1fr) 2.05fr;
+      gap: 64px;
+    }[data-crf="footer-cta"] .fc-brand-logo { height: 26px; width: auto; display: block; margin-bottom: 24px; }[data-crf="footer-cta"] .fc-news-lbl {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--cr-fg);
+      margin-bottom: 14px;
+    }[data-crf="footer-cta"] .fc-news {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 340px;
+      padding: 5px 5px 5px 18px;
+      background: var(--cr-bg);
+      border: 1px solid var(--cr-line);
+      border-radius: var(--cr-radius-pill);
+    }[data-crf="footer-cta"] .fc-news:focus-within { border-color: var(--cr-brand); }[data-crf="footer-cta"] .fc-news-input {
+      flex: 1;
+      min-width: 0;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-family: var(--cr-font-body);
+      font-size: 14px;
+      color: var(--cr-fg);
+    }[data-crf="footer-cta"] .fc-news-input::placeholder { color: var(--cr-fg-muted); }[data-crf="footer-cta"] .fc-news-btn {
+      flex-shrink: 0;
+      background: var(--cr-ink);
+      color: #fff;
+      border: none;
+      border-radius: var(--cr-radius-pill);
+      padding: 9px 20px;
+      font-family: var(--cr-font-display);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background .2s ease;
+    }[data-crf="footer-cta"] .fc-news-btn:hover { background: var(--cr-brand); }[data-crf="footer-cta"] .fc-fine {
+      margin-top: 14px;
+      max-width: 320px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--cr-fg-3);
+    }[data-crf="footer-cta"] .fc-cols {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 32px 24px;
+    }[data-crf="footer-cta"] .fc-col { display: flex; flex-direction: column; }[data-crf="footer-cta"] .fc-col-h {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--cr-fg-3);
+      margin-bottom: 16px;
+    }[data-crf="footer-cta"] .fc-col a {
+      font-size: 14px;
+      line-height: 1.45;
+      color: var(--cr-fg-2);
+      text-decoration: none;
+      padding: 5px 0;
+      transition: color .15s ease;
+    }[data-crf="footer-cta"] .fc-col a:hover { color: var(--cr-brand); }[data-crf="footer-cta"] .fc-rule {
+      height: 1px;
+      background: rgba(210,224,240,0.8);
+      margin: 40px 0 24px;
+    }[data-crf="footer-cta"] .fc-copy {
+      text-align: center;
+      font-size: 13px;
+      color: var(--cr-fg-3);
+    }[data-crf="footer-cta"] @media (max-width: 1080px) {
+      .fc-panel { padding: 0 48px; }
+      .fc-foot-top { grid-template-columns: 1fr; gap: 40px; }
+      .fc-cols { grid-template-columns: repeat(5, 1fr); }
+    }
+
+    @media (max-width: 820px) {[data-crf="footer-cta"] .fc-cta { padding: 64px 0 56px; }[data-crf="footer-cta"] .fc-cta-title { font-size: 38px; }[data-crf="footer-cta"] .fc-cols { grid-template-columns: repeat(3, 1fr); gap: 28px 16px; }
+    }
+
+    @media (max-width: 560px) {[data-crf="footer-cta"] .fc-panel { padding: 0 18px; }[data-crf="footer-cta"] .fc-cta-title { font-size: 30px; }[data-crf="footer-cta"] .fc-cta-btns { display: flex; flex-direction: column; width: 100%; gap: 10px; }[data-crf="footer-cta"] .fc-btn { width: 100%; }[data-crf="footer-cta"] .fc-foot { padding: 36px 0 24px; }[data-crf="footer-cta"] .fc-cols { grid-template-columns: repeat(2, 1fr); }[data-crf="footer-cta"] .fc-news { max-width: 100%; }
+    }
+</style>
+<div data-crf="footer-cta">
+<section class="fc" data-screen-label="CTA &amp; Footer">
+
+    <!-- Corner motif — CR orbit rings + diamond (subtle, top-right, behind content) -->
+    <div class="fc-deco" aria-hidden="true">
+      <svg viewBox="0 0 480 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="372" cy="64" r="58"  stroke="var(--cr-brand)" stroke-opacity="0.20" stroke-width="1.25"/>
+        <circle cx="372" cy="64" r="116" stroke="var(--cr-brand)" stroke-opacity="0.13" stroke-width="1.25"/>
+        <circle cx="372" cy="64" r="182" stroke="var(--cr-brand)" stroke-opacity="0.09" stroke-width="1.25" stroke-dasharray="2 7"/>
+        <rect x="328" y="20" width="88" height="88" rx="20" transform="rotate(45 372 64)"
+              stroke="var(--cr-brand)" stroke-opacity="0.15" stroke-width="1.25"/>
+        <circle cx="372" cy="6" r="3.5" fill="var(--cr-brand)" fill-opacity="0.35"/>
+      </svg>
+    </div>
+
+    <div class="fc-panel">
+
+      <!-- ① CTA -->
+      <div class="fc-cta">
+        <h2 class="fc-cta-title cr-rise">Ready to Turn AI<br>Into Growth?</h2>
+        <p class="fc-cta-sub cr-rise" style="--d:.06s">AI strategy, assessment, and integration &mdash; deployed into your existing systems and measured against your goals.</p>
+        <div class="fc-cta-btns cr-rise" style="--d:.12s">
+          <a class="fc-btn fc-btn-primary" href="#contact">Let's Talk</a>
+          <a class="fc-btn fc-btn-ghost" href="#how">See How We Work</a>
+        </div>
+      </div>
+
+      <!-- ② Footer -->
+      <div class="fc-foot cr-rise" style="--d:.16s">
+        <div class="fc-foot-top">
+
+          <!-- Left — brand + newsletter -->
+          <div class="fc-brand">
+            <img class="fc-brand-logo" src="../assets/logo-color.svg" alt="Example Brand">
+            <p class="fc-news-lbl">Sign up for AI strategy insights.</p>
+            <form class="fc-news" onsubmit="return false">
+              <input class="fc-news-input" type="email" placeholder="Enter your email" aria-label="Email address">
+              <button class="fc-news-btn" type="submit">Submit</button>
+            </form>
+            <p class="fc-fine">By subscribing you agree to our Privacy Policy and consent to receive updates from Example Brand.</p>
+          </div>
+
+          <!-- Right — 5 link columns -->
+          <nav class="fc-cols" aria-label="Footer">
+            <div class="fc-col">
+              <span class="fc-col-h">Services</span>
+              <a href="#">AI Strategy &amp; Integration</a>
+              <a href="#">Assessment</a>
+              <a href="#">Roadmapping</a>
+              <a href="#">Enablement</a>
+            </div>
+            <div class="fc-col">
+              <span class="fc-col-h">Platform</span>
+              <a href="#">FosterX</a>
+              <a href="#">Example Brand APA</a>
+              <a href="#">Integrations</a>
+              <a href="#">Security</a>
+            </div>
+            <div class="fc-col">
+              <span class="fc-col-h">Company</span>
+              <a href="#">About Us</a>
+              <a href="#">Customers</a>
+              <a href="#">Careers</a>
+              <a href="#contact">Contact Us</a>
+            </div>
+            <div class="fc-col">
+              <span class="fc-col-h">Resources</span>
+              <a href="#">Blog</a>
+              <a href="#">Case Studies</a>
+              <a href="#">Documentation</a>
+            </div>
+            <div class="fc-col">
+              <span class="fc-col-h">Legal</span>
+              <a href="#">Terms &amp; Conditions</a>
+              <a href="#">Privacy Policy</a>
+              <a href="#">Security</a>
+              <a href="#">DPA</a>
+            </div>
+          </nav>
+
+        </div>
+
+        <div class="fc-rule"></div>
+        <p class="fc-copy">&copy; 2026 Example Brand. All rights reserved.</p>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+</main>
+
+<script>if (window.lucide) lucide.createIcons();</script>
+</body>
+</html>

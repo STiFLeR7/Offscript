@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR — Pricing &amp; Packages (asymmetric bento)</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Bento · feature-dominant  from component-pricing-packages.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **The offers are unequal by nature, so the grid must be too.** The
+              profile is explicit: this is a range of engagements, not a ladder
+              of tiers, and the geometry says so before the copy does. Two
+              stacked cards against one tall card is the section — flattening it
+              into peer columns would misrepresent what is being sold.
+
+  STRUCTURE   Unchanged. Centred header · asymmetric two-track bento (a flex
+              column of two equal plan cards on the left, one tall Enterprise
+              card on the right) · closing outline control. The equal split of
+              the left pair depends on Enterprise staying the height-driver, so
+              nothing here trims its list. DOM, the script, every id and every
+              behavioural hook are byte-compatible with the frozen original.
+
+  ACCENT      One moment: the recommended plan's control. Enterprise "Contact
+              Sales" is the section's single filled action; the two plan CTAs
+              and the closing control are outlines in ink. The original also
+              painted the closing control's focus ring and every check glyph
+              with colour — those are neutral now, because a page where
+              everything is marked marks nothing.
+
+  ENVIRONMENT `env-massif-clear` on the Enterprise tile. The original pointed
+              that tile at an abstract atmospheric plate through a path that no
+              longer resolves, so the dead pointer and the abstraction leave
+              together. The tile holds no type — the plan's words sit in the
+              column to its left, in the same grid row — so removing the
+              photograph changes nothing about what can be read. The white arcs
+              that were drawn over it are made inert rather than deleted: a
+              decorative diagram on a photograph is the ornament this pass
+              retires, and the elements themselves are frozen.
+
+  TYPE        Display face at 400 for the title and plan names, body face at 400
+              or 500 everywhere else. The badge and the "includes" labels stop
+              being uppercase and stop being tracked — supporting text is
+              supporting text, not a small system of its own.
+
+  RADIUS      The card radius and the control radius, and nothing between them.
+              Every button was a full pill; the pill is retired for controls.
+
+  RESPONSIVE  The original's breakpoints, unchanged. The type sizes it
+              re-authored at each viewport are gone rather than re-scaled — the
+              ramp already steps at the pack's own breakpoints.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--cr-page-ground); font-family: var(--cr-font-body); }
+
+  /* ── Section: the page ground, with raised cards on it ───────────────── */
+  .pk {
+    position: relative;
+    width: 100%;
+    background: var(--cr-page-ground);
+    padding: var(--cr-space-2xl) 0;
+    overflow: hidden;                              /* contain reveal transforms */
+  }
+  .pk-inner {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+    padding: 0 var(--cr-page-gutter);
+  }
+
+  /* ── Header ──────────────────────────────────────────────────────────── */
+  .pk-head { text-align: center; max-width: var(--cr-measure-title); margin: 0 auto var(--cr-rhythm-content); }
+  .pk-title {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h2);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  /* Heading to supporting copy is the cluster gap — one thought, bound tightly,
+     with the large space above the pair rather than inside it. */
+  .pk-sub {
+    margin: var(--cr-rhythm-cluster) auto 0;
+    max-width: var(--cr-measure-body);
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* ── Bento grid — the asymmetry is carried over exactly ──────────────── */
+  .pk-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--cr-space-s);
+    align-items: stretch;                          /* left column stretches to Enterprise height */
+  }
+  .pk-col {                                        /* holds the two stacked left cards */
+    display: flex;
+    flex-direction: column;
+    gap: var(--cr-space-s);
+  }
+  .pk-col > .card { flex: 1 1 0; }                 /* exact equal halves of Enterprise's height */
+
+  /* ── Card shell (shared) ─────────────────────────────────────────────── */
+  .card {
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-m);
+  }
+  .card--plan {
+    display: grid;
+    grid-template-columns: 1.32fr 1fr;              /* text wider than feature column */
+    align-items: stretch;                           /* both inner columns full card height */
+  }
+  .card--ent { display: flex; flex-direction: column; }
+
+  /* ── Left inner column: badge → name → desc → CTA(bottom) ────────────── */
+  /* `min-width: 0` on both inner tracks. A grid item defaults to
+     `min-width: auto`, so its intrinsic minimum overrides the track it was
+     given — and stepping the feature list onto the ramp raised that minimum
+     enough to re-author the card's 1.32/1 split without anyone deciding to.
+     The declared proportion is the decision; this is what lets it hold. */
+  .pk-left {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding-right: var(--cr-space-m);
+  }
+  .card--ent .ent-top .pk-left { padding-right: 0; }   /* tile sits to the right, no divider */
+
+  /* SUPPORTING TEXT IS NEVER UPPERCASED AND NEVER TRACKED. The badge was a
+     tracked caps micro-label — a system of its own, competing with the plan
+     name a few pixels below it. It says the same thing at the supporting step
+     in secondary ink, on the quiet surface, at the control radius. */
+  .pk-badge {
+    align-self: flex-start;
+    display: inline-block;
+    padding: var(--cr-space-xs);
+    background: var(--cr-bg-tint);
+    color: var(--cr-text-secondary);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    letter-spacing: 0;
+    text-transform: none;
+    line-height: 1;
+    border-radius: var(--cr-radius-control);
+    white-space: nowrap;
+  }
+  .pk-name {
+    margin: var(--cr-space-s) 0 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h4);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .pk-desc {
+    margin: var(--cr-space-xs) 0 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    max-width: var(--cr-measure-body);
+  }
+
+  /* ── CTA ─────────────────────────────────────────────────────────────────
+     ONE ACCENT MOMENT PER SECTION, and on a pricing section it belongs to the
+     recommended plan's control and to nothing else. Enterprise takes the fill;
+     the two plan actions and the closing control are outlines in ink, which is
+     what a secondary action is. The pill is retired for controls — every button
+     here takes the control radius. */
+  .pk-cta {
+    margin-top: auto;                              /* pin to bottom → trailing whitespace */
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: 1;
+    text-decoration: none;
+    border: var(--cr-stroke) solid transparent;    /* equal box height against the outline */
+    border-radius: var(--cr-radius-control);
+    cursor: pointer;
+    transition: transform .15s ease, background .2s ease;
+  }
+  /* Text on orange is the LIGHT-accent foreground — the dark ink. The inverse
+     value on this hue does not clear the contrast floor. */
+  .pk-cta--primary { background: var(--cr-accent-orange); color: var(--cr-on-accent-light); }
+  .pk-cta--primary:hover { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+  .pk-cta--ghost {
+    background: transparent;
+    color: var(--cr-text-primary);
+    border-color: var(--cr-border-default);
+  }
+  .pk-cta--ghost:hover { background: var(--cr-bg-tint); }
+  .pk-cta .pk-arrow { transition: transform .2s ease; }
+  .pk-cta:hover .pk-arrow { transform: translateX(4px); }
+  .pk-cta:active { transform: scale(.97); }
+  .pk-cta:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 3px; }
+
+  /* ── Right inner column: INCLUDES label → feature list ───────────────── */
+  .pk-right {
+    min-width: 0;
+    border-left: var(--cr-stroke) solid var(--cr-border-default);   /* full-height divider */
+    padding-left: var(--cr-space-m);
+  }
+
+  .pk-incl-label {
+    margin: var(--cr-space-s) 0 var(--cr-space-xs);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    letter-spacing: 0;
+    text-transform: none;
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  .pk-incl-label--first { margin-top: 0; }          /* plan cards: tops the column */
+  .pk-feat { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--cr-space-xs); }
+  .pk-feat li {
+    display: flex; align-items: flex-start; gap: var(--cr-space-xs);
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* The check glyph is a mark, not an accent: neutral ink, on the icon stroke
+     the system owns rather than a per-component weight. */
+  .pk-chk { flex: none; width: 18px; height: 18px; color: var(--cr-text-secondary); margin-top: 0; stroke-width: var(--cr-icon-stroke-sm); }
+
+  /* ── Enterprise card ─────────────────────────────────────────────────── */
+  .ent-top {
+    display: grid;
+    grid-template-columns: 1fr minmax(150px, 190px);
+    gap: var(--cr-space-m);
+    align-items: stretch;
+  }
+  .ent-rule { height: var(--cr-stroke); background: var(--cr-border-default); margin: var(--cr-space-s) 0; }
+  .ent-body { /* full-width single column */ }
+
+  /* ── THE ENTERPRISE TILE — a photograph, not a plate ──────────────────────
+     The original filled this with an abstract atmospheric image through a path
+     that does not resolve, under a fallback wash. It becomes an approved
+     environment carrying the pack's texture treatment.
+
+     ONE BACKGROUND STACK, three layers, in this order: grain on top, grunge
+     under it, the environment underneath both. It has to be one stack — a blend
+     mode composites against what is beneath it in the SAME background, so
+     moving the grain onto a pseudo-element resolves the blend against
+     transparency and renders as grey static. The last position is the asset's
+     measured focus, not a guess. The URLs are written out rather than reached
+     through a custom property, because a url() inside a custom property
+     resolves against the CONSUMING document and fails silently.
+
+     `align-self: start` is what lets the declared crop govern: a stretching
+     grid row beats an aspect-ratio, and a frame whose proportion is whatever
+     the row happened to be is not a crop at all. */
+  .pk-sphere {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    align-self: start;
+    border-radius: var(--cr-radius-card);
+    overflow: hidden;
+    background-color: var(--cr-bg-dark);
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-massif-clear.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 50% 42%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+  }
+  /* THE ARCS ARE GONE. Decorative circles drawn over a creative are exactly the
+     abstract ornament this pass replaces with photography, and a photograph does
+     not need a diagram on top of it. They are real elements the DOM freeze
+     keeps, so they are made inert rather than deleted. */
+  .pk-orbit { display: none; }
+
+  /* ── Closing outline control ─────────────────────────────────────────── */
+  .pk-more { display: flex; justify-content: center; margin-top: var(--cr-space-m); }
+  .pk-more a {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-control);
+    color: var(--cr-text-primary);
+    font-family: var(--cr-font-body); font-weight: 500;
+    font-size: var(--cr-text-supporting); line-height: 1;
+    text-decoration: none;
+    transition: background .2s ease;
+  }
+  .pk-more a:hover { background: var(--cr-bg-tint); }
+  .pk-more a:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 3px; }
+
+  /* ── Entrance reveal (JS-gated, fires once) ──────────────────────────── */
+  .has-js .pk-head,
+  .has-js .card,
+  .has-js .pk-more {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity .6s cubic-bezier(.22, .61, .36, 1),
+                transform .6s cubic-bezier(.22, .61, .36, 1);
+    transition-delay: var(--d, 0ms);
+  }
+  .has-js .pk.in .pk-head,
+  .has-js .pk.in .card,
+  .has-js .pk.in .pk-more { opacity: 1; transform: none; }
+
+  /* ── Responsive — the original's breakpoints ─────────────────────────── */
+  @media (max-width: 980px) {
+    .pk-grid { grid-template-columns: 1fr; gap: var(--cr-space-s); }   /* stack */
+    .pk-col > .card { flex: 1 1 auto; }                                /* content-height */
+  }
+  @media (max-width: 680px) {
+    .card { padding: var(--cr-space-s); }
+    .card--plan { grid-template-columns: 1fr; }           /* inner split stacks */
+    .pk-left { padding-right: 0; }
+    .pk-cta { margin-top: var(--cr-space-s); }            /* not pinned when stacked */
+    .pk-right {
+      border-left: none;
+      border-top: var(--cr-stroke) solid var(--cr-border-default);   /* divider turns */
+      padding-left: 0;
+      padding-top: var(--cr-space-s);
+      margin-top: var(--cr-space-s);
+    }
+    .ent-top { grid-template-columns: 1fr; gap: var(--cr-space-s); }
+    .pk-sphere { aspect-ratio: 16 / 9; }                  /* the wide step of the same vocabulary */
+  }
+
+  /* Reduced motion: snap, no fade — matched to the trigger's specificity. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .pk-head,
+    .has-js .card,
+    .has-js .pk-more { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .pk-cta .pk-arrow { transition: none !important; }
+  }
+</style>
+</head>
+
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. Drafted from the measurement and then answered:
+     nothing in it is unexplained, so no line carries the directed reason.
+  .card          | border-radius          | radius-pair
+  .card          | padding-bottom         | spacing-scale
+  .card          | padding-left           | spacing-scale
+  .card          | padding-right          | spacing-scale
+  .card          | padding-top            | spacing-scale
+  .ent-top       | column-gap             | spacing-scale
+  .ent-top       | row-gap                | spacing-scale
+  .pk-arrow      | font-size              | type-ramp
+  .pk-arrow      | line-height            | type-ramp
+  .pk-badge      | border-radius          | radius-pair
+  .pk-badge      | font-size              | type-ramp
+  .pk-badge      | line-height            | type-ramp
+  .pk-badge      | padding-bottom         | spacing-scale
+  .pk-badge      | padding-left           | spacing-scale
+  .pk-badge      | padding-right          | spacing-scale
+  .pk-badge      | padding-top            | spacing-scale
+  .pk-chk        | font-size              | type-ramp
+  .pk-chk        | line-height            | type-ramp
+  .pk-chk        | margin-top             | spacing-scale
+  .pk-cta        | border-radius          | radius-pair
+  .pk-cta        | column-gap             | spacing-scale
+  .pk-cta        | font-size              | type-ramp
+  .pk-cta        | line-height            | type-ramp
+  .pk-cta        | margin-top             | spacing-scale
+  .pk-cta        | padding-bottom         | spacing-scale
+  .pk-cta        | padding-left           | spacing-scale
+  .pk-cta        | padding-right          | spacing-scale
+  .pk-cta        | padding-top            | spacing-scale
+  .pk-cta        | row-gap                | spacing-scale
+  .pk-desc       | line-height            | type-ramp
+  .pk-desc       | margin-top             | spacing-scale
+  .pk-desc       | max-width              | measure
+  .pk-head       | margin-bottom          | spacing-scale
+  .pk-head       | margin-left            | spacing-scale
+  .pk-head       | margin-right           | spacing-scale
+  .pk-head       | max-width              | measure
+  .pk-incl-label | font-size              | type-ramp
+  .pk-incl-label | line-height            | type-ramp
+  .pk-incl-label | margin-bottom          | spacing-scale
+  .pk-incl-label | margin-top             | spacing-scale
+  .pk-inner      | padding-left           | spacing-scale
+  .pk-inner      | padding-right          | spacing-scale
+  .pk-left       | padding-right          | spacing-scale
+  .pk-name       | font-size              | type-ramp
+  .pk-name       | line-height            | type-ramp
+  .pk-name       | margin-top             | spacing-scale
+  .pk-right      | margin-top             | spacing-scale
+  .pk-right      | padding-left           | spacing-scale
+  .pk-right      | padding-top            | spacing-scale
+  .pk-sub        | font-size              | type-ramp
+  .pk-sub        | line-height            | type-ramp
+  .pk-sub        | margin-left            | spacing-scale
+  .pk-sub        | margin-right           | spacing-scale
+  .pk-sub        | margin-top             | spacing-scale
+  .pk-sub        | max-width              | measure
+  .pk-title      | font-size              | type-ramp
+  .pk-title      | line-height            | type-ramp
+  a              | border-radius          | radius-pair
+  a              | column-gap             | spacing-scale
+  a              | font-size              | type-ramp
+  a              | line-height            | type-ramp
+  a              | padding-left           | spacing-scale
+  a              | padding-right          | spacing-scale
+  a              | row-gap                | spacing-scale
+  circle         | font-size              | type-ramp
+  circle         | line-height            | type-ramp
+  li             | column-gap             | spacing-scale
+  li             | font-size              | type-ramp
+  li             | line-height            | type-ramp
+  li             | row-gap                | spacing-scale
+  path           | font-size              | type-ramp
+  path           | line-height            | type-ramp
+-->
+<section class="pk" data-screen-label="Pricing &amp; Packages — bento"
+         data-archetype="editorial-stack" data-hierarchy="technical" data-intent="compare"
+         data-register="confident" data-signature="editorial-photography" data-density="medium">
+  <div class="pk-inner">
+
+    <!-- ── Header ──────────────────────────────────────────────────────── -->
+    <header class="pk-head" style="--d:0ms">
+      <h2 class="pk-title">Pricing &amp; Packages</h2>
+      <p class="pk-sub">Autonomous agents pay back in outcomes, not seats. Start with a no-cost audit, prove value in a four-week pilot, then scale across your operations.</p>
+    </header>
+
+    <!-- ── Bento ───────────────────────────────────────────────────────── -->
+    <div class="pk-grid">
+
+      <!-- LEFT column: two stacked, equal-height plan cards -->
+      <div class="pk-col">
+
+        <!-- ── Process Audit ────────────────────────────────────────────── -->
+        <article class="card card--plan" style="--d:120ms">
+          <div class="pk-left">
+            <span class="pk-badge">No Cost</span>
+            <h3 class="pk-name">Process Audit</h3>
+            <p class="pk-desc">For ops leaders mapping where autonomous agents pay back first — before committing budget or headcount.</p>
+            <a href="#" class="pk-cta pk-cta--ghost">Book My Audit <span class="pk-arrow" aria-hidden="true">&rarr;</span></a>
+          </div>
+          <div class="pk-right">
+            <p class="pk-incl-label pk-incl-label--first">Audit includes:</p>
+            <ul class="pk-feat">
+              <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Process &amp; systems walkthrough</li>
+              <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>ROI and payback model</li>
+              <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Automation roadmap</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- ── Pilot ────────────────────────────────────────────────────── -->
+        <article class="card card--plan" style="--d:210ms">
+          <div class="pk-left">
+            <span class="pk-badge">Fixed &middot; 4 Weeks</span>
+            <h3 class="pk-name">Pilot</h3>
+            <p class="pk-desc">For teams putting one production agent into a live workflow, billed on the outcome it delivers.</p>
+            <a href="#" class="pk-cta pk-cta--ghost">Start a Pilot <span class="pk-arrow" aria-hidden="true">&rarr;</span></a>
+          </div>
+          <div class="pk-right">
+            <p class="pk-incl-label pk-incl-label--first">Everything in Audit, and:</p>
+            <ul class="pk-feat">
+              <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Production agent in your stack</li>
+              <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>SAP / Salesforce / Zoho integration</li>
+              <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Outcome-based pricing</li>
+              <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Weekly performance reporting</li>
+            </ul>
+          </div>
+        </article>
+
+      </div><!-- /.pk-col -->
+
+      <!-- RIGHT column: tall Enterprise card -->
+      <article class="card card--ent" style="--d:170ms">
+        <div class="ent-top">
+          <div class="pk-left">
+            <span class="pk-badge">Custom</span>
+            <h3 class="pk-name">Enterprise</h3>
+            <p class="pk-desc">For organisations scaling autonomous operations across teams and systems.</p>
+            <a href="#" class="pk-cta pk-cta--primary">Contact Sales <span class="pk-arrow" aria-hidden="true">&rarr;</span></a>
+          </div>
+          <div class="pk-sphere" aria-hidden="true">
+            <svg class="pk-orbit" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+              <g fill="none" stroke="#FFFFFF" stroke-linecap="round">
+                <circle cx="60" cy="540" r="360" stroke-width="1.2" stroke-opacity="0.42"/>
+                <circle cx="330" cy="40" r="250" stroke-width="1.2" stroke-opacity="0.26"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="ent-rule"></div>
+
+        <div class="ent-body">
+          <p class="pk-incl-label">Enterprise includes:</p>
+          <ul class="pk-feat">
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Access to all Example Brand agents, or bring your own workflows for free</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Moderated rollout with a dedicated pod</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Multi-system orchestration (SAP, Oracle, Epic, Cerner)</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Exception handling with human-in-the-loop</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Document &amp; knowledge agents (CR-DocXter)</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Sales outreach agents (CR-Jennie)</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Clinical documentation (Dr.Scribe)</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Audit trails and decision logging</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Automated reporting and live dashboards</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>SOC 2 controls and data residency</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Enterprise SSO and role-based access</li>
+            <li><svg class="pk-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Priority support, dedicated CSM, and solution architects</li>
+          </ul>
+        </div>
+      </article>
+
+    </div><!-- /.pk-grid -->
+
+    <!-- ── Closing outline pill ──────────────────────────────────────────── -->
+    <div class="pk-more" style="--d:300ms">
+      <a href="#">View all features</a>
+    </div>
+
+  </div><!-- /.pk-inner -->
+</section>
+
+<script>
+  /* Progressive enhancement: content is fully visible without JS. */
+  document.documentElement.classList.add('has-js');
+  (function () {
+    var section = document.querySelector('.pk');
+    if (!section) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      section.classList.add('in');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { section.classList.add('in'); io.disconnect(); }
+      });
+    }, { threshold: 0.15 });
+    io.observe(section);
+  })();
+</script>
+</body>
+</html>

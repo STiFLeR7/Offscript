@@ -1,0 +1,21 @@
+:root {
+  --cr-bg: #ffffff;
+  --cr-fg: #111111;
+}
+
+@font-face {
+  font-family: 'TestFont';
+  src: url("./fonts/test.ttf") format('truetype');
+}
+
+body {
+  background-image: url('./assets/bg.png');
+}
+
+.absolute-bg {
+  background-image: url("https://example.com/external.png");
+}
+
+.data-bg {
+  background-image: url("data:image/png;base64,iVBORw0KGgo=");
+}

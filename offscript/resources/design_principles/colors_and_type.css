@@ -1,0 +1,400 @@
+/* Example Brand Design System — colors, type & A4 collateral layout */
+/* Charts/data-viz are NOT here: their RULES live in README-DATA-VIZ.md (single source of truth),
+   and chart CSS is doc-scoped (.viz-*) per document — never added to this shared stylesheet. */
+
+@font-face { font-family: "Inter"; src: url("fonts/Inter_18pt-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Inter"; src: url("fonts/Inter_18pt-Italic.ttf") format("truetype"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "Inter"; src: url("fonts/Inter_18pt-Medium.ttf") format("truetype"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Inter"; src: url("fonts/Inter_18pt-SemiBold.ttf") format("truetype"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "Inter"; src: url("fonts/Inter_18pt-Bold.ttf") format("truetype"); font-weight: 700; font-display: swap; }
+
+@font-face { font-family: "Manrope"; src: url("fonts/Manrope-Regular.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Manrope"; src: url("fonts/Manrope-Medium.ttf") format("truetype"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Manrope"; src: url("fonts/Manrope-SemiBold.ttf") format("truetype"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "Manrope"; src: url("fonts/Manrope-Bold.ttf") format("truetype"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Manrope"; src: url("fonts/Manrope-ExtraBold.ttf") format("truetype"); font-weight: 800; font-display: swap; }
+@font-face { font-family: "Manrope"; src: url("fonts/Manrope-Light.ttf") format("truetype"); font-weight: 300; font-display: swap; }
+
+:root {
+  /* ── Brand core ─────────────────────────────────────────────── */
+  --cr-ink:           #020B1B;   /* brand deep navy — dark surfaces, CTAs, dark pages */
+  --cr-ink-deep:      #092456;   /* deep blue used in footer waves */
+  --cr-ink-mid:       #12659B;   /* mid-blue */
+  --cr-electric:      #149DFF;   /* primary button / accent / link blue */
+  --cr-electric-deep: #0A82EB;   /* hover / press for electric */
+  --cr-violet:        #150580;   /* deep indigo — sparing label accent (legacy) */
+  --cr-orchid:        #A514FF;   /* rare purple stroke accent (legacy) */
+
+  /* ── Neutrals (no warm/cream; gray ramp is TEXT-only) ──────── */
+  --cr-paper:         #FFFFFF;   /* primary page surface */
+  --cr-line:          #DEDEDE;   /* hairline rules */
+  --cr-line-soft:     #D9D9D9;
+  --cr-stone:         #9A9A9A;   /* faint text */
+  --cr-graphite:      #616161;   /* secondary body text */
+  --cr-charcoal:      #292929;   /* primary body / headings on light */
+
+  /* ── Soft-clay tonal palette ───────────────────────────────── */
+  /* Muted, matte pastels for surfaces: cards, sections, callouts,
+     data groups, icon chips, highlights. Dark text (charcoal/ink)
+     sits ON the tint. The *-accent is for borders / icons / keylines
+     ONLY — never run text on an accent. Apply via .tone-* modifiers. */
+  --cr-tone-periwinkle:        #C9CCF0;   --cr-tone-periwinkle-accent: #4F57C4;
+  --cr-tone-sky:               #C6DCF0;   --cr-tone-sky-accent:        #2C6FB5;
+  --cr-tone-sage:              #C7E0D2;   --cr-tone-sage-accent:       #3B7A5A;
+  --cr-tone-lilac:             #DDD2F0;   --cr-tone-lilac-accent:      #7048B8;
+  --cr-tone-blush:             #F1D2D9;   --cr-tone-blush-accent:      #AC4F62;
+  --cr-tone-coral:             #F6CFBD;   --cr-tone-coral-accent:      #C2580E;
+
+  /* ── Semantic foreground / background ──────────────────────── */
+  --bg:               var(--cr-paper);
+  --bg-subtle:        var(--cr-tone-sky);   /* soft tonal section background */
+  --bg-inverse:       var(--cr-ink);
+  --fg:               var(--cr-charcoal);
+  --fg-muted:         var(--cr-graphite);
+  --fg-faint:         var(--cr-stone);
+  --fg-inverse:       var(--cr-paper);
+  --fg-link:          var(--cr-electric);
+
+  --accent:           var(--cr-electric);
+  --accent-hover:     var(--cr-electric-deep);
+  --primary:          var(--cr-electric);
+  --primary-hover:    var(--cr-electric-deep);
+
+  --border:           var(--cr-line);
+  --border-strong:    var(--cr-charcoal);
+  --cr-keyline:       rgba(2,11,27,0.12);     /* navy-based hairline on light */
+  --cr-keyline-dark:  rgba(255,255,255,0.14); /* hairline on navy */
+
+  /* ── Type families ──────────────────────────────────────────── */
+  --font-display:     "Manrope", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body:        "Inter", "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:        ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* ── Type scale ─────────────────────────────────────────────── */
+  --fs-display-xl:    40px;   /* hero headline (Manrope 500) */
+  --fs-display-lg:    36px;   /* page title */
+  --fs-display:       32px;
+  --fs-h1:            28px;
+  --fs-h2:            24px;
+  --fs-h3:            20px;
+  --fs-h4:            18px;
+  --fs-body-lg:       16px;
+  --fs-body:          16px;   /* default body — also the smallest body size */
+  --fs-eyebrow:       12px;   /* uppercase labels / micro-caps */
+
+  --lh-display:       1.3;
+  --lh-body:          1.5;
+  --lh-tight:         1.3;
+  --tracking-display: -0.02em;
+  --tracking-eyebrow: 0.08em;
+
+  /* ── Radii ──────────────────────────────────────────────────── */
+  --radius-xs:        2px;
+  --radius-sm:        4px;
+  --radius:           8px;
+  --radius-lg:        12px;
+  --radius-pill:      999px;
+
+  /* ── Spacing (4-pt scale) ──────────────────────────────────── */
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px;
+  --space-6:24px; --space-8:32px; --space-10:40px; --space-12:48px; --space-16:64px;
+
+  /* ── Signature gradients (flat system — no shadows) ────────── */
+  --grad-iris:        linear-gradient(135deg, #DCE4FE 0%, #E8DCFE 50%, #FCE7D6 100%); /* cover / hero accent ONLY */
+  --grad-protect-dn:  linear-gradient(180deg, rgba(2,11,27,0) 0%, rgba(2,11,27,1) 100%); /* navy bottom protection */
+  --grad-protect-up:  linear-gradient(180deg, rgba(2,11,27,1) 0%, rgba(2,11,27,0) 100%); /* navy top protection */
+  --grad-night:       linear-gradient(180deg, #04142E 0%, #020B1B 100%);
+}
+
+/* ── Tonal modifier classes ─────────────────────────────────────
+   Apply alongside any surface component to set its colour, e.g.
+   <div class="cr-stat-card tone-periwinkle">. Components read
+   --surface / --accent, so no colour role is hard-coded.            */
+.tone-periwinkle { --surface: var(--cr-tone-periwinkle); --accent: var(--cr-tone-periwinkle-accent); }
+.tone-sky        { --surface: var(--cr-tone-sky);        --accent: var(--cr-tone-sky-accent); }
+.tone-sage       { --surface: var(--cr-tone-sage);       --accent: var(--cr-tone-sage-accent); }
+.tone-lilac      { --surface: var(--cr-tone-lilac);      --accent: var(--cr-tone-lilac-accent); }
+.tone-blush      { --surface: var(--cr-tone-blush);      --accent: var(--cr-tone-blush-accent); }
+.tone-coral      { --surface: var(--cr-tone-coral);      --accent: var(--cr-tone-coral-accent); }
+
+/* ── Semantic element styles ───────────────────────────────────── */
+html, body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: var(--fs-body); line-height: var(--lh-body); -webkit-font-smoothing: antialiased; }
+
+.cr-display-xl, h1.cr { font: 500 var(--fs-display-xl)/var(--lh-display) var(--font-display); letter-spacing: var(--tracking-display); color: var(--fg); }
+.cr-display-lg            { font: 500 var(--fs-display-lg)/var(--lh-display) var(--font-display); letter-spacing: var(--tracking-display); }
+.cr-display               { font: 400 var(--fs-display)/var(--lh-display) var(--font-display);    letter-spacing: var(--tracking-display); }
+.cr-h1, h2.cr             { font: 400 var(--fs-h1)/var(--lh-display) var(--font-display);         letter-spacing: var(--tracking-display); }
+.cr-h2, h3.cr             { font: 400 var(--fs-h2)/var(--lh-display) var(--font-display);         letter-spacing: var(--tracking-display); }
+.cr-h3, h4.cr             { font: 500 var(--fs-h3)/var(--lh-display) var(--font-display);         letter-spacing: var(--tracking-display); }
+.cr-h4                    { font: 500 var(--fs-h4)/var(--lh-display) var(--font-display);         letter-spacing: var(--tracking-display); }
+
+.cr-body-lg               { font: 400 var(--fs-body-lg)/var(--lh-body) var(--font-body); }
+.cr-body                  { font: 400 var(--fs-body)/var(--lh-body) var(--font-body); }
+.cr-body-strong           { font: 500 var(--fs-body)/var(--lh-body) var(--font-body); }
+.cr-eyebrow               { font: 600 var(--fs-eyebrow)/1.4 var(--font-body); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; color: var(--fg-muted); }
+
+.cr-link                  { color: var(--fg-link); text-decoration: none; }
+.cr-link:hover            { color: var(--primary-hover); text-decoration: underline; }
+
+/* ════════════════════════════════════════════════════════════════
+   A4-PORTRAIT COLLATERAL LAYOUT (Swiss)
+   Build multi-page documents by stacking .cr-page inside .cr-doc.
+   Pages read top → bottom; every page is an identical A4 portrait.
+   Flat system — no drop shadows anywhere.
+   ════════════════════════════════════════════════════════════════ */
+@page { size: A4 portrait; margin: 0; }
+
+.cr-doc {
+  --page-pad: 16mm;                 /* Swiss outer margin, identical every page */
+  display: flex; flex-direction: column; align-items: center;
+  gap: 12mm; padding: 16mm 0;
+  background: #E9ECF1;              /* screen-only viewport backdrop (ignored in print) */
+}
+
+.cr-page {
+  position: relative; box-sizing: border-box;
+  width: 210mm; height: 297mm; overflow: hidden;   /* fixed A4 — keep content within */
+  padding: var(--page-pad);
+  background: var(--cr-paper); color: var(--fg);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact; /* navy, tonal fills & image scrims survive print */
+}
+.cr-page--bleed { padding: 0; }                    /* full-bleed pages (cover) */
+.cr-page--dark  { background: var(--cr-ink); color: var(--fg-inverse); }
+
+/* Page furniture */
+.cr-page-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
+.cr-page-foot   { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+                  font: 400 var(--fs-eyebrow)/1.4 var(--font-body); color: var(--fg-muted); }
+.cr-logo        { height: 18px; width: auto; display: block; }
+
+/* Vertical rhythm helpers */
+.cr-stack       { display: flex; flex-direction: column; }
+.cr-section     { display: flex; flex-direction: column; gap: 6mm; }
+.cr-headline-block { display: flex; flex-direction: column; gap: 5mm; max-width: 150mm; }
+
+/* Swiss grid — equal columns only, max 3, prefer 1–2.
+   ONE COMPONENT PER ROW: a grid row holds a single component, OR a homogeneous
+   peer set (a stat strip, a feature grid, a comparison inside one band). Distinct
+   components never share a row; any asymmetry stays INSIDE a single component.
+   (No sidebar / off-centre ratio classes — that pattern is retired.) */
+.cr-grid   { display: grid; gap: 8mm; }
+.cr-cols-1 { grid-template-columns: 1fr; }
+.cr-cols-2 { grid-template-columns: 1fr 1fr; }
+.cr-cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+/* Tonal band / section separation (colour via .tone-*) */
+.cr-band        { background: var(--surface, var(--cr-tone-sky)); border-radius: var(--radius-lg); padding: 8mm; }
+.cr-band--bleed { border-radius: 0; margin: 0 calc(-1 * var(--page-pad)); padding-left: var(--page-pad); padding-right: var(--page-pad); }
+/* Full-width dark band — navy surface, inverse text. Pair with .cr-band--bleed
+   for an impactful edge-to-edge band on a white page (parallels .cr-page--dark). */
+.cr-band--dark  { --surface: var(--cr-ink); color: var(--fg-inverse); }
+
+/* Stat card — tonal surface, DARK numerals (default periwinkle so a toneless card is never white-on-white) */
+.cr-stat-card  { background: var(--surface, var(--cr-tone-periwinkle)); border-radius: var(--radius-lg);
+                 padding: 7mm; display: flex; flex-direction: column; justify-content: space-between; gap: 5mm; min-height: 0; }
+.cr-stat-value { font: 600 var(--fs-display-lg)/1 var(--font-display); letter-spacing: var(--tracking-display); color: var(--cr-ink); }
+.cr-stat-value .unit { font-size: 0.5em; font-weight: 600; margin-left: 2px; }
+.cr-stat-label { font: 500 var(--fs-h4)/1.3 var(--font-display); letter-spacing: var(--tracking-display); color: var(--cr-charcoal); }
+.cr-stat-sub   { font: 400 var(--fs-body)/1.5 var(--font-body); color: var(--cr-graphite); }
+
+/* Lead / impact stat card — the BOXED "stat showcase" treatment: an oversized numeral as
+   the hero with a SINGLE caption anchored to the card floor (value + sub; the .cr-stat-label
+   tier is dropped — the number IS the message). Use as a homogeneous 3-up strip (.cr-cols-3,
+   or a 2×2 .cr-cols-2 for four metrics — never a 4-wide row) under an eyebrow + claim
+   headline, on a white page. Because the caption is now the sole descriptor it sits in
+   charcoal (AA on the tonal fill), not the muted graphite of a normal sub-line. (The un-boxed
+   navy sibling treatment is .cr-stat-wall.) */
+.cr-stat-card--lead                { min-height: 42mm; gap: 8mm; }
+.cr-stat-card--lead .cr-stat-value { font-size: 64px; }            /* hero showcase numeral — keep values short (~4 glyphs); long figures overflow a 3-up card → use the wall */
+.cr-stat-card--lead .cr-stat-sub   { color: var(--cr-charcoal); }
+
+/* NO callout/highlight component. A tinted box with a coloured left-border
+   accent is NOT part of this system and must never be created (even ad hoc).
+   For an aside, use a plain lead paragraph, a tonal band (.cr-band), or a
+   hairline divider (.cr-divider). */
+
+/* Quote / testimonial — a pull-statement on the sanctioned full-width band
+   (.cr-band cr-band--bleed). An APPLICATION of .cr-band, NOT a callout: never a
+   coloured left-border stripe (see the ban above). Navy .cr-band--dark by default
+   for impact on white pages; a light .tone-* is the alt. The statement is the hero;
+   an optional .cr-eyebrow sits above and attribution below. No interior photography
+   — the identity mark is an initials monogram (optional). */
+.cr-quote      { display: flex; flex-direction: column; gap: 6mm; }
+.cr-quote-text { font: 400 var(--fs-h2)/1.4 var(--font-display); letter-spacing: var(--tracking-display);
+                 color: inherit; max-width: 165mm; }
+.cr-quote-cite { display: flex; align-items: center; gap: 4mm; }
+.cr-quote-mono { width: 12mm; height: 12mm; border-radius: var(--radius-pill); flex-shrink: 0;
+                 background: var(--cr-tone-periwinkle); color: var(--cr-ink);
+                 display: grid; place-items: center; font: 600 var(--fs-body)/1 var(--font-display); }
+
+/* Stat showcase ("metrics wall") — oversized, UN-boxed stats ruled off by hairlines:
+   the sanctioned flush "scale + a hairline" stat scaled to a whole cluster (NOT tonal
+   cards). The wall lays out reused .cr-stat-value (numeral) + .cr-stat-sub (caption) in
+   hairline-ruled rows; numerals stay primary/inverse text, never an accent. Showcased
+   full-page on .cr-page--dark (navy, white numerals — its bold-surface default); also
+   fine on a white page or inside .cr-band--dark. EVERY stat shares one numeral size for
+   an even, systematic grid — hierarchy comes from the numbers + captions, not type scale. */
+.cr-stat-wall { display: flex; flex-direction: column; }
+.cr-stat-row  { display: grid; gap: 0 10mm; padding: 8mm 0; border-top: 1px solid var(--cr-keyline); } /* pair with .cr-cols-2/3 */
+.cr-stat      { display: flex; flex-direction: column; gap: 2mm; }
+.cr-stat-wall .cr-stat-value { font-size: 52px; }   /* one uniform showcase size for ALL stats — do not override per stat */
+/* Dark showcase surfaces: flip the hairline + the reused stat type (scoped to the wall) */
+.cr-page--dark .cr-stat-row,                 .cr-band--dark .cr-stat-row                 { border-color: var(--cr-keyline-dark); }
+.cr-page--dark .cr-stat-wall .cr-stat-value, .cr-band--dark .cr-stat-wall .cr-stat-value { color: var(--fg-inverse); }
+.cr-page--dark .cr-stat-wall .cr-stat-sub,   .cr-band--dark .cr-stat-wall .cr-stat-sub   { color: var(--cr-stone); }
+
+/* Stat ledger — horizontal stat rows (the side-by-side sibling of .cr-stat-wall):
+   ONE stat per row with the supporting text and the big numeral SIDE BY SIDE (not stacked),
+   hairline-ruled, rows stacked one below another. Reuses .cr-stat-sub (caption, default) or
+   .cr-stat-label (named-metric tier) + .cr-stat-value (numeral) AS the two grid cells directly —
+   no .cr-stat wrapper (the wall needs one to stack value-over-sub; the ledger lays them across).
+   The ledger is the GRID; each .cr-stat-line is a subgrid row, so the value column is SHARED across
+   ALL rows — every supporting-text cell starts at one x even when numerals differ in width (18.0M /
+   >50% / $81B). Hairline + vertical padding live on the line. VERTICAL alignment is content-responsive
+   (the numeral never wraps — it's a fixed 44px line — so only the text can grow taller): the taller cell
+   fills the row track and the shorter cell aligns to its edge via align-self → a SHORT (1-line) label
+   drops to the numeral's BOTTOM/baseline, a TALL (2+-line) label TOP-aligns the pair. Default order =
+   label-first; .cr-stat-ledger--value-first flips it at
+   the CONTAINER. Numerals stay primary/inverse text, never an accent. One uniform 44px size for every
+   row — DOWN from the wall's 52px (side-by-side gives the numeral only ~half the row): keep figures
+   SHORT. (The numeral-over-caption sibling is .cr-stat-wall.) */
+.cr-stat-ledger { display: grid; grid-template-columns: 1fr auto; column-gap: 10mm; }
+.cr-stat-line   { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid;
+                  padding: 6mm 0; border-top: 1px solid var(--cr-keyline); }
+.cr-stat-ledger .cr-stat-value { font-size: 44px; }   /* one uniform ledger size — do not override per row */
+
+/* Default order = label-first: text in col 1 (flush to the margin), numeral in col 2 (right edge on
+   the margin). Pin BOTH cells — auto-placing the complementary cell collapses value-first into a stack.
+   Text cell is .cr-stat-sub OR .cr-stat-label (class-swapped — never both in one line).
+   grid-row:1 pins BOTH cells to the same row — without it, value-first (value→col1, text→col2 against the
+   text-then-value DOM order) makes auto-placement push the value to a 2nd row (diagonal stacking).
+   align-self makes the row content-responsive: numeral pins to the TOP, text to the BOTTOM — so a short
+   label sits at the numeral's baseline, while a label tall enough to define the row top-aligns the pair. */
+.cr-stat-line > .cr-stat-sub,
+.cr-stat-line > .cr-stat-label { grid-column: 1; grid-row: 1; justify-self: start; align-self: end; }
+.cr-stat-line > .cr-stat-value { grid-column: 2; grid-row: 1; justify-self: end; align-self: start; }
+
+/* Order flip (container modifier): numeral left, supporting text right. Swap the flexible track AND
+   each cell's column. Scoped through .cr-stat-line (specificity 0,3,0) so it beats the default (0,2,0)
+   regardless of source order — the flip can't silently regress if the block is reordered. */
+.cr-stat-ledger--value-first { grid-template-columns: auto 1fr; }
+.cr-stat-ledger--value-first .cr-stat-line > .cr-stat-value { grid-column: 1; justify-self: start; }
+.cr-stat-ledger--value-first .cr-stat-line > .cr-stat-sub,
+.cr-stat-ledger--value-first .cr-stat-line > .cr-stat-label { grid-column: 2; justify-self: start; }
+
+/* Subgrid fallback for engines without `grid-template-columns: subgrid` (Chrome <117). Subgrid is the
+   primary design (the project verifies via Chrome-headless, which supports it); this only keeps the
+   shared column approximately aligned on legacy engines via a FIXED numeral-column width. */
+@supports not (grid-template-columns: subgrid) {
+  .cr-stat-line                              { grid-template-columns: 1fr 56mm; }
+  .cr-stat-ledger--value-first .cr-stat-line { grid-template-columns: 56mm 1fr; }
+}
+
+/* Dark surfaces: flip hairline + reused stat type (scoped UNDER .cr-stat-ledger so tonal .cr-stat-cards
+   and the wall are untouched — mirrors the wall's dark inversion, no new global token). */
+.cr-page--dark .cr-stat-ledger .cr-stat-line,  .cr-band--dark .cr-stat-ledger .cr-stat-line  { border-color: var(--cr-keyline-dark); }
+.cr-page--dark .cr-stat-ledger .cr-stat-value, .cr-band--dark .cr-stat-ledger .cr-stat-value { color: var(--fg-inverse); }
+.cr-page--dark .cr-stat-ledger .cr-stat-sub,   .cr-band--dark .cr-stat-ledger .cr-stat-sub   { color: var(--cr-stone); }
+.cr-page--dark .cr-stat-ledger .cr-stat-label, .cr-band--dark .cr-stat-ledger .cr-stat-label { color: var(--fg-inverse); }  /* label tier is prominent → white (not the muted stone the sub gets); base --cr-charcoal would vanish on navy */
+
+/* Data / comparison group (default sage) */
+.cr-data-group { background: var(--surface, var(--cr-tone-sage)); border-radius: var(--radius-lg); padding: 6mm 7mm; }
+
+/* Icon chip — tonal circle, accent glyph (default periwinkle) */
+.cr-icon-chip { width: 40px; height: 40px; border-radius: var(--radius-pill);
+                background: var(--surface, var(--cr-tone-periwinkle)); color: var(--accent, var(--cr-tone-periwinkle-accent));
+                display: grid; place-items: center; flex-shrink: 0; }
+.cr-icon-chip svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Numbered editorial list row (number · label · description) */
+.cr-list-row   { display: grid; grid-template-columns: 9mm 52mm 1fr; gap: 6mm; padding: 5mm 0; border-top: 1px solid var(--cr-keyline); }
+.cr-list-num   { font: 500 var(--fs-h3)/1.1 var(--font-display); color: var(--cr-graphite); }
+.cr-list-label { font: 500 var(--fs-h4)/1.3 var(--font-display); letter-spacing: var(--tracking-display); color: var(--cr-charcoal); }
+.cr-list-body  { font: 400 var(--fs-body)/1.55 var(--font-body); color: var(--cr-graphite); }
+
+/* Dark section + end-of-doc CTA strip (navy, no pure black, no shadow) */
+.cr-dark-section { background: var(--cr-ink); color: var(--fg-inverse); border-radius: var(--radius-lg); padding: 8mm; }
+.cr-cta-strip    { background: var(--cr-ink); color: var(--fg-inverse); border-radius: var(--radius-lg);
+                   padding: 7mm 8mm; display: flex; align-items: center; justify-content: space-between; gap: 6mm; }
+
+/* Check / proof-point list — a benefits checklist (check glyph + text). A LIST
+   MARKER, not a feature icon-chip: surface-adaptive (inherits text colour, so it
+   reads white-on-navy or dark-on-white), the accent stays reserved for buttons.
+   Reusable anywhere; the CTA banner (a .cr-band cr-band--dark lede + this) pairs them. */
+.cr-checklist { display: flex; flex-direction: column; align-items: flex-start; gap: 5mm; }
+.cr-checklist--center { width: max-content; max-width: 100%; margin-inline: auto; text-align: left; } /* generic centred VERTICAL list (block centred, rows left-aligned) */
+/* Horizontal checklist — pointers flow across a centred 2- or 3-column grid instead of
+   one vertical column (the centred CTA banner's pointer layout). Columns are equal and
+   capped at a max width; a long pointer WRAPS within its column rather than overrunning
+   the margin (the min keeps a wrapped column readable). Pick the count with --cols-2 /
+   --cols-3 — same per-column sizing either way; the grid centres its columns. */
+.cr-checklist--cols-2,
+.cr-checklist--cols-3 { display: grid; width: 100%; justify-content: center; align-items: start;
+                        gap: 5mm 8mm; text-align: left; }
+.cr-checklist--cols-2 { grid-template-columns: repeat(2, minmax(38mm, 64mm)); }
+.cr-checklist--cols-3 { grid-template-columns: repeat(3, minmax(38mm, 64mm)); }
+.cr-checklist--cols-2 .cr-check,
+.cr-checklist--cols-3 .cr-check     { align-items: flex-start; }   /* top-align the check when a pointer wraps */
+.cr-checklist--cols-2 .cr-check svg,
+.cr-checklist--cols-3 .cr-check svg { margin-top: 2px; }
+.cr-check     { display: flex; align-items: center; gap: 3mm; font: 400 var(--fs-body)/1.4 var(--font-body); }
+.cr-check svg { width: 18px; height: 18px; flex-shrink: 0; stroke: currentColor; fill: none;
+                stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Buttons — electric (primary) */
+.cr-btn        { display: inline-flex; align-items: center; gap: 6px; padding: 11px 20px;
+                 background: var(--cr-electric); color: #fff; border: 0; border-radius: var(--radius);
+                 font: 600 13px/1 var(--font-body); text-decoration: none; cursor: pointer; transition: background 200ms ease; white-space: nowrap; }
+.cr-btn:hover  { background: var(--cr-electric-deep); }
+.cr-btn--ghost { background: transparent; color: var(--cr-ink); border: 1px solid var(--cr-line); }
+.cr-btn--ghost:hover { background: transparent; border-color: var(--cr-charcoal); }
+
+/* Rules */
+.cr-divider    { height: 1px; background: var(--cr-keyline); border: 0; margin: 0; }
+
+/* ────────────────────────────────────────────────────────────────
+   COMPOSITION & IMAGE — the variation toolkit
+   Layout-only helpers so each collateral can explore a different
+   composition, hierarchy, image treatment, and rhythm WITHOUT
+   restyling any component or token. The visual family is fixed; how
+   you arrange it on the page is where the creativity lives.
+   ──────────────────────────────────────────────────────────────── */
+
+/* Placement & rhythm — vary where the eye lands and how a page breathes */
+.cr-page--center  { display: flex; flex-direction: column; justify-content: center; } /* anchor content to the vertical centre */
+.cr-page--inset   { padding: 28mm 26mm; }            /* sparser frame for statement / editorial pages */
+.cr-anchor-bottom { margin-top: auto; }              /* push a block to the foot of the page */
+.cr-align-center  { text-align: center; align-items: center; }
+.cr-justify-end   { justify-content: flex-end; }
+
+/* Cover imagery — the cover ALWAYS carries a photo, and photography lives on the
+   COVER ONLY (never on an interior page, even ad hoc): the cover is the single home
+   of all imagery. A cover photo carries the navy scrim (the proven cover treatment),
+   never a tint via filter/mix-blend. Interior pages get their visual interest from
+   composition, tonal surfaces, scale and whitespace — not photos. (No interior
+   figure/aspect-ratio/caption helpers exist, by design.) */
+.cr-figure          { position: relative; overflow: hidden; border-radius: var(--radius-lg); }
+.cr-figure img      { display: block; width: 100%; height: 100%; object-fit: cover; }
+.cr-figure--flush   { border-radius: 0; }            /* edge/bleed image, e.g. inside a split cover */
+.cr-figure--navy::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+                    background: linear-gradient(180deg, rgba(2,11,27,.16) 0%, rgba(2,11,27,.50) 100%); }
+
+/* Half-page split (image one side, content the other) — COVER ONLY. Use inside a
+   .cr-page--bleed page WITH a column modifier, e.g. <div class="cr-split cr-cols-2">.
+   This is the one place two areas share a row; interior pages never do. */
+.cr-split        { display: grid; gap: 0; height: 100%; }
+.cr-split > *    { min-width: 0; min-height: 0; }
+.cr-split-pane   { padding: var(--page-pad); display: flex; flex-direction: column; } /* padded content side */
+
+/* Screen: subtle hairline so white pages read against the backdrop (no shadows in the system) */
+@media screen {
+  .cr-page { border: 1px solid rgba(2,11,27,0.07); }
+}
+
+/* Print: collapse screen chrome, one clean A4 sheet per page */
+@media print {
+  html, body { margin: 0; padding: 0; background: #fff; }
+  .cr-doc  { display: block; gap: 0; padding: 0; background: #fff; }
+  .cr-page { margin: 0 auto; border: 0; break-after: page; page-break-after: always; }
+  .cr-page:last-child { break-after: auto; page-break-after: auto; }
+}

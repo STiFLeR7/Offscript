@@ -1,0 +1,358 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../_card.css">
+<link rel="stylesheet" href="../../../../brand-pack/accent-palette.css">
+<style>
+  /* ─────────────────────────────────────────────────────────────────────
+     SPATIAL · ECOSYSTEM SYSTEM  (doc-scoped .spatial-* — SVG isometric, no JS)
+     Distributed network of varied entities around a focal core on a ground grid (§9 ecosystem). RULES: README-SPATIAL.md.
+     ───────────────────────────────────────────────────────────────────── */
+
+  /* ── SHARED .spatial-* CORE — byte-identical in every specimen (copy verbatim) ──
+     The primitives every spatial visual reuses: the three isometric faces (top +
+     two depth faces), the focal highlight (flat accent + a white-fade sheen — the
+     one sanctioned same-hue gradient, §11), embedded objects, leader lines, and
+     annotation type. Identical everywhere, so two spatial visuals pasted into one
+     document stay consistent and never collide. Family-specific classes
+     (.spatial-<family>-*) layer on top and are namespaced. SVG polygons whose
+     points already encode the fixed iso angle; no JavaScript, no preserve-3d;
+     inherits the system tokens. Depth faces darken the surface/accent toward
+     black via color-mix — quiet, not a render. ── */
+  .spatial-svg        { display: block; width: 100%; height: auto; overflow: visible; }
+  .spatial-face       { stroke: var(--cr-keyline); stroke-width: 1; stroke-linejoin: round; }
+  .spatial-face-top   { fill: var(--surface, var(--cr-tone-sky)); }
+  .spatial-face-left  { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 86%, #000); }
+  .spatial-face-right { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 76%, #000); }
+  /* the ONE selective highlight — flat accent + a quiet white-fade sheen (same-hue, §11) */
+  .spatial-focal .spatial-face-top   { fill: var(--accent, var(--cr-tone-sky-accent)); }
+  .spatial-focal .spatial-face-left  { fill: color-mix(in srgb, var(--accent, var(--cr-tone-sky-accent)) 82%, #000); }
+  .spatial-focal .spatial-face-right { fill: color-mix(in srgb, var(--accent, var(--cr-tone-sky-accent)) 70%, #000); }
+  .spatial-sheen      { fill: url(#spatialSheen); stroke: none; }
+  .spatial-embed      { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 68%, #000); stroke: none; }
+  .spatial-focal .spatial-embed { fill: color-mix(in srgb, #fff 36%, transparent); }
+  .spatial-leader     { stroke: var(--cr-keyline); stroke-width: 1; fill: none; }
+  .spatial-leader--dash { stroke-dasharray: 2 3; }
+  .spatial-dot        { fill: var(--accent, var(--cr-tone-sky-accent)); }
+  .spatial-label      { font: 500 var(--fs-h4)/1.2 var(--font-display); fill: var(--cr-charcoal); letter-spacing: var(--tracking-display); }
+  .spatial-sub        { font: 400 12px/1.4 var(--font-body); fill: var(--cr-graphite); }
+  .spatial-eyebrow    { font: 600 var(--fs-eyebrow)/1 var(--font-body); fill: var(--accent, var(--cr-tone-sky-accent)); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; }
+  /* scoped DARK inversion (navy .cr-band--dark / .cr-page--dark) — strokes & type lift to stay legible */
+  .cr-band--dark .spatial-face,   .cr-page--dark .spatial-face,
+  .cr-band--dark .spatial-leader, .cr-page--dark .spatial-leader { stroke: var(--cr-keyline-dark); }
+  .cr-band--dark .spatial-label,  .cr-page--dark .spatial-label  { fill: var(--fg-inverse); }
+  .cr-band--dark .spatial-sub,    .cr-page--dark .spatial-sub    { fill: var(--cr-stone); }
+  .cr-band--dark .spatial-eyebrow,.cr-page--dark .spatial-eyebrow{ fill: var(--cr-stone); }
+  .spatial-demo    { max-width: 178mm; display: flex; flex-direction: column; gap: 40px; }
+  .spatial-caption { font: 400 13px/1.55 var(--font-body); color: var(--cr-graphite); max-width: 178mm; margin-top: 26px; }
+
+
+  /* ── DETAIL VOCABULARY (Tier-2 — namespaced; copy the parts a doc uses) ──
+     Richer primitives that ENCODE REAL SUB-STRUCTURE (a datastore, a network, a
+     console), never decoration (Rulebook §14). Volumes (cube = the core faces at
+     full height; cylinder = ellipse lid + wall), surface textures (grid-mesh &
+     node-graph = repeated <line> polylines, NOT an SVG <pattern> — patterns flake
+     in PDF), embedded chips, screen UI, ground grid, droplines, curved connector.
+     All hold the fixed 2:1 iso angle; no JS, no preserve-3d. ── */
+  .spatial-cyl-top   { fill: var(--surface, var(--cr-tone-sky)); stroke: var(--cr-keyline); stroke-width: 1; }
+  .spatial-cyl-body  { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 80%, #000); stroke: var(--cr-keyline); stroke-width: 1; }
+  .spatial-focal .spatial-cyl-top  { fill: var(--accent, var(--cr-tone-sky-accent)); }
+  .spatial-focal .spatial-cyl-body { fill: color-mix(in srgb, var(--accent, var(--cr-tone-sky-accent)) 74%, #000); }
+  .spatial-mesh-line { stroke: var(--cr-keyline); stroke-width: 0.75; fill: none; }
+  .spatial-node-link { stroke: var(--cr-keyline); stroke-width: 1; fill: none; }
+  .spatial-chip      { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 64%, #000); stroke: none; }
+  .spatial-focal .spatial-chip { fill: color-mix(in srgb, #fff 42%, transparent); }
+  .spatial-screen-ui { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 60%, #000); stroke: none; }
+  .spatial-grid-line { stroke: var(--cr-keyline); stroke-width: 1; stroke-dasharray: 2 3; fill: none; }
+  .spatial-drop      { stroke: var(--cr-keyline); stroke-width: 1; stroke-dasharray: 2 3; fill: none; }
+  .spatial-link--curve { stroke: var(--cr-graphite); stroke-width: 1.5; fill: none; }
+  .spatial-link-arrow  { fill: var(--cr-graphite); stroke: none; }
+  .cr-band--dark .spatial-cyl-top,  .cr-page--dark .spatial-cyl-top,
+  .cr-band--dark .spatial-cyl-body, .cr-page--dark .spatial-cyl-body,
+  .cr-band--dark .spatial-mesh-line,.cr-page--dark .spatial-mesh-line,
+  .cr-band--dark .spatial-node-link,.cr-page--dark .spatial-node-link,
+  .cr-band--dark .spatial-grid-line,.cr-page--dark .spatial-grid-line,
+  .cr-band--dark .spatial-drop,     .cr-page--dark .spatial-drop { stroke: var(--cr-keyline-dark); }
+  .cr-band--dark .spatial-link--curve, .cr-page--dark .spatial-link--curve { stroke: var(--cr-stone); }
+  .cr-band--dark .spatial-link-arrow,  .cr-page--dark .spatial-link-arrow  { fill: var(--cr-stone); }
+  .spatial-eco-peer { stroke-dasharray: 3 3; opacity: .8; }
+</style>
+</head>
+<body style="background:#FFFFFF">
+<div class="spatial-demo">
+
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">1 · Ecosystem system · a distributed network of varied entities around a focal orchestration core · grounded on an iso grid</div>
+    <div style="max-width:165mm">
+      <svg class="spatial-svg" viewBox="0 0 660 470">
+        <defs><linearGradient id="spatialSheenA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="0.34"/></linearGradient></defs>
+      <g style="opacity:.5">
+    <line class="spatial-grid-line" x1="330" y1="145" x2="56" y2="282"/>
+    <line class="spatial-grid-line" x1="330" y1="145" x2="604" y2="282"/>
+    <line class="spatial-grid-line" x1="354.91" y1="157.45" x2="80.91" y2="294.45"/>
+    <line class="spatial-grid-line" x1="305.09" y1="157.45" x2="579.09" y2="294.45"/>
+    <line class="spatial-grid-line" x1="379.82" y1="169.91" x2="105.82" y2="306.91"/>
+    <line class="spatial-grid-line" x1="280.18" y1="169.91" x2="554.18" y2="306.91"/>
+    <line class="spatial-grid-line" x1="404.73" y1="182.36" x2="130.73" y2="319.36"/>
+    <line class="spatial-grid-line" x1="255.27" y1="182.36" x2="529.27" y2="319.36"/>
+    <line class="spatial-grid-line" x1="429.64" y1="194.82" x2="155.64" y2="331.82"/>
+    <line class="spatial-grid-line" x1="230.36" y1="194.82" x2="504.36" y2="331.82"/>
+    <line class="spatial-grid-line" x1="454.55" y1="207.27" x2="180.55" y2="344.27"/>
+    <line class="spatial-grid-line" x1="205.45" y1="207.27" x2="479.45" y2="344.27"/>
+    <line class="spatial-grid-line" x1="479.45" y1="219.73" x2="205.45" y2="356.73"/>
+    <line class="spatial-grid-line" x1="180.55" y1="219.73" x2="454.55" y2="356.73"/>
+    <line class="spatial-grid-line" x1="504.36" y1="232.18" x2="230.36" y2="369.18"/>
+    <line class="spatial-grid-line" x1="155.64" y1="232.18" x2="429.64" y2="369.18"/>
+    <line class="spatial-grid-line" x1="529.27" y1="244.64" x2="255.27" y2="381.64"/>
+    <line class="spatial-grid-line" x1="130.73" y1="244.64" x2="404.73" y2="381.64"/>
+    <line class="spatial-grid-line" x1="554.18" y1="257.09" x2="280.18" y2="394.09"/>
+    <line class="spatial-grid-line" x1="105.82" y1="257.09" x2="379.82" y2="394.09"/>
+    <line class="spatial-grid-line" x1="579.09" y1="269.55" x2="305.09" y2="406.55"/>
+    <line class="spatial-grid-line" x1="80.91" y1="269.55" x2="354.91" y2="406.55"/>
+    <line class="spatial-grid-line" x1="604" y1="282" x2="330" y2="419"/>
+    <line class="spatial-grid-line" x1="56" y1="282" x2="330" y2="419"/>
+      </g>
+        <line class="spatial-node-link" x1="330" y1="266" x2="398.52" y2="349.24"/>
+        <line class="spatial-node-link" x1="330" y1="266" x2="300.73" y2="345.39"/>
+        <line class="spatial-node-link" x1="330" y1="266" x2="207.39" y2="328.2"/>
+        <line class="spatial-node-link" x1="330" y1="266" x2="202.98" y2="276.44"/>
+        <line class="spatial-node-link" x1="330" y1="266" x2="223.28" y2="228.64"/>
+        <line class="spatial-node-link" x1="330" y1="266" x2="323.46" y2="219.63"/>
+        <line class="spatial-node-link" x1="330" y1="266" x2="422.39" y2="220.69"/>
+        <line class="spatial-node-link" x1="330" y1="266" x2="453.16" y2="265.5"/>
+        <line class="spatial-node-link" x1="330" y1="266" x2="452.16" y2="307.93"/>
+        <line class="spatial-node-link" x1="330" y1="266" x2="215.53" y2="299.5"/>
+        <line class="spatial-node-link spatial-eco-peer" x1="398.52" y1="349.24" x2="207.39" y2="328.2"/>
+        <line class="spatial-node-link spatial-eco-peer" x1="207.39" y1="328.2" x2="223.28" y2="228.64"/>
+        <line class="spatial-node-link spatial-eco-peer" x1="223.28" y1="228.64" x2="422.39" y2="220.69"/>
+        <line class="spatial-node-link spatial-eco-peer" x1="422.39" y1="220.69" x2="398.52" y2="349.24"/>
+      <g class="tone-sky">
+    <g class="">
+      <polygon class="spatial-face spatial-face-left" points="312.46,212.63 323.46,218.13 323.46,232.13 312.46,226.63"/>
+      <polygon class="spatial-face spatial-face-right" points="323.46,218.13 334.46,212.63 334.46,226.63 323.46,232.13"/>
+      <polygon class="spatial-face spatial-face-top" points="323.46,207.13 334.46,212.63 323.46,218.13 312.46,212.63"/>
+    </g>
+    <g class="">
+      <path class="spatial-cyl-body" d="M 404.39,209.69 L 404.39,231.69 A 18,9 0 0 0 440.39,231.69 L 440.39,209.69 A 18,9 0 0 1 404.39,209.69 Z"/>
+      <ellipse class="spatial-cyl-top" cx="422.39" cy="209.69" rx="18" ry="9"/>
+    </g>
+    <g class="">
+      <polygon class="spatial-face spatial-face-left" points="209.28,220.14 223.28,227.14 223.28,244.14 209.28,237.14"/>
+      <polygon class="spatial-face spatial-face-right" points="223.28,227.14 237.28,220.14 237.28,237.14 223.28,244.14"/>
+      <polygon class="spatial-face spatial-face-top" points="223.28,213.14 237.28,220.14 223.28,227.14 209.28,220.14"/>
+    </g>
+    <g class="">
+      <polygon class="spatial-face spatial-face-left" points="442.16,258.5 453.16,264 453.16,278 442.16,272.5"/>
+      <polygon class="spatial-face spatial-face-right" points="453.16,264 464.16,258.5 464.16,272.5 453.16,278"/>
+      <polygon class="spatial-face spatial-face-top" points="453.16,253 464.16,258.5 453.16,264 442.16,258.5"/>
+    </g>
+    <g class="">
+      <path class="spatial-cyl-body" d="M 191.98,269.44 L 191.98,283.44 A 11,5.5 0 0 0 213.98,283.44 L 213.98,269.44 A 11,5.5 0 0 1 191.98,269.44 Z"/>
+      <ellipse class="spatial-cyl-top" cx="202.98" cy="269.44" rx="11" ry="5.5"/>
+    </g>
+      </g>
+        <line class="spatial-drop" x1="330" y1="266" x2="330" y2="306"/>
+      <g class="tone-blue spatial-focal">
+    <polygon class="spatial-face spatial-face-left" points="238,248 330,294 330,305 238,259"/>
+    <polygon class="spatial-face spatial-face-right" points="330,294 422,248 422,259 330,305"/>
+    <polygon class="spatial-face spatial-face-top" points="330,202 422,248 330,294 238,248"/>
+    <polygon class="spatial-sheen" points="330,202 422,248 330,294 238,248" style="fill:url(#spatialSheenA)"/>
+        <polygon class="spatial-chip" points="328.16,210.28 390.72,241.56 377.84,248 315.28,216.72"/>
+      <g class=" spatial-focal">
+        <polygon class="spatial-face spatial-face-top" points="304.24,222.24 352.08,246.16 307.92,268.24 260.08,244.32"/>
+        <polygon class="spatial-chip" points="304.83,229.6 337.36,245.87 329.41,249.84 296.88,233.57"/>
+        <polygon class="spatial-chip" points="290.7,236.67 323.23,252.93 317.93,255.58 285.4,239.32"/>
+        <circle class="spatial-dot" cx="333.39" cy="247.85" r="2.4"/>
+      </g>
+    <g class=" spatial-focal">
+      <path class="spatial-cyl-body" d="M 337.56,249.64 L 337.56,263.64 A 9,4.5 0 0 0 355.56,263.64 L 355.56,249.64 A 9,4.5 0 0 1 337.56,249.64 Z"/>
+      <ellipse class="spatial-cyl-top" cx="346.56" cy="249.64" rx="9" ry="4.5"/>
+    </g>
+      </g>
+      <g class="tone-sky">
+    <g class="">
+      <polygon class="spatial-face spatial-face-left" points="204.53,292.5 215.53,298 215.53,312 204.53,306.5"/>
+      <polygon class="spatial-face spatial-face-right" points="215.53,298 226.53,292.5 226.53,306.5 215.53,312"/>
+      <polygon class="spatial-face spatial-face-top" points="215.53,287 226.53,292.5 215.53,298 204.53,292.5"/>
+    </g>
+    <g class="">
+      <path class="spatial-cyl-body" d="M 441.16,300.93 L 441.16,314.93 A 11,5.5 0 0 0 463.16,314.93 L 463.16,300.93 A 11,5.5 0 0 1 441.16,300.93 Z"/>
+      <ellipse class="spatial-cyl-top" cx="452.16" cy="300.93" rx="11" ry="5.5"/>
+    </g>
+    <g class="">
+      <polygon class="spatial-face spatial-face-left" points="189.39,317.2 207.39,326.2 207.39,348.2 189.39,339.2"/>
+      <polygon class="spatial-face spatial-face-right" points="207.39,326.2 225.39,317.2 225.39,339.2 207.39,348.2"/>
+      <polygon class="spatial-face spatial-face-top" points="207.39,308.2 225.39,317.2 207.39,326.2 189.39,317.2"/>
+    </g>
+    <g class="">
+      <path class="spatial-cyl-body" d="M 289.73,338.39 L 289.73,352.39 A 11,5.5 0 0 0 311.73,352.39 L 311.73,338.39 A 11,5.5 0 0 1 289.73,338.39 Z"/>
+      <ellipse class="spatial-cyl-top" cx="300.73" cy="338.39" rx="11" ry="5.5"/>
+    </g>
+    <g class="">
+      <polygon class="spatial-face spatial-face-left" points="384.52,340.74 398.52,347.74 398.52,364.74 384.52,357.74"/>
+      <polygon class="spatial-face spatial-face-right" points="398.52,347.74 412.52,340.74 412.52,357.74 398.52,364.74"/>
+      <polygon class="spatial-face spatial-face-top" points="398.52,333.74 412.52,340.74 398.52,347.74 384.52,340.74"/>
+    </g>
+      </g>
+        <line class="spatial-leader" x1="298.72" y1="242" x2="120" y2="120"/>
+        <circle class="spatial-dot" cx="298.72" cy="242" r="3"/>
+        <text class="spatial-eyebrow" x="120" y="106" text-anchor="start">Core</text>
+        <text class="spatial-label" x="120" y="124" text-anchor="start">Orchestration hub</text>
+        <line class="spatial-leader" x1="422.39" y1="220.69" x2="440.73" y2="208.53"/>
+        <circle class="spatial-dot" cx="422.39" cy="220.69" r="2.6"/>
+        <text class="spatial-sub" x="447.39" y="210.32" text-anchor="start">Cloud services</text>
+        <line class="spatial-leader" x1="223.28" y1="228.64" x2="203.6" y2="218.8"/>
+        <circle class="spatial-dot" cx="223.28" cy="228.64" r="2.6"/>
+        <text class="spatial-sub" x="196.45" y="221.01" text-anchor="end">Data sources</text>
+        <line class="spatial-leader" x1="207.39" y1="328.2" x2="186.8" y2="335.95"/>
+        <circle class="spatial-dot" cx="207.39" cy="328.2" r="2.6"/>
+        <text class="spatial-sub" x="179.31" y="341.36" text-anchor="end">Partner network</text>
+        <line class="spatial-leader" x1="398.52" y1="349.24" x2="414.22" y2="364.65"/>
+        <circle class="spatial-dot" cx="398.52" cy="349.24" r="2.6"/>
+        <text class="spatial-sub" x="419.93" y="371.45" text-anchor="start">Identity registry</text>
+      </svg>
+    </div>
+  </div>
+
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">2 · On navy (.cr-band--dark) · the same ecosystem; strokes/labels lift, the focal core leads</div>
+    <div class="cr-band cr-band--dark"><div style="max-width:165mm">
+      <svg class="spatial-svg" viewBox="0 0 660 470">
+        <defs><linearGradient id="spatialSheenB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="0.30"/></linearGradient></defs>
+      <g style="opacity:.5">
+    <line class="spatial-grid-line" x1="330" y1="145" x2="56" y2="282"/>
+    <line class="spatial-grid-line" x1="330" y1="145" x2="604" y2="282"/>
+    <line class="spatial-grid-line" x1="354.91" y1="157.45" x2="80.91" y2="294.45"/>
+    <line class="spatial-grid-line" x1="305.09" y1="157.45" x2="579.09" y2="294.45"/>
+    <line class="spatial-grid-line" x1="379.82" y1="169.91" x2="105.82" y2="306.91"/>
+    <line class="spatial-grid-line" x1="280.18" y1="169.91" x2="554.18" y2="306.91"/>
+    <line class="spatial-grid-line" x1="404.73" y1="182.36" x2="130.73" y2="319.36"/>
+    <line class="spatial-grid-line" x1="255.27" y1="182.36" x2="529.27" y2="319.36"/>
+    <line class="spatial-grid-line" x1="429.64" y1="194.82" x2="155.64" y2="331.82"/>
+    <line class="spatial-grid-line" x1="230.36" y1="194.82" x2="504.36" y2="331.82"/>
+    <line class="spatial-grid-line" x1="454.55" y1="207.27" x2="180.55" y2="344.27"/>
+    <line class="spatial-grid-line" x1="205.45" y1="207.27" x2="479.45" y2="344.27"/>
+    <line class="spatial-grid-line" x1="479.45" y1="219.73" x2="205.45" y2="356.73"/>
+    <line class="spatial-grid-line" x1="180.55" y1="219.73" x2="454.55" y2="356.73"/>
+    <line class="spatial-grid-line" x1="504.36" y1="232.18" x2="230.36" y2="369.18"/>
+    <line class="spatial-grid-line" x1="155.64" y1="232.18" x2="429.64" y2="369.18"/>
+    <line class="spatial-grid-line" x1="529.27" y1="244.64" x2="255.27" y2="381.64"/>
+    <line class="spatial-grid-line" x1="130.73" y1="244.64" x2="404.73" y2="381.64"/>
+    <line class="spatial-grid-line" x1="554.18" y1="257.09" x2="280.18" y2="394.09"/>
+    <line class="spatial-grid-line" x1="105.82" y1="257.09" x2="379.82" y2="394.09"/>
+    <line class="spatial-grid-line" x1="579.09" y1="269.55" x2="305.09" y2="406.55"/>
+    <line class="spatial-grid-line" x1="80.91" y1="269.55" x2="354.91" y2="406.55"/>
+    <line class="spatial-grid-line" x1="604" y1="282" x2="330" y2="419"/>
+    <line class="spatial-grid-line" x1="56" y1="282" x2="330" y2="419"/>
+      </g>
+        <line class="spatial-node-link" x1="330" y1="266" x2="398.52" y2="349.24"/>
+        <line class="spatial-node-link" x1="330" y1="266" x2="300.73" y2="345.39"/>
+        <line class="spatial-node-link" x1="330" y1="266" x2="207.39" y2="328.2"/>
+        <line class="spatial-node-link" x1="330" y1="266" x2="202.98" y2="276.44"/>
+        <line class="spatial-node-link" x1="330" y1="266" x2="223.28" y2="228.64"/>
+        <line class="spatial-node-link" x1="330" y1="266" x2="323.46" y2="219.63"/>
+        <line class="spatial-node-link" x1="330" y1="266" x2="422.39" y2="220.69"/>
+        <line class="spatial-node-link" x1="330" y1="266" x2="453.16" y2="265.5"/>
+        <line class="spatial-node-link" x1="330" y1="266" x2="452.16" y2="307.93"/>
+        <line class="spatial-node-link" x1="330" y1="266" x2="215.53" y2="299.5"/>
+        <line class="spatial-node-link spatial-eco-peer" x1="398.52" y1="349.24" x2="207.39" y2="328.2"/>
+        <line class="spatial-node-link spatial-eco-peer" x1="207.39" y1="328.2" x2="223.28" y2="228.64"/>
+        <line class="spatial-node-link spatial-eco-peer" x1="223.28" y1="228.64" x2="422.39" y2="220.69"/>
+        <line class="spatial-node-link spatial-eco-peer" x1="422.39" y1="220.69" x2="398.52" y2="349.24"/>
+      <g class="tone-sky">
+    <g class="">
+      <polygon class="spatial-face spatial-face-left" points="312.46,212.63 323.46,218.13 323.46,232.13 312.46,226.63"/>
+      <polygon class="spatial-face spatial-face-right" points="323.46,218.13 334.46,212.63 334.46,226.63 323.46,232.13"/>
+      <polygon class="spatial-face spatial-face-top" points="323.46,207.13 334.46,212.63 323.46,218.13 312.46,212.63"/>
+    </g>
+    <g class="">
+      <path class="spatial-cyl-body" d="M 404.39,209.69 L 404.39,231.69 A 18,9 0 0 0 440.39,231.69 L 440.39,209.69 A 18,9 0 0 1 404.39,209.69 Z"/>
+      <ellipse class="spatial-cyl-top" cx="422.39" cy="209.69" rx="18" ry="9"/>
+    </g>
+    <g class="">
+      <polygon class="spatial-face spatial-face-left" points="209.28,220.14 223.28,227.14 223.28,244.14 209.28,237.14"/>
+      <polygon class="spatial-face spatial-face-right" points="223.28,227.14 237.28,220.14 237.28,237.14 223.28,244.14"/>
+      <polygon class="spatial-face spatial-face-top" points="223.28,213.14 237.28,220.14 223.28,227.14 209.28,220.14"/>
+    </g>
+    <g class="">
+      <polygon class="spatial-face spatial-face-left" points="442.16,258.5 453.16,264 453.16,278 442.16,272.5"/>
+      <polygon class="spatial-face spatial-face-right" points="453.16,264 464.16,258.5 464.16,272.5 453.16,278"/>
+      <polygon class="spatial-face spatial-face-top" points="453.16,253 464.16,258.5 453.16,264 442.16,258.5"/>
+    </g>
+    <g class="">
+      <path class="spatial-cyl-body" d="M 191.98,269.44 L 191.98,283.44 A 11,5.5 0 0 0 213.98,283.44 L 213.98,269.44 A 11,5.5 0 0 1 191.98,269.44 Z"/>
+      <ellipse class="spatial-cyl-top" cx="202.98" cy="269.44" rx="11" ry="5.5"/>
+    </g>
+      </g>
+        <line class="spatial-drop" x1="330" y1="266" x2="330" y2="306"/>
+      <g class="tone-blue spatial-focal">
+    <polygon class="spatial-face spatial-face-left" points="238,248 330,294 330,305 238,259"/>
+    <polygon class="spatial-face spatial-face-right" points="330,294 422,248 422,259 330,305"/>
+    <polygon class="spatial-face spatial-face-top" points="330,202 422,248 330,294 238,248"/>
+    <polygon class="spatial-sheen" points="330,202 422,248 330,294 238,248" style="fill:url(#spatialSheenB)"/>
+        <polygon class="spatial-chip" points="328.16,210.28 390.72,241.56 377.84,248 315.28,216.72"/>
+      <g class=" spatial-focal">
+        <polygon class="spatial-face spatial-face-top" points="304.24,222.24 352.08,246.16 307.92,268.24 260.08,244.32"/>
+        <polygon class="spatial-chip" points="304.83,229.6 337.36,245.87 329.41,249.84 296.88,233.57"/>
+        <polygon class="spatial-chip" points="290.7,236.67 323.23,252.93 317.93,255.58 285.4,239.32"/>
+        <circle class="spatial-dot" cx="333.39" cy="247.85" r="2.4"/>
+      </g>
+    <g class=" spatial-focal">
+      <path class="spatial-cyl-body" d="M 337.56,249.64 L 337.56,263.64 A 9,4.5 0 0 0 355.56,263.64 L 355.56,249.64 A 9,4.5 0 0 1 337.56,249.64 Z"/>
+      <ellipse class="spatial-cyl-top" cx="346.56" cy="249.64" rx="9" ry="4.5"/>
+    </g>
+      </g>
+      <g class="tone-sky">
+    <g class="">
+      <polygon class="spatial-face spatial-face-left" points="204.53,292.5 215.53,298 215.53,312 204.53,306.5"/>
+      <polygon class="spatial-face spatial-face-right" points="215.53,298 226.53,292.5 226.53,306.5 215.53,312"/>
+      <polygon class="spatial-face spatial-face-top" points="215.53,287 226.53,292.5 215.53,298 204.53,292.5"/>
+    </g>
+    <g class="">
+      <path class="spatial-cyl-body" d="M 441.16,300.93 L 441.16,314.93 A 11,5.5 0 0 0 463.16,314.93 L 463.16,300.93 A 11,5.5 0 0 1 441.16,300.93 Z"/>
+      <ellipse class="spatial-cyl-top" cx="452.16" cy="300.93" rx="11" ry="5.5"/>
+    </g>
+    <g class="">
+      <polygon class="spatial-face spatial-face-left" points="189.39,317.2 207.39,326.2 207.39,348.2 189.39,339.2"/>
+      <polygon class="spatial-face spatial-face-right" points="207.39,326.2 225.39,317.2 225.39,339.2 207.39,348.2"/>
+      <polygon class="spatial-face spatial-face-top" points="207.39,308.2 225.39,317.2 207.39,326.2 189.39,317.2"/>
+    </g>
+    <g class="">
+      <path class="spatial-cyl-body" d="M 289.73,338.39 L 289.73,352.39 A 11,5.5 0 0 0 311.73,352.39 L 311.73,338.39 A 11,5.5 0 0 1 289.73,338.39 Z"/>
+      <ellipse class="spatial-cyl-top" cx="300.73" cy="338.39" rx="11" ry="5.5"/>
+    </g>
+    <g class="">
+      <polygon class="spatial-face spatial-face-left" points="384.52,340.74 398.52,347.74 398.52,364.74 384.52,357.74"/>
+      <polygon class="spatial-face spatial-face-right" points="398.52,347.74 412.52,340.74 412.52,357.74 398.52,364.74"/>
+      <polygon class="spatial-face spatial-face-top" points="398.52,333.74 412.52,340.74 398.52,347.74 384.52,340.74"/>
+    </g>
+      </g>
+        <line class="spatial-leader" x1="298.72" y1="242" x2="120" y2="120"/>
+        <circle class="spatial-dot" cx="298.72" cy="242" r="3"/>
+        <text class="spatial-eyebrow" x="120" y="106" text-anchor="start">Core</text>
+        <text class="spatial-label" x="120" y="124" text-anchor="start">Orchestration hub</text>
+        <line class="spatial-leader" x1="422.39" y1="220.69" x2="440.73" y2="208.53"/>
+        <circle class="spatial-dot" cx="422.39" cy="220.69" r="2.6"/>
+        <text class="spatial-sub" x="447.39" y="210.32" text-anchor="start">Cloud services</text>
+        <line class="spatial-leader" x1="223.28" y1="228.64" x2="203.6" y2="218.8"/>
+        <circle class="spatial-dot" cx="223.28" cy="228.64" r="2.6"/>
+        <text class="spatial-sub" x="196.45" y="221.01" text-anchor="end">Data sources</text>
+        <line class="spatial-leader" x1="207.39" y1="328.2" x2="186.8" y2="335.95"/>
+        <circle class="spatial-dot" cx="207.39" cy="328.2" r="2.6"/>
+        <text class="spatial-sub" x="179.31" y="341.36" text-anchor="end">Partner network</text>
+        <line class="spatial-leader" x1="398.52" y1="349.24" x2="414.22" y2="364.65"/>
+        <circle class="spatial-dot" cx="398.52" cy="349.24" r="2.6"/>
+        <text class="spatial-sub" x="419.93" y="371.45" text-anchor="start">Identity registry</text>
+      </svg>
+    </div></div>
+  </div>
+
+  <div class="spatial-caption">
+    <strong>Ecosystem system</strong> · a distributed spatial network around a core (Rulebook §9): a focal
+    <strong>orchestration hub</strong> (console) wired by hub-spoke relations to a cloud of <strong>varied
+    entities</strong> — partner networks, data sources, cloud services, an identity registry — sized by
+    importance (<strong>scale hierarchy</strong>), with peer links among the majors. Grounded on a dashed iso
+    grid; every entity encodes something real (§14). <strong>One selective highlight</strong> (the core + sheen).
+    Baked SVG at the fixed 2:1 angle; <strong>no JS, no <code>preserve-3d</code>.</strong> Doc-scoped.
+    Illustrative platform ecosystem.
+  </div>
+
+</div>
+</body></html>

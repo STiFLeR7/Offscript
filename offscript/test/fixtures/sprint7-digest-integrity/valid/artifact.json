@@ -1,0 +1,11 @@
+{
+  "contractVersion": 1,
+  "id": "sprint7-valid",
+  "intentDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "artifactType": "html",
+  "location": "test/fixtures/sprint7-digest-integrity/valid/visual.html",
+  "artifactDigest": "sha256:027f2462b0b75ff4f664d367c6301aa12f0cee82f8800ce79a3ff6bd4589fcd8",
+  "createdAt": "2026-08-12T00:00:00.000Z",
+  "generation": { "sourceSystem": "sprint7-fixture" },
+  "approval": { "status": "approved", "source": "sprint7-fixture" }
+}

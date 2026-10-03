@@ -1,0 +1,11 @@
+{
+  "id": "predictive-query-complete",
+  "contractVersion": 1,
+  "digest": "sha256:0f2c24894b0065f995e0fd392d01720c378d728cd12b791edd01ff8526f632a1",
+  "belief": "the search bar finishes your query — and surfaces the answer — before you finish typing it",
+  "feature": "search",
+  "ratio": "3:4",
+  "camera": "macro",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

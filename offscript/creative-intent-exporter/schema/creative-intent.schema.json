@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example-brand.dev/offscript/creative-intent.schema.json",
+  "title": "Creative Intent Contract (contractVersion 1)",
+  "description": "Machine-readable form of the Creative Intent Contract (Program CG, CG6/CG7). Describes one exported Creative Intent instance for an approved creative from the Creatives Generation system. Carries INTENT ONLY — no presentation (color/material/environment/layout), no internal anti-sameness bookkeeping, no governance/approval state. Existence of a conformant instance implies its source creative was approved=yes at export time; that fact is never itself a field. This schema expresses structural and semantic (enum) validation only — digest and trust validation require logic outside this document.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "id",
+    "contractVersion",
+    "digest",
+    "belief",
+    "feature",
+    "ratio",
+    "camera",
+    "must-include",
+    "content-provenance"
+  ],
+  "properties": {
+    "id": {
+      "description": "Stable identity — the creative's slug. Unique across every Creative Intent instance a given producer has ever emitted (cross-instance rule; not enforceable by this schema alone).",
+      "type": "string",
+      "minLength": 1
+    },
+    "contractVersion": {
+      "description": "Contract major version. Must be in the reader's own supported set.",
+      "type": "integer",
+      "enum": [1]
+    },
+    "digest": {
+      "description": "sha256 content-address over {contractVersion, id, belief, feature, ratio, camera, must-include, content-provenance, section?}, canonical form (sorted keys, no insignificant whitespace, section omitted if absent). Recomputation mismatch is fatal.",
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "provenance": {
+      "description": "Opaque, audit-only metadata. Carried verbatim; never interpreted by any conformant reader. Excluded from the digest.",
+      "type": "object",
+      "additionalProperties": { "type": ["string", "number", "boolean"] }
+    },
+    "belief": {
+      "description": "The one sentence the creative makes the viewer believe. Captured verbatim at generation time. Immutable once first emitted for this id (a trust-layer rule, not schema-checkable).",
+      "type": "string",
+      "minLength": 1
+    },
+    "feature": {
+      "description": "The Feature Mapping capability row this creative argues. The primary classification key.",
+      "type": "string",
+      "enum": [
+        "automation",
+        "search",
+        "analytics",
+        "security",
+        "collaboration",
+        "ai-intelligence",
+        "configuration"
+      ]
+    },
+    "ratio": {
+      "description": "The creative's aspect ratio, asked at intake and held exact.",
+      "type": "string",
+      "enum": ["1:1", "4:3", "3:4", "16:9"]
+    },
+    "camera": {
+      "description": "The semantic framing distance chosen to prove the belief.",
+      "type": "string",
+      "enum": ["establishing", "product", "workflow", "component", "macro"]
+    },
+    "must-include": {
+      "description": "Verbatim hard content requirements from intake. Always present as an array; empty when none were declared. Never reconstructed after the fact.",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "content-provenance": {
+      "description": "Whether every data point in the creative traces to the original intake spec (human) or the generator invented content to fill a gap (augmented). Decided once, at generation time.",
+      "type": "string",
+      "enum": ["human", "augmented"]
+    },
+    "section": {
+      "description": "Intended placement, when known at intake. Never guessed retroactively — absent means unknown, not 'no preference'.",
+      "type": "string",
+      "enum": ["hero", "feature", "benefit", "cta", "social", "collateral"]
+    }
+  },
+  "$comment": "additionalProperties is true at the top level so an unrecognized key never fails schema validation (forward-compatibility) — a conformant reader implementation SHOULD still warn on it, per the specification's error model (CG7 §7). additionalProperties is deliberately NOT relaxed inside any enum property: an unrecognized enum VALUE is always a fatal structural error, never a warning, because it breaks that field's own closed vocabulary rather than merely adding an unread extra."
+}

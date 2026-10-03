@@ -1,0 +1,15 @@
+schema_version: "1.0"
+kind: documentation
+identity:
+  id: "canonical::token-base"
+  title: "Token Base"
+ownership:
+  owner: "offscript-authority"
+scope:
+  class: canonical
+  identity: "offscript"
+governance:
+  authority: canonical-global
+semantics:
+  produces:
+    - "concept:brand-color-role"

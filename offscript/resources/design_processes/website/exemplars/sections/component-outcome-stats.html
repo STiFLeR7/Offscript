@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CR — Outcome · stats band</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Grid · four-column-equal     from component-outcome-stats.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **The copy states what changed; the measures state by how much —
+              and they have to arrive together.** That is the profile's whole
+              distinction from a stat wall: this section argues an outcome
+              rather than displaying figures. So the split at the top is not
+              decoration, it is the argument, and the band below is its
+              evidence. Nothing may make either half look like the subject
+              alone.
+
+  STRUCTURE   Unchanged. Two-column top (claim left, argument + control right)
+              over a four-column measure band whose columns touch and are
+              separated by a hairline left border. DOM, the single script,
+              every `data-*` and the `.has-js` / `.reveal` / `.in` /
+              `--d` / `--bar-d` reveal contract are byte-compatible with the
+              frozen original (DR-22).
+
+  ENVIRONMENT `env-lake-mirror`, on `.ost-bar`. The blanket rule replaces every
+              abstract creative background with an approved environment
+              photograph, and the five-stop `linear-gradient` on the bar — dark
+              navy → brand blue → cyan, two of its stops raw hex — is the only
+              abstract background in the file. It is also the only surface here
+              carrying no type, which is what makes it the one place a
+              photograph may legitimately go: remove the picture and not a word
+              in this section changes legibility.
+
+              The stack is written as ONE background — grain, grunge, the
+              environment — because a blend mode composites against what is
+              beneath it in the SAME background; on a pseudo-element `overlay`
+              resolves against transparency and renders as grey static. The
+              URLs are written out rather than reached through `--cr-env-*`: a
+              `url()` inside a custom property resolves against the CONSUMING
+              document and fails silently. `background:` shorthand is avoided
+              on that element for the obvious reason — it resets the image.
+
+              The frozen wipe (`scaleX(0 → 1)`, origin left) is animation logic
+              and stays exactly as it is.
+
+  ACCENT      One moment: the control. Orange marks a rule, a fill or a control
+              and never a measure — so the four measures are ink, and the
+              gradient bars, which were four saturated moments in one band, are
+              now four crops of one quiet photograph.
+
+  TYPE        Every `clamp()` is gone; it resolves to sizes nobody authored
+              (the v2 headline landed on 60px, the measures on 58px, the labels
+              on 13px). The eyebrow keeps its bracketed text — that is frozen
+              content — but loses the tracking and the weight it was carrying:
+              supporting text is never uppercase and never tracked, and where
+              the words themselves are capitals that is the copy's decision,
+              not the style layer's.
+
+  RESPONSIVE  The original's breakpoints (900 / 760 / 480), unchanged. Type
+              steps on the pack's own ramp at 1024 and 700.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+    font-size: var(--cr-text-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .cr-ost {
+    background: var(--cr-page-ground);
+    padding: var(--cr-space-2xl) var(--cr-page-gutter);
+    font-family: var(--cr-font-body);
+  }
+  .ost-well {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+  }
+
+  /* ── Top 2-col split — the argument ─────────────────────────
+     Tracks are the original's. The gap between the two halves and the gap
+     down to the evidence are the section rhythm's roles, not numbers picked
+     to look right. */
+  .ost-top {
+    display: grid;
+    grid-template-columns: 55fr 45fr;
+    gap: var(--cr-space-xl);
+    align-items: start;
+    padding-bottom: var(--cr-rhythm-content);
+  }
+
+  /* Left */
+  .ost-eyebrow {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--cr-text-secondary);
+  }
+  /* Three peer sentences, each terminated — the size is the same for all three
+     and that IS the device. Heading → its own opening line is the cluster
+     role. */
+  .ost-headline {
+    margin: var(--cr-rhythm-cluster) 0 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h2);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+    max-width: var(--cr-measure-title);
+  }
+
+  /* Right */
+  .ost-body {
+    margin: 0 0 var(--cr-space-m);
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    max-width: var(--cr-measure-body);
+  }
+  /* THE ONE ACCENT MOMENT. A control, which is the sanctioned placement; the
+     pill radius is retired for buttons, and the 1.5px border it used is not a
+     stroke the system has. */
+  .ost-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    border: 0;
+    border-radius: var(--cr-radius-control);
+    background: var(--cr-accent-orange);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    letter-spacing: 0;
+    color: var(--cr-on-accent-light);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .18s ease;
+  }
+  .ost-cta:hover, .ost-cta:focus-visible { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+  .ost-cta:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 3px; }
+
+  /* ── Stats grid — the evidence ──────────────────────────────
+     Columns touch; the hairline left border is the whole separation. Both are
+     the original's and neither moves. */
+  .ost-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  /* THE CELL CLOSES ON ITS CONTENT NOW — directed, DR-51. The 240px floor and
+     the zero bottom padding were both in service of the environment strip: the
+     strip pinned to the foot of the cell, and the floor is what gave
+     `margin-top: auto` something to push against. With the strip gone, that
+     floor is holding open ~110px of nothing under every measure while the
+     hairline rule runs down past the last word. So the floor drops below the
+     content height — it no longer binds, and is kept only as the guard the
+     narrow breakpoints still need — and the bottom padding comes up to match
+     the top. The cell is symmetrical and the rules stop where the evidence
+     does. */
+  .ost-stat {
+    border-left: var(--cr-stroke) solid var(--cr-border-default);
+    padding: var(--cr-space-s);
+    display: flex;
+    flex-direction: column;
+    min-height: var(--cr-space-3xl);
+  }
+  /* Tabular figures so four measures on one row align down their stems while
+     the reveal runs. */
+  .ost-num {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h1);
+    letter-spacing: var(--cr-tracking-heading);
+    line-height: var(--cr-leading-heading);
+    color: var(--cr-text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+  .ost-label {
+    margin: var(--cr-space-xs) 0 0;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* THE ENVIRONMENT IS WITHDRAWN — directed, DR-51.
+     This carried `env-lake-mirror` under the standard three-layer treatment,
+     pinned to the foot of every cell as a 14px strip. DR-46 permits it — the
+     strip holds no type, so the photograph was a surface and not a backdrop
+     for words — but permission is not a reason. At 14px tall the asset is not
+     legible as a place: it is a band of colour sampled out of a landscape,
+     repeated four times under four unrelated measures, and it decorates the
+     evidence rather than saying anything about it. Under `nothing decorative
+     survives`, an element that can be removed without loss should be.
+
+     `display: none` and not a deleted node: the DOM and the script are frozen
+     (DR-22) and the script still addresses `.ost-bar`. The reveal rules below
+     are left standing for the same reason — they are the reduced-motion guard
+     and its trigger, and a guard is matched to its trigger's specificity or it
+     is not a guard. They now animate nothing. */
+  .ost-bar {
+    display: none;
+    margin-top: auto;
+    height: 14px;
+    transform-origin: left center;
+    /* Default: visible without JS */
+    transform: scaleX(1);
+  }
+
+  /* ── Scroll-reveal — unchanged in kind ──────────────────────── */
+  .cr-ost.has-js .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  .cr-ost.has-js .reveal.in {
+    opacity: 1;
+    transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+
+  /* Bar starts hidden with JS; animates to scaleX(1) on .in */
+  .cr-ost.has-js .ost-bar {
+    transform: scaleX(0);
+  }
+  .cr-ost.has-js .ost-bar.in {
+    transform: scaleX(1);
+    transition: transform .9s cubic-bezier(.16,.84,.44,1);
+    transition-delay: var(--bar-d, 0ms);
+  }
+
+  /* Matched to the trigger's specificity — a guard that loses the cascade is
+     not a guard. */
+  @media (prefers-reduced-motion: reduce) {
+    .cr-ost.has-js .reveal,
+    .cr-ost.has-js .reveal.in { opacity: 1; transform: none; transition: none; }
+    .cr-ost.has-js .ost-bar,
+    .cr-ost.has-js .ost-bar.in { transform: scaleX(1); transition: none; }
+  }
+
+  /* ── Responsive — the ORIGINAL's breakpoints and moves ──────── */
+  @media (max-width: 900px) {
+    .ost-top {
+      grid-template-columns: 1fr;
+      gap: var(--cr-space-m);
+      padding-bottom: var(--cr-rhythm-content);
+    }
+  }
+  @media (max-width: 760px) {
+    .ost-stats { grid-template-columns: repeat(2, 1fr); }
+  }
+  /* One column, and the floor comes off entirely. It existed to keep air
+     between the label and the strip pinned under it; with the strip withdrawn
+     there is nothing to keep air from, and a floor on a single-column stack
+     only pads four cells to a height none of them needs. The cell is its
+     content plus one step of padding on every side, here as everywhere. */
+  @media (max-width: 480px) {
+    .ost-stats { grid-template-columns: 1fr; }
+    .ost-stat { min-height: 0; padding: var(--cr-space-s); }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. Both grid track lists are the original's, and the cell's
+     min-height began as the same silhouette expressed in space tokens rather
+     than a hand-picked 210 / 190 / 160.
+
+     ONE LINE IS `directed`, and it is the only decision in the block. The
+     environment strip that pinned to the foot of each cell is withdrawn
+     (DR-51), so the cell no longer holds space for it: the bottom padding
+     comes up to match the top and the cell closes on its content. The used
+     height of the cell and of everything above it moves with that, and every
+     one of those is a resultant the predicate suppresses under the authored
+     change that causes it. The one dimension somebody chose is the padding,
+     so the padding is the one thing claimed. The strip itself needs no line:
+     it carries no text and no element children, so it was never in the
+     measured set on either side.
+  .ost-body     | font-size              | type-ramp
+  .ost-body     | line-height            | type-ramp
+  .ost-body     | margin-bottom          | spacing-scale
+  .ost-body     | max-width              | measure
+  .ost-cta      | border-bottom-width    | stroke
+  .ost-cta      | border-left-width      | stroke
+  .ost-cta      | border-radius          | radius-pair
+  .ost-cta      | border-right-width     | stroke
+  .ost-cta      | border-top-width       | stroke
+  .ost-cta      | column-gap             | spacing-scale
+  .ost-cta      | font-size              | type-ramp
+  .ost-cta      | padding-left           | spacing-scale
+  .ost-cta      | padding-right          | spacing-scale
+  .ost-cta      | row-gap                | spacing-scale
+  .ost-eyebrow  | font-size              | type-ramp
+  .ost-headline | font-size              | type-ramp
+  .ost-headline | line-height            | type-ramp
+  .ost-headline | margin-top             | spacing-scale
+  .ost-headline | max-width              | measure
+  .ost-label    | font-size              | type-ramp
+  .ost-label    | line-height            | type-ramp
+  .ost-label    | margin-top             | spacing-scale
+  .ost-left     | font-size              | type-ramp
+  .ost-num      | font-size              | type-ramp
+  .ost-num      | line-height            | type-ramp
+  .ost-right    | font-size              | type-ramp
+  .ost-stat     | font-size              | type-ramp
+  .ost-stat     | min-height             | spacing-scale
+  .ost-stat     | padding-bottom         | directed
+  .ost-stat     | padding-left           | spacing-scale
+  .ost-stat     | padding-right          | spacing-scale
+  .ost-stat     | padding-top            | spacing-scale
+  .ost-stats    | font-size              | type-ramp
+  .ost-top      | column-gap             | spacing-scale
+  .ost-top      | font-size              | type-ramp
+  .ost-top      | padding-bottom         | spacing-scale
+  .ost-top      | row-gap                | spacing-scale
+  .ost-well     | font-size              | type-ramp
+  br            | font-size              | type-ramp
+  br            | line-height            | type-ramp
+-->
+
+<section class="cr-ost" data-screen-label="Outcome · stats band"
+         data-archetype="proof-layout" data-hierarchy="proof" data-intent="prove"
+         data-register="confident" data-signature="large-statistic" data-density="medium">
+  <div class="ost-well">
+
+    <!-- ── Top 2-col ──────────────────────────────────────── -->
+    <div class="ost-top">
+
+      <div class="ost-left">
+        <p class="ost-eyebrow reveal" style="--d:0ms">[ THE RESULT ]</p>
+        <h2 class="ost-headline reveal" style="--d:80ms">
+          No backlogs.<br>
+          No blind spots.<br>
+          No added headcount.
+        </h2>
+      </div>
+
+      <div class="ost-right">
+        <p class="ost-body reveal" style="--d:80ms">We built Example Brand because manual operations were bottlenecking businesses that deserved to grow faster. Our team combines deep process engineering with purpose-built AI to remove the work that shouldn't exist. The result is a platform where automation delivers from day one — and compounds over time.</p>
+        <a class="ost-cta reveal" style="--d:160ms" href="#">Learn More About Us &rarr;</a>
+      </div>
+
+    </div>
+
+    <!-- ── Stats grid ─────────────────────────────────────── -->
+    <div class="ost-stats">
+
+      <div class="ost-stat reveal" style="--d:160ms">
+        <p class="ost-num">92%</p>
+        <p class="ost-label">ops cost removed<br>per deployment</p>
+        <div class="ost-bar" style="--bar-d:280ms"></div>
+      </div>
+
+      <div class="ost-stat reveal" style="--d:240ms">
+        <p class="ost-num">11.3&times;</p>
+        <p class="ost-label">average client ROI<br>delivered</p>
+        <div class="ost-bar" style="--bar-d:430ms"></div>
+      </div>
+
+      <div class="ost-stat reveal" style="--d:320ms">
+        <p class="ost-num">4 wks</p>
+        <p class="ost-label">from kickoff to<br>live deployment</p>
+        <div class="ost-bar" style="--bar-d:580ms"></div>
+      </div>
+
+      <div class="ost-stat reveal" style="--d:400ms">
+        <p class="ost-num">80%</p>
+        <p class="ost-label">of routine work<br>automated per client</p>
+        <div class="ost-bar" style="--bar-d:730ms"></div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<script>
+  (function () {
+    var sec = document.querySelector('.cr-ost');
+    if (!sec) return;
+    if (!('IntersectionObserver' in window)) return;
+
+    sec.classList.add('has-js');
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        // Reveal content elements
+        sec.querySelectorAll('.reveal').forEach(function (el) {
+          el.classList.add('in');
+        });
+        // Animate gradient bars (separate class so transition applies cleanly)
+        sec.querySelectorAll('.ost-bar').forEach(function (bar) {
+          bar.classList.add('in');
+        });
+        io.disconnect();
+      });
+    }, { threshold: 0.08 });
+
+    io.observe(sec);
+  })();
+</script>
+</body>
+</html>

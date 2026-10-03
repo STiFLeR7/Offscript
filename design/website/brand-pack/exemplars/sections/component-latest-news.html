@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR &middot; Latest News</title>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css" />
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — Latest News · Press-Release Card Grid    component-latest-news.html
+  ════════════════════════════════════════════════════════════════════════
+  COMPOSITION  Warm off-white (--cr-bg-warm) section.
+               • HEADER: Urbanist 700 44px title + Inter 16px subtitle, TOP-LEFT;
+                 outlined pill "View All Insights" button, BOTTOM-RIGHT.
+                 space-between + align-items: flex-end.
+               • 3-COLUMN equal-width card grid, 20px gap, 1240px well.
+               • Each card (16px radius, hairline border, no shadow):
+                 ① IMAGE REGION (height 230px, full-bleed):
+                    — Card 1: blur-7.png (cool blue/teal) + dark logos
+                    — Card 2: amber CSS gradient + dark logos
+                    — Card 3: dark navy CSS gradient + white logos
+                    — badge pill (white, top-left, 14px offset)
+                    — TWO logos side-by-side, 1px vertical separator, centred
+                 ② CONTENT AREA (20/20/24px padding):
+                    — date (Inter 13px, --cr-fg-3)
+                    — 2–3 line title (Urbanist 600, 17px, --cr-fg)
+
+  INSPIRATION  Lumos Technologies "Latest from The Lantern" press-release grid.
+               Exact layout/card-structure/logo-pair vocabulary matched.
+               Palette: brand wins — sky-blue → blur-7 cool, neon-green →
+               CR amber gradient, dark-teal → CR navy gradient.
+               Partner logos: SAP, Salesforce, Oracle (styled text, recognizable
+               brand typography) + CR logo from local assets.
+
+  ROWS/RATIOS  Fixed 230px image height on ~400px card width → ~1.74:1 ratio,
+               matching source's ~55–60% image area vs total card height.
+               minmax(230px, auto) would overflow-safe but fixed height holds
+               the source ratio exactly across the 3 equal columns.
+
+  MOTION       Transform-only staggered entrance: translateY(20px)→0, 400ms ease,
+               delays 0 / 80 / 160ms. NO opacity change so cards are always
+               visible in headless screenshots.
+
+  RESPONSIVE   3-col → 2-col (≤960px) → 1-col (≤640px).
+               Header stacks (column) on mobile.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+/* ── Reset ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--cr-bg-warm); }
+
+/* ── Section ────────────────────────────────────────────── */
+.news-section {
+  background: var(--cr-bg-warm);
+  padding: 80px 100px;
+}
+
+/* ── Well ───────────────────────────────────────────────── */
+.news-well {
+  max-width: var(--cr-content-max);
+  margin: 0 auto;
+}
+
+/* ── Header row ─────────────────────────────────────────── */
+.news-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 40px;
+}
+
+.news-title {
+  font-family: var(--cr-font-display);
+  font-weight: 700;
+  font-size: 44px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--cr-fg);
+  margin-bottom: 10px;
+}
+
+.news-sub {
+  font-family: var(--cr-font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--cr-fg-3);
+}
+
+.btn-view-all {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 22px;
+  border: 1.5px solid var(--cr-fg);
+  border-radius: var(--cr-radius-pill);
+  font-family: var(--cr-font-body);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--cr-fg);
+  background: transparent;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 150ms ease;
+  flex-shrink: 0;
+}
+.btn-view-all:hover { background: rgba(14,14,14,0.05); }
+
+/* ── Card grid ──────────────────────────────────────────── */
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* ── Card ───────────────────────────────────────────────── */
+.news-card {
+  background: var(--cr-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  /* transform-only stagger — never hides the card, safe for screenshots */
+  animation: card-rise 400ms ease both;
+}
+.news-card:nth-child(1) { animation-delay: 0ms; }
+.news-card:nth-child(2) { animation-delay: 80ms; }
+.news-card:nth-child(3) { animation-delay: 160ms; }
+
+@keyframes card-rise {
+  from { transform: translateY(20px); }
+  to   { transform: translateY(0); }
+}
+
+/* ── Card image region ──────────────────────────────────── */
+.card-image {
+  position: relative;
+  height: 230px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* Card 1 — very light pastel sky-blue (source is near-white, airy; blur-7 is too saturated) */
+.card-image.bg-blue {
+  background: linear-gradient(145deg, #C8E3F4 0%, #DAEEFB 30%, #EEF7FF 55%, #C2DDF0 100%);
+}
+
+/* Card 2 — on-brand cool atmospheric (blur-7.png); the source's neon-lime/green tone
+   is deliberately dropped — v2 brand law allows only the cool blue/teal axis */
+.card-image.bg-cool {
+  background-image: url('../assets/creative-background/blur-7.png');
+  background-size: cover;
+  background-position: center;
+}
+
+/* Card 3 — deep dark navy, multi-stop for depth */
+.card-image.bg-navy {
+  background: linear-gradient(155deg, #0A1828 0%, #091020 35%, #0C1430 60%, #0D2040 100%);
+}
+
+/* ── Badge ──────────────────────────────────────────────── */
+.card-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 5px 12px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: var(--cr-radius-pill);
+  font-family: var(--cr-font-body);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--cr-fg-2);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* ── Logo pair ──────────────────────────────────────────── */
+.logo-pair {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  width: 100%;
+  padding: 0 32px;
+  position: relative;
+  z-index: 1;
+}
+
+.logo-sep {
+  width: 1px;
+  height: 44px;
+  background: rgba(14,14,14,0.25);
+  flex-shrink: 0;
+}
+.bg-navy .logo-sep { background: rgba(255,255,255,0.45); }
+
+/* CR wordmark */
+.logo-cr {
+  height: 30px;
+  object-fit: contain;
+  flex-shrink: 0;
+  max-width: 140px;
+}
+
+/* Partner logo treatments — mark + text */
+.logo-partner {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* SAP: bold wordmark, dark on pastel-blue bg */
+.logo-sap {
+  font-family: 'Arial Black', Arial, sans-serif;
+  font-weight: 900;
+  font-size: 34px;
+  letter-spacing: -1px;
+  color: var(--cr-ink-flat);
+}
+
+/* Salesforce: cloud icon + text, dark on bright-green bg */
+.logo-sf {
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.2px;
+  color: var(--cr-ink-flat);
+}
+
+/* Oracle: database icon + text, white on dark-navy bg */
+.logo-oracle {
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+  font-size: 27px;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+}
+
+/* ── Card content ───────────────────────────────────────── */
+.card-body {
+  padding: 20px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.card-date {
+  font-family: var(--cr-font-body);
+  font-size: 13px;
+  color: var(--cr-fg-3);
+  font-weight: 400;
+}
+
+.card-title {
+  font-family: var(--cr-font-display);
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--cr-fg);
+  letter-spacing: -0.01em;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .news-section { padding: 64px 60px; }
+}
+
+@media (max-width: 960px) {
+  .news-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+}
+
+@media (max-width: 768px) {
+  .news-section { padding: 48px 24px; }
+}
+
+@media (max-width: 640px) {
+  .news-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .news-title  { font-size: 32px; }
+  .news-grid   { grid-template-columns: 1fr; gap: 16px; }
+}
+</style>
+</head>
+
+<body>
+<section class="news-section" data-screen-label="Latest News">
+  <div class="news-well">
+
+    <!-- ── Header ─────────────────────────────────────── -->
+    <header class="news-header">
+      <div>
+        <h2 class="news-title">Latest from Example Brand</h2>
+        <p class="news-sub">Insights on AI automation, process transformation, and enterprise outcomes.</p>
+      </div>
+      <a class="btn-view-all" href="#">View All Insights</a>
+    </header>
+
+    <!-- ── Card grid ──────────────────────────────────── -->
+    <div class="news-grid">
+
+      <!-- Card 1 — SAP partnership, cool blue image -->
+      <article class="news-card">
+        <div class="card-image bg-blue">
+          <span class="card-badge">Press Release</span>
+          <div class="logo-pair">
+            <span class="logo-partner logo-sap">SAP</span>
+            <div class="logo-sep"></div>
+            <img class="logo-cr" src="../assets/logo-color.svg" alt="Example Brand" />
+          </div>
+        </div>
+        <div class="card-body">
+          <time class="card-date">Dec 15, 2025</time>
+          <h3 class="card-title">Example Brand and SAP Partner to Automate Finance Operations at Scale</h3>
+        </div>
+      </article>
+
+      <!-- Card 2 — Salesforce case study (cool atmospheric, blur-7) -->
+      <article class="news-card">
+        <div class="card-image bg-cool">
+          <span class="card-badge">Case Study</span>
+          <div class="logo-pair">
+            <span class="logo-partner logo-sf">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--cr-ink-flat)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+              salesforce
+            </span>
+            <div class="logo-sep"></div>
+            <img class="logo-cr" src="../assets/logo-color.svg" alt="Example Brand" />
+          </div>
+        </div>
+        <div class="card-body">
+          <time class="card-date">Mar 5, 2025</time>
+          <h3 class="card-title">Example Brand and Salesforce Bring Autonomous CRM Workflows to Mid-Market Operations</h3>
+        </div>
+      </article>
+
+      <!-- Card 3 — Oracle integration, dark navy gradient -->
+      <article class="news-card">
+        <div class="card-image bg-navy">
+          <span class="card-badge">Press Release</span>
+          <div class="logo-pair">
+            <span class="logo-partner logo-oracle">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
+              oracle
+            </span>
+            <div class="logo-sep"></div>
+            <img class="logo-cr" src="../assets/logo-white.svg" alt="Example Brand" />
+          </div>
+        </div>
+        <div class="card-body">
+          <time class="card-date">Oct 9, 2024</time>
+          <h3 class="card-title">Example Brand Announces Integration with Oracle to Streamline AP Cycle Times with AI Agents</h3>
+        </div>
+      </article>
+
+    </div><!-- /news-grid -->
+  </div><!-- /news-well -->
+</section>
+</body>
+</html>

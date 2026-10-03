@@ -1,0 +1,48 @@
+{
+  "_about": "Format registry for the /design-init collateral branch (S5C collateral-spec / S7C collateral-build / S8C collateral-review). One entry per supported collateral type. v1 covers one-pager (the A4 brochure / sell sheet); social-pack / html-email / case-study are reserved for v2+. (Pitch-deck graduated to its own first-class `pitch-deck` track on 2026-05-20 — see .claude/lib/pitch-deck-formats.json; it is no longer a collateral type.) The .claude/pipeline/.collateral-type dotfile holds the active key (pinned to one-pager in v1). There is no shipped layout kit — the build GENERATES each A4 page's layout from the page_archetypes vocabulary below + the S6C direction + imagegen references, skinned entirely from the project's Design.md §2 tokens (the client's design system). This mirrors how the landing-page branch's frontend-build generates layout from the direction rather than porting a fixed kit.",
+  "version": 3,
+  "formats": {
+    "one-pager": {
+      "label": "One-pager / sell sheet",
+      "summary": "A printable A4 marketing brochure that distils the offer to a small number of pages. The classic 'leave-behind' / 'PDF you email'.",
+      "deliverable": "self-contained HTML+CSS file (stacked A4 pages); the editable HTML is the deliverable. An A4 PDF is OPTIONAL and never auto-created — S9C asks the designer whether to render it.",
+      "ui_kit": "brochure",
+      "ui_kit_note": "`ui_kit` is the build-MODE selector (brochure) — NOT a path to a shipped kit (there is none). The build sizes each `.page` to A4 and generates the archetype layouts named in `page_archetypes` from the `archetype_notes` geometry + the S6C direction + imagegen references, skinned from Design.md §2.",
+      "page": {
+        "name": "page",
+        "format": "A4",
+        "orientation": "portrait",
+        "size_mm": { "w": 210, "h": 297 },
+        "size_px": { "w": 595, "h": 842, "_note": "A4 at 72dpi; the build sizes .page in mm and lays the interior out in these px values" }
+      },
+      "units": { "name": "page", "min": 1, "max": 4, "default": 4 },
+      "page_archetypes": ["CoverPage", "ContentPage", "StatsPage", "ClosingPage"],
+      "archetype_notes": {
+        "CoverPage": "dark hero sheet — headline + subhead + a single CTA + the brand watermark",
+        "ContentPage": "the mechanism — section headline + intro + a 3-up FeatureRow and/or a hairline DiagnosticList",
+        "StatsPage": "the proof — section headline + intro + a 2x2 stat-card grid (optionally a compact comparison strip)",
+        "ClosingPage": "the ask — short label/text rows ('how it works') + a dark CtaStrip + a footer row"
+      },
+      "metrics": { "pad": 48, "header_top": 64, "bottom_reserve": 64, "section_gap": 28, "heading_body_gap": 20, "tight_gap": 12 },
+      "min_text_px": 9,
+      "render": "html (pdf on request at S9C; S8C measures with --no-pdf, no file)",
+      "output_dir": ".claude/pipeline/collateral/one-pager/",
+      "build_path": "Design/Hand-off/Collateral/<slug>-one-pager/<slug>.html",
+      "deliverable_path": "Design/Hand-off/Collateral/<slug>-one-pager/<slug>.html",
+      "optional_pdf_path": "Design/Hand-off/Collateral/<slug>-one-pager/<slug>.pdf",
+      "hard_constraints": [
+        "every page's content fits within the page box minus print margins — nothing overflows the bottom edge or the stripe/footer",
+        "no two text elements overlap",
+        "print-to-PDF produces exactly the declared page count (a page that wraps to two = FAIL)",
+        "all colours resolve to a Design.md §2 token — off-palette = FAIL",
+        "HTML+CSS only — no React/Vue/Tailwind/JS framework, no build step; no motion (static brochure)",
+        "fonts: only what Design.md §2 declares (Google-Fonts-or-parent-only, max 2 families)"
+      ]
+    }
+  },
+  "_deferred_v2": {
+    "social-pack": "1080x1080 / 1080x1350 / OG 1200x630 fixed-px frames; rendered to PNG; review check = legible at 50% scale; ui_kit social",
+    "html-email": "~600px content width, table layout, inline styles, email-client-safe; ui_kit email",
+    "case-study": "A4 multi-page (2-6 pages), long-form text + charts; ui_kit case-study (extends brochure)"
+  }
+}

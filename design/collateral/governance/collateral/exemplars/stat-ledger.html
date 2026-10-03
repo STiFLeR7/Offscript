@@ -1,0 +1,164 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css"></head>
+<body style="background:#FFFFFF">
+<div style="max-width:620px; display:flex; flex-direction:column; gap:28px">
+
+  <!-- (1) Single stat row · no background -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:10px">1 · Single row · no background</div>
+    <div class="cr-stat-ledger">
+      <div class="cr-stat-line">
+        <div class="cr-stat-sub">Documents processed in production</div>
+        <div class="cr-stat-value">18.0<span class="unit">M</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- (2) Single stat row · WITH background (light tonal .cr-band) -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:10px">2 · Single row · on a tonal background</div>
+    <div class="cr-band tone-sky">
+      <div class="cr-stat-ledger">
+        <div class="cr-stat-line">
+          <div class="cr-stat-sub">Win rate against incumbents</div>
+          <div class="cr-stat-value">&gt;50<span class="unit">%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- (3) Multiple stat rows · no background -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:10px">3 · Multiple rows · no background</div>
+    <div class="cr-stat-ledger">
+      <div class="cr-stat-line">
+        <div class="cr-stat-sub">Documents processed in production</div>
+        <div class="cr-stat-value">18.0<span class="unit">M</span></div>
+      </div>
+      <div class="cr-stat-line">
+        <div class="cr-stat-sub">Integrations live across the stack</div>
+        <div class="cr-stat-value">+4,000</div>
+      </div>
+      <div class="cr-stat-line">
+        <div class="cr-stat-sub">Deployment regions covering the footprint</div>
+        <div class="cr-stat-value">3</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- (4) Multiple stat rows · WHOLE component on a navy background -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:10px">4 · Multiple rows · whole component on a navy background</div>
+    <div class="cr-band cr-band--dark">
+      <div class="cr-stat-ledger">
+        <div class="cr-stat-line">
+          <div class="cr-stat-sub">Documents processed in production</div>
+          <div class="cr-stat-value">18.0<span class="unit">M</span></div>
+        </div>
+        <div class="cr-stat-line">
+          <div class="cr-stat-sub">Actions automated per year</div>
+          <div class="cr-stat-value">+1<span class="unit">M</span></div>
+        </div>
+        <div class="cr-stat-line">
+          <div class="cr-stat-sub">Deployment regions covering the footprint</div>
+          <div class="cr-stat-value">3</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- (5) Order flip + alignment proof · value-first, deliberately varying numeral widths -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:10px">5 · Value-first order (container modifier) · varying numeral widths share one text start</div>
+    <div class="cr-stat-ledger cr-stat-ledger--value-first">
+      <div class="cr-stat-line">
+        <div class="cr-stat-label">Documents processed in production</div>
+        <div class="cr-stat-value">18.0<span class="unit">M</span></div>
+      </div>
+      <div class="cr-stat-line">
+        <div class="cr-stat-label">Win rate against incumbents</div>
+        <div class="cr-stat-value">&gt;50<span class="unit">%</span></div>
+      </div>
+      <div class="cr-stat-line">
+        <div class="cr-stat-label">Assets under automation</div>
+        <div class="cr-stat-value"><span class="unit">$</span>81<span class="unit">B</span></div>
+      </div>
+      <div class="cr-stat-line">
+        <div class="cr-stat-label">Integrations live across the stack</div>
+        <div class="cr-stat-value">+4,000</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- (6) Named-metric tier (.cr-stat-label) on a navy background — label inverts to white, not charcoal -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:10px">6 · Named-metric tier (.cr-stat-label) on navy · label inverts to white</div>
+    <div class="cr-band cr-band--dark">
+      <div class="cr-stat-ledger">
+        <div class="cr-stat-line">
+          <div class="cr-stat-label">Net cumulative funded accounts</div>
+          <div class="cr-stat-value">18.0<span class="unit">M</span></div>
+        </div>
+        <div class="cr-stat-line">
+          <div class="cr-stat-label">Monthly active users</div>
+          <div class="cr-stat-value">17.7<span class="unit">M</span></div>
+        </div>
+        <div class="cr-stat-line">
+          <div class="cr-stat-label">Assets under custody</div>
+          <div class="cr-stat-value"><span class="unit">$</span>81<span class="unit">B</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- (7) Content-responsive vertical alignment — a multi-line label TOP-aligns the pair, single-line labels sit at the numeral's bottom/baseline -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:10px">7 · Vertical alignment · tall (multi-line) label top-aligns; short labels sit at the numeral baseline</div>
+    <div class="cr-stat-ledger">
+      <div class="cr-stat-line">
+        <div class="cr-stat-sub">Win rate against incumbents</div>
+        <div class="cr-stat-value">&gt;50<span class="unit">%</span></div>
+      </div>
+      <div class="cr-stat-line">
+        <div class="cr-stat-sub">Integrations live across the entire partner stack and running in production across every deployment region today</div>
+        <div class="cr-stat-value">+4,000</div>
+      </div>
+      <div class="cr-stat-line">
+        <div class="cr-stat-sub">Deployment regions</div>
+        <div class="cr-stat-value">3</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- (8) Value-first + a multi-line label — the fragile axis: tall row must still top-align, labels still share one start -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:10px">8 · Value-first + multi-line label · tall row top-aligns, short rows baseline, labels share one start</div>
+    <div class="cr-stat-ledger cr-stat-ledger--value-first">
+      <div class="cr-stat-line">
+        <div class="cr-stat-sub">Win rate against incumbents</div>
+        <div class="cr-stat-value">&gt;50<span class="unit">%</span></div>
+      </div>
+      <div class="cr-stat-line">
+        <div class="cr-stat-sub">Integrations live across the entire partner stack and running in production across every deployment region today</div>
+        <div class="cr-stat-value">+4,000</div>
+      </div>
+      <div class="cr-stat-line">
+        <div class="cr-stat-sub">Deployment regions</div>
+        <div class="cr-stat-value">3</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div style="font:400 11px/1.5 Inter; color:#616161; margin-top:14px; max-width:620px">Stat ledger ·
+  one stat per row, supporting text + numeral <strong>side by side</strong>, hairline-ruled — the
+  side-by-side sibling of the metrics wall (<code>.cr-stat-wall</code>, which stacks numeral over
+  caption). The ledger is a grid; each <code>.cr-stat-line</code> is a <code>subgrid</code> row, so the
+  numeral column is shared across rows and <strong>every supporting-text cell starts at one x</strong>
+  even when figures differ in width. Reuses <code>.cr-stat-value</code> (with <code>.unit</code>) +
+  <code>.cr-stat-sub</code> (default supporting text) or <code>.cr-stat-label</code> (stronger
+  named-metric tier). Numerals are primary dark / inverse text, never an accent; one uniform 44px size
+  per ledger (keep figures short — long values crowd a side-by-side row). Default order is label-first;
+  <code>.cr-stat-ledger--value-first</code> flips it at the container. Dark inversion (white numerals,
+  faint hairlines) is scoped under <code>.cr-stat-ledger</code> on <code>.cr-page--dark</code> /
+  <code>.cr-band--dark</code>. Figures are placeholders.</div>
+</body></html>

@@ -1,0 +1,70 @@
+<!-- CURATED EXEMPLAR — archetype: faq. Distilled from apa-landing.html #faq. Match the rhythm/discipline; do NOT clone. -->
+<section id="faq" class="cr-band-warm cr-section" aria-label="Frequently asked questions">
+  <style>
+    /* doc-scoped: row/accordion LAYOUT only — surfaces, type & cards come from the house sheet */
+    #faq .fq-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: var(--cr-space-15); align-items: start; }
+    #faq .fq-intro { position: sticky; top: var(--cr-space-10); display: flex; flex-direction: column; gap: var(--cr-space-4); }
+    #faq .fq-intro .cr-link { margin-top: var(--cr-space-2); }
+    #faq .fq-list { display: flex; flex-direction: column; gap: var(--cr-space-3); }
+    /* .cr-card supplies surface/border/radius; the accordion pads its summary + panel instead */
+    #faq .fq-item { padding: 0; overflow: hidden; }
+    #faq .fq-q { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: var(--cr-space-4);
+      list-style: none; cursor: pointer; padding: var(--cr-space-5) var(--cr-space-6); transition: color .16s ease; }
+    #faq .fq-q::-webkit-details-marker { display: none; }
+    #faq .fq-q:hover { color: var(--cr-brand-700); }
+    /* pure-CSS +/- marker — two bars, vertical bar collapses on open (transform-only, resting opacity 1) */
+    #faq .fq-ico { position: relative; width: 18px; height: 18px; flex: none; }
+    #faq .fq-ico::before, #faq .fq-ico::after { content: ""; position: absolute; background: var(--cr-brand);
+      border-radius: 2px; transition: transform .25s ease; }
+    #faq .fq-ico::before { top: 8px; left: 0; width: 18px; height: 2px; }
+    #faq .fq-ico::after  { top: 0; left: 8px; width: 2px; height: 18px; }
+    #faq .fq-item[open] .fq-ico::after { transform: scaleY(0); }
+    #faq .fq-panel { padding: 0 var(--cr-space-6) var(--cr-space-5); }
+    #faq .fq-panel .cr-p { max-width: 560px; }
+    @media (prefers-reduced-motion: reduce) {
+      #faq .fq-ico::before, #faq .fq-ico::after { transition: none; }
+    }
+    @media (max-width: 900px) {
+      #faq .fq-grid { grid-template-columns: 1fr; gap: var(--cr-space-10); }
+      #faq .fq-intro { position: static; }
+    }
+  </style>
+
+  <div class="cr-container">
+    <div class="fq-grid">
+      <div class="fq-intro">
+        <span class="cr-eyebrow">Questions</span>
+        <h2 class="cr-h-section">The Things Ops Leaders Ask Us First.</h2>
+        <p class="cr-p">Still weighing it up? The fastest answer is a free process audit — we'll show you exactly what's automatable.</p>
+        <a class="cr-link" href="#cta">Book a free process audit <span class="cr-arrow" aria-hidden="true">&rarr;</span></a>
+      </div>
+
+      <div class="fq-list">
+        <details class="cr-card fq-item" open>
+          <summary class="fq-q"><span class="cr-h-card">How does this work with our existing systems?</span><span class="fq-ico" aria-hidden="true"></span></summary>
+          <div class="fq-panel"><p class="cr-p">Agents operate on top of the tools you already use — your ERP, CRM, ticketing, email, and spreadsheets — through APIs or the same screens your team uses. No rip-and-replace.</p></div>
+        </details>
+        <details class="cr-card fq-item">
+          <summary class="fq-q"><span class="cr-h-card">Is it secure and compliant?</span><span class="fq-ico" aria-hidden="true"></span></summary>
+          <div class="fq-panel"><p class="cr-p">Agents run inside your environment or a dedicated, access-scoped tenant. Every action is logged and auditable, and we support SOC 2, role-based access, and data-residency requirements.</p></div>
+        </details>
+        <details class="cr-card fq-item">
+          <summary class="fq-q"><span class="cr-h-card">How long until something is live?</span><span class="fq-ico" aria-hidden="true"></span></summary>
+          <div class="fq-panel"><p class="cr-p">The first agent is typically in production in about three weeks. We start with one high-value process, prove it, then expand from there.</p></div>
+        </details>
+        <details class="cr-card fq-item">
+          <summary class="fq-q"><span class="cr-h-card">What happens when an agent isn't sure?</span><span class="fq-ico" aria-hidden="true"></span></summary>
+          <div class="fq-panel"><p class="cr-p">It escalates. Agents act autonomously within the guardrails you set and hand off to a human the moment confidence drops — so the judgment calls stay with your team.</p></div>
+        </details>
+        <details class="cr-card fq-item">
+          <summary class="fq-q"><span class="cr-h-card">How is it priced?</span><span class="fq-ico" aria-hidden="true"></span></summary>
+          <div class="fq-panel"><p class="cr-p">Outcome-linked. We align our fee to the cost, time, or throughput we actually move — so you're buying results, not seats.</p></div>
+        </details>
+        <details class="cr-card fq-item">
+          <summary class="fq-q"><span class="cr-h-card">Will it disrupt my team's day-to-day?</span><span class="fq-ico" aria-hidden="true"></span></summary>
+          <div class="fq-panel"><p class="cr-p">No. Agents take the repetitive load while your people keep the exceptions and the relationships. Rollout runs alongside live operations.</p></div>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Divider · dither dissolve (use sparingly)</title>
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+<!--
+  COMPONENT   — Divider: dither / halftone DISSOLVE (a transition device, NOT a
+                between-every-section rule). USE SPARINGLY — drop it once in a
+                while where a dark band hands off to a light one, e.g. just under
+                a dark CTA band or to close a dense dark section into the next
+                light section. Content-agnostic: the .cr-divider block is pure
+                transition art and carries no copy of its own.
+                DISTINCT from `component-divider.html` (the soft brand-blue→cream
+                GRADIENT divider) — this is the monochrome DITHERED-DOT dissolve.
+  COMPOSITION — (user-supplied reference, 3024×540 monochrome strip) A solid band
+                at the TOP that dissolves DOWNWARD through an ordered (Bayer-8)
+                dither dot gradient into a flat light field, ending in a CLEAN
+                edge — the dots simply thin out to nothing. Solid cap (~10% h) →
+                gamma-eased Bayer dither fade (→ ~82% h) → clean light foot.
+                NOTE: the source also showed ragged "drip" columns hanging below
+                the band, and an earlier pass reproduced them — but per user
+                feedback those danglers read as decorative/festive (toran-like)
+                rather than SaaS-tech, so they were REMOVED. This is now the clean
+                dissolve only (constant-size dots, no per-column drips/jitter).
+  RE-SKIN     — Source is PURE monochrome (black → warm off-white); there is no
+                hue to translate, so this stays neutral per the fidelity contract
+                (brand wins on hue only when the source HAS one — it doesn't here).
+                Dots + solid cap = --cr-ink (#0E0E0E, never pure black). Light
+                field = --cr-bg-warm-2 (#F2F2F2, the source's warm cream). An
+                optional --div-accent var is exposed for flexibility but ships
+                neutral. NO brand blue inside the divider.
+  SEAM        — The divider's solid-ink cap reaches y=0 and the adjacent dark
+                band is the SAME --cr-ink with zero margin between them, so the
+                ink reads as one continuous surface (no hairline step). The cream
+                field is the SAME --cr-bg-warm-2 token as the section below, so the
+                bottom dissolves with no seam either (the charter's "hard seam"
+                failure mode, designed out on both edges).
+  CHARTER     — No shadows / elevation / glow; surfaces separate by contrast +
+                tone. The dot field is the dark-band dot-motif allowance (same
+                family as the CTA band's dot-matrix + the hairline-dot
+                constellation). Grain on the dark band tiles at native size.
+                Hover lives only on the real control (the demo CTA pill); the
+                divider canvas is aria-hidden + pointer-events:none.
+  FLIP        — .cr-divider.flip mirrors the canvas (scaleY(-1)) so the solid cap
+                sits at the BOTTOM and the dissolve rises UP (dots densify
+                downward into the cap) — for a light-section → dark-band
+                transition. Same canvas, one class.
+  MOTION      — Deliberately the MOST restrained thing on the page so it never
+                competes with an adjacent CTA: a single one-time opacity fade-in
+                of the canvas on first viewport hit (IntersectionObserver, fires
+                once). No perpetual motion, no per-frame loop. prefers-reduced-
+                motion → snaps in. Without JS the canvas is absent and a CSS dot-
+                gradient fallback (.div-fallback, masked fade + solid cap) renders
+                a clean degraded version (a decorative divider may degrade to a
+                tasteful gradient — it carries no content).
+  Standalone: links ../colors_and_type.css only; own <style>; no shared CSS.
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-bg-warm-2);
+    font-family: var(--cr-font-body); color: var(--cr-fg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── The divider block — content-agnostic transition art ───────────────
+     Colours are CSS vars so it can be re-tinted per placement. Defaults mirror
+     --cr-ink (dots/cap) and --cr-bg-warm-2 (light field). */
+  .cr-divider {
+    --div-dark:   var(--cr-ink);          /* var(--cr-ink-flat) — dots + solid cap   */
+    --div-light:  var(--cr-bg-warm-2);    /* var(--cr-bg-grey-100) — the light field    */
+    --div-accent: var(--cr-ink);          /* exposed for flexibility; neutral by default */
+    position: relative;
+    width: 100%;
+    height: 280px;
+    background: var(--div-light);
+    overflow: hidden;
+    line-height: 0;                        /* kill the inline-canvas descender gap */
+  }
+  .div-canvas,
+  .div-fallback { position: absolute; inset: 0; display: block; }
+  .div-canvas   { pointer-events: none; }
+
+  /* No-JS fallback — masked dot-gradient + solid cap. Hidden once JS runs
+     (the canvas does the real thing). A divider may degrade to this gracefully. */
+  .div-fallback {
+    background-color: var(--div-light);
+    background-image: radial-gradient(var(--div-dark) 1.5px, transparent 1.7px);
+    background-size: 6px 6px;
+    background-position: 0 0;
+    -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 12%, rgba(0,0,0,.82) 28%, rgba(0,0,0,0) 60%);
+            mask-image: linear-gradient(to bottom, #000 0, #000 12%, rgba(0,0,0,.82) 28%, rgba(0,0,0,0) 60%);
+  }
+  .div-fallback::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0;
+    height: 12%; background: var(--div-dark);
+  }
+  .has-js .div-fallback { display: none; }
+
+  /* Flip — solid cap to the bottom, the dissolve rises into the light (light→dark use) */
+  .cr-divider.flip .div-canvas,
+  .cr-divider.flip .div-fallback { transform: scaleY(-1); }
+
+  /* One-time fade-in (restrained; never competes with a CTA) */
+  .has-js .div-canvas {
+    opacity: 0;
+    transition: opacity .7s cubic-bezier(.2,.7,.2,1);
+  }
+  .cr-divider.reveal .div-canvas { opacity: 1; }
+
+  /* ── Demo bands (the divider's two surfaces) ───────────────────────────
+     The dark band is FLAT --cr-ink to match the source's neutral black and the
+     divider's ink dots/cap (not the cool navy gradient — that's a different
+     device; fidelity wants neutral here). */
+  .band { padding: 88px 100px; text-align: center; }
+  /* Flat var(--cr-ink-flat) — exactly the divider's ink cap so the two read as one
+     continuous surface with zero seam (the source is grain-free; grain here
+     would micro-lighten the band and reveal the join). */
+  .band--dark {
+    position: relative; overflow: hidden;
+    background: var(--cr-ink); color: #fff;
+  }
+  .band--light { background: var(--cr-bg-warm-2); color: var(--cr-fg); }
+
+  .band-inner { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+
+  .eyebrow {
+    font-family: var(--cr-font-body);
+    font-weight: 600; font-size: 13px; letter-spacing: 0.14em;
+    text-transform: uppercase; margin: 0 0 18px;
+  }
+  .band--dark  .eyebrow { color: rgba(255,255,255,0.52); }
+  .band--light .eyebrow { color: var(--cr-fg-3); }
+
+  .band-h {
+    font-family: var(--cr-font-display);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .band--dark  .band-h { color: #fff; font-size: clamp(30px, 4vw, 42px); }
+  .band--light .band-h { color: var(--cr-fg); font-size: clamp(28px, 3.6vw, 38px); }
+
+  .band-sub {
+    font-family: var(--cr-font-body);
+    font-weight: 400; font-size: 20px; line-height: 1.5;
+    color: var(--cr-fg-3); margin: 18px auto 0; max-width: 560px;
+  }
+  .band--dark .band-sub { color: rgba(255,255,255,0.66); }
+
+  /* Brand-blue pill — the one real control on the page */
+  .pill {
+    display: inline-flex; align-items: center; gap: 10px;
+    margin-top: 30px;
+    background: var(--cr-brand); color: #fff;
+    border: 0; border-radius: var(--cr-radius-pill); cursor: pointer; text-decoration: none;
+    padding: 15px 28px;
+    font-family: var(--cr-font-display);
+    font-weight: 700; font-size: 16px; letter-spacing: -0.01em;
+    transition: background .16s ease, transform .12s ease;
+  }
+  .pill .arrow { display: inline-block; transition: transform .16s ease; }
+  .pill:hover { background: var(--cr-brand-700); }
+  .pill:hover .arrow { transform: translateX(4px); }
+  .pill:active { transform: scale(.97); }
+
+  .reassure {
+    font-family: var(--cr-font-body);
+    font-weight: 500; font-size: 14px; color: rgba(255,255,255,0.46);
+    margin: 18px 0 0;
+  }
+
+  /* Compact closing dark band (flip demo) */
+  .band--slim { padding: 56px 100px; }
+  .wordmark {
+    font-family: var(--cr-font-display);
+    font-weight: 700; font-size: 17px; letter-spacing: 0.02em;
+    color: rgba(255,255,255,0.72); margin: 0;
+  }
+  .wordmark .dot { color: var(--cr-brand); }
+
+  /* ── Responsive ────────────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .band { padding: 64px 40px; }
+    .band--slim { padding: 44px 40px; }
+    .cr-divider { height: 230px; }
+  }
+  @media (max-width: 560px) {
+    .band { padding: 48px 20px; }
+    .band--slim { padding: 36px 20px; }
+    .cr-divider { height: 170px; }
+    .band-sub { font-size: 17px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .div-canvas { opacity: 1; transition: none; }
+    .pill, .pill .arrow { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<section data-screen-label="Divider · dither dissolve (use sparingly)">
+
+  <!-- ── Canonical use: dark CTA band → divider → next (light) section ──── -->
+  <div class="band band--dark">
+    <div class="band-inner">
+      <p class="eyebrow">Book a Working Session</p>
+      <h2 class="band-h">See It Running in Your Stack,<br>Not in a Demo.</h2>
+      <a class="pill" href="#">Book a Demo Call <span class="arrow" aria-hidden="true">&rarr;</span></a>
+      <p class="reassure">30 minutes · No commitment · We show you the numbers first</p>
+    </div>
+  </div>
+
+  <!-- The divider — dark dissolves down into the light field below -->
+  <div class="cr-divider">
+    <div class="div-fallback" aria-hidden="true"></div>
+    <canvas class="div-canvas" aria-hidden="true"></canvas>
+  </div>
+
+  <div class="band band--light">
+    <div class="band-inner">
+      <p class="eyebrow">What You Get</p>
+      <h2 class="band-h">Outcomes You Can Measure.</h2>
+      <p class="band-sub">Every workflow accounted for, every exception caught — billed on results, not on seats.</p>
+    </div>
+  </div>
+
+  <!-- ── Flip variant: a light section closing down into a dark band ────── -->
+  <div class="band band--light">
+    <div class="band-inner">
+      <p class="eyebrow">Proof, Not Promises</p>
+      <h2 class="band-h">From Production Deployments.</h2>
+    </div>
+  </div>
+
+  <!-- .flip mirrors the canvas: solid cap to the bottom, the dissolve rises up -->
+  <div class="cr-divider flip">
+    <div class="div-fallback" aria-hidden="true"></div>
+    <canvas class="div-canvas" aria-hidden="true"></canvas>
+  </div>
+
+  <div class="band band--dark band--slim">
+    <div class="band-inner">
+      <p class="wordmark">Example Brand<span class="dot"> · </span>Autonomous Process Automation</p>
+    </div>
+  </div>
+
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var BAYER  = buildBayer(8);
+
+  /* Recursive ordered (Bayer) dither matrix, normalised to (0,1). The regular
+     halftone structure is what makes the source read as ordered dithering
+     rather than a generic fade. */
+  function buildBayer(n) {
+    var m = [[0]], size = 1;
+    while (size < n) {
+      var s = size * 2, nm = [], y, x;
+      for (y = 0; y < s; y++) nm[y] = [];
+      for (y = 0; y < size; y++) for (x = 0; x < size; x++) {
+        var v = m[y][x];
+        nm[y][x]               = 4 * v + 0;
+        nm[y][x + size]        = 4 * v + 2;
+        nm[y + size][x]        = 4 * v + 3;
+        nm[y + size][x + size] = 4 * v + 1;
+      }
+      m = nm; size = s;
+    }
+    var d = n * n, out = [];
+    for (var yy = 0; yy < n; yy++) { out[yy] = []; for (var xx = 0; xx < n; xx++) out[yy][xx] = (m[yy][xx] + 0.5) / d; }
+    return out;
+  }
+
+  /* Resolve a CSS custom-property colour (handles var()/token) to an rgb string
+     the canvas can use as fillStyle. */
+  function resolveColor(el, prop, fallback) {
+    var v = getComputedStyle(el).getPropertyValue(prop).trim();
+    if (!v) return fallback;
+    var probe = document.createElement('span');
+    probe.style.cssText = 'display:none;color:' + v;
+    el.appendChild(probe);
+    var c = getComputedStyle(probe).color;
+    el.removeChild(probe);
+    return c || fallback;
+  }
+
+  function num(ds, key, def) { var v = parseFloat(ds[key]); return isNaN(v) ? def : v; }
+
+  function drawOne(div) {
+    var canvas = div.querySelector('.div-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var ds  = div.dataset;
+
+    var cell    = num(ds, 'cell', 5);        // grid pitch (px) — fine halftone
+    var dot     = num(ds, 'dot', 1.9);       // dot radius (px) — dense rows read dark, dots still separated
+    var solidF  = num(ds, 'solid', 0.10);    // solid cap, fraction of height (the band above carries most of the black)
+    var dissF   = num(ds, 'dissolve', 0.82); // dots thin out to nothing by here — a clean, full-height dissolve
+    var gamma   = num(ds, 'gamma', 0.72);    // <1 holds the dark midtones longer → richer, more gradual ramp
+
+    var dark = resolveColor(div, '--div-dark', '#0E0E0E');
+
+    var rect = div.getBoundingClientRect();
+    var W = rect.width, H = rect.height;
+    if (!W || !H) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width  = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+
+    var cols = Math.ceil(W / cell) + 1;
+    var rows = Math.ceil(H / cell) + 1;
+    var solidH = H * solidF, dissEnd = H * dissF;
+
+    /* Solid cap — reaches y=0 so it merges seamlessly with the dark band above. */
+    ctx.fillStyle = dark;
+    ctx.fillRect(0, 0, W, solidH);
+
+    for (var cy = 0; cy < rows; cy++) {
+      var y = cy * cell + cell * 0.5;
+      var brow = BAYER[cy & 7];
+      for (var cx = 0; cx < cols; cx++) {
+        /* Uniform dissolve: solid → Bayer-dithered fade → nothing. Clean tech
+           halftone — no per-column drips/jitter (they read as festive danglers). */
+        var cov;
+        if (y <= solidH) cov = 1;
+        else if (y >= dissEnd) cov = 0;
+        else cov = Math.pow(1 - (y - solidH) / (dissEnd - solidH), gamma);
+
+        if (cov <= 0.001) continue;
+        if (cov > brow[cx & 7]) {
+          ctx.beginPath();
+          ctx.arc(cx * cell + cell * 0.5, y, dot, 0, 6.2832);
+          ctx.fill();
+        }
+      }
+    }
+  }
+
+  var divs = [].slice.call(document.querySelectorAll('.cr-divider'));
+  function drawAll() { divs.forEach(drawOne); }
+  drawAll();
+
+  /* One-time reveal — fade the canvas in on first viewport hit. */
+  if (reduce || !('IntersectionObserver' in window)) {
+    divs.forEach(function (d) { d.classList.add('reveal'); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('reveal'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.2 });
+    divs.forEach(function (d) { io.observe(d); });
+  }
+
+  var rt;
+  window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(drawAll, 160); });
+})();
+</script>
+</body>
+</html>

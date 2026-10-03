@@ -1,0 +1,1158 @@
+{
+  "about-value.html  (claimed)": [
+    "desktop div row-gap 86.4px -> 80px [spacing-scale]",
+    "desktop div column-gap 86.4px -> 80px [spacing-scale]",
+    "desktop div font-size 16px -> 20px [type-ramp]"
+  ],
+  "about-value.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "accordion-panel-right.html  (claimed)": [
+    "desktop div padding-right 0px -> 70px [spacing-scale]",
+    "desktop div padding-left 0px -> 70px [spacing-scale]",
+    "desktop div row-gap 56px -> 40px [spacing-scale]"
+  ],
+  "accordion-panel-right.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "agent-status.html  (claimed)": [
+    "desktop div padding-top 24px -> 20px [spacing-scale]",
+    "desktop div padding-right 24px -> 20px [spacing-scale]",
+    "desktop div padding-bottom 24px -> 20px [spacing-scale]"
+  ],
+  "agent-status.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [
+      "[exempt] gap \u2014 frozen geometry: the ramp's pitch \u2014 sixty 3px segments 2px apart measure 298px and fit the card's content box; the closed scale's smallest step would run the same ramp to 888px"
+    ],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "book-demo.html  (claimed)": [
+    "desktop div padding-top 72px -> 80px [spacing-scale]",
+    "desktop div padding-right 64px -> 70px [spacing-scale]",
+    "desktop div padding-bottom 72px -> 80px [spacing-scale]"
+  ],
+  "book-demo.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "buttons.html  (claimed)": [
+    "desktop div padding-top 0px -> 20px [spacing-scale]",
+    "desktop div padding-right 0px -> 20px [spacing-scale]",
+    "desktop div padding-bottom 0px -> 20px [spacing-scale]"
+  ],
+  "buttons.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "carousel-cards.html  (claimed)": [
+    "desktop section padding-top 100px -> 120px [spacing-scale]",
+    "desktop section padding-right 100px -> 70px [spacing-scale]",
+    "desktop section padding-bottom 80px -> 120px [spacing-scale]"
+  ],
+  "carousel-cards.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [
+      "[exempt] gap \u2014 frozen geometry: the script advances by slideWidth + 32"
+    ],
+    "6 geometry": [],
+    "7 ratios": [
+      "[note] mobile \u00b7 article.slide declares 4 / 5 \u2014 an authored proportion outside the creative ratio vocabulary"
+    ]
+  },
+  "compare-table.html  (claimed)": [
+    "desktop section padding-right 100px -> 70px [spacing-scale]",
+    "desktop section padding-left 100px -> 70px [spacing-scale]",
+    "desktop header margin-bottom 64px -> 80px [spacing-scale]"
+  ],
+  "compare-table.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "comparison.html  (claimed)": [
+    "desktop div border-radius 24px -> 12px [radius-pair]",
+    "desktop div row-gap 18px -> 20px [spacing-scale]",
+    "desktop div column-gap 18px -> 20px [spacing-scale]"
+  ],
+  "comparison.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "contact-form.html  (claimed)": [
+    "desktop div row-gap 52px -> 80px [spacing-scale]",
+    "desktop div column-gap 52px -> 80px [spacing-scale]",
+    "desktop div font-size 16px -> 20px [type-ramp]"
+  ],
+  "contact-form.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "contact-methods.html  (claimed)": [
+    "desktop div row-gap 72px -> 80px [spacing-scale]",
+    "desktop div column-gap 72px -> 80px [spacing-scale]",
+    "desktop div font-size 16px -> 20px [type-ramp]"
+  ],
+  "contact-methods.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "contact-us.html  (claimed)": [
+    "desktop div margin-right 456px -> 410px [spacing-scale]",
+    "desktop div margin-left 456px -> 410px [spacing-scale]",
+    "desktop h2 margin-bottom 8px -> 12px [spacing-scale]"
+  ],
+  "contact-us.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "contact.html  (claimed)": [
+    "desktop div font-size 16px -> 20px [type-ramp]",
+    "desktop h1 font-size 150px -> 72px [type-ramp]",
+    "desktop h1 line-height 147px -> 86.4px [type-ramp]"
+  ],
+  "contact.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "cta-band.html  (claimed)": [
+    "desktop div border-radius 32px -> 12px [radius-pair]",
+    "desktop div font-size 16px -> 20px [type-ramp]",
+    "desktop div min-height 580px -> 640px [spacing-scale]"
+  ],
+  "cta-band.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "cta-banner.html  (claimed)": [
+    "desktop div padding-top 120px -> 0px [spacing-scale]",
+    "desktop div padding-right 60px -> 0px [spacing-scale]",
+    "desktop div padding-bottom 120px -> 0px [spacing-scale]"
+  ],
+  "cta-banner.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "cta-footer-reveal.html  (claimed)": [
+    "desktop section padding-top 84px -> 120px [spacing-scale]",
+    "desktop section padding-right 80px -> 70px [spacing-scale]",
+    "desktop section padding-bottom 84px -> 120px [spacing-scale]"
+  ],
+  "cta-footer-reveal.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "cta-orbit.html  (claimed)": [
+    "desktop div padding-top 88px -> 40px [spacing-scale]",
+    "desktop div padding-right 80px -> 40px [spacing-scale]",
+    "desktop div padding-bottom 88px -> 40px [spacing-scale]"
+  ],
+  "cta-orbit.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "customer-story.html  (claimed)": [
+    "desktop div row-gap 86.4px -> 80px [spacing-scale]",
+    "desktop div column-gap 86.4px -> 80px [spacing-scale]",
+    "desktop div font-size 26px -> 24px [type-ramp]"
+  ],
+  "customer-story.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "demo-modal.html  (claimed)": [
+    "desktop p margin-top 13px -> 16px [spacing-scale]",
+    "desktop p margin-bottom 13px -> 16px [spacing-scale]",
+    "desktop p font-size 13px -> 16px [type-ramp]"
+  ],
+  "demo-modal.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "divider-dissolve.html  (claimed)": [
+    "desktop span font-size 12px -> 16px [type-ramp]",
+    "desktop span line-height normal -> 23.2px [type-ramp]",
+    "desktop span font-size 12px -> 16px [type-ramp]"
+  ],
+  "divider-dissolve.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "divider-dither.html  (claimed)": [
+    "desktop div margin-right 240px -> 275px [spacing-scale]",
+    "desktop div margin-left 240px -> 275px [spacing-scale]",
+    "desktop div max-width 760px -> 750px [measure]"
+  ],
+  "divider-dither.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "divider-halftone.html  (claimed)": [
+    "desktop div padding-right 100px -> 70px [spacing-scale]",
+    "desktop div padding-left 100px -> 70px [spacing-scale]",
+    "desktop p font-size 12px -> 16px [type-ramp]"
+  ],
+  "divider-halftone.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "divider-horizon.html  (claimed)": [
+    "desktop div margin-right 360px -> 345px [spacing-scale]",
+    "desktop div margin-left 360px -> 345px [spacing-scale]",
+    "desktop div padding-top 112px -> 80px [spacing-scale]"
+  ],
+  "divider-horizon.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "divider.html  (claimed)": [
+    "desktop div padding-right 100px -> 70px [spacing-scale]",
+    "desktop div padding-left 100px -> 70px [spacing-scale]",
+    "desktop div font-size 12px -> 16px [type-ramp]"
+  ],
+  "divider.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "faq-centered.html  (claimed)": [
+    "desktop div margin-right 80px -> 110px [spacing-scale]",
+    "desktop div margin-left 80px -> 110px [spacing-scale]",
+    "desktop h2 font-size 52px -> 56px [type-ramp]"
+  ],
+  "faq-centered.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "faq-single.html  (claimed)": [
+    "desktop div margin-right 80px -> 110px [spacing-scale]",
+    "desktop div margin-left 80px -> 110px [spacing-scale]",
+    "desktop h2 margin-bottom 56px -> 80px [spacing-scale]"
+  ],
+  "faq-single.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "faq-split.html  (claimed)": [
+    "desktop section padding-right 100px -> 70px [spacing-scale]",
+    "desktop section padding-left 100px -> 70px [spacing-scale]",
+    "desktop div margin-bottom 24px -> 12px [spacing-scale]"
+  ],
+  "faq-split.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "faq.html  (claimed)": [
+    "desktop div row-gap normal -> 12px [spacing-scale]",
+    "desktop div column-gap normal -> 12px [spacing-scale]",
+    "desktop div padding-top 30px -> 20px [spacing-scale]"
+  ],
+  "faq.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "feature-bento.html  (claimed)": [
+    "desktop div font-size 16px -> 20px [type-ramp]",
+    "desktop div margin-bottom 48px -> 80px [spacing-scale]",
+    "desktop div font-size 16px -> 20px [type-ramp]"
+  ],
+  "feature-bento.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "feature-stack.html  (claimed)": [
+    "desktop section padding-right 100px -> 70px [spacing-scale]",
+    "desktop section padding-bottom 220px -> 160px [spacing-scale]",
+    "desktop section padding-left 100px -> 70px [spacing-scale]"
+  ],
+  "feature-stack.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "feature-steps.html  (claimed)": [
+    "desktop div font-size 16px -> 20px [type-ramp]",
+    "desktop div margin-bottom 64px -> 80px [spacing-scale]",
+    "desktop div font-size 16px -> 20px [type-ramp]"
+  ],
+  "feature-steps.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "feature-trio.html  (claimed)": [
+    "desktop div font-size 16px -> 20px [type-ramp]",
+    "desktop header margin-bottom 132px -> 80px [spacing-scale]",
+    "desktop header font-size 16px -> 20px [type-ramp]"
+  ],
+  "feature-trio.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "footer-cta.html  (claimed)": [
+    "desktop div padding-right 100px -> 70px [spacing-scale]",
+    "desktop div padding-left 100px -> 70px [spacing-scale]",
+    "desktop div padding-top 96px -> 80px [spacing-scale]"
+  ],
+  "footer-cta.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "footer-dark.html  (claimed)": [
+    "desktop section font-size 16px -> 20px [type-ramp]",
+    "desktop div padding-top 100px -> 120px [spacing-scale]",
+    "desktop div padding-right 64px -> 70px [spacing-scale]"
+  ],
+  "footer-dark.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "footer-links.html  (claimed)": [
+    "desktop div padding-top 0px -> 20px [spacing-scale]",
+    "desktop div padding-right 0px -> 20px [spacing-scale]",
+    "desktop div padding-bottom 0px -> 20px [spacing-scale]"
+  ],
+  "footer-links.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "footer-mega.html  (claimed)": [
+    "desktop div font-size 16px -> 20px [type-ramp]",
+    "desktop pre font-size 13.4505px -> 14.2857px [spacing-scale]",
+    "desktop pre line-height 13.4505px -> 14.2857px [spacing-scale]"
+  ],
+  "footer-mega.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "footer-orbit.html  (claimed)": [
+    "desktop section font-size 16px -> 20px [type-ramp]",
+    "desktop div padding-top 72px -> 120px [spacing-scale]",
+    "desktop div padding-right 64px -> 70px [spacing-scale]"
+  ],
+  "footer-orbit.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "get-started.html  (claimed)": [
+    "desktop div column-gap 64px -> 80px [spacing-scale]",
+    "desktop div font-size 16px -> 20px [type-ramp]",
+    "desktop div font-size 16px -> 20px [type-ramp]"
+  ],
+  "get-started.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "grid-five-column-equal.html  (claimed)": [
+    "desktop div padding-right 0px -> 70px [spacing-scale]",
+    "desktop div padding-left 0px -> 70px [spacing-scale]",
+    "desktop p margin-bottom 28px -> 80px [spacing-scale]"
+  ],
+  "grid-five-column-equal.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "grid-four-column-equal-cards.html  (claimed)": [
+    "desktop div padding-right 0px -> 70px [spacing-scale]",
+    "desktop div padding-left 0px -> 70px [spacing-scale]",
+    "desktop h2 margin-right 260px -> 275px [spacing-scale]"
+  ],
+  "grid-four-column-equal-cards.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": [
+      "[note] desktop \u00b7 article.card declares 1 / 1.05 \u2014 an authored proportion outside the creative ratio vocabulary",
+      "[note] tablet \u00b7 article.card declares 1 / 1.05 \u2014 an authored proportion outside the creative ratio vocabulary"
+    ]
+  },
+  "grid-four-column-equal.html  (claimed)": [
+    "desktop div padding-right 0px -> 70px [spacing-scale]",
+    "desktop div padding-left 0px -> 70px [spacing-scale]",
+    "desktop h2 line-height 62.72px -> 67.2px [type-ramp]"
+  ],
+  "grid-four-column-equal.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "hero-actions.html  (claimed)": [
+    "desktop nav padding-right 57.6px -> 70px [spacing-scale]",
+    "desktop nav padding-left 57.6px -> 70px [spacing-scale]",
+    "desktop nav row-gap 24px -> 20px [spacing-scale]"
+  ],
+  "hero-actions.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "hero-agent.html  (claimed)": [
+    "desktop nav padding-right 48px -> 70px [spacing-scale]",
+    "desktop nav padding-left 48px -> 70px [spacing-scale]",
+    "desktop nav row-gap 24px -> 20px [spacing-scale]"
+  ],
+  "hero-agent.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "hero-bento.html  (claimed)": [
+    "desktop section font-size 16px -> 20px [type-ramp]",
+    "desktop nav padding-top 20px -> 12px [spacing-scale]",
+    "desktop nav padding-right 48px -> 70px [spacing-scale]"
+  ],
+  "hero-bento.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "hero-horizon-light.html  (claimed)": [
+    "desktop section padding-top 100px -> 120px [spacing-scale]",
+    "desktop section padding-right 24px -> 70px [spacing-scale]",
+    "desktop section padding-bottom 100px -> 120px [spacing-scale]"
+  ],
+  "hero-horizon-light.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "hero-lending.html  (claimed)": [
+    "desktop section padding-bottom 72px -> 80px [spacing-scale]",
+    "desktop nav padding-top 26px -> 20px [spacing-scale]",
+    "desktop nav padding-right 100px -> 70px [spacing-scale]"
+  ],
+  "hero-lending.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "industry-chips.html  (claimed)": [
+    "desktop div row-gap normal -> 12px [spacing-scale]",
+    "desktop div column-gap normal -> 12px [spacing-scale]",
+    "desktop div border-radius 14px -> 12px [radius-pair]"
+  ],
+  "industry-chips.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "integration-grid.html  (claimed)": [
+    "desktop div margin-right 216px -> 210px [spacing-scale]",
+    "desktop div margin-bottom 110px -> 80px [spacing-scale]",
+    "desktop div margin-left 216px -> 210px [spacing-scale]"
+  ],
+  "integration-grid.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "integrations.html  (claimed)": [
+    "desktop div padding-top 88px -> 80px [spacing-scale]",
+    "desktop div padding-bottom 64px -> 80px [spacing-scale]",
+    "desktop div padding-right 32px -> 70px [spacing-scale]"
+  ],
+  "integrations.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "latest-insights.html  (claimed)": [
+    "desktop div margin-bottom 44px -> 40px [spacing-scale]",
+    "desktop div row-gap 24px -> 20px [spacing-scale]",
+    "desktop div column-gap 24px -> 20px [spacing-scale]"
+  ],
+  "latest-insights.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "latest-news.html  (claimed)": [
+    "desktop h2 margin-bottom 10px -> 12px [spacing-scale]",
+    "desktop p line-height 24px -> 23.2px [type-ramp]",
+    "desktop a padding-top 10px -> 12px [spacing-scale]"
+  ],
+  "latest-news.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "logo-marquee.html  (claimed)": [
+    "desktop h2 margin-right 240px -> 275px [spacing-scale]",
+    "desktop h2 margin-bottom 56px -> 80px [spacing-scale]",
+    "desktop h2 margin-left 240px -> 275px [spacing-scale]"
+  ],
+  "logo-marquee.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "logo-strip.html  (claimed)": [
+    "desktop section padding-top 96px -> 80px [spacing-scale]",
+    "desktop section padding-bottom 96px -> 80px [spacing-scale]",
+    "desktop p margin-right 0px -> 275px [spacing-scale]"
+  ],
+  "logo-strip.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "mission-reveal.html  (claimed)": [
+    "desktop div max-width 920px -> 950px [measure]",
+    "desktop p font-size 52px -> 56px [type-ramp]",
+    "desktop span font-size 52px -> 56px [type-ramp]"
+  ],
+  "mission-reveal.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "more-solutions.html  (claimed)": [
+    "desktop div font-size 16px -> 20px [type-ramp]",
+    "desktop h2 margin-bottom 88px -> 80px [spacing-scale]",
+    "desktop h2 line-height 50.6px -> 52.8px [type-ramp]"
+  ],
+  "more-solutions.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "nav.html  (claimed)": [
+    "desktop div padding-top 28px -> 20px [spacing-scale]",
+    "desktop div padding-right 100px -> 70px [spacing-scale]",
+    "desktop div padding-bottom 28px -> 20px [spacing-scale]"
+  ],
+  "nav.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "outcome-stats.html  (claimed)": [
+    "desktop div font-size 16px -> 20px [type-ramp]",
+    "desktop div padding-bottom 96px -> 80px [spacing-scale]",
+    "desktop div row-gap 100.8px -> 80px [spacing-scale]"
+  ],
+  "outcome-stats.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "pricing-packages.html  (claimed)": [
+    "desktop div padding-right 100px -> 70px [spacing-scale]",
+    "desktop div padding-left 100px -> 70px [spacing-scale]",
+    "desktop header margin-right 230px -> 275px [spacing-scale]"
+  ],
+  "pricing-packages.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "pricing-tabbed.html  (claimed)": [
+    "desktop div row-gap 56px -> 40px [spacing-scale]",
+    "desktop div column-gap 56px -> 40px [spacing-scale]",
+    "desktop p font-size 13px -> 16px [type-ramp]"
+  ],
+  "pricing-tabbed.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "pricing.html  (claimed)": [
+    "desktop div padding-right 100px -> 70px [spacing-scale]",
+    "desktop div padding-left 100px -> 70px [spacing-scale]",
+    "desktop h2 margin-right 0px -> 275px [spacing-scale]"
+  ],
+  "pricing.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "problem-card.html  (claimed)": [
+    "desktop div row-gap 24px -> 20px [spacing-scale]",
+    "desktop div column-gap 24px -> 20px [spacing-scale]",
+    "desktop div line-height 33.6px -> 28.8px [type-ramp]"
+  ],
+  "problem-card.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "resources-carousel.html  (claimed)": [
+    "desktop div row-gap 24px -> 20px [spacing-scale]",
+    "desktop div column-gap 24px -> 20px [spacing-scale]",
+    "desktop h2 line-height 35.84px -> 33.6px [type-ramp]"
+  ],
+  "resources-carousel.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "resources-insights.html  (claimed)": [
+    "desktop header column-gap 56px -> 40px [spacing-scale]",
+    "desktop p font-size 13px -> 16px [type-ramp]",
+    "desktop p line-height normal -> 23.2px [type-ramp]"
+  ],
+  "resources-insights.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "results-proof.html  (claimed)": [
+    "desktop div font-size 16px -> 20px [type-ramp]",
+    "desktop header margin-bottom 52px -> 80px [spacing-scale]",
+    "desktop header font-size 16px -> 20px [type-ramp]"
+  ],
+  "results-proof.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "reviews-carousel.html  (claimed)": [
+    "desktop div margin-bottom 40px -> 80px [spacing-scale]",
+    "desktop p font-size 13px -> 16px [type-ramp]",
+    "desktop p line-height normal -> 23.2px [type-ramp]"
+  ],
+  "reviews-carousel.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [
+      "[exempt] gap \u2014 frozen geometry: the script advances by cardWidth + GAP, GAP hardcoded at 24 in the script"
+    ],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "split-layout-asymmetric.html  (claimed)": [
+    "desktop div padding-right 0px -> 70px [spacing-scale]",
+    "desktop div padding-left 0px -> 70px [spacing-scale]",
+    "desktop div column-gap 56px -> 40px [spacing-scale]"
+  ],
+  "split-layout-asymmetric.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "stat-band.html  (claimed)": [
+    "desktop section padding-right 100px -> 70px [spacing-scale]",
+    "desktop section padding-left 100px -> 70px [spacing-scale]",
+    "desktop section font-size 16px -> 20px [type-ramp]"
+  ],
+  "stat-band.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "stat-tiles.html  (claimed)": [
+    "desktop div padding-top 0px -> 20px [spacing-scale]",
+    "desktop div padding-right 0px -> 20px [spacing-scale]",
+    "desktop div padding-bottom 0px -> 20px [spacing-scale]"
+  ],
+  "stat-tiles.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "sticky-sidebar-left-full-bleed.html  (claimed)": [
+    "desktop section padding-right 100px -> 70px [spacing-scale]",
+    "desktop section padding-left 100px -> 70px [spacing-scale]",
+    "desktop header row-gap 16px -> 20px [spacing-scale]"
+  ],
+  "sticky-sidebar-left-full-bleed.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [
+      "column-gap: 48px \u2014 off-system literal",
+      "font-size: 10px \u2014 off-system literal",
+      "font-size: 11px \u2014 off-system literal",
+      "font-size: 12.5px \u2014 off-system literal",
+      "font-size: 12px \u2014 off-system literal",
+      "font-size: 13.5px \u2014 off-system literal",
+      "font-size: 14px \u2014 off-system literal",
+      "font-size: 17px \u2014 off-system literal",
+      "font-size: 18px \u2014 off-system literal",
+      "font-size: 21px \u2014 off-system literal",
+      "font-size: 22px \u2014 off-system literal",
+      "font-size: 9.5px \u2014 off-system literal",
+      "gap: 10px \u2014 off-system literal",
+      "gap: 14px \u2014 off-system literal",
+      "gap: 16px \u2014 off-system literal",
+      "gap: 28px \u2014 off-system literal",
+      "gap: 2px \u2014 off-system literal",
+      "gap: 48px \u2014 off-system literal",
+      "gap: 5px \u2014 off-system literal",
+      "gap: 64px \u2014 off-system literal",
+      "gap: 6px \u2014 off-system literal",
+      "gap: 7px \u2014 off-system literal",
+      "gap: 8px \u2014 off-system literal",
+      "gap: 9px \u2014 off-system literal",
+      "margin-bottom: 4px \u2014 off-system literal",
+      "margin-bottom: 60px \u2014 off-system literal",
+      "margin-top: 14px \u2014 off-system literal",
+      "margin: 14px -18px -18px \u2014 off-system literal",
+      "padding-top: 6px \u2014 off-system literal",
+      "padding: 10px 13px \u2014 off-system literal",
+      "padding: 12px 16px \u2014 off-system literal",
+      "padding: 13px 18px \u2014 off-system literal",
+      "padding: 16px 18px \u2014 off-system literal",
+      "padding: 18px \u2014 off-system literal",
+      "padding: 2px 8px \u2014 off-system literal",
+      "padding: 4px 9px \u2014 off-system literal",
+      "padding: 9px 11px \u2014 off-system literal",
+      "padding: 9px 16px \u2014 off-system literal"
+    ],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "sticky-sidebar-left.html  (claimed)": [
+    "desktop section padding-right 100px -> 0px [spacing-scale]",
+    "desktop section padding-left 100px -> 0px [spacing-scale]",
+    "desktop section max-width 1440px -> none [measure]"
+  ],
+  "sticky-sidebar-left.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "subscription-faq.html  (claimed)": [
+    "desktop section padding-top 104px -> 120px [spacing-scale]",
+    "desktop section padding-bottom 104px -> 120px [spacing-scale]",
+    "desktop div padding-right 100px -> 70px [spacing-scale]"
+  ],
+  "subscription-faq.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "tabs-panel-below.html  (claimed)": [
+    "desktop section padding-top 100px -> 120px [spacing-scale]",
+    "desktop section padding-right 100px -> 70px [spacing-scale]",
+    "desktop section padding-bottom 80px -> 120px [spacing-scale]"
+  ],
+  "tabs-panel-below.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "team-about.html  (claimed)": [
+    "desktop div font-size 16px -> 20px [type-ramp]",
+    "desktop div font-size 16px -> 20px [type-ramp]",
+    "desktop div row-gap 8px -> 12px [spacing-scale]"
+  ],
+  "team-about.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "team-grid.html  (claimed)": [
+    "desktop div margin-right 116px -> 110px [spacing-scale]",
+    "desktop div margin-left 116px -> 110px [spacing-scale]",
+    "desktop div font-size 16px -> 20px [type-ramp]"
+  ],
+  "team-grid.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "team-leadership.html  (claimed)": [
+    "desktop div font-size 16px -> 20px [type-ramp]",
+    "desktop h2 margin-bottom 84px -> 80px [spacing-scale]",
+    "desktop h2 font-size 58px -> 56px [type-ramp]"
+  ],
+  "team-leadership.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "team-visionaries.html  (claimed)": [
+    "desktop div font-size 16px -> 20px [type-ramp]",
+    "desktop header padding-top 4px -> 0px [spacing-scale]",
+    "desktop header padding-right 6px -> 0px [spacing-scale]"
+  ],
+  "team-visionaries.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "testimonial-bento.html  (claimed)": [
+    "desktop header margin-right 330px -> 275px [spacing-scale]",
+    "desktop header margin-bottom 92px -> 80px [spacing-scale]",
+    "desktop header margin-left 330px -> 275px [spacing-scale]"
+  ],
+  "testimonial-bento.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "testimonial-slider.html  (claimed)": [
+    "desktop article row-gap 72px -> 80px [spacing-scale]",
+    "desktop article column-gap 72px -> 80px [spacing-scale]",
+    "desktop p margin-bottom 30px -> 40px [spacing-scale]"
+  ],
+  "testimonial-slider.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "value-who.html  (claimed)": [
+    "desktop div font-size 16px -> 20px [type-ramp]",
+    "desktop div column-gap 56px -> 80px [spacing-scale]",
+    "desktop div font-size 16px -> 20px [type-ramp]"
+  ],
+  "value-who.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  },
+  "wide-card-internal-columns.html  (claimed)": [
+    "desktop div margin-right 80px -> 180px [spacing-scale]",
+    "desktop div margin-left 80px -> 180px [spacing-scale]",
+    "desktop div padding-right 0px -> 70px [spacing-scale]"
+  ],
+  "wide-card-internal-columns.html": {
+    "1 structure": [],
+    "2 attributes": [],
+    "3 scripts": [],
+    "4 classes": [],
+    "5 literals": [],
+    "6 geometry": [],
+    "7 ratios": []
+  }
+}

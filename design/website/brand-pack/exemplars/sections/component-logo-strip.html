@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR — Logo strip (trusted-by, light)</title>
+
+<!--
+  ────────────────────────────────────────────────────────────────────────────
+  COMPONENT: Logo strip — "trusted by" social proof (LIGHT, full-colour)
+  ────────────────────────────────────────────────────────────────────────────
+  COMPOSITION (faithful reproduction of the supplied inspiration):
+    • Full-bleed WARM CREAM band (--cr-bg-warm #F8F8F8) — the source sits on a
+      slightly-warm off-white; CR's warm proof-band surface matches its tone.
+    • A single CENTRED, TWO-TONE caption line on top: a strong lead
+      ("Trusted by 500+", --cr-fg) + a muted continuation (--cr-fg-3). This is
+      SUPPORTING text, so per the design charter it stays on the Inter BODY ramp
+      (~17px) — NOT inflated to a Urbanist display size.
+    • A generous vertical void, then ONE horizontal row of full-colour,
+      recognisable brand logos, optically balanced, evenly spaced.
+    • Source pattern reproduced: wordmarks are mostly dark, the MARKS carry the
+      colour (mapbox/Browserbase/toptal wordmarks are dark; the marks are
+      coloured). So here every wordmark is ink-dark except Stripe/Zoom, which are
+      genuinely wordmark-only coloured logos.
+
+  RE-SKIN (brand wins on hue/voice only):
+    • Copy → CR voice: "Trusted by 500+ operations teams running complex
+      workflows" (CR is APA / ops automation — "running workflows" is the brand's
+      own phrasing; structure + length matched to the source's single line).
+    • Logos are illustrative recognisable placeholders (Slack, Notion, Stripe,
+      Zoom, Asana, Dropbox, Microsoft) recreated as clean inline SVG — SWAP for
+      CR's real customer logo SVGs. NOTE: third-party logo colours are kept as
+      their REAL brand colours (e.g. Stripe indigo #635BFF) — the CR
+      "no-indigo / no-pure-black" rules govern CR's OWN UI, not third-party
+      logos, which must keep their real colours to stay recognisable.
+
+  MOTION: "logo autoslider" — a PURE-CSS infinite marquee (set rendered twice,
+    translateX 0 → -50% for a seamless loop; logos use a uniform margin-right so
+    the half-track offset lands exactly on a logo boundary = no jump). Edge fade
+    mask dissolves logos into the cream at both ends. Pauses on hover (the lone
+    hover affordance — an accessibility control to let a reader stop the motion
+    and read a logo; the same accepted pattern as logo-marquee / integrations).
+    The strip works fully WITHOUT JS (CSS marquee). JS only adds a one-time
+    scroll-reveal entrance (caption → strip, .has-js / --d / IntersectionObserver,
+    fires once). prefers-reduced-motion → marquee stops and the single set
+    centres as a static row (no per-logo colour/scale hover — these are static
+    social proof, not controls; charter).
+
+  DISTINCT FROM:
+    • logo-marquee  — DARK navy band, big two-tone TITLE, grayscale wordmarks
+      that brighten on hover.
+    • integrations  — DARK navy band, BORDERED logo cells.
+    • integration-grid — DARK navy, 4-up columns w/ descriptions + links.
+    THIS one — LIGHT warm band, small caption line, borderless full-colour logos.
+
+  Responsive: caption + logo gap + mark sizes step down at 768 / 480; the marquee
+    keeps scrolling (shows more logos than a narrow screen holds). Verified
+    headless at 1440 / 768 / 390.
+  ────────────────────────────────────────────────────────────────────────────
+-->
+
+<link rel="stylesheet" href="../_frozen-v2-tokens.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--cr-bg); font-family: var(--cr-font-body); }
+
+  /* ── Section: full-bleed warm cream band ─────────────────────────────── */
+  .ls {
+    --gap: clamp(48px, 6vw, 96px);     /* space between logos (margin-based) */
+    --mark-h: 28px;                     /* optical mark height */
+    --wm: 22px;                         /* base wordmark size */
+    position: relative;
+    width: 100%;
+    background: var(--cr-bg-warm);      /* var(--cr-bg-grey-50) */
+    padding: clamp(64px, 8vw, 96px) 0;
+    overflow: hidden;                   /* contain the wide track */
+  }
+
+  /* ── Caption (two-tone, on the Inter body ramp — NOT display) ─────────── */
+  .ls-inner {
+    max-width: var(--cr-content-max);      /* 1440 */
+    margin: 0 auto;
+    padding: 0 var(--cr-page-gutter);   /* 100 */
+  }
+  .ls-cap {
+    margin: 0 auto;
+    text-align: center;
+    font-family: var(--cr-font-body);   /* Inter — supporting text */
+    font-size: clamp(15px, 1.35vw, 18px);
+    line-height: 1.55;
+    color: var(--cr-fg-3);              /* muted continuation */
+    letter-spacing: 0;
+  }
+  .ls-cap strong {
+    font-weight: 600;
+    color: var(--cr-fg);                /* strong lead — focal */
+  }
+
+  /* ── Marquee ──────────────────────────────────────────────────────────── */
+  .ls-marquee {
+    margin-top: clamp(40px, 5vw, 60px);
+    width: 100%;
+    overflow: hidden;
+    /* edge fade — dissolve logos into the cream at both ends */
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%);
+  }
+  .ls-track {
+    display: flex;
+    align-items: center;
+    width: max-content;                 /* two sets side by side */
+    animation: ls-scroll 40s linear infinite;
+    will-change: transform;
+  }
+  .ls-set { display: flex; align-items: center; }
+
+  @keyframes ls-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }   /* one full set — seamless */
+  }
+  /* pause to read (animation control / a11y, not a decorative hover) */
+  .ls-marquee:hover .ls-track { animation-play-state: paused; }
+
+  /* ── Logo lockups ─────────────────────────────────────────────────────── */
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin-right: var(--gap);           /* uniform spacing → seamless loop */
+    flex: none;
+    white-space: nowrap;
+  }
+  .logo .mk { height: var(--mark-h); width: auto; display: block; flex: none; }
+  .logo .wm {
+    font-family: var(--cr-font-body);
+    font-size: var(--wm);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--cr-fg);                     /* dark ink wordmark (default) */
+    letter-spacing: -0.3px;
+  }
+  /* per-brand wordmark tuning so each lockup reads like the real logo */
+  .logo--notion .wm    { font-weight: 600; letter-spacing: -0.4px; }
+  .logo--stripe .wm    { font-weight: 800; letter-spacing: -0.6px; color: #635BFF; font-size: calc(var(--wm) + 2px); }
+  .logo--zoom   .wm    { font-weight: 700; letter-spacing: -0.4px; color: #0B5CFF; font-size: calc(var(--wm) + 2px); }
+  .logo--asana  .wm    { font-weight: 700; letter-spacing: -0.2px; }
+  .logo--dropbox .wm   { font-weight: 600; letter-spacing: -0.3px; }
+  .logo--ms     .wm    { font-weight: 500; letter-spacing: 0;      color: #5e5e5e; font-size: calc(var(--wm) - 1px); }
+
+  /* ── Entrance reveal (JS-gated, fires once) ───────────────────────────── */
+  .has-js .ls-cap,
+  .has-js .ls-marquee {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity .6s cubic-bezier(.22,.61,.36,1),
+                transform .6s cubic-bezier(.22,.61,.36,1);
+    transition-delay: var(--d, 0ms);
+  }
+  .has-js .ls.in .ls-cap,
+  .has-js .ls.in .ls-marquee { opacity: 1; transform: none; }
+
+  /* ── Responsive ───────────────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .ls { --gap: clamp(40px, 7vw, 64px); --mark-h: 26px; --wm: 20px; padding: 64px 0; }
+    .ls-inner { padding: 0 40px; }
+  }
+  @media (max-width: 480px) {
+    .ls { --gap: 40px; --mark-h: 24px; --wm: 18px; padding: 52px 0; }
+    .ls-inner { padding: 0 24px; }
+    .ls-marquee { margin-top: 36px; }
+  }
+
+  /* ── Reduced motion: stop the slider, centre a single static row ──────────
+     The set is a flex item of the track; its default min-width:auto pins it to
+     its content width (~700px) so it never reflows and the marquee clips it.
+     flex:1 1 100% + min-width:0 collapses it to the track (viewport) width so it
+     wraps its logos cleanly. Gap (not margin-right) keeps wrapped rows centred. */
+  @media (prefers-reduced-motion: reduce) {
+    .ls-track {
+      animation: none;
+      transform: none;
+      width: 100%;
+      min-width: 0;
+    }
+    .ls-set {
+      flex: 1 1 100%;
+      min-width: 0;                     /* remove the auto floor → can shrink + wrap */
+      flex-wrap: wrap;
+      justify-content: center;
+      column-gap: var(--gap);
+      row-gap: 28px;
+    }
+    .ls-set--dup { display: none; }
+    .ls-set .logo { margin-right: 0; }
+    .ls-marquee {
+      -webkit-mask-image: none; mask-image: none;
+    }
+    .has-js .ls-cap,
+    .has-js .ls-marquee { opacity: 1 !important; transform: none !important; transition: none !important; }
+  }
+</style>
+</head>
+
+<body>
+<section class="ls" data-screen-label="Logo strip — trusted by">
+
+  <div class="ls-inner">
+    <p class="ls-cap" style="--d:0ms">
+      <strong>Trusted by 500+</strong> operations teams running complex workflows
+    </p>
+  </div>
+
+  <div class="ls-marquee" style="--d:120ms">
+    <div class="ls-track">
+
+      <!-- SET A (the readable set) -->
+      <div class="ls-set">
+
+        <!-- Slack -->
+        <span class="logo logo--slack">
+          <svg class="mk" viewBox="0 0 122.8 122.8" aria-hidden="true" role="img">
+            <path d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9zm6.5 0c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z" fill="#E01E5A"/>
+            <path d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2zm0 6.5c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 51.1 0 45.3 0 38.2s5.8-12.9 12.9-12.9h32.3z" fill="#36C5F0"/>
+            <path d="M97 38.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97V38.2zm-6.5 0c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V5.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9v25.3z" fill="#2EB67D"/>
+            <path d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9zm0-6.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z" fill="#ECB22E"/>
+          </svg>
+          <span class="wm">slack</span>
+        </span>
+
+        <!-- Notion -->
+        <span class="logo logo--notion">
+          <svg class="mk" viewBox="0 0 24 24" aria-hidden="true" role="img">
+            <rect x="1" y="1" width="22" height="22" rx="5" fill="var(--cr-fg)"/>
+            <path d="M8 17V7l8 10V7" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="wm">Notion</span>
+        </span>
+
+        <!-- Stripe (wordmark-only, real indigo) -->
+        <span class="logo logo--stripe">
+          <span class="wm">stripe</span>
+        </span>
+
+        <!-- Zoom (wordmark-only, real blue) -->
+        <span class="logo logo--zoom">
+          <span class="wm">zoom</span>
+        </span>
+
+        <!-- Asana -->
+        <span class="logo logo--asana">
+          <svg class="mk" viewBox="0 0 24 24" aria-hidden="true" role="img" fill="#F06A6A">
+            <path d="M18.78 12.653a5.22 5.22 0 1 0 0 10.44 5.22 5.22 0 0 0 0-10.44zm-13.56 0a5.22 5.22 0 1 0 0 10.44 5.22 5.22 0 0 0 0-10.44zM12 .908a5.22 5.22 0 1 0 0 10.44A5.22 5.22 0 0 0 12 .908z"/>
+          </svg>
+          <span class="wm">asana</span>
+        </span>
+
+        <!-- Dropbox -->
+        <span class="logo logo--dropbox">
+          <svg class="mk" viewBox="0 0 24 24" aria-hidden="true" role="img" fill="var(--cr-brand)">
+            <path d="M6 1.807 0 5.629l6 3.822 6.001-3.822zM18 1.807l-6 3.822 6 3.822 6-3.822zM0 13.274l6 3.822 6.001-3.822L6 9.452zM18 9.452l-6.001 3.822L18 17.096l6-3.822zM6 18.371l6.001 3.822 6-3.822-6-3.822z"/>
+          </svg>
+          <span class="wm">Dropbox</span>
+        </span>
+
+        <!-- Microsoft -->
+        <span class="logo logo--ms">
+          <svg class="mk" viewBox="0 0 23 23" aria-hidden="true" role="img">
+            <rect x="1"  y="1"  width="10" height="10" fill="#F25022"/>
+            <rect x="12" y="1"  width="10" height="10" fill="#7FBA00"/>
+            <rect x="1"  y="12" width="10" height="10" fill="#00A4EF"/>
+            <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
+          </svg>
+          <span class="wm">Microsoft</span>
+        </span>
+
+      </div><!-- /SET A -->
+
+      <!-- SET B (visual duplicate for the seamless loop; hidden from a11y tree) -->
+      <div class="ls-set ls-set--dup" aria-hidden="true">
+
+        <span class="logo logo--slack">
+          <svg class="mk" viewBox="0 0 122.8 122.8" aria-hidden="true" role="img">
+            <path d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9zm6.5 0c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z" fill="#E01E5A"/>
+            <path d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2zm0 6.5c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 51.1 0 45.3 0 38.2s5.8-12.9 12.9-12.9h32.3z" fill="#36C5F0"/>
+            <path d="M97 38.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97V38.2zm-6.5 0c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V5.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9v25.3z" fill="#2EB67D"/>
+            <path d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9zm0-6.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z" fill="#ECB22E"/>
+          </svg>
+          <span class="wm">slack</span>
+        </span>
+
+        <span class="logo logo--notion">
+          <svg class="mk" viewBox="0 0 24 24" aria-hidden="true" role="img">
+            <rect x="1" y="1" width="22" height="22" rx="5" fill="var(--cr-fg)"/>
+            <path d="M8 17V7l8 10V7" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="wm">Notion</span>
+        </span>
+
+        <span class="logo logo--stripe"><span class="wm">stripe</span></span>
+        <span class="logo logo--zoom"><span class="wm">zoom</span></span>
+
+        <span class="logo logo--asana">
+          <svg class="mk" viewBox="0 0 24 24" aria-hidden="true" role="img" fill="#F06A6A">
+            <path d="M18.78 12.653a5.22 5.22 0 1 0 0 10.44 5.22 5.22 0 0 0 0-10.44zm-13.56 0a5.22 5.22 0 1 0 0 10.44 5.22 5.22 0 0 0 0-10.44zM12 .908a5.22 5.22 0 1 0 0 10.44A5.22 5.22 0 0 0 12 .908z"/>
+          </svg>
+          <span class="wm">asana</span>
+        </span>
+
+        <span class="logo logo--dropbox">
+          <svg class="mk" viewBox="0 0 24 24" aria-hidden="true" role="img" fill="var(--cr-brand)">
+            <path d="M6 1.807 0 5.629l6 3.822 6.001-3.822zM18 1.807l-6 3.822 6 3.822 6-3.822zM0 13.274l6 3.822 6.001-3.822L6 9.452zM18 9.452l-6.001 3.822L18 17.096l6-3.822zM6 18.371l6.001 3.822 6-3.822-6-3.822z"/>
+          </svg>
+          <span class="wm">Dropbox</span>
+        </span>
+
+        <span class="logo logo--ms">
+          <svg class="mk" viewBox="0 0 23 23" aria-hidden="true" role="img">
+            <rect x="1"  y="1"  width="10" height="10" fill="#F25022"/>
+            <rect x="12" y="1"  width="10" height="10" fill="#7FBA00"/>
+            <rect x="1"  y="12" width="10" height="10" fill="#00A4EF"/>
+            <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
+          </svg>
+          <span class="wm">Microsoft</span>
+        </span>
+
+      </div><!-- /SET B -->
+
+    </div><!-- /.ls-track -->
+  </div><!-- /.ls-marquee -->
+
+</section>
+
+<script>
+  // JS only adds the one-time entrance reveal; the marquee itself is pure CSS,
+  // so the strip is fully visible + animating without JS.
+  (function () {
+    var root = document.documentElement;
+    root.classList.add('has-js');
+    var sec = document.querySelector('.ls');
+    if (!sec) return;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) { sec.classList.add('in'); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { sec.classList.add('in'); io.disconnect(); }
+      });
+    }, { threshold: 0.25 });
+    io.observe(sec);
+  })();
+</script>
+</body>
+</html>

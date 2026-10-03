@@ -1,0 +1,184 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Footer link columns</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Footer link columns (atom)    from component-footer-links.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  An ATOM PREVIEW, not a band — the same shape `comparison`,
+                `stat-tiles` and `buttons` turned out to be. The v2 file is
+                twenty-eight lines with no stylesheet of its own: every value
+                is an inline `style` attribute, and the only sheet it links
+                besides the token file is `card.css`, the harness the atom
+                previews inside. That link is kept and repointed; the file it
+                names does not exist anywhere in the repo, so BOTH the control
+                and this specimen resolve it to nothing and the preview shape
+                comes from the stylesheet below rather than from the harness.
+
+  THE CLAIM     **Wayfinding alone — no identity, no capture, no ending.** The
+                profile is explicit that this is what separates it from the
+                four footer bands: it carries none of the closing gesture, and
+                a page that ends in bare columns has no ending. So the specimen
+                does exactly one thing well — four columns of destinations, one
+                rhythm, one ink relationship — and adds nothing that would let
+                it be mistaken for a footer.
+
+  STRUCTURE     Unchanged. One row, four columns, a head over each column's
+                links. DOM order, element types and depth are byte-compatible
+                with the frozen original (DR-22). Inline `style` attributes are
+                presentation, not contract, so they move into the sheet — which
+                is the whole migration on a file that had no sheet.
+
+  ENVIRONMENT   **None, no abstract background.** There is nothing here to
+                retire: no gradient, no glow, no blur plate, no tint wash — the
+                atom is four flat columns on the page ground. Every one of the
+                nineteen boxes in it holds words, so a photograph behind them
+                would be type on a photograph, which the direction refuses.
+                There is no type-free plate in this atom, and none is invented
+                to satisfy the rule.
+
+  ACCENT        **Zero spent.** Wayfinding marks nothing. v2 already spent none
+                on the resting state, and the column heads read as heads
+                through WEIGHT and INK — the display face at the same step as
+                the links, in primary ink, over links in secondary. That
+                separation survives being printed in one colour, which is the
+                test a hue would not have passed.
+
+  SCALE         Heads and links both land on the supporting step. The head was
+                two steps above the links in v2 and the ramp has nothing
+                between them; setting a dense wayfinding block at two different
+                sizes stops it reading down a column, and reading down a column
+                is the only thing this atom does. Weight carries the head,
+                not size.
+
+  FOCUS         The anchors carry no `href` in the frozen markup, so they are
+                not focusable and no ring can fire on them. The rule is
+                declared anyway — it is the ring every other control in the
+                library takes, primary ink at 13.1:1 and never a hue — so that
+                it is correct the moment this atom is composed into a footer
+                that gives its links destinations.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/sections/card.css">
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<style>
+  html, body {
+    margin: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+  }
+  .fl-row, .fl-row * { box-sizing: border-box; }
+
+  /* The atom's own container. `card.css` would have supplied `.row` / `.col` /
+     `.gap-*`; it is absent, so the preview shape is declared here — the row and
+     the columns its own class names claim, on the closed spacing scale. */
+  .fl-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--cr-space-m);
+    padding: var(--cr-space-s);
+  }
+
+  /* ONE rhythm down every column, at the micro step — the distance the scale
+     assigns to label-to-value, which is what a destination under its head is. */
+  .fl-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cr-space-xs);
+  }
+
+  /* The head names the group; the links are the group. Display face, the
+     heavier of the system's two weights, primary ink. */
+  .fl-head {
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+
+  /* A destination, at rest, is quieter than the head that names it. Hover
+     brings it up to primary ink — the strongest move available without
+     spending a colour. */
+  .fl-link {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color .15s ease;
+  }
+  .fl-link:hover { color: var(--cr-text-primary); }
+  .fl-link:focus-visible {
+    outline: 2px solid var(--cr-focus-ring);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fl-link { transition: none; }
+  }
+</style>
+</head><body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing.
+
+     FOUR `directed` lines, and all four are the harness rather than the design.
+     `card.css`, which would have declared the row and the four columns as the
+     flex containers their own class names name, does not exist anywhere in the
+     repo, so this atom has been previewing as bare blocks. Declaring the shape
+     its markup already claims makes five containers flex containers and their
+     children flex items, and a flex item's resolved `min-height` reads `auto`
+     where a block's reads zero. No column width and no link height is decided
+     by it; it is stated here rather than passed through.
+
+     Note the missing line: `.fl-link` moves its leading and not its size. The
+     links were already on the supporting step; only the heads came down to it.
+  .fl-col  | column-gap             | spacing-scale
+  .fl-col  | min-height             | directed
+  .fl-col  | row-gap                | spacing-scale
+  .fl-head | font-size              | type-ramp
+  .fl-head | line-height            | type-ramp
+  .fl-head | min-height             | directed
+  .fl-link | line-height            | type-ramp
+  .fl-link | min-height             | directed
+  .fl-row  | column-gap             | spacing-scale
+  .fl-row  | padding-bottom         | spacing-scale
+  .fl-row  | padding-left           | spacing-scale
+  .fl-row  | padding-right          | spacing-scale
+  .fl-row  | padding-top            | spacing-scale
+  .fl-row  | row-gap                | spacing-scale
+-->
+<div class="fl-row row gap-8"
+     data-archetype="editorial-stack" data-hierarchy="closing" data-intent="orient"
+     data-register="quiet" data-signature="architectural-whitespace" data-density="high">
+  <div class="fl-col col gap-3"><div class="fl-head">Solutions</div>
+    <a class="fl-link">Accelerate Growth</a>
+    <a class="fl-link">Scale SME Operations</a>
+    <a class="fl-link">Digital Experiences</a>
+    <a class="fl-link">Automate Workflows</a>
+    <a class="fl-link">Knowledge &amp; Insights</a>
+  </div>
+  <div class="fl-col col gap-3"><div class="fl-head">AI Capabilities</div>
+    <a class="fl-link">Custom AI Development</a>
+    <a class="fl-link">AI Strategy &amp; Integration</a>
+  </div>
+  <div class="fl-col col gap-3"><div class="fl-head">Product</div>
+    <a class="fl-link">WPSteroids</a>
+    <a class="fl-link">DocXter</a>
+    <a class="fl-link">FosterX</a>
+  </div>
+  <div class="fl-col col gap-3"><div class="fl-head">Company</div>
+    <a class="fl-link">Contact Us</a>
+    <a class="fl-link">About Us</a>
+    <a class="fl-link">Resources</a>
+    <a class="fl-link">Careers</a>
+    <a class="fl-link">Life at CR</a>
+  </div>
+</div>
+</body></html>

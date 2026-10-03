@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Testimonial slider</title>
+<!-- set the JS flag before first paint so the slider layout + entrance reveal
+     don't flash (no-JS keeps the slides stacked & readable). -->
+<script>document.documentElement.classList.add('js');</script>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Testimonial slider          from component-testimonial-slider.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **One voice at a time, given room and time to be read whole.**
+              The profile is explicit: capacity singular, pace slow, density
+              low, registers human and reflective. Manual advance is the
+              structure — the reader decides when the quote leaves.
+
+  STRUCTURE   Unchanged. Viewport · track · three slides, each a 2-column
+              split (client lockup → quote-title → quote → link → two stat
+              tiles) beside a portrait carrying an inset name-card ·
+              controls (dots + counter, prev/next). DOM, both scripts, ids,
+              `data-*`, `aria-*`, `src` and every behavioural hook are
+              byte-compatible with the frozen original. The v2 file is
+              beside this one in `_v2/`.
+
+  CREATIVE    **No environment photograph enters this section, because there
+  BACKGROUND  was never an abstract background to replace.** The section is
+              flat: one page ground, one raised surface for the tiles and the
+              name-card, and the single image is a client HEADSHOT. Human
+              portrait imagery is never substituted, and the brief forbids
+              inventing a photographic surface where none existed. Reported
+              as `none`.
+
+              What the fill contrast used to carry, the hairline now carries:
+              the stat tiles and the name-card take the raised surface plus
+              one stroke, which is what separates them on a page held to one
+              ground.
+
+  ACCENT      ZERO. This is a quotation section and the profile's emphasis is
+              typography. v2 spent colour twice — the case-study link and the
+              active dot — for no ask. Both are ink now, and the link's
+              affordance is the underline it always should have carried.
+
+  TYPE        The quote-title is the section's one voice, at the section
+              heading step; the quote is body, not caption. The client name
+              was tracked-out uppercase supporting text; supporting text in
+              this direction is neither.
+
+  RATIO       The stacked portrait declared 16/10 at 1024 and 4/3 at 640 —
+              two proportions, one of them off the approved vocabulary of
+              four. It is 4/3 at both stacked widths now: ONE crop serving
+              both states, chosen over 16/9 because 4/3 is the proportion the
+              narrower state already held and the taller frame is what a
+              standing portrait wants. Not the nearest value to 16/10 — the
+              nearest is 16/9; this is a composition decision, not rounding.
+
+  RESPONSIVE  The original's breakpoints (1024 / 640), unchanged. Type steps
+              on the pack's ramp; `clamp()` is gone throughout — it resolves
+              to sizes nobody authored.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  * { box-sizing: border-box; }
+  /* EVERY SECTION DECLARES ITS OWN BACKGROUND (COMPOSE.md §C.5). This root was
+     transparent, so it rendered correctly only because the specimen chrome sets a
+     ground on <body> — which retrieval strips. Composed onto a page it took
+     whatever surface happened to be underneath: "a section with no declaration is
+     a section nobody decided." Declaring the page ground changes nothing that is
+     rendered and makes the decision the section's own. (LIBRARY-AUDIT.md C-4.) */
+  .cr-tslider { background: var(--cr-page-ground); }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body); color: var(--cr-text-secondary);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Section padding and the well are the pack's values, reached by token:
+     the opening rhythm vertically, the one page gutter horizontally. */
+  .cr-tslider { padding: var(--cr-rhythm-opening) var(--cr-page-gutter); }
+  .wrap { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ── Entrance reveal (one-time) ───────────────────────────────── */
+  html.js .wrap {
+    opacity: 0; transform: translateY(22px);
+    transition: opacity .7s cubic-bezier(.22,.61,.36,1),
+                transform .7s cubic-bezier(.22,.61,.36,1);
+  }
+  html.js .wrap.revealed { opacity: 1; transform: none; }
+
+  /* ── Slider plumbing — scoped to html.js so no-JS stays readable ── */
+  .viewport { position: relative; }
+  .track { display: block; }                 /* no-JS: slides stack vertically */
+  /* The split is the original's — 1.1fr / 0.9fr, untouched. Only the room
+     between the two columns moves onto the scale. */
+  .slide {
+    width: 100%;
+    display: grid; grid-template-columns: 1.1fr 0.9fr;
+    gap: var(--cr-space-xl); align-items: stretch;
+  }
+  .slide > * { min-width: 0; }               /* equal-grid discipline */
+
+  html.js .viewport {
+    overflow: hidden;
+    cursor: grab; touch-action: pan-y;       /* let vertical scroll through */
+  }
+  html.js .viewport.grabbing { cursor: grabbing; }
+  html.js .viewport.grabbing, html.js .viewport.grabbing * { user-select: none; }
+  html.js .track {
+    display: flex; will-change: transform;
+    transition: transform .6s cubic-bezier(.22,.61,.36,1);
+  }
+  html.js .slide { flex: 0 0 100%; }
+
+  /* no-JS: the stacked slides divide on one hairline */
+  html:not(.js) .slide + .slide {
+    margin-top: var(--cr-space-xl); padding-top: var(--cr-space-xl);
+    border-top: var(--cr-stroke) solid var(--cr-border-default);
+  }
+
+  /* ── Left column ──────────────────────────────────────────────── */
+  .client {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    margin: 0 0 var(--cr-space-m);
+  }
+  /* The credibility mark: a filled tile with the glyph inside it. */
+  .client .mark {
+    width: 30px; height: 30px; border-radius: var(--cr-radius-control);
+    background: var(--cr-text-primary); color: var(--cr-text-inverse);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--cr-font-display); font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    letter-spacing: var(--cr-tracking-heading);
+  }
+  /* SUPPORTING TEXT IS NEITHER UPPERCASE NOR TRACKED. The client name was
+     both, which read as a label on a control rather than an attribution. */
+  .client .name {
+    font-family: var(--cr-font-body); font-weight: 500;
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    letter-spacing: 0; text-transform: none; color: var(--cr-text-secondary);
+  }
+
+  /* THE ONE VOICE. Section-heading step, the display family at the system's
+     upper weight, on the title measure. */
+  .qt {
+    margin: 0; max-width: var(--cr-measure-title);
+    font-family: var(--cr-font-display); font-weight: 500;
+    font-size: var(--cr-text-h2); line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading); color: var(--cr-text-primary);
+  }
+  /* The quote is BODY, not caption — it is the thing the section exists to
+     carry, and a `ch` measure is a third width the system does not hold. */
+  .quote {
+    margin: var(--cr-space-m) 0 0; max-width: var(--cr-measure-body);
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-body); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* A LINK READS AS PRIMARY TEXT AND THE UNDERLINE CARRIES THE AFFORDANCE.
+     v2 coloured it, then revealed the underline only on hover — so the one
+     signal that survives a colour-blind reader arrived last. */
+  .read {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    margin: var(--cr-space-m) 0 0;
+    font-family: var(--cr-font-body); font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    color: var(--cr-text-primary);
+    text-decoration: none; cursor: pointer;
+  }
+  .read .read-label { text-decoration: underline; text-underline-offset: 0.25em; }
+  .read .read-arr { transition: transform .15s ease; }
+  .read:hover .read-arr { transform: translateX(4px); }
+  .read:focus-visible {
+    outline: 2px solid var(--cr-focus-ring); outline-offset: 4px;
+    border-radius: var(--cr-radius-control);
+  }
+
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--cr-space-s); margin: var(--cr-space-m) 0 0; }
+  /* The tile took a second warm fill with no border — a fill standing in for
+     structure. One page ground, so the tile takes the raised surface and the
+     single hairline instead. */
+  .tile {
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-s);
+  }
+  .tile .v {
+    font-family: var(--cr-font-display); font-weight: 500;
+    font-size: var(--cr-text-h4); line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading); color: var(--cr-text-primary);
+  }
+  .tile .l {
+    margin-top: var(--cr-space-xs);
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body); color: var(--cr-text-secondary);
+  }
+
+  /* ── Right column — the headshot, and the name-card over it ──────
+     THE PORTRAIT IS HUMAN PHOTOGRAPHY AND IS NEVER SUBSTITUTED. It is not a
+     creative background; it is the person being quoted, and this pass does
+     not touch it. The monogram beneath is the load failure fallback. */
+  .portrait {
+    position: relative; width: 100%; height: 100%;
+    border-radius: var(--cr-radius-card); overflow: hidden;
+    background-color: var(--cr-surface-5);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+  }
+  .portrait .shot {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; object-position: center 20%;
+    -webkit-user-drag: none; user-select: none;
+  }
+  .avatar {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -60%);
+    width: 132px; height: 132px; border-radius: 50%;
+    background: var(--cr-surface-1);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--cr-font-display); font-weight: 500;
+    font-size: var(--cr-text-h3);
+    letter-spacing: var(--cr-tracking-heading); color: var(--cr-text-secondary);
+  }
+  /* THE NAME-CARD IS OPAQUE, WHICH IS THE WHOLE REASON IT MAY SIT OVER A
+     PHOTOGRAPH. Remove the picture and not one word of the attribution
+     changes legibility — no scrim, no veil, nothing tuned to win contrast
+     back off an image. */
+  .namecard {
+    position: absolute; left: var(--cr-space-s); right: var(--cr-space-s); bottom: var(--cr-space-s);
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+  }
+  .nc-name {
+    margin: 0; font-family: var(--cr-font-display); font-weight: 500;
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-heading);
+    letter-spacing: 0; color: var(--cr-text-primary);
+  }
+  .nc-role {
+    margin: 0; font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* ── Controls (bottom) — scoped to html.js ────────────────────── */
+  .controls { display: none; }
+  html.js .controls {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: var(--cr-space-m);
+  }
+  .meta { display: flex; align-items: center; }
+  .dots { display: flex; align-items: center; gap: var(--cr-space-xs); }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%; padding: 0; border: 0;
+    background: var(--cr-border-default); cursor: pointer;
+    transition: width .25s ease, background .25s ease;
+  }
+  .dot:hover { background: var(--cr-text-secondary); }
+  /* Position, not colour. The active dot is the darkest thing in the row and
+     the widest — it does not need to be the only coloured one as well. */
+  .dot.on { width: 26px; border-radius: var(--cr-radius-control); background: var(--cr-text-primary); }
+  .dot.on:hover { background: var(--cr-text-primary); }
+  .dot:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 3px; }
+  .counter {
+    margin-left: var(--cr-space-xs);
+    font-family: var(--cr-font-body); font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    letter-spacing: 0; color: var(--cr-text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .arrows { display: flex; gap: var(--cr-space-xs); }
+  /* A circular control is a true circle, not a retired pill: 50% on a square
+     box is the shape, and the control radius is for rectangles. */
+  .nav {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    color: var(--cr-text-primary);
+    font-family: var(--cr-font-body);
+    display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: border-color .15s ease, background .15s ease, transform .15s ease;
+  }
+  .nav:hover { border-color: var(--cr-text-primary); background: var(--cr-surface-5); }
+  .nav:active { transform: scale(.97); }
+  .nav:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 2px; }
+  .nav svg { width: 20px; height: 20px; stroke-width: var(--cr-icon-stroke-md); }
+
+  /* ── Responsive: the original's breakpoints and the original's reflow.
+        Type steps with the pack's ramp; no per-section type breakpoints. ── */
+  @media (max-width: 1024px) {
+    .cr-tslider { padding: var(--cr-space-xl) var(--cr-page-gutter); }
+    .slide { grid-template-columns: 1fr; gap: var(--cr-space-m); }
+    /* 16/10 was off the approved vocabulary of four. Stacked, full width,
+       this frame reads as the reference's landscape crop — 4/3 is the
+       nearest approved proportion and the one it renders at. */
+    .portrait { height: auto; aspect-ratio: 4 / 3; }
+    .controls { margin-top: var(--cr-space-m); }
+    html:not(.js) .slide + .slide { margin-top: var(--cr-space-m); padding-top: var(--cr-space-m); }
+  }
+  @media (max-width: 640px) {
+    .cr-tslider { padding: var(--cr-space-m) var(--cr-page-gutter); }
+    .slide { gap: var(--cr-space-m); }
+    .client { margin-bottom: var(--cr-space-s); }
+    .quote { margin-top: var(--cr-space-s); }
+    .read { margin-top: var(--cr-space-s); }
+    .stats { gap: var(--cr-space-xs); margin-top: var(--cr-space-m); }
+    .tile { padding: var(--cr-space-s); }
+    .portrait { aspect-ratio: 4 / 3; }
+    .avatar { width: 104px; height: 104px; }
+    .namecard {
+      left: var(--cr-space-xs); right: var(--cr-space-xs); bottom: var(--cr-space-xs);
+      padding: var(--cr-space-xs) var(--cr-space-s);
+    }
+    .nav { width: 46px; height: 46px; }
+    .nav svg { width: 18px; height: 18px; }
+    .counter { margin-left: var(--cr-space-xs); }
+  }
+
+  /* The guard matches the trigger's specificity, or it is a declaration that
+     never runs. */
+  @media (prefers-reduced-motion: reduce) {
+    html.js .wrap { opacity: 1; transform: none; transition: none; }
+    html.js .track { transition: none; }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. Nothing in this section required a directed change.
+  .avatar     | font-size              | type-ramp
+  .client     | margin-bottom          | spacing-scale
+  .controls   | margin-top             | spacing-scale
+  .counter    | font-size              | type-ramp
+  .counter    | margin-left            | spacing-scale
+  .dots       | column-gap             | spacing-scale
+  .dots       | row-gap                | spacing-scale
+  .l          | font-size              | type-ramp
+  .l          | line-height            | type-ramp
+  .l          | margin-top             | spacing-scale
+  .mark       | border-radius          | radius-pair
+  .mark       | font-size              | type-ramp
+  .name       | font-size              | type-ramp
+  .name       | line-height            | type-ramp
+  .namecard   | padding-bottom         | spacing-scale
+  .namecard   | padding-left           | spacing-scale
+  .namecard   | padding-right          | spacing-scale
+  .namecard   | padding-top            | spacing-scale
+  .nc-name    | font-size              | type-ramp
+  .nc-name    | line-height            | type-ramp
+  .nc-role    | font-size              | type-ramp
+  .nc-role    | line-height            | type-ramp
+  .nc-role    | margin-top             | spacing-scale
+  .portrait   | aspect-ratio           | ratio-vocabulary
+  .portrait   | border-radius          | radius-pair
+  .qt         | font-size              | type-ramp
+  .qt         | line-height            | type-ramp
+  .qt         | max-width              | measure
+  .quote      | font-size              | type-ramp
+  .quote      | line-height            | type-ramp
+  .quote      | margin-top             | spacing-scale
+  .quote      | max-width              | measure
+  .read       | column-gap             | spacing-scale
+  .read       | font-size              | type-ramp
+  .read       | margin-top             | spacing-scale
+  .read       | row-gap                | spacing-scale
+  .read-arr   | font-size              | type-ramp
+  .read-label | font-size              | type-ramp
+  .slide      | column-gap             | spacing-scale
+  .slide      | row-gap                | spacing-scale
+  .stats      | column-gap             | spacing-scale
+  .stats      | margin-top             | spacing-scale
+  .stats      | row-gap                | spacing-scale
+  .tile       | border-bottom-width    | stroke
+  .tile       | border-left-width      | stroke
+  .tile       | border-right-width     | stroke
+  .tile       | border-top-width       | stroke
+  .tile       | padding-bottom         | spacing-scale
+  .tile       | padding-left           | spacing-scale
+  .tile       | padding-right          | spacing-scale
+  .tile       | padding-top            | spacing-scale
+  .v          | font-size              | type-ramp
+  .v          | line-height            | type-ramp
+-->
+
+<section class="cr-tslider" data-screen-label="Testimonial slider"
+         data-archetype="editorial-split" data-hierarchy="proof" data-intent="build-trust"
+         data-register="human" data-signature="pull-quote" data-density="low">
+  <div class="wrap">
+    <div class="viewport">
+      <div class="track">
+
+        <!-- 1 · BFSI -->
+        <article class="slide">
+          <div class="col-text">
+            <p class="client"><span class="mark">M</span><span class="name">Meridian Bank</span></p>
+            <h2 class="qt">Meridian Bank Reconciles in Hours.</h2>
+            <p class="quote">We're a regulated lender with no room for error. Example Brand put agents alongside our finance team and cleared the routine reconciliation — no backlog, no extra headcount.</p>
+            <a class="read" href="#"><span class="read-label">Read the case study</span><span class="read-arr">→</span></a>
+            <div class="stats">
+              <div class="tile"><div class="v">92%</div><div class="l">Routine reconciliation automated</div></div>
+              <div class="tile"><div class="v">4 wks</div><div class="l">From pilot to production</div></div>
+            </div>
+          </div>
+          <div class="col-media">
+            <div class="portrait">
+              <div class="avatar">AR</div>
+              <img class="shot" alt="Anita Rao" draggable="false" decoding="async"
+                   src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=1000&h=833&fit=crop&crop=faces&q=80&auto=format"
+                   onerror="this.remove()">
+              <div class="namecard">
+                <p class="nc-name">Anita Rao</p>
+                <p class="nc-role">VP, Finance Operations, Meridian Bank</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 2 · Healthcare -->
+        <article class="slide">
+          <div class="col-text">
+            <p class="client"><span class="mark">C</span><span class="name">Cedar Health</span></p>
+            <h2 class="qt">Cedar Health Saves Two Hours a Day.</h2>
+            <p class="quote">Our physicians were finishing charts long after every shift. Dr.Scribe now drafts the clinical notes and routes the exceptions to a human, so the documentation is done before the patient leaves.</p>
+            <a class="read" href="#"><span class="read-label">Read the case study</span><span class="read-arr">→</span></a>
+            <div class="stats">
+              <div class="tile"><div class="v">2 hrs</div><div class="l">Returned per clinician, daily</div></div>
+              <div class="tile"><div class="v">30K+</div><div class="l">Clinical notes drafted monthly</div></div>
+            </div>
+          </div>
+          <div class="col-media">
+            <div class="portrait">
+              <div class="avatar">MH</div>
+              <img class="shot" alt="Dr. Marcus Hale" draggable="false" decoding="async"
+                   src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=1000&h=833&fit=crop&crop=faces&q=80&auto=format"
+                   onerror="this.remove()">
+              <div class="namecard">
+                <p class="nc-name">Dr. Marcus Hale</p>
+                <p class="nc-role">Chief Medical Officer, Cedar Health</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 3 · Supply Chain -->
+        <article class="slide">
+          <div class="col-text">
+            <p class="client"><span class="mark">V</span><span class="name">Volta Logistics</span></p>
+            <h2 class="qt">Volta Logistics Halved Its Cycle Time.</h2>
+            <p class="quote">We move thousands of orders a day across three systems. Example Brand mapped the process and deployed agents in parallel to our team — cycle time dropped by half, with nothing re-platformed.</p>
+            <a class="read" href="#"><span class="read-label">Read the case study</span><span class="read-arr">→</span></a>
+            <div class="stats">
+              <div class="tile"><div class="v">48%</div><div class="l">Order cycle-time reduction</div></div>
+              <div class="tile"><div class="v">3</div><div class="l">Core ERPs integrated</div></div>
+            </div>
+          </div>
+          <div class="col-media">
+            <div class="portrait">
+              <div class="avatar">LF</div>
+              <img class="shot" alt="Lena Fischer" draggable="false" decoding="async"
+                   src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=1000&h=833&fit=crop&crop=faces&q=80&auto=format"
+                   onerror="this.remove()">
+              <div class="namecard">
+                <p class="nc-name">Lena Fischer</p>
+                <p class="nc-role">Director of Supply Chain, Volta Logistics</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="meta">
+        <div class="dots" aria-hidden="false"></div>
+        <span class="counter">01 / 03</span>
+      </div>
+      <div class="arrows">
+        <button class="nav prev" type="button" aria-label="Previous testimonial"><i data-lucide="arrow-left"></i></button>
+        <button class="nav next" type="button" aria-label="Next testimonial"><i data-lucide="arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var root = document.querySelector('.cr-tslider');
+  if (!root) return;
+  var wrap     = root.querySelector('.wrap');
+  var vp       = root.querySelector('.viewport');
+  var track    = root.querySelector('.track');
+  var prevBtn  = root.querySelector('.nav.prev');
+  var nextBtn  = root.querySelector('.nav.next');
+  var counter  = root.querySelector('.counter');
+  var dotsWrap = root.querySelector('.dots');
+  var REDUCED  = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ── Entrance reveal — set up FIRST so a later error can't trap the
+  //    content in its hidden (opacity:0) state. ──
+  if ('IntersectionObserver' in window && !REDUCED) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { wrap.classList.add('revealed'); io.disconnect(); }
+      });
+    }, { threshold: 0.18 });
+    io.observe(wrap);
+  } else {
+    wrap.classList.add('revealed');
+  }
+
+  var N = track.children.length;
+  if (N < 2) { if (window.lucide) { try { lucide.createIcons(); } catch (e) {} } return; }
+
+  // Build position dots
+  var dots = [];
+  for (var i = 0; i < N; i++) {
+    var b = document.createElement('button');
+    b.className = 'dot';
+    b.type = 'button';
+    b.setAttribute('aria-label', 'Go to testimonial ' + (i + 1));
+    (function (idx) { b.addEventListener('click', function () { goTo(idx); }); })(i);
+    dotsWrap.appendChild(b);
+    dots.push(b);
+  }
+
+  var current = 0;                 // logical index of the active testimonial
+  var busy = false, dragging = false, startX = 0, delta = 0, moved = false;
+
+  function W()     { return vp.clientWidth; }      // read live → resize-safe
+  function baseX() { return -W(); }                // rest = one slide left (buffer)
+  function pad(n)  { return (n < 10 ? '0' : '') + n; }
+
+  function setX(px, anim) {
+    track.style.transition = anim ? '' : 'none';
+    track.style.transform  = 'translateX(' + px + 'px)';
+  }
+  function rest() { setX(baseX(), false); }
+
+  function updateUI() {
+    counter.textContent = pad(current + 1) + ' / ' + pad(N);
+    for (var i = 0; i < N; i++) {
+      dots[i].classList.toggle('on', i === current);
+      dots[i].setAttribute('aria-current', i === current ? 'true' : 'false');
+    }
+    // a11y: only the visible (active) slide — always the 2nd DOM child — is interactive
+    var kids = track.children;
+    for (var j = 0; j < kids.length; j++) {
+      var active = (j === 1);
+      kids[j].inert = !active;
+      kids[j].setAttribute('aria-hidden', active ? 'false' : 'true');
+    }
+  }
+
+  function afterNext() {
+    track.appendChild(track.firstElementChild);
+    rest();
+    current = (current + 1) % N;
+    updateUI();
+  }
+  function afterPrev() {
+    track.insertBefore(track.lastElementChild, track.firstElementChild);
+    rest();
+    current = (current - 1 + N) % N;
+    updateUI();
+  }
+
+  // dir: 1 = next, -1 = prev, 0 = snap back. `done` runs after the rotation.
+  function settle(dir, done) {
+    if (dir === 0) { setX(baseX(), !REDUCED); if (done) done(); return; }
+    if (busy) return;
+    if (REDUCED) { dir === 1 ? afterNext() : afterPrev(); if (done) done(); return; }
+    busy = true;
+    setX(dir === 1 ? -2 * W() : 0, true);
+    function onEnd(e) {
+      // ignore transitions that bubble up from children (e.g. button hovers)
+      if (e.target !== track || e.propertyName !== 'transform') return;
+      track.removeEventListener('transitionend', onEnd);
+      dir === 1 ? afterNext() : afterPrev();
+      busy = false;
+      if (done) done();
+    }
+    track.addEventListener('transitionend', onEnd);
+  }
+
+  function next() { settle(1); }
+  function prev() { settle(-1); }
+
+  function goTo(i) {
+    if (i === current || busy) return;
+    var fwd  = (i - current + N) % N;
+    var back = (current - i + N) % N;
+    var dir  = fwd <= back ? 1 : -1;
+    var steps = dir === 1 ? fwd : back;
+    (function run() {
+      if (steps <= 0) return;
+      steps--;
+      settle(dir, function () { if (steps > 0) run(); });
+    })();
+  }
+
+  // Buffer setup: move the last slide to the front so there is ALWAYS a slide
+  // to the left for drag/prev. Rest transform = -W shows slide 0 (2nd child).
+  track.insertBefore(track.lastElementChild, track.firstElementChild);
+  rest();
+  updateUI();
+
+  // ── Pointer drag ──
+  vp.addEventListener('pointerdown', function (e) {
+    if (e.button === 2) return;                 // ignore right-click
+    moved = false;                              // fresh gesture (also clears a stale flag)
+    if (busy) return;                           // don't start a drag mid-animation
+    dragging = true; startX = e.clientX; delta = 0;
+    try { vp.setPointerCapture(e.pointerId); } catch (_) {}
+    track.style.transition = 'none';
+    vp.classList.add('grabbing');
+  });
+  vp.addEventListener('pointermove', function (e) {
+    if (!dragging) return;
+    delta = e.clientX - startX;
+    if (Math.abs(delta) > 6) moved = true;
+    var w = W(), d = delta;
+    if (d >  w) d =  w + (d - w) * 0.25;     // rubber-band past one slide
+    if (d < -w) d = -w + (d + w) * 0.25;
+    setX(baseX() + d, false);
+  });
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    vp.classList.remove('grabbing');
+    try { vp.releasePointerCapture(e.pointerId); } catch (_) {}
+    var threshold = Math.min(W() * 0.18, 140);
+    if (delta <= -threshold)      settle(1);
+    else if (delta >=  threshold) settle(-1);
+    else                          settle(0);
+  }
+  vp.addEventListener('pointerup', endDrag);
+  vp.addEventListener('pointercancel', endDrag);
+
+  // Swallow the click that trails a real drag, so dragging never fires a link.
+  vp.addEventListener('click', function (e) {
+    if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; }
+  }, true);
+
+  // Keep the demo "Read the case study" links from jumping in the preview.
+  var reads = root.querySelectorAll('.read');
+  for (var r = 0; r < reads.length; r++) {
+    reads[r].addEventListener('click', function (e) { e.preventDefault(); });
+  }
+
+  // Arrows + keyboard (active when focus is within the section)
+  nextBtn.addEventListener('click', next);
+  prevBtn.addEventListener('click', prev);
+  root.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') { next(); }
+    else if (e.key === 'ArrowLeft') { prev(); }
+  });
+
+  // Keep the resting position correct across resizes (base is always one slide).
+  var rt;
+  window.addEventListener('resize', function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () { if (!dragging) rest(); }, 120);
+  });
+
+  if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
+})();
+</script>
+</body>
+</html>

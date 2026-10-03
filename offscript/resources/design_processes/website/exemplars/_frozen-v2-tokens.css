@@ -1,0 +1,335 @@
+/* ══════════════════════════════════════════════════════════════════
+   FROZEN — Example Brand v2 "eternum" tokens, as of 2026-07-28.
+
+   This is a SNAPSHOT, not a live layer. It exists so the 81 exemplars in
+   this directory keep expressing the visual language they were authored
+   in, instead of half-migrating every time the live brand pack changes.
+
+   The live pack is ../colors_and_type.css (v3 editorial restraint). Do
+   NOT author against this file, do not sync it forward, and do not copy
+   values out of it. It is here to keep a historical reference honest.
+
+   Why this exists: these exemplars linked the live pack, so re-pointing
+   the shared token NAMES to new values silently re-themed them — new
+   page surface and accents underneath ~185 hardcoded old font-family
+   strings and ~180 raw old hexes. That hybrid was neither language.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ──────────────────────────────────────────────────────────────────
+   Example Brand — Colors & Type  [v2 RE-THEME — PROPOSED, gate-1 draft]
+   Color  : "eternum" brandbook (purple→blue, teal secondary, cool neutrals)
+   Type   : Urbanist (display) + Inter (body); scale from amigo.ai
+   Skin   : structure (spacing/radius/effects/buttons/nav) from amigo.ai
+   Token NAMES are the stable contract — only VALUES change + new tokens added.
+   ────────────────────────────────────────────────────────────────── */
+
+/* ─── Webfonts ─────────────────────────────────────────────────── */
+/* Display = Urbanist (Thin→Black in ./fonts/). Body = Inter. Manrope retired. */
+@font-face { font-family:"Urbanist"; src:url("../fonts/Urbanist-Light.ttf")    format("truetype"); font-weight:300; font-style:normal; font-display:swap; }
+@font-face { font-family:"Urbanist"; src:url("../fonts/Urbanist-Regular.ttf")  format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"Urbanist"; src:url("../fonts/Urbanist-Medium.ttf")   format("truetype"); font-weight:500; font-style:normal; font-display:swap; }
+@font-face { font-family:"Urbanist"; src:url("../fonts/Urbanist-SemiBold.ttf") format("truetype"); font-weight:600; font-style:normal; font-display:swap; }
+@font-face { font-family:"Urbanist"; src:url("../fonts/Urbanist-Bold.ttf")     format("truetype"); font-weight:700; font-style:normal; font-display:swap; }
+@font-face { font-family:"Urbanist"; src:url("../fonts/Urbanist-ExtraBold.ttf")format("truetype"); font-weight:800; font-style:normal; font-display:swap; }
+
+@font-face { font-family:"Inter"; src:url("../fonts/Inter-Regular.ttf")  format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"Inter"; src:url("../fonts/Inter-Medium.ttf")   format("truetype"); font-weight:500; font-style:normal; font-display:swap; }
+@font-face { font-family:"Inter"; src:url("../fonts/Inter-SemiBold.ttf") format("truetype"); font-weight:600; font-style:normal; font-display:swap; }
+@font-face { font-family:"Inter"; src:url("../fonts/Inter-Bold.ttf")     format("truetype"); font-weight:700; font-style:normal; font-display:swap; }
+
+/* ─── Tokens ───────────────────────────────────────────────────── */
+:root {
+  /* ── Brand / primary (Spirit slot → blue, kept from v1) ───────── */
+  --cr-brand:           #149DFF;   /* Primary brand + action accent */
+  --cr-brand-700:       #0074DD;
+  --cr-brand-300:       #74C0FC;
+  --cr-brand-100:       #EDFAFF;
+  --cr-brand-blue:      #149DFF;   /* alias, prefer --cr-brand */
+  --cr-brand-blue-700:  #0074DD;
+  --cr-brand-blue-300:  #74C0FC;
+  --cr-brand-blue-100:  #EDFAFF;
+  --cr-wordmark-indigo: #150580;   /* WORDMARK ONLY — unchanged */
+  --cr-brand-indigo:    #150580;
+
+  /* ── Secondary (Stability / teal — NEW, from brandbook) ───────── */
+  --cr-teal:            #1E6E6E;   /* main secondary */
+  --cr-teal-900:        #0F4746;   /* deep teal — dense surfaces */
+  --cr-teal-400:        #57A1A0;
+  --cr-teal-100:        #B3DFDC;   /* soft teal tint */
+
+  /* ── Dark / ink surfaces (cool, neutralised) ──────────────────── */
+  --cr-ink:             #111111;   /* near-black dense surface (brandbook #000) */
+  --cr-ink-deep:        #0A0A0A;
+  --cr-ink-night:       #141414;
+  --cr-ink-violet:      #14233A;   /* re-pointed: cool blue-grey, was indigo */
+  --cr-ink-blue-deep:   #0B1B30;   /* CTA gradient base, cool */
+  --cr-ink-flat:        #0E0E0E;   /* flat ink band surface (most common dark) */
+  --cr-ink-cool:        #0E1116;   /* cool blue-black: modal backdrops, dark chips */
+  --cr-ink-card:        #0A0D12;   /* deepest blue-ink: dark photo / feature cards */
+
+  /* ── Neutrals — COOL grey ramp (brandbook) ────────────────────── */
+  --cr-fg:              #1A1A1A;   /* Primary text on light (was #292929) */
+  --cr-fg-2:            #4E4E4E;   /* Body text on light */
+  --cr-fg-3:            #6E6E6E;   /* Caption / supporting (brandbook) */
+  --cr-fg-muted:        #A5A5A5;   /* Inverse-body / muted (brandbook) */
+  --cr-fg-link:         #6E6E6E;   /* Footer navigation (cooled) */
+
+  --cr-bg:              #FFFFFF;
+  --cr-bg-warm:         #FAFAFA;   /* LEGACY name — now a COOL off-white */
+  --cr-bg-warm-2:       #F2F2F2;   /* LEGACY name — now cool grey-50 */
+  --cr-bg-tint:         #EEF4FE;   /* soft blue protective tint */
+  --cr-bg-grey-50:      #F8F8F8;
+  --cr-bg-grey-100:     #F2F2F2;   /* brandbook lightest */
+  --cr-bg-grey-200:     #E4E4E6;   /* brandbook */
+
+  --cr-line:            #E4E4E6;   /* 1px hairline (cool, brandbook) */
+  --cr-line-soft:       rgba(110,110,110,0.30);
+  --cr-line-dark:       rgba(255,255,255,0.20);  /* amigo: translucent white edge on dark */
+
+  /* ── Surface roles (the governance join) ──────────────────────────
+     COMPOSITION.md / COMPOSE.md name surfaces by ROLE, never by value;
+     the roles resolve to these tokens (one surface role per band — see
+     the composition grammar). Rebrand changes the VALUES here only.
+       base     → the default page surface
+       rest     → a quieter alternate surface for low-drama bands
+       contrast → the inverted high-contrast surface (proof / closing beats)
+       figure   → a decorated / imaged panel surface (gradient or image) */
+  --cr-surface-base:      var(--cr-bg);            /* #FFFFFF */
+  --cr-surface-rest:      var(--cr-bg-warm);       /* cool off-white #FAFAFA (legacy 'warm' name) */
+  --cr-surface-contrast:  var(--cr-ink-flat);      /* #0E0E0E flat ink band — most common dark */
+  --cr-surface-figure:    var(--cr-ink-blue-deep); /* base of the cool ink→blue-grey→teal panel; full
+                                                      treatment = the figure/gradient spec, never purple/indigo */
+
+  /* ── Functional semantics (kept — brandbook doesn't define these) ─ */
+  --cr-success:         #37AE61;
+  --cr-success-soft:    #74C054;
+  --cr-success-700:     #1F8A5B;   /* deep success green — dark ramp stop (parallels --cr-error-700) */
+  --cr-success-100:     #BCF2C9;
+  --cr-amber:           #DCA64D;   /* warning */
+  --cr-amber-100:       #FEF5E5;   /* pale amber tint — chip / icon backgrounds */
+  --cr-amber-700:       #8B5E1C;   /* deep amber / bronze — dark ramp stop */
+  --cr-info:            var(--cr-brand);
+  --cr-warning:         var(--cr-amber);
+  --cr-error:           #E5484D;
+  --cr-error-700:       #C4292E;
+  --cr-error-soft:      #F2706D;
+  --cr-error-100:       #FDECEC;
+
+  /* ── Data-viz categorical ramp (chart-only accents) ───────────────
+     Decorative hues survive HERE ONLY (charts/metrics), not as brand
+     surface colors. Anchored on blue + teal + functional + neutral. */
+  --cr-data-1:          var(--cr-brand);     /* blue   */
+  --cr-data-2:          var(--cr-teal);      /* teal   */
+  --cr-data-3:          var(--cr-success);   /* green  */
+  --cr-data-4:          var(--cr-amber);     /* amber  */
+  --cr-data-5:          var(--cr-teal-400);  /* light teal */
+  --cr-data-6:          #6E6E6E;             /* neutral grey */
+
+  /* ── Industry-chip palette (vertical accents) ─────────────────────
+     BFSI = --cr-brand · Healthcare = --cr-success-soft · Supply-chain =
+     --cr-amber (reuse existing tokens). Staffing needs its own blue: */
+  --cr-chip-staffing:   #6694F0;   /* Staffing vertical chip blue (README industry-chip palette) */
+
+  /* ── Radius (from amigo.ai) ───────────────────────────────────────
+     amigo: buttons 6px, cards 20px, sections 24px, pills 9999px. */
+  --cr-radius-xs:       6px;       /* buttons, chips */
+  --cr-radius-sm:       8px;
+  --cr-radius-md:       12px;
+  --cr-radius-lg:       16px;
+  --cr-radius-xl:       20px;      /* cards (amigo's dominant 20px) */
+  --cr-radius-2xl:      24px;      /* large panels / sections (NEW) */
+  --cr-radius-pill:     9999px;    /* was 500px */
+
+  /* ── Effects ──────────────────────────────────────────────────────
+     amigo is BORDER-FIRST: only one soft shadow, buttons flat. Depth
+     comes from borders + scale + GLASS (backdrop-blur) on translucent
+     panels. Shadows stay rare; glass is the new charter-approved tool. */
+  --cr-shadow-sm:       0 1px 2px rgba(0,0,0,0.04);
+  --cr-shadow-lg:       0 10px 15px -3px rgba(0,0,0,0.10),
+                        0 4px 6px -4px rgba(0,0,0,0.10);   /* amigo's exact */
+
+  --cr-glass-bg:        rgba(255,255,255,0.08);  /* on dark surfaces */
+  --cr-glass-bg-light:  rgba(17,17,17,0.04);     /* on light surfaces */
+  --cr-glass-blur:      14px;                     /* backdrop-filter radius */
+  --cr-glass-border:    rgba(255,255,255,0.20);   /* amigo translucent edge */
+
+  /* ── Iconography (the governance join) ─────────────────────────────
+     COMPOSE.md grammar references "the sanctioned icon set" by role; the
+     family + stroke pairings resolve here. Icon set: Lucide. No emoji,
+     no custom glyphs. Sanctioned inline unicode: → (CTA labels only). */
+  --cr-icon-stroke-sm:  1.0;   /* stroke weight at the 18px icon size */
+  --cr-icon-stroke-md:  1.5;   /* stroke weight at the 24px icon size */
+
+  /* ── Spacing scale (8px grid; amigo adds generous large steps) ──── */
+  --cr-space-1:  4px;
+  --cr-space-2:  8px;
+  --cr-space-3:  12px;
+  --cr-space-4:  16px;
+  --cr-space-5:  20px;
+  --cr-space-6:  24px;
+  --cr-space-7:  28px;    /* NEW — amigo sub-rhythm (count 46) */
+  --cr-space-8:  32px;
+  --cr-space-10: 40px;
+  --cr-space-12: 48px;
+  --cr-space-14: 56px;    /* NEW */
+  --cr-space-15: 60px;
+  --cr-space-16: 64px;    /* NEW */
+  --cr-space-20: 80px;
+  --cr-space-25: 100px;   /* NEW — section gutter */
+  --cr-space-30: 120px;
+  --cr-space-32: 128px;   /* NEW — amigo big section rhythm */
+  --cr-space-40: 160px;   /* NEW */
+  --cr-space-50: 200px;   /* NEW — hero/section max breathing */
+
+  /* ── Layout ───────────────────────────────────────────────────── */
+  --cr-page-max:        1440px;  /* outer page frame / full-bleed band cap */
+  --cr-page-gutter:     100px;
+  --cr-content-max:     1440px;  /* CANONICAL section content well — every section aligns to this one edge (coincides with the page frame by design) */
+  --cr-content-narrow:  1080px;  /* secondary reading well — FAQ / editorial sections only; the one documented exception */
+
+  /* ── Nav (NEW — consolidates v1's 5+ ad-hoc nav impls) ──────────── */
+  --cr-nav-height:      72px;
+  --cr-nav-pad-x:       var(--cr-page-gutter);
+  --cr-nav-link-size:   15px;
+  --cr-nav-link-gap:    28px;
+
+  /* ── Typography ─────────────────────────────────────────────────── */
+  --cr-font-display:    "Urbanist", system-ui, sans-serif;
+  --cr-font-body:       "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --cr-font-editorial:  "Urbanist", system-ui, sans-serif;   /* heavy weight for oversize moments */
+  --cr-font-mono:       ui-monospace, "JetBrains Mono", Menlo, monospace;
+}
+
+/* ─── Type ramp ────────────────────────────────────────────────────
+   Scale adopted from amigo.ai (editorial: large display, tight negative
+   tracking, tight leading), rendered in Urbanist. amigo's source weights
+   were 300–400 (a serif); on geometric Urbanist that reads thin, so the
+   DEFAULT display weight here is 600 (SemiBold). The type preview shows a
+   300/500/600 comparison — this is the #1 eyes-on call at gate 1. */
+.cr-h-hero, h1.cr {
+  font-family: var(--cr-font-display);
+  font-weight: 600;
+  font-size: 88px;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  color: var(--cr-fg);
+}
+.cr-h-section, h2.cr {
+  font-family: var(--cr-font-display);
+  font-weight: 600;
+  font-size: 60px;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--cr-fg);
+}
+.cr-h-sub, h3.cr {
+  font-family: var(--cr-font-display);
+  font-weight: 600;
+  font-size: 44px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--cr-fg);
+}
+.cr-h-group, h4.cr {
+  font-family: var(--cr-font-display);
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--cr-fg);
+}
+.cr-h-card, h5.cr {
+  font-family: var(--cr-font-display);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--cr-fg);
+}
+.cr-h-eyebrow {
+  font-family: var(--cr-font-body);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.08em;     /* amigo mono-eyebrow tracked-out */
+  text-transform: uppercase;
+  color: var(--cr-fg-3);
+}
+
+/* Body — Inter */
+.cr-p-lede {
+  font-family: var(--cr-font-body);
+  font-weight: 400; font-size: 20px; line-height: 1.5; color: var(--cr-fg-3);
+}
+.cr-p, p.cr {
+  font-family: var(--cr-font-body);
+  font-weight: 400; font-size: 16px; line-height: 1.6; color: var(--cr-fg-2);
+}
+.cr-p-card {
+  font-family: var(--cr-font-body);
+  font-weight: 500; font-size: 18px; line-height: 1.5; color: var(--cr-fg-3);
+}
+.cr-caption {
+  font-family: var(--cr-font-body);
+  font-weight: 500; font-size: 13px; line-height: 1.4; color: var(--cr-fg-muted);
+}
+.cr-quote {
+  font-family: var(--cr-font-body);
+  font-weight: 500; font-size: 20px; line-height: 1.5; color: var(--cr-fg-3);
+}
+.cr-num-display {
+  font-family: var(--cr-font-display);
+  font-weight: 600; font-size: 96px; line-height: 1.0; letter-spacing: -0.03em;
+}
+
+/* Inverse on dark surfaces.
+   Put .cr-on-dark on the BAND (or any wrapper): headings inside flip to white
+   automatically — the ramp's own color: var(--cr-fg) would otherwise render
+   dark-on-dark on ink surfaces. */
+.cr-on-dark { color: #FFFFFF; }
+.cr-on-dark.cr-p, .cr-on-dark .cr-p { color: var(--cr-fg-muted); }
+.cr-on-dark .cr-h-hero, .cr-on-dark.cr-h-hero,
+.cr-on-dark .cr-h-section, .cr-on-dark.cr-h-section,
+.cr-on-dark .cr-h-sub, .cr-on-dark.cr-h-sub,
+.cr-on-dark .cr-h-group, .cr-on-dark.cr-h-group,
+.cr-on-dark .cr-h-card, .cr-on-dark.cr-h-card,
+.cr-on-dark .cr-num-display { color: #FFFFFF; }
+.cr-on-dark .cr-h-eyebrow, .cr-on-dark.cr-h-eyebrow { color: var(--cr-fg-muted); }
+.cr-on-dark .cr-p-lede, .cr-on-dark .cr-p-card,
+.cr-on-dark .cr-caption, .cr-on-dark .cr-quote { color: var(--cr-fg-muted); }
+
+/* ─── Buttons (NEW shared layer) ───────────────────────────────────
+   amigo's geometry was flat/compact/6px; CR overrides the SHAPE back to
+   its signature PILL (--cr-radius-pill), keeping the flat fill + brand
+   blue + the "→". Padding widened for the pill. */
+.cr-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--cr-font-body); font-weight: 500; font-size: 15px;
+  line-height: 1; letter-spacing: -0.01em;
+  padding: 12px 24px; border-radius: var(--cr-radius-pill);
+  border: 1px solid transparent; cursor: pointer;
+  transition: background-color .15s ease, color .15s ease, opacity .15s ease;
+}
+.cr-btn-primary   { background: var(--cr-brand); color: #fff; }
+.cr-btn-primary:hover   { background: var(--cr-brand-700); }
+.cr-btn-secondary { background: #fff; color: var(--cr-fg); border-color: var(--cr-line); }
+.cr-btn-secondary:hover { background: var(--cr-bg-grey-100); }
+.cr-btn-tertiary  { background: transparent; color: var(--cr-brand); padding-left: 4px; padding-right: 4px; }
+.cr-btn-tertiary:hover  { color: var(--cr-brand-700); }
+.cr-btn:active    { transform: scale(0.98); }
+.cr-btn:disabled  { opacity: 0.4; cursor: not-allowed; }
+
+/* ─── Glass surface (NEW — charter-approved; amigo backdrop-blur) ──── */
+.cr-glass {
+  background: var(--cr-glass-bg);
+  -webkit-backdrop-filter: blur(var(--cr-glass-blur));
+  backdrop-filter: blur(var(--cr-glass-blur));
+  border: 1px solid var(--cr-glass-border);
+  border-radius: var(--cr-radius-xl);
+}
+.cr-glass-light {
+  background: var(--cr-glass-bg-light);
+  -webkit-backdrop-filter: blur(var(--cr-glass-blur));
+  backdrop-filter: blur(var(--cr-glass-blur));
+  border: 1px solid var(--cr-line);
+  border-radius: var(--cr-radius-xl);
+}

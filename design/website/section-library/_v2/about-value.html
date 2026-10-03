@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CR — About · value proposition</title>
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+<!--
+  COMPONENT: About · value proposition
+  COMPOSITION: Warm off-white band (#F8F8F8). TRUE 2-column split (30fr / 70fr).
+    LEFT col (flex column, stretches to right col height): a small plain
+    uppercase "ABOUT US" eyebrow PINNED TOP + a tall rounded PORTRAIT pinned to
+    the BOTTOM (margin-top:auto) so its base aligns with the last stat row on the
+    right (the source's photo-bottom ≈ stats-bottom alignment). RIGHT col: a
+    large Inter LEDE (kept on the Inter body/lede ramp — NOT inflated to display
+    per charter) + a small "MORE ABOUT US →" uppercase link, then a stack of
+    THREE STAT ROWS each separated by a hairline rule (border-top, right column
+    only). Each stat row uses IDENTICAL grid tracks `1fr minmax(240px,300px)`:
+    a big Urbanist number left-aligned in col 1 + a 2-line grey caption
+    left-aligned in col 2 — fixed tracks so every caption shares one left edge
+    regardless of number width (space-between/auto tracks would ragged the left
+    edges since "11.3×" ≠ "92%" in width).
+  INSPIRATION: a cookware brand "ABOUT US" value-prop section — layout only:
+    left label + tall environmental portrait, right lede + "more about us" link,
+    3 stacked number/caption stat rows with hairline separators. Re-skinned to CR:
+    cookware copy → CR ops-automation voice; man-with-blender portrait → CR
+    professional-at-desk (leader-1); brand stats → real CR numbers
+    (4M+ tasks / 11.3× ROI / 92% cost removed — reconciled with the catalog's
+    "4M+ tasks" milestone). Serif lede → Inter; warm cream band kept.
+  MOTION: "count-up + reveal" (default — answer 3 was a fidelity note, not a
+    motion idea; this matches the value-stats sibling). On first viewport entry
+    the eyebrow → lede → link → 3 stat rows fade+rise in sequence
+    (--d 0/80/160/200/280/360ms) and the photo rises (--d 240ms); each big
+    number COUNTS from 0 to its target (easeOutCubic ~1.4s, lands exactly on
+    4 / 11.3 / 92 with its M+ / × / % suffix). IntersectionObserver fires once.
+    .has-js default-VISIBLE + final numbers in the HTML (without JS / script
+    stripped the final numbers + full layout show); prefers-reduced-motion / no-IO
+    → final numbers, no count. No Lucide — the link arrow is a plain → entity
+    (CR's own CTA-arrow typography), so no CDN is loaded.
+  RESPONSIVE: 2-col ≥ 820px → 1-col ≤ 819px (the left col stacks above the
+    right, so reading order becomes eyebrow → photo → lede → link → stats; the
+    photo re-crops to a wide 16:10 landscape capped at 360px tall); stat rows
+    keep the number|caption split until ≤ 520px where the caption drops under
+    the number; lede + numbers scale via clamp.
+-->
+<style>
+  .cr-abv {
+    background: var(--cr-bg-warm);
+    padding: clamp(72px, 8vw, 116px) clamp(24px, 5vw, 80px);
+    font-family: var(--cr-font-body);
+  }
+  .abv-well { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  .abv-grid {
+    display: grid;
+    grid-template-columns: 30fr 70fr;
+    gap: clamp(40px, 6vw, 88px);
+    /* align-items defaults to stretch → left col matches right col height */
+  }
+
+  /* ── Left column ────────────────────────────────────────── */
+  .abv-left {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .abv-eyebrow {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cr-fg-3);
+  }
+  .abv-photo {
+    margin-top: auto;            /* pin to bottom of the column */
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border-radius: 16px;
+    object-fit: cover;
+    object-position: center 22%;
+    display: block;
+  }
+
+  /* ── Right column ───────────────────────────────────────── */
+  .abv-right { min-width: 0; }
+
+  .abv-lede {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: clamp(19px, 1.7vw, 24px);
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+    color: var(--cr-fg);
+    max-width: 640px;
+  }
+  .abv-more {
+    display: inline-block;
+    margin: 28px 0 0;
+    font-family: var(--cr-font-body);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cr-fg-2);
+    text-decoration: none;
+    transition: color .18s ease;
+  }
+  .abv-more:hover, .abv-more:focus-visible { color: var(--cr-brand); }
+  .abv-more .arr { transition: transform .2s ease; display: inline-block; }
+  .abv-more:hover .arr, .abv-more:focus-visible .arr { transform: translateX(3px); }
+
+  /* Stats */
+  .abv-stats { margin-top: clamp(40px, 5vw, 64px); }
+  .abv-stat {
+    display: grid;
+    grid-template-columns: 1fr minmax(240px, 300px);
+    align-items: center;
+    gap: 24px;
+    padding: clamp(24px, 3vw, 34px) 0;
+    border-top: 1px solid var(--cr-line);
+  }
+  .abv-num {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 600;
+    font-size: clamp(40px, 4.6vw, 58px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--cr-fg);
+  }
+  .abv-cap {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--cr-fg-3);
+  }
+
+  /* ── Scroll-reveal ──────────────────────────────────────── */
+  .cr-abv.has-js .reveal { opacity: 0; transform: translateY(16px); }
+  .cr-abv.has-js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cr-abv.has-js .reveal { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ── Responsive ─────────────────────────────────────────── */
+  @media (max-width: 819px) {
+    .abv-grid { grid-template-columns: 1fr; gap: 40px; }
+    .abv-photo {
+      margin-top: 28px;
+      aspect-ratio: 16 / 10;     /* wide landscape crop on stack */
+      object-position: center 30%;
+      max-height: 360px;
+    }
+  }
+  @media (max-width: 520px) {
+    .abv-stat {
+      grid-template-columns: 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+    .abv-num { font-size: clamp(36px, 11vw, 48px); }
+  }
+</style>
+</head>
+<body>
+
+<section class="cr-abv" data-screen-label="About · value proposition">
+  <div class="abv-well">
+    <div class="abv-grid">
+
+      <!-- ── Left column ───────────────────────────────────── -->
+      <div class="abv-left">
+        <p class="abv-eyebrow reveal" style="--d:0ms">About Us</p>
+        <img class="abv-photo reveal" style="--d:240ms"
+             src="../assets/../../brand-pack/assets/imagery/avatars/leader-1.jpg"
+             alt="A Example Brand operations lead at work">
+      </div>
+
+      <!-- ── Right column ──────────────────────────────────── -->
+      <div class="abv-right">
+        <p class="abv-lede reveal" style="--d:80ms">Designed for the high-volume, exception-heavy work real businesses run on, Example Brand brings agents, integration, and strategy together under one accountable team.</p>
+
+        <a class="abv-more reveal" style="--d:160ms" href="#">More About Us <span class="arr">&rarr;</span></a>
+
+        <div class="abv-stats">
+
+          <div class="abv-stat reveal" style="--d:200ms">
+            <p class="abv-num" data-target="4" data-suffix="M+" data-decimals="0">4M+</p>
+            <p class="abv-cap">Operational tasks automated across our clients.</p>
+          </div>
+
+          <div class="abv-stat reveal" style="--d:280ms">
+            <p class="abv-num" data-target="11.3" data-suffix="&times;" data-decimals="1">11.3&times;</p>
+            <p class="abv-cap">Average return delivered on every engagement.</p>
+          </div>
+
+          <div class="abv-stat reveal" style="--d:360ms">
+            <p class="abv-num" data-target="92" data-suffix="%" data-decimals="0">92%</p>
+            <p class="abv-cap">Of routine operational cost removed per deployment.</p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var sec = document.querySelector('.cr-abv');
+    if (!sec || !('IntersectionObserver' in window)) return;
+    sec.classList.add('has-js');
+
+    var nums = sec.querySelectorAll('.abv-num');
+
+    // Prime numbers to 0 (final value stays in HTML for no-JS)
+    nums.forEach(function (el) {
+      var dec = parseInt(el.getAttribute('data-decimals'), 10) || 0;
+      var suf = el.getAttribute('data-suffix') || '';
+      el.textContent = (0).toFixed(dec) + suf.replace('&times;', '×');
+    });
+
+    function countUp(el) {
+      var target  = parseFloat(el.getAttribute('data-target'));
+      var dec     = parseInt(el.getAttribute('data-decimals'), 10) || 0;
+      var suf     = (el.getAttribute('data-suffix') || '').replace('&times;', '×');
+      var dur     = 1400, start = null;
+
+      function frame(ts) {
+        if (start === null) start = ts;
+        var p = Math.min((ts - start) / dur, 1);
+        var eased = 1 - Math.pow(1 - p, 3);       // easeOutCubic
+        el.textContent = (target * eased).toFixed(dec) + suf;
+        if (p < 1) requestAnimationFrame(frame);
+        else el.textContent = target.toFixed(dec) + suf;
+      }
+      requestAnimationFrame(frame);
+    }
+
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        sec.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+        nums.forEach(function (el) {
+          if (reduce) {
+            var dec = parseInt(el.getAttribute('data-decimals'), 10) || 0;
+            var suf = (el.getAttribute('data-suffix') || '').replace('&times;', '×');
+            el.textContent = parseFloat(el.getAttribute('data-target')).toFixed(dec) + suf;
+          } else {
+            countUp(el);
+          }
+        });
+        io.disconnect();
+      });
+    }, { threshold: 0.12 });
+
+    io.observe(sec);
+  })();
+</script>
+</body>
+</html>

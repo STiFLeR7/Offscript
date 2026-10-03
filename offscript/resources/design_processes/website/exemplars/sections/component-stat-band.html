@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stat band</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Grid · four-column-equal        from component-stat-band.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **Evidence that does not spend the page's attention budget.**
+              The profile is explicit — low density, quiet · confident, "reach
+              for it wherever proof is needed and a peak is not". So the whole
+              migration is one instruction: make the measures large and make
+              nothing else loud. Scale carries it; nothing else is allowed to.
+
+  STRUCTURE   Unchanged. Eyebrow alone on the top-left · headline left with the
+              supporting copy and its control top-aligned to the RIGHT of it ·
+              a row of measures, each preceded by a tall vertical hairline. DOM,
+              every `data-*`, and the three inline `--accent` declarations are
+              byte-compatible with the frozen original (DR-22). There is no
+              script in this section, so predicates 3 and 4 are vacuous here.
+
+  THE ONE KNOB, RETIRED.
+              The v2 file drove the entire proportion from `--num: 80px` —
+              the unit sized at `calc(var(--num) * .38)`, the caption at
+              `clamp(13px, calc(var(--num) * .18), 16px)`. That is a private
+              scale: it resolves to 30.4px and 14.4px, sizes nobody authored and
+              no other section can reach. Every one of them lands on the pack's
+              ramp instead (H1 · H5 · supporting), and the knob is gone rather
+              than re-tuned. The three breakpoint re-tunings of `--num` go with
+              it — the ramp already steps at 1024 and 700.
+
+  ACCENT      One moment: the control. Orange marks a rule, a fill or a control
+              and never a measure, so the three measures — which v2 painted
+              blue, green and amber from the inline `--accent` — are ink. Three
+              hues on three peers named a winner among numbers that are peers by
+              construction, and it made the band read as a dashboard. The inline
+              declarations stay in the markup (frozen) and are simply no longer
+              consumed.
+
+  ENVIRONMENT NONE — and it is not an omission. The blanket rule replaces every
+              abstract creative background with an approved environment
+              photograph. This section has no abstract background: the surface
+              is a flat fill, the separators are hairlines, and there is no
+              gradient, blur or wash anywhere in the source. Nor is there
+              anywhere to put one — every surface in the file (`.section`,
+              `.top`, `.aside`, `.stat`) carries type, and type never sits on a
+              photograph. `env-cliffside-muted` is therefore unused here; the
+              hard constraint outranks the assignment table.
+
+  RESPONSIVE  The original's breakpoints (1024 / 680), unchanged, including the
+              mobile move that turns the vertical rules into a top border
+              between stacked measures. Type steps on the pack's own ramp;
+              every `clamp()` is gone — it resolves to sizes nobody authored.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+    font-size: var(--cr-text-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Section ──────────────────────────────────────────────────
+     Section padding on the block scale, the horizontal gutter from the one
+     responsive spacing token, the well at the canonical alignment edge. */
+  .section {
+    padding: var(--cr-space-2xl) var(--cr-page-gutter);
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }
+
+  /* ── Top block ─────────────────────────────────────────────────
+     Eyebrow alone on the top-left. Below it, the headline (left) and the
+     supporting copy + control (right) share one row — so the right column
+     top-aligns with the HEADLINE, not the eyebrow. Both tracks and both gaps
+     are the original's; nothing here is re-proportioned. ──────────────── */
+  .top {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    column-gap: var(--cr-space-xl);
+    margin-bottom: var(--cr-space-xl);
+  }
+  /* SUPPORTING TEXT IS NEVER UPPERCASE AND NEVER TRACKED. The v2 eyebrow was
+     13px / 600 / 0.18em / uppercase — four decorations doing the work one step
+     of the ramp does. It reads as a label because of where it sits. */
+  .eyebrow {
+    grid-column: 1; grid-row: 1;
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    letter-spacing: 0; text-transform: none;
+    color: var(--cr-text-secondary);
+    margin: 0 0 var(--cr-space-s);
+  }
+  .headline {
+    grid-column: 1; grid-row: 2;
+    font-family: var(--cr-font-display); font-weight: 400;
+    font-size: var(--cr-text-h2);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+    margin: 0; max-width: var(--cr-measure-title);
+  }
+  .aside {
+    /* row 2 / right column → its top edge lines up with the headline */
+    grid-column: 2; grid-row: 2;
+    align-self: start; justify-self: end;
+    max-width: var(--cr-measure-body);
+  }
+  .aside p {
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    margin: 0 0 var(--cr-space-m);
+  }
+  /* THE SECTION'S ONE ACCENT MOMENT, and it is a control — the one placement
+     the direction sanctions. The v2 outlined pill spent brand blue on a border,
+     text and a hover fill, which is three uses of a colour to say one thing;
+     and the pill radius is retired for buttons. A <button> does not inherit
+     font-family, so it is declared. */
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    background: var(--cr-accent-orange); color: var(--cr-on-accent-light);
+    border: 0; border-radius: var(--cr-radius-control); cursor: pointer;
+    font-family: var(--cr-font-body); font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    letter-spacing: 0;
+    transition: background .18s ease;
+  }
+  .btn-outline:hover { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+  .btn-outline:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 3px; }
+
+  /* ── Stat band ─────────────────────────────────────────────────
+     A row of columns, each preceded by a tall vertical hairline. The track
+     count is the original's; the hairline is the one stroke the system has. ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);   /* brand default: 3 columns */
+  }
+  .stats.cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+  .stat {
+    /* The inline `--accent` on each .stat is frozen markup and is deliberately
+       no longer read: three hues on three peers is three accent moments in a
+       band whose whole claim is that the measures are equal. */
+    border-left: var(--cr-stroke) solid var(--cr-border-default);
+    padding: var(--cr-space-m) var(--cr-space-s);
+  }
+  /* Number — the metric role: large numerical hierarchy, minimal decoration,
+     emphasis from scale alone. Tabular figures keep the digit widths even so
+     three measures on one row align down their stems. */
+  .stat-num {
+    font-family: var(--cr-font-display); font-weight: 400;
+    font-size: var(--cr-text-h1);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+    font-variant-numeric: tabular-nums;
+    display: flex; align-items: baseline; gap: 0;
+  }
+  /* The symbol or word beside the measure. One step of the ramp below the
+     display size rather than a fraction of a private knob; symbols sit tight
+     against the number, word units take one micro step of air. */
+  .stat-unit {
+    font-family: var(--cr-font-display); font-weight: 400;
+    font-size: var(--cr-text-h5);
+    letter-spacing: var(--cr-tracking-heading);
+    margin-left: 0;
+  }
+  .stat-unit.word { margin-left: var(--cr-space-xs); }
+  /* Caption — supporting text, one step below body, untracked. The v2 cap of
+     220px held a wrap that was a consequence of the old size, not a decision;
+     it is released to the reading measure rather than re-tuned. */
+  .stat-cap {
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    margin-top: var(--cr-space-xs);
+    max-width: var(--cr-measure-body);
+  }
+
+  /* ── Responsive — the ORIGINAL's breakpoints and the ORIGINAL's moves ───── */
+
+  /* Tablet: top block stacks (copy + control drop below the headline,
+     left-aligned); stat band → 2 columns. Type steps on the pack's ramp.
+
+     A DECLARATION THAT LOSES ITS OWN PLACEMENT IS NOT A DECLARATION. The v2
+     file states this stack in words and in `grid-template-columns: 1fr`, then
+     never releases `.aside { grid-column: 2 }` — so an implicit second track is
+     created and the "stacked" block stays two columns at every width, down to
+     a three-word-per-line control at 390. The intent was already authored; only
+     its placement was missing. */
+  @media (max-width: 1024px) {
+    .section { padding: var(--cr-space-xl) var(--cr-page-gutter); }
+    .top { grid-template-columns: 1fr; gap: var(--cr-space-m); margin-bottom: var(--cr-space-m); }
+    .aside { grid-column: 1; grid-row: 3; justify-self: start; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .stats.cols-4 { grid-template-columns: repeat(2, 1fr); }
+    .stat { padding: var(--cr-space-m) var(--cr-space-s); }
+  }
+
+  /* Mobile: single-column stack; vertical dividers become a full-width
+     top border (vertical rules read wrong when stacked). */
+  @media (max-width: 680px) {
+    .section { padding: var(--cr-space-m) var(--cr-page-gutter); }
+    .stats,
+    .stats.cols-4 { grid-template-columns: 1fr; }
+    .stat {
+      border-left: 0;
+      border-top: var(--cr-stroke) solid var(--cr-border-default);
+      padding: var(--cr-space-s) 0;
+    }
+    .stat:first-child { border-top: 0; }   /* dividers sit between stats, not above the first */
+    .stat-cap { max-width: none; }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. The three columns, the hairline before each and the mobile
+     stack are the original's; every line below but one is a scale realizing
+     itself. The `.top` grid-template-columns line is the one that LOOKS like a
+     layout change and is not — the tracks are still 1.1fr 0.9fr and they
+     resolve to different pixels only because the section's horizontal padding
+     moved onto the gutter token, which widened the well.
+
+     ONE line is `directed`, and it is a repair rather than a redesign: the
+     `.top` grid-template-rows. Below 1024 the v2 file declares the top block
+     stacked and never releases the aside's `grid-column: 2`, so an implicit
+     second track keeps it two-up all the way down to 390. Releasing the
+     placement adds the third row the stack always meant to have.
+  .aside       | font-size              | type-ramp
+  .aside       | max-width              | measure
+  .btn-outline | border-bottom-width    | stroke
+  .btn-outline | border-left-width      | stroke
+  .btn-outline | border-radius          | radius-pair
+  .btn-outline | border-right-width     | stroke
+  .btn-outline | border-top-width       | stroke
+  .btn-outline | column-gap             | spacing-scale
+  .btn-outline | font-size              | type-ramp
+  .btn-outline | padding-bottom         | spacing-scale
+  .btn-outline | padding-left           | spacing-scale
+  .btn-outline | padding-right          | spacing-scale
+  .btn-outline | padding-top            | spacing-scale
+  .btn-outline | row-gap                | spacing-scale
+  .eyebrow     | font-size              | type-ramp
+  .eyebrow     | margin-bottom          | spacing-scale
+  .headline    | font-size              | type-ramp
+  .headline    | line-height            | type-ramp
+  .headline    | max-width              | measure
+  .section     | font-size              | type-ramp
+  .section     | padding-bottom         | spacing-scale
+  .section     | padding-left           | spacing-scale
+  .section     | padding-right          | spacing-scale
+  .section     | padding-top            | spacing-scale
+  .stat        | font-size              | type-ramp
+  .stat        | padding-bottom         | spacing-scale
+  .stat        | padding-left           | spacing-scale
+  .stat        | padding-right          | spacing-scale
+  .stat        | padding-top            | spacing-scale
+  .stat-cap    | font-size              | type-ramp
+  .stat-cap    | line-height            | type-ramp
+  .stat-cap    | margin-top             | spacing-scale
+  .stat-cap    | max-width              | measure
+  .stat-num    | font-size              | type-ramp
+  .stat-num    | line-height            | type-ramp
+  .stat-unit   | font-size              | type-ramp
+  .stat-unit   | line-height            | type-ramp
+  .stat-unit   | margin-left            | spacing-scale
+  .stats       | font-size              | type-ramp
+  .top         | column-gap             | spacing-scale
+  .top         | font-size              | type-ramp
+  .top         | grid-template-columns  | spacing-scale
+  .top         | grid-template-rows     | directed
+  .top         | margin-bottom          | spacing-scale
+  .top         | row-gap                | spacing-scale
+  br           | font-size              | type-ramp
+  br           | line-height            | type-ramp
+  p            | font-size              | type-ramp
+  p            | line-height            | type-ramp
+  p            | margin-bottom          | spacing-scale
+  span         | font-size              | type-ramp
+-->
+
+<section class="section" data-screen-label="Stat band"
+         data-archetype="proof-layout" data-hierarchy="proof" data-intent="prove"
+         data-register="quiet" data-signature="large-statistic" data-density="low">
+  <!-- TOP BLOCK -->
+  <div class="top">
+    <p class="eyebrow">The Proof</p>
+    <h2 class="headline">Fewer Manual Hours.<br/>Higher Margins.<br/>Outcomes You Can Measure.</h2>
+    <div class="aside">
+      <p>We deploy production AI agents into the systems your team already uses and bill on outcomes, not seats. The result is operational work that runs itself — and numbers your CFO can verify.</p>
+      <button class="btn-outline">Learn More About Us <span>&rarr;</span></button>
+    </div>
+  </div>
+
+  <!-- STAT BAND — default 3 columns (brand-preferred).
+       Each .stat still carries its v2 inline `--accent`; the style layer no
+       longer reads it, because a measure is never coloured. For a 4-column
+       band, add the `cols-4` class to .stats and a 4th .stat with the same
+       .stat-num / .stat-unit / .stat-cap shape. -->
+  <div class="stats">
+    <div class="stat" style="--accent:var(--cr-brand)">
+      <div class="stat-num">92<span class="stat-unit">%</span></div>
+      <div class="stat-cap">of operational cost removed in year one</div>
+    </div>
+    <div class="stat" style="--accent:var(--cr-success)">
+      <div class="stat-num">11.3<span class="stat-unit">&times;</span></div>
+      <div class="stat-cap">return on every agent we put into production</div>
+    </div>
+    <div class="stat" style="--accent:var(--cr-amber)">
+      <div class="stat-num">4<span class="stat-unit word">weeks</span></div>
+      <div class="stat-cap">from process audit to a live agent in production</div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

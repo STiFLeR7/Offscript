@@ -1,0 +1,20 @@
+{
+  "name": "offscript",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Offscript creative production platform and governed design engine.",
+  "type": "module",
+  "engines": { "node": ">=22", "npm": ">=10" },
+  "scripts": {
+    "setup": "node scripts/workspace.mjs setup",
+    "build": "node scripts/workspace.mjs build",
+    "typecheck": "node scripts/workspace.mjs typecheck",
+    "test": "node scripts/workspace.mjs test",
+    "test:render": "node scripts/workspace.mjs render",
+    "check": "node scripts/workspace.mjs check",
+    "verify": "node scripts/workspace.mjs verify",
+    "demo": "node scripts/demo.mjs",
+    "offscript": "node scripts/offscript.mjs",
+    "browser:install": "node scripts/workspace.mjs browser"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "id": "whos-already-on-it",
+  "contractVersion": 1,
+  "digest": "sha256:5ec81383b753b71f3e05579d2b7e4f2fd120dc628bab12c03a1f341b9f382143",
+  "belief": "you can see who's already working on something before you duplicate the effort",
+  "feature": "collaboration",
+  "ratio": "1:1",
+  "camera": "component",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sticky cards</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<noscript><style>.item { opacity: 1 !important; transform: none !important; }
+  /* THE RINGS ARE GONE. Decorative circles drawn over a creative are exactly the
+     abstract ornament this pass replaces with photography — and a photograph does
+     not need a diagram on top of it. They are real elements the DOM freeze keeps,
+     so they are made inert rather than deleted. */
+  .orbit { display: none !important; }
+</style></noscript>
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body); color: var(--cr-text-secondary);
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Surface, section padding and the two wells are the pack's — SECTION_LAYOUT
+     §16. The header and the wrap each take `.cr-well`, so they share one
+     alignment edge without the section re-declaring a container. */
+  .section-header { margin-bottom: var(--cr-rhythm-content); }
+  .section-header .eyebrow { margin: 0 0 var(--cr-space-s); }
+  .section-header .headline { margin: 0 0 var(--cr-space-s); }
+  .section-header .intro { margin: 0; }
+
+  /* `align-items: start` is REQUIRED for the sticky aside; without it Grid
+     stretches every item to the row height and `position: sticky` silently
+     stops working. Load-bearing layout, carried over verbatim. */
+  .wrap {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    column-gap: var(--cr-space-xl);
+    align-items: start;
+  }
+
+  /* The aside sticks vertically centred, then bottom-aligns with the last item
+     at section end. `--aside-half` is written by JS from the measured height;
+     the fallback is the pre-measure frame only and must stay. */
+  .aside {
+    position: sticky;
+    top: calc(50vh - var(--aside-half, 75px));
+    align-self: start;
+  }
+
+  /* THE RAIL IS THE SECTION'S ARGUMENT, so it is where the one accent is
+     spent. Everything else in this section — including the mock's status
+     lights, which the v2 file painted in three different hues — is neutral.
+     An accent spent in four places marks nothing. */
+  .nav { display: flex; flex-direction: column; }
+  .nav-item {
+    display: flex; align-items: baseline; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    border-left: var(--cr-stroke) solid var(--cr-border-default);
+    color: var(--cr-text-secondary);
+    text-decoration: none;
+    font-size: var(--cr-text-supporting);
+    transition: color .2s ease, border-color .2s ease;
+  }
+  .nav-item:hover { color: var(--cr-text-primary); }
+  .nav-item.active { color: var(--cr-text-primary); border-left-color: var(--cr-accent-orange); }
+  .nav-item .num {
+    font-size: var(--cr-text-supporting);
+    color: var(--cr-text-secondary);
+    min-width: 24px;
+    transition: color .2s ease;
+  }
+  .nav-item.active .num { color: var(--cr-text-primary); }
+
+  .cards { display: flex; flex-direction: column; gap: var(--cr-space-xl); }
+  .item { display: flex; flex-direction: column; gap: var(--cr-space-m); }
+
+  /* THE CREATIVE WAS A GRADIENT. A three-stop dark blend with a tone wash over
+     it is depth and decoration in one element, and the direction has one
+     surface per band and no gradient mixing. It becomes a quiet surface with
+     the card radius and one hairline, holding the artifact — which is what the
+     creative position is for: the artifact is the subject, the panel is not. */
+  .creative {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;   /* an approved ratio; 16/10 was off the vocabulary of four */
+    border-radius: var(--cr-radius-card);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+
+  }
+  /* THE PHOTOGRAPH IS THE SURFACE, AND THE PACK OWNS ITS ATMOSPHERE.
+     A section SELECTS an environment and never supplies a URL; the selection
+     binds the asset to its measured focus. The local grain layer that stood in
+     for this is gone — the pack's treatment builds noise, film and grunge above
+     the photograph in the one fixed order for a photographic base. */
+  /* The directional dark wash is gone: it was depth simulation on a surface
+     that now has none to simulate. */
+  .orbit {
+    position: absolute;
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .orbit.o1 { right: -240px; top: -180px; width: 720px; height: 720px; }
+  .orbit.o2 { right: -160px; top: -100px; width: 540px; height: 540px; }
+
+  .mock {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--cr-bg-raised);
+    border-radius: var(--cr-radius-card);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    padding: var(--cr-space-s);
+    width: calc(100% - 96px);
+    max-width: 460px;
+    z-index: 1;
+  }
+  .mock-title { margin: 0 0 var(--cr-space-s); color: var(--cr-text-primary); font-weight: 500; }
+  .mock-row {
+    display: flex; align-items: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs);
+    border-radius: var(--cr-radius-control);
+    background: var(--cr-bg-tint);
+    color: var(--cr-text-secondary);
+    margin-bottom: 0;
+  }
+  .mock-row.is-active { background: var(--cr-bg-raised); color: var(--cr-text-primary); font-weight: 500; }
+  /* Neutral by decision, not by omission — see the rail above. */
+  .mock-row .dot {
+    width: var(--cr-marker-size); height: var(--cr-marker-size);
+    border-radius: var(--cr-marker-radius);
+    background: var(--cr-text-secondary);
+    flex-shrink: 0;
+  }
+  .mock-row.is-active .dot { background: var(--cr-text-primary); }
+  .mock-row .label { flex: 1; min-width: 0; }
+  .mock-row .meta { color: var(--cr-text-secondary); }
+  .mock-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--cr-space-xs); }
+  .mock-tile {
+    aspect-ratio: 1;
+    background: var(--cr-bg-tint);
+    border-radius: var(--cr-radius-control);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--cr-text-secondary);
+  }
+  .mock-tile svg { width: 24px; height: 24px; stroke-width: var(--cr-icon-stroke-md); }
+  .mock-foot { margin-top: var(--cr-space-xs); color: var(--cr-text-secondary); }
+
+  /* The item title sits TWO ramp steps below the section headline, not one:
+     adjacent steps read as co-equal headlines, which is the one thing a single
+     display tier forbids. */
+  .text-block h3 { margin: 0 0 var(--cr-space-xs); max-width: var(--cr-measure-title); }
+  .text-block p { margin: 0; max-width: var(--cr-measure-body); }
+
+  /* Items start hidden; `.in-view` triggers the staggered entrance. */
+  .item { opacity: 0; transform: translateY(12px); }
+  .section.in-view .item {
+    animation: item-in .55s ease forwards;
+    animation-delay: var(--delay, 0ms);
+  }
+  @keyframes item-in { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .item,
+    .section.in-view .item { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* Responsive: the original's breakpoints and the original's reflow. Type
+     steps with the pack's ramp; section padding steps with `.cr-band`. */
+  @media (max-width: 1024px) {
+    .wrap { grid-template-columns: 240px 1fr; column-gap: var(--cr-space-m); }
+    .cards { gap: var(--cr-space-m); }
+    .creative { aspect-ratio: 16 / 9; }
+  }
+  @media (max-width: 640px) {
+    .wrap { grid-template-columns: 1fr; column-gap: 0; }
+    .aside { display: none; }
+    .cards { gap: var(--cr-space-m); }
+    .item { gap: var(--cr-space-s); }
+    .mock { width: calc(100% - 48px); padding: var(--cr-space-xs); }
+    .orbit.o1 { right: -160px; top: -120px; width: 480px; height: 480px; }
+    .orbit.o2 { right: -100px; top: -60px; width: 320px; height: 320px; }
+  }
+
+  /* THE RINGS ARE GONE. Decorative circles over a creative are the abstract
+     ornament this pass replaces with photography, and a photograph does not need
+     a diagram on top of it. Real elements the DOM freeze keeps, made inert. */
+  .orbit { display: none !important; }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line
+     here that moved nothing. Retrofitted from measurement for the pilot
+     ten; declared before authoring from Phase 1 onward.
+  .cards          | column-gap             | spacing-scale
+  .cards          | row-gap                | spacing-scale
+  .cr-h-group     | font-size              | type-ramp
+  .cr-h-group     | line-height            | type-ramp
+  .cr-h-group     | margin-bottom          | spacing-scale
+  .cr-h-group     | max-width              | measure
+  .creative       | aspect-ratio           | ratio-vocabulary
+  .creative       | border-bottom-width    | stroke
+  .creative       | border-left-width      | stroke
+  .creative       | border-radius          | radius-pair
+  .creative       | border-right-width     | stroke
+  .creative       | border-top-width       | stroke
+  .eyebrow        | font-size              | type-ramp
+  .eyebrow        | line-height            | type-ramp
+  .eyebrow        | margin-bottom          | spacing-scale
+  .headline       | font-size              | type-ramp
+  .headline       | line-height            | type-ramp
+  .headline       | max-width              | measure
+  .intro          | font-size              | type-ramp
+  .intro          | line-height            | type-ramp
+  .intro          | max-width              | measure
+  .item           | column-gap             | spacing-scale
+  .item           | row-gap                | spacing-scale
+  .label          | font-size              | type-ramp
+  .label          | line-height            | type-ramp
+  .meta           | font-size              | type-ramp
+  .meta           | line-height            | type-ramp
+  .mock           | border-radius          | radius-pair
+  .mock           | padding-bottom         | spacing-scale
+  .mock           | padding-left           | spacing-scale
+  .mock           | padding-right          | spacing-scale
+  .mock           | padding-top            | spacing-scale
+  .mock-foot      | font-size              | type-ramp
+  .mock-foot      | line-height            | type-ramp
+  .mock-foot      | margin-bottom          | spacing-scale
+  .mock-foot      | margin-top             | spacing-scale
+  .mock-foot      | max-width              | measure
+  .mock-grid      | column-gap             | spacing-scale
+  .mock-grid      | row-gap                | spacing-scale
+  .mock-row       | border-radius          | radius-pair
+  .mock-row       | font-size              | type-ramp
+  .mock-row       | line-height            | type-ramp
+  .mock-row       | margin-bottom          | spacing-scale
+  .mock-row       | max-width              | measure
+  .mock-row       | padding-bottom         | spacing-scale
+  .mock-row       | padding-left           | spacing-scale
+  .mock-row       | padding-right          | spacing-scale
+  .mock-row       | padding-top            | spacing-scale
+  .mock-title     | font-size              | type-ramp
+  .mock-title     | line-height            | type-ramp
+  .mock-title     | margin-bottom          | spacing-scale
+  .mock-title     | max-width              | measure
+  .nav-item       | border-left-width      | stroke
+  .nav-item       | column-gap             | spacing-scale
+  .nav-item       | row-gap                | spacing-scale
+  .num            | font-size              | type-ramp
+  .section        | max-width              | measure
+  .section        | padding-bottom         | spacing-scale
+  .section        | padding-left           | spacing-scale
+  .section        | padding-right          | spacing-scale
+  .section        | padding-top            | spacing-scale
+  .section-header | margin-bottom          | spacing-scale
+  .section-header | max-width              | measure
+  .section-header | padding-left           | spacing-scale
+  .section-header | padding-right          | spacing-scale
+  .wrap           | column-gap             | spacing-scale
+  .wrap           | max-width              | measure
+  .wrap           | padding-left           | spacing-scale
+  .wrap           | padding-right          | spacing-scale
+  p               | font-size              | type-ramp
+  p               | line-height            | type-ramp
+  p               | max-width              | measure
+-->
+
+
+<section class="section cr-band" data-screen-label="Sticky cards"
+         data-archetype="narrative-flow" data-hierarchy="secondary" data-intent="explain"
+         data-register="instructional" data-signature="architectural-whitespace" data-density="medium">
+
+  <!-- Section header — sits OUTSIDE the scroll-interaction wrap below.
+       Title + body scroll normally with the page; only the nav inside
+       the aside below sticks. -->
+  <header class="section-header cr-well">
+    <p class="eyebrow cr-h-eyebrow">How It Works</p>
+    <h2 class="headline cr-h-section">Three Things Our Agents Earn Their Keep On.</h2>
+    <p class="intro cr-p">From audit to autonomous, here's how an agent earns its place in your stack — billed on outcomes, not seats.</p>
+  </header>
+
+  <!-- Scroll-interaction zone: sticky aside (nav only) + items. -->
+  <div class="wrap cr-well">
+    <aside class="aside">
+      <nav class="nav">
+        <a class="nav-item active" href="#card-1"><span class="num">01</span><span class="lbl">Find the workflow</span></a>
+        <a class="nav-item"        href="#card-2"><span class="num">02</span><span class="lbl">Deploy in your stack</span></a>
+        <a class="nav-item"        href="#card-3"><span class="num">03</span><span class="lbl">Watch every decision</span></a>
+      </nav>
+    </aside>
+
+    <div class="cards">
+      <!-- Item 1 — Navy gradient (brand blue accent).
+           Creative and text-block are SEPARATE elements; the .item wrapper
+           only groups them for the entrance animation + id target. -->
+      <article class="item">
+        <!-- ANCHOR is declared; PRESENCE is not, and the omission is measured rather than
+             an oversight. COMPOSE.md §A2.2 binds both to the archetype, and no specimen in
+             the library declared either. The anchor vocabulary has no CSS behind it — it is
+             a pure declaration and costs nothing. `cr-presence-*` is a WIDTH, so declaring
+             it is inert in a specimen and not inert in a page: applied here it narrowed the
+             creative in composition and pushed 10px labels onto a busier part of the
+             photograph, three new AA failures. A vocabulary that cannot be declared without
+             changing layout is a finding about the vocabulary. (LIBRARY-AUDIT.md C-3.) -->
+        <div class="creative cr-creative cr-env-valley-deep cr-anchor-inline" id="card-1" style="--right-1:var(--cr-surface-3); --right-2:var(--cr-surface-4); --right-3:var(--cr-surface-5)">
+          <div class="orbit o1"></div>
+          <div class="orbit o2"></div>
+          <div class="mock">
+            <p class="mock-title cr-meta">Workflow audit</p>
+            <div class="mock-row cr-meta"           style="--dot:var(--cr-text-secondary)"><span class="dot"></span><span class="label">Claims triage</span><span class="meta">4.2 hrs/day</span></div>
+            <div class="mock-row is-active cr-meta" style="--dot:var(--cr-text-secondary)"><span class="dot"></span><span class="label">Vendor reconciliation</span><span class="meta">6.1 hrs/day</span></div>
+            <div class="mock-row cr-meta"           style="--dot:var(--cr-success)"><span class="dot"></span><span class="label">Invoice matching</span><span class="meta">3.8 hrs/day</span></div>
+            <div class="mock-row cr-meta"           style="--dot:var(--cr-amber)"><span class="dot"></span><span class="label">Compliance reporting</span><span class="meta">2.4 hrs/day</span></div>
+          </div>
+        </div>
+        <div class="text-block">
+          <h3 class="cr-h-group">Find the workflow that's draining your margin.</h3>
+          <p>We start with a no-cost process audit and identify the high-friction, high-cost manual tasks absorbing up to 40% of your team's time.</p>
+        </div>
+      </article>
+
+      <!-- Item 2 — Forest gradient -->
+      <article class="item">
+        <div class="creative cr-creative cr-env-valley-deep" id="card-2" style="--right-1:var(--cr-bg-tint); --right-2:var(--cr-bg-raised); --right-3:var(--cr-bg-tint)">
+          <div class="orbit o1"></div>
+          <div class="orbit o2"></div>
+          <div class="mock">
+            <p class="mock-title cr-meta">Connected systems</p>
+            <div class="mock-grid">
+              <div class="mock-tile"><i data-lucide="database"></i></div>
+              <div class="mock-tile"><i data-lucide="cloud"></i></div>
+              <div class="mock-tile"><i data-lucide="plug"></i></div>
+              <div class="mock-tile"><i data-lucide="mail"></i></div>
+              <div class="mock-tile"><i data-lucide="file-text"></i></div>
+              <div class="mock-tile"><i data-lucide="message-square"></i></div>
+            </div>
+            <p class="mock-foot cr-meta">6 connected · 0 down</p>
+          </div>
+        </div>
+        <div class="text-block">
+          <h3 class="cr-h-group">Deploy inside your stack, not around it.</h3>
+          <p>Agents connect via API or browser automation to SAP, Salesforce, Oracle, Epic, Cerner — even custom spreadsheets. No rip-and-replace, no licence shuffle.</p>
+        </div>
+      </article>
+
+      <!-- Item 3 — Bronze gradient -->
+      <article class="item">
+        <div class="creative cr-creative cr-env-valley-deep" id="card-3" style="--right-1:var(--cr-amber); --right-2:var(--cr-text-secondary); --right-3:var(--cr-text-primary)">
+          <div class="orbit o1"></div>
+          <div class="orbit o2"></div>
+          <div class="mock">
+            <p class="mock-title cr-meta">Recent decisions</p>
+            <div class="mock-row cr-meta"           style="--dot:var(--cr-success)"><span class="dot"></span><span class="label">Approved claim #4827</span><span class="meta">0.94</span></div>
+            <div class="mock-row is-active cr-meta" style="--dot:var(--cr-success)"><span class="dot"></span><span class="label">Approved claim #4828</span><span class="meta">0.91</span></div>
+            <div class="mock-row cr-meta"           style="--dot:var(--cr-amber)"><span class="dot"></span><span class="label">Escalated #4826</span><span class="meta">0.62</span></div>
+            <div class="mock-row cr-meta"           style="--dot:var(--cr-success)"><span class="dot"></span><span class="label">Approved claim #4825</span><span class="meta">0.89</span></div>
+          </div>
+        </div>
+        <div class="text-block">
+          <h3 class="cr-h-group">Watch every decision with a confidence score.</h3>
+          <p>Every action is logged with a confidence number. Below threshold the agent escalates to a human. Above threshold it acts but flags a sample for review.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<script>
+  lucide.createIcons();
+
+  const section   = document.querySelector('.section');
+  const aside     = section.querySelector('.aside');
+  const items     = section.querySelectorAll('.item');
+  const creatives = section.querySelectorAll('.creative');
+  const navItems  = section.querySelectorAll('.nav-item');
+
+  // Per-item entrance stagger (80ms between items).
+  items.forEach((it, i) => it.style.setProperty('--delay', (i * 80) + 'ms'));
+
+  // Centre-vertical sticky offset — write half the aside's height into
+  // `--aside-half`. CSS uses `top: calc(50vh - var(--aside-half))` so the
+  // aside's vertical centre sits at viewport centre while sticky. Re-run
+  // on resize and after the brand fonts load (which shifts nav height).
+  function updateAsideHalf() {
+    if (!aside) return;
+    aside.style.setProperty('--aside-half', (aside.offsetHeight / 2) + 'px');
+  }
+  updateAsideHalf();
+  window.addEventListener('resize', updateAsideHalf);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(updateAsideHalf);
+  }
+
+  if ('IntersectionObserver' in window) {
+    // 1) Section entrance — fade items in on first viewport hit.
+    const sectionIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          section.classList.add('in-view');
+          sectionIO.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    sectionIO.observe(section);
+
+    // 2) Active-nav tracker — whichever .creative is in the viewport's
+    // mid-band becomes the active nav item. The id lives on .creative
+    // (not .item) because the creative is more compact and gives a
+    // cleaner mid-band signal. Inset rootMargin focuses on the centre.
+    const navIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const id = '#' + e.target.id;
+        navItems.forEach(n =>
+          n.classList.toggle('active', n.getAttribute('href') === id));
+      });
+    }, { rootMargin: '-30% 0px -45% 0px' });
+    creatives.forEach(c => navIO.observe(c));
+  } else {
+    section.classList.add('in-view');
+  }
+
+  // Click a nav item → smooth-scroll to the matching card.
+  navItems.forEach(n => {
+    n.addEventListener('click', e => {
+      e.preventDefault();
+      const target = section.querySelector(n.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+</body>
+</html>

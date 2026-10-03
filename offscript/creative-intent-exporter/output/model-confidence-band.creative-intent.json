@@ -1,0 +1,11 @@
+{
+  "id": "model-confidence-band",
+  "contractVersion": 1,
+  "digest": "sha256:40aff44992a368b9c3f9987a7b5bc90a89783ce6ab69538fcb323669a2cef18e",
+  "belief": "the model tells you exactly how sure it is, not just a raw prediction",
+  "feature": "ai-intelligence",
+  "ratio": "3:4",
+  "camera": "component",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

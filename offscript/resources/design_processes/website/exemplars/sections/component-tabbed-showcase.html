@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tabbed product showcase</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body); color: var(--cr-text-secondary);
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Section padding and the well are the pack's (`.cr-band` + `.cr-well`, both
+     on the section: this composition has no inner wrapper and the Pilot
+     Constraint forbids adding one, so the primitives sit together rather than
+     the section re-declaring a container of its own. */
+
+  /* TABS ARE CONTROLS, AND THE CHROME RECEDES. The v2 tab bar carried an
+     18px display face, a filled icon tile in the item's own accent and a 2px
+     underline — three signals for one state. One remains: the rule under the
+     tab you are on, in the accent whose job is the small mark. */
+  .eyebrow { margin: 0 0 var(--cr-space-s); }
+  .headline { margin: 0 0 var(--cr-rhythm-content); max-width: var(--cr-measure-title); }
+  .tabs {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    border-top: var(--cr-stroke) solid var(--cr-border-default);
+    border-bottom: var(--cr-stroke) solid var(--cr-border-default);
+  }
+  .tab {
+    display: flex; align-items: center; justify-content: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-s); cursor: pointer; position: relative;
+    font-size: var(--cr-text-supporting); font-weight: 500;
+    color: var(--cr-text-secondary);
+    border-right: var(--cr-stroke) solid var(--cr-border-default);
+    transition: background .2s ease, color .2s ease;
+    background: transparent;
+  }
+  .tab:last-child { border-right: 0; }
+  .tab:hover { color: var(--cr-text-primary); }
+  .tab.active { background: var(--cr-bg-tint); color: var(--cr-text-primary); }
+  .tab.active::after {
+    content: ""; position: absolute; left: 0; right: 0;
+    bottom: calc(var(--cr-stroke) * -1);
+    height: var(--cr-stroke); background: var(--cr-accent-orange);
+  }
+  /* A FILLED TILE IS THE VOCABULARY FOR A FLOATING CONTEXTUAL MARKER (DR-3),
+     not for a control in a tab bar. Tinted on a tinted bar it read as an empty
+     square with a faint mark in it. The glyph stays outline, in the tab's own
+     ink, with nothing behind it — which is what the icon language actually is. */
+  .tab .ico {
+    width: 18px; height: 18px; border-radius: 0;
+    background: none; color: inherit;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .tab .ico svg { width: 18px; height: 18px; stroke-width: var(--cr-icon-stroke-sm); }
+
+  .card {
+    margin-top: var(--cr-space-m);
+    border: var(--cr-stroke) solid var(--cr-border-default); border-radius: var(--cr-radius-card);
+    background: var(--cr-bg-raised); overflow: hidden;
+    display: grid; grid-template-columns: 1fr 1fr;
+  }
+  .card-left { padding: var(--cr-space-m); display: flex; flex-direction: column; position: relative; }
+  .marker {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    font-size: var(--cr-text-supporting); color: var(--cr-text-secondary);
+    margin-bottom: var(--cr-space-s);
+  }
+  .marker .dot {
+    width: var(--cr-marker-size); height: var(--cr-marker-size);
+    border-radius: var(--cr-marker-radius); background: var(--cr-text-secondary);
+  }
+  /* Two ramp steps below the section headline, not one — adjacent steps read
+     as co-equal headlines, which one display tier forbids. */
+  .card-title { margin: 0 0 var(--cr-space-s); max-width: var(--cr-measure-title); }
+  .card-body { margin: 0 0 var(--cr-space-s); max-width: var(--cr-measure-body); }
+  .learn-more {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    font-size: var(--cr-text-supporting); font-weight: 500;
+    color: var(--cr-text-primary); text-decoration: underline; text-underline-offset: 0.25em;
+    cursor: pointer; transition: color .15s ease;
+  }
+  .learn-more svg { width: 16px; height: 16px; stroke-width: var(--cr-icon-stroke-sm); }
+  .sub-features {
+    margin-top: auto; padding-top: var(--cr-space-m);
+    display: flex; align-items: center; gap: var(--cr-space-s); flex-wrap: wrap;
+    font-size: var(--cr-text-supporting);
+  }
+  .sub-features .pin { width: 20px; height: var(--cr-stroke); background: var(--cr-border-default); }
+  .sub-features button {
+    background: none; border: 0; padding: var(--cr-space-xs) 0; cursor: pointer;
+    font: inherit; color: var(--cr-text-secondary);
+    border-bottom: var(--cr-stroke) solid transparent;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .sub-features button:hover { color: var(--cr-text-primary); }
+  .sub-features button.is-current { color: var(--cr-text-primary); font-weight: 500; border-bottom-color: var(--cr-text-primary); }
+
+  /* THE PANEL WAS A RADIAL GRADIENT under a grain overlay at 35%. One surface
+     per band, no gradient mixing, no depth: a quiet surface holding the
+     artifact, and the artifact is the subject. */
+  .card-right {
+    position: relative; overflow: hidden;
+    /* 1:1 — an approved crop, and it GOVERNS. The height floor that used to sit
+       here beat the declared ratio, so the rendered proportion was whatever the
+       column happened to be. `align-self: start` keeps the grid row from
+       stretching the panel back out of ratio. */
+    aspect-ratio: 1 / 1;
+    align-self: start;
+  }
+  /* THE PHOTOGRAPH IS THE SURFACE, AND THE PACK OWNS ITS ATMOSPHERE.
+     A section SELECTS an environment — it never supplies a URL — and the
+     selection binds the asset to its measured focus, because "which asset" is
+     meaningless without "which part of it" at a 3:2 source under a cropping
+     ratio. The local grain layer that stood in for this is removed: the pack's
+     own treatment builds noise, film and grunge above the photograph in the one
+     fixed composition order for a photographic base. */
+  .orbit {
+    position: absolute; border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: 50%; pointer-events: none;
+  }
+  .orbit.o1 { left: -200px; top: -200px; width: 900px; height: 900px; }
+  .orbit.o2 { left: -100px; top: -100px; width: 700px; height: 700px; }
+
+  /* THE ARTIFACT IS FRAMED, NOT BLED. The v2 composition ran the mock off two
+     edges of the panel, and that worked because the panel was a dark gradient:
+     a white artifact on a dark stage reads as a lit object continuing
+     off-frame. On a quiet tint the same white artifact is nearly its own
+     background's value — the figure/ground separation is gone, and the clipped
+     corner stops reading as a bleed and starts reading as broken. The
+     composition depended on a tonal inversion the direction retired, and a
+     quieter panel underneath it is not a substitute.
+     The v3 answer is the one the archetype already declares: `product-showcase`
+     anchors its creative FRAMED. So the artifact is complete, inset on all four
+     sides, with air around it — separated by the hairline and the room rather
+     than by a tonal drop the language no longer has. */
+  .mock {
+    /* border-box, or the cap is 26px short of what it says: this file carries
+       no scoped reset, so padding and border sat OUTSIDE the max-height and the
+       artifact ran past the panel at mobile. */
+    box-sizing: border-box;
+    position: absolute;
+    inset: var(--cr-space-m) var(--cr-space-m) auto var(--cr-space-m);
+    max-height: calc(100% - var(--cr-space-xl));
+    background: var(--cr-bg-raised); border-radius: var(--cr-radius-card);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    padding: var(--cr-space-s); overflow: hidden;
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .mock.is-changing { opacity: 0; transform: translateY(8px); }
+
+  /* ── THE ARTIFACT ─────────────────────────────────────────────────────────
+     A miniature interface, marked `cr-graphic` and EXEMPT FROM THE TYPE RAMP —
+     a form label at the supporting size does not fit the artifact it sits
+     inside. The collateral track already authors this exemption for
+     device-mockup internals; the website track does not, and that gap is
+     recorded in FINDINGS. Every exempt rule claims the exemption in its own
+     selector, so it is bounded and greppable. COLOUR IS NOT EXEMPT: the whole
+     artifact is neutral, because the v2 version painted the accent onto a
+     status pill, a primary button, a step numeral and a bar chart at once. */
+  .cr-graphic .mock-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 18px; border-bottom: var(--cr-stroke) solid var(--cr-border-default);
+  }
+  .cr-graphic .mock-title { font-weight: 500; font-size: 15px; color: var(--cr-text-primary); }
+  .cr-graphic .mock-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--cr-text-secondary);
+    padding: 4px 10px; background: var(--cr-bg-tint); border-radius: var(--cr-radius-control);
+  }
+  .cr-graphic .mock-status .live {
+    width: var(--cr-marker-size); height: var(--cr-marker-size);
+    border-radius: var(--cr-marker-radius); background: var(--cr-text-secondary);
+  }
+  .cr-graphic .field { margin-top: 16px; }
+  .cr-graphic .field-label { font-size: 11px; font-weight: 500; color: var(--cr-text-secondary); margin-bottom: 6px; }
+  .cr-graphic .field-input {
+    border: var(--cr-stroke) solid var(--cr-border-default); border-radius: var(--cr-radius-control);
+    padding: 10px 12px; font-size: 13px; color: var(--cr-text-primary);
+    background: var(--cr-bg-raised);
+  }
+  .cr-graphic .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  /* The opening state ships in the markup and cannot carry an authored value in a
+     style attribute, so the two the alternate states set inline become classes —
+     scoped like every other rule in this block, or `.cr-graphic .field-input`
+     out-specifies them and the figure silently renders at the body size. */
+  .cr-graphic .field-row--spaced { margin-top: 14px; }
+  .cr-graphic .field-input--figure {
+    font-family: var(--cr-font-display); font-weight: 700; font-size: 18px;
+  }
+  .cr-graphic .field-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: var(--cr-radius-control);
+    font-size: 11px; font-weight: 500;
+    margin-right: 6px; margin-bottom: 6px;
+    background: var(--cr-bg-tint); color: var(--cr-text-secondary);
+  }
+  .cr-graphic .mock-btn {
+    margin-top: 18px;
+    background: var(--cr-text-primary); color: var(--cr-bg-raised);
+    font-weight: 500; font-size: 13px;
+    padding: 10px 18px; border-radius: var(--cr-radius-control); border: 0;
+    display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+  }
+  .cr-graphic .mock-btn-row { display: flex; justify-content: flex-end; }
+  .cr-graphic .mock-bars { display: flex; gap: 2px; margin-top: 10px; align-items: flex-end; height: 36px; }
+  .cr-graphic .mock-bars span { display: inline-block; width: 3px; background: var(--cr-border-default); }
+  .cr-graphic .mock-step {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-control); margin-bottom: 8px;
+  }
+  .cr-graphic .mock-step .n {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--cr-text-primary); color: var(--cr-bg-raised);
+    font-weight: 500; font-size: 11px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .cr-graphic .mock-step .body { flex: 1; font-size: 13px; color: var(--cr-text-primary); }
+  .cr-graphic .mock-step .body small { display: block; color: var(--cr-text-secondary); font-size: 11px; margin-top: 2px; }
+  .cr-graphic .mock-stat { display: flex; align-items: baseline; gap: 12px; margin-top: 10px; }
+  .cr-graphic .mock-stat .n {
+    font-weight: 500; font-size: 32px;
+    letter-spacing: var(--cr-tracking-heading); color: var(--cr-text-primary);
+  }
+  .cr-graphic .mock-stat .l { font-size: 12px; color: var(--cr-text-secondary); }
+  /* ── end of the marked artifact ────────────────────────────────────────── */
+
+  .story {
+    margin-top: var(--cr-space-m);
+    display: flex; align-items: center; gap: var(--cr-space-m);
+    padding-top: var(--cr-space-s); border-top: var(--cr-stroke) solid var(--cr-border-default);
+    flex-wrap: wrap;
+  }
+  .story .ey { font-size: var(--cr-text-supporting); color: var(--cr-text-secondary); }
+  .story .lk {
+    font-size: var(--cr-text-supporting); font-weight: 500;
+    color: var(--cr-text-primary); text-decoration: underline; text-underline-offset: 0.25em;
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs); cursor: pointer;
+  }
+  .story .lk svg { width: 18px; height: 18px; stroke-width: var(--cr-icon-stroke-sm); }
+
+  /* Responsive: the original's breakpoints and reflow. Type steps with the
+     pack's ramp; section padding steps with `.cr-band`. */
+  @media (max-width: 1100px) {
+    .card { grid-template-columns: 1fr; }
+    /* the ratio holds; no height floor to fight it */
+    .mock { inset: var(--cr-space-s) var(--cr-space-s) auto var(--cr-space-s);
+            max-height: calc(100% - var(--cr-space-m)); }
+  }
+  @media (max-width: 720px) {
+    .eyebrow { margin-bottom: var(--cr-space-xs); }
+    .tabs { grid-template-columns: 1fr; }
+    .tab {
+      border-right: 0; border-bottom: var(--cr-stroke) solid var(--cr-border-default);
+      padding: var(--cr-space-xs) var(--cr-space-s); justify-content: flex-start;
+    }
+    .tab:last-child { border-bottom: 0; }
+    .tab.active::after { top: 0; bottom: auto; left: 0; right: auto; width: var(--cr-stroke); height: 100%; }
+    .card-left { padding: var(--cr-space-s); }
+    .sub-features { gap: var(--cr-space-xs); padding-top: var(--cr-space-s); }
+
+    .mock { inset: var(--cr-space-xs) var(--cr-space-xs) auto var(--cr-space-xs);
+            max-height: calc(100% - var(--cr-space-s)); padding: var(--cr-space-xs); }
+    .story { gap: var(--cr-space-xs); }
+  }
+
+  /* THE RINGS ARE GONE. Decorative circles drawn over a creative are exactly the
+     abstract ornament this pass replaces with photography — and a photograph does
+     not need a diagram on top of it. They are real elements the DOM freeze keeps,
+     so they are made inert rather than deleted. */
+  .orbit { display: none !important; }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line
+     here that moved nothing. Retrofitted from measurement for the pilot
+     ten; declared before authoring from Phase 1 onward.
+  .card         | border-radius          | radius-pair
+  .card         | min-height             | ratio-vocabulary
+  .card-body    | font-size              | type-ramp
+  .card-body    | line-height            | type-ramp
+  .card-body    | margin-bottom          | spacing-scale
+  .card-body    | max-width              | measure
+  .card-left    | padding-bottom         | spacing-scale
+  .card-left    | padding-left           | spacing-scale
+  .card-left    | padding-right          | spacing-scale
+  .card-left    | padding-top            | spacing-scale
+  .card-right   | aspect-ratio           | ratio-vocabulary
+  .card-right   | border-radius          | radius-pair
+  .card-right   | min-height             | ratio-vocabulary
+  .card-title   | font-size              | type-ramp
+  .card-title   | line-height            | type-ramp
+  .card-title   | margin-bottom          | spacing-scale
+  .card-title   | max-width              | measure
+  .ey           | font-size              | type-ramp
+  .eyebrow      | font-size              | type-ramp
+  .eyebrow      | line-height            | type-ramp
+  .eyebrow      | margin-bottom          | spacing-scale
+  .field-input  | border-radius          | radius-pair
+  .headline     | font-size              | type-ramp
+  .headline     | line-height            | type-ramp
+  .headline     | margin-bottom          | spacing-scale
+  .headline     | max-width              | measure
+  .is-current   | border-bottom-width    | stroke
+  .is-current   | font-size              | type-ramp
+  .is-current   | padding-bottom         | spacing-scale
+  .is-current   | padding-top            | spacing-scale
+  .learn-more   | column-gap             | spacing-scale
+  .learn-more   | font-size              | type-ramp
+  .learn-more   | row-gap                | spacing-scale
+  .lk           | column-gap             | spacing-scale
+  .lk           | font-size              | type-ramp
+  .lk           | row-gap                | spacing-scale
+  .lucide       | font-size              | type-ramp
+  .marker       | column-gap             | spacing-scale
+  .marker       | font-size              | type-ramp
+  .marker       | margin-bottom          | spacing-scale
+  .marker       | row-gap                | spacing-scale
+  .mock         | border-radius          | radius-pair
+  .mock         | padding-bottom         | spacing-scale
+  .mock         | padding-left           | spacing-scale
+  .mock         | padding-right          | spacing-scale
+  .mock         | padding-top            | spacing-scale
+  .mock-btn     | border-radius          | radius-pair
+  .mock-status  | border-radius          | radius-pair
+  .mock-title   | font-size              | type-ramp
+  .section      | padding-bottom         | spacing-scale
+  .section      | padding-left           | spacing-scale
+  .section      | padding-right          | spacing-scale
+  .section      | padding-top            | spacing-scale
+  .story        | column-gap             | spacing-scale
+  .story        | margin-top             | spacing-scale
+  .story        | padding-top            | spacing-scale
+  .story        | row-gap                | spacing-scale
+  .sub-features | column-gap             | spacing-scale
+  .sub-features | font-size              | type-ramp
+  .sub-features | margin-top             | spacing-scale
+  .sub-features | padding-top            | spacing-scale
+  .sub-features | row-gap                | spacing-scale
+  .tab          | column-gap             | spacing-scale
+  .tab          | font-size              | type-ramp
+  .tab          | padding-bottom         | spacing-scale
+  .tab          | padding-left           | spacing-scale
+  .tab          | padding-right          | spacing-scale
+  .tab          | padding-top            | spacing-scale
+  .tab          | row-gap                | spacing-scale
+  br            | font-size              | type-ramp
+  br            | line-height            | type-ramp
+  button        | border-bottom-width    | stroke
+  button        | font-size              | type-ramp
+  button        | padding-bottom         | spacing-scale
+  button        | padding-top            | spacing-scale
+  path          | font-size              | type-ramp
+  rect          | font-size              | type-ramp
+  span          | font-size              | type-ramp
+-->
+
+
+<section class="section cr-band cr-well" data-screen-label="Tabbed product showcase"
+         data-archetype="product-showcase" data-hierarchy="primary" data-intent="compare"
+         data-register="technical" data-signature="embedded-screenshot" data-density="medium">
+  <div class="eyebrow cr-h-eyebrow">Products</div>
+  <h2 class="headline cr-h-section">One platform for every<br/>operational workflow.</h2>
+
+  <!-- TAB STRIP -->
+  <!-- THE DEFAULT STATE SHIPS. Retrieval returned this band with seven empty
+       containers — an eyebrow, a headline and a blank card — because the whole
+       body of the section was printed from a JS object at run time. It is the
+       best structural fit in the library for an enumerated set and it could not
+       be composed at all. The strip, the copy, the sub-features, the story link
+       and the opening device state are now markup; the script switches between
+       states, which is what it is for. (DR-58; LIBRARY-AUDIT.md C-1.) -->
+  <div class="tabs" id="tabs">
+      <div class="tab active" data-key="apa" style="--accent:var(--cr-brand); --ico-bg:var(--cr-brand-100)">
+        <span class="ico"><i data-lucide="bot"></i></span>
+        <span>Autonomous Process Automation</span>
+      </div>
+      <div class="tab " data-key="docxter" style="--accent:var(--cr-success); --ico-bg:var(--cr-success-100)">
+        <span class="ico"><i data-lucide="file-text"></i></span>
+        <span>Document Intelligence</span>
+      </div>
+      <div class="tab " data-key="jennie" style="--accent:var(--cr-amber); --ico-bg:var(--cr-amber-100)">
+        <span class="ico"><i data-lucide="send"></i></span>
+        <span>Sales Outreach</span>
+      </div></div>
+
+  <!-- CARD -->
+  <div class="card">
+    <div class="card-left">
+      <div class="marker"><span class="dot"></span><span id="marker-label">APA · Workflows</span></div>
+      <h3 class="card-title" id="card-title">Run your operations on autonomous agents.</h3>
+      <p class="card-body" id="card-body">Deploy production AI agents that execute work continuously across your stack — handling exceptions, flagging risk, and escalating only what genuinely needs a human call.</p>
+      <a class="learn-more">Learn more <i data-lucide="arrow-up-right"></i></a>
+      <div class="sub-features" id="sub-features"><span class="pin"></span><button data-sub="workflows" class="is-current">Workflows</button><button data-sub="decisions" class="">Decisions</button><button data-sub="integrations" class="">Integrations</button><button data-sub="audit" class="">Audit &amp; logs</button><button data-sub="reporting" class="">Reporting</button></div>
+    </div>
+    <!-- ANCHOR is declared; PRESENCE is not, and the omission is measured rather than
+         an oversight. COMPOSE.md §A2.2 binds both to the archetype, and no specimen in
+         the library declared either. The anchor vocabulary has no CSS behind it — it is
+         a pure declaration and costs nothing. `cr-presence-*` is a WIDTH, so declaring
+         it is inert in a specimen and not inert in a page: applied here it narrowed the
+         creative in composition and pushed 10px labels onto a busier part of the
+         photograph, three new AA failures. A vocabulary that cannot be declared without
+         changing layout is a finding about the vocabulary. (LIBRARY-AUDIT.md C-3.) -->
+    <div class="card-right cr-creative cr-env-massif-banded cr-anchor-framed" id="card-right"
+         style="--right-1:var(--cr-brand-700); --right-2:color-mix(in srgb, var(--cr-teal-900) 70%, black); --right-3:var(--cr-ink-cool)">
+      <div class="orbit o1"></div>
+      <div class="orbit o2"></div>
+      <div class="mock cr-graphic" id="mock">
+          <div class="mock-head"><div class="mock-title">Active Workflow</div><div class="mock-status"><span class="live"></span>Live</div></div>
+          <div class="field"><div class="field-label">Pipeline</div><div class="field-input">Claims triage — Tier 1 retail</div></div>
+          <div class="field-row field-row--spaced">
+            <div class="field"><div class="field-label">Processed today</div><div class="field-input field-input--figure">3,412</div></div>
+            <div class="field"><div class="field-label">In queue</div><div class="field-input field-input--figure">128</div></div>
+          </div>
+          <div class="field"><div class="field-label">Confidence distribution</div><div class="mock-bars"><span style="height:10px;background:var(--cr-brand)"></span><span style="height:16px;background:var(--cr-brand)"></span><span style="height:22px;background:var(--cr-brand)"></span><span style="height:14px;background:var(--cr-brand)"></span><span style="height:28px;background:var(--cr-brand)"></span><span style="height:24px;background:var(--cr-brand)"></span><span style="height:32px;background:var(--cr-brand)"></span><span style="height:20px;background:var(--cr-brand)"></span><span style="height:30px;background:var(--cr-brand)"></span><span style="height:26px;background:var(--cr-brand)"></span><span style="height:18px;background:var(--cr-brand)"></span><span style="height:22px;background:var(--cr-brand)"></span><span style="height:28px;background:var(--cr-brand)"></span><span style="height:30px;background:var(--cr-brand)"></span><span style="height:24px;background:var(--cr-brand)"></span><span style="height:20px;background:var(--cr-brand)"></span><span style="height:26px;background:var(--cr-brand)"></span><span style="height:32px;background:var(--cr-brand)"></span><span style="height:28px;background:var(--cr-brand)"></span><span style="height:22px;background:var(--cr-brand)"></span><span style="height:30px;background:var(--cr-brand)"></span><span style="height:24px;background:var(--cr-brand)"></span><span style="height:28px;background:var(--cr-brand)"></span><span style="height:32px;background:var(--cr-brand)"></span><span style="height:26px;background:var(--cr-brand)"></span><span style="height:24px;background:var(--cr-brand)"></span><span style="height:20px;background:var(--cr-brand)"></span><span style="height:16px;background:var(--cr-brand)"></span><span style="height:14px;background:var(--cr-brand)"></span><span style="height:22px;background:var(--cr-brand)"></span><span style="height:28px;background:var(--cr-brand)"></span><span style="height:26px;background:var(--cr-brand)"></span><span style="height:24px;background:var(--cr-brand)"></span><span style="height:20px;background:var(--cr-brand)"></span><span style="height:26px;background:var(--cr-brand)"></span><span style="height:28px;background:var(--cr-brand)"></span><span style="height:22px;background:var(--cr-brand)"></span><span style="height:18px;background:var(--cr-brand)"></span><span style="height:14px;background:var(--cr-amber)"></span><span style="height:20px;background:var(--cr-amber)"></span><span style="height:18px;background:var(--cr-amber)"></span><span style="height:16px;background:var(--cr-amber)"></span><span style="height:12px;background:var(--cr-amber)"></span><span style="height:18px;background:var(--cr-amber)"></span><span style="height:16px;background:var(--cr-amber)"></span><span style="height:14px;background:var(--cr-amber)"></span><span style="height:10px;background:var(--cr-amber)"></span><span style="height:12px;background:var(--cr-amber)"></span></div></div>
+          <div class="mock-btn-row"><button class="mock-btn">View report <i data-lucide="arrow-right"></i></button></div></div>
+    </div>
+  </div>
+
+  <!-- CUSTOMER STORY -->
+  <div class="story">
+    <div class="ey">Customer story</div>
+    <a class="lk" id="story-link">How a Tier-1 BFSI insurer automated 80% of claims triage with Example Brand <i data-lucide="arrow-up-right"></i></a>
+  </div>
+</section>
+
+<script>
+  // ── Helpers for building mock content ──────────────────────────
+  const accentBars = (accent) => {
+    const heights = [10, 16, 22, 14, 28, 24, 32, 20, 30, 26, 18, 22, 28, 30, 24, 20, 26, 32, 28, 22, 30, 24, 28, 32, 26, 24, 20, 16, 14, 22, 28, 26, 24, 20, 26, 28, 22, 18, 14, 20, 18, 16, 12, 18, 16, 14, 10, 12];
+    return `<div class="mock-bars">${heights.map((h, i) =>
+      `<span style="height:${h}px;background:${i < 38 ? accent : 'var(--cr-amber)'}"></span>`).join('')}</div>`;
+  };
+  const pills = (items, color) => items.map(t =>
+    `<span class="field-pill" style="background:${color}1A;color:${color}">${t}</span>`).join('');
+
+  // ── Tab + sub-feature content ──────────────────────────────────
+  const CONTENT = {
+    apa: {
+      label: "APA",
+      tabIcon: "bot",
+      tabName: "Autonomous Process Automation",
+      accent: "var(--cr-brand)",
+      icoBg: "var(--cr-brand-100)",
+      right: ["var(--cr-brand-700)", "color-mix(in srgb, var(--cr-teal-900) 70%, black)", "var(--cr-ink-cool)"],
+      title: "Run your operations on autonomous agents.",
+      body: "Deploy production AI agents that execute work continuously across your stack — handling exceptions, flagging risk, and escalating only what genuinely needs a human call.",
+      story: "How a Tier-1 BFSI insurer automated 80% of claims triage with Example Brand",
+      subs: {
+        workflows: { name: "Workflows", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Active Workflow</div><div class="mock-status"><span class="live"></span>Live</div></div>
+          <div class="field"><div class="field-label">Pipeline</div><div class="field-input">Claims triage — Tier 1 retail</div></div>
+          <div class="field-row" style="margin-top:14px">
+            <div class="field"><div class="field-label">Processed today</div><div class="field-input field-input--figure">3,412</div></div>
+            <div class="field"><div class="field-label">In queue</div><div class="field-input field-input--figure">128</div></div>
+          </div>
+          <div class="field"><div class="field-label">Confidence distribution</div>${accentBars(c)}</div>
+          <div class="mock-btn-row"><button class="mock-btn">View report <i data-lucide="arrow-right"></i></button></div>`
+        },
+        decisions: { name: "Decisions", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Decision policy</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Evaluating</div></div>
+          <div class="field"><div class="field-label">Input</div><div class="field-input">Claim #4827 · $24,500 · Vendor tier 1</div></div>
+          <div class="field"><div class="field-label">Reasoning</div>
+            <div>${pills(["Apply tier-1 rules", "Check SLA window", "Compare vs. policy"], c)}</div>
+          </div>
+          <div class="field"><div class="field-label">Chosen action</div><div class="field-input" style="font-weight:600">Auto-approve · log to audit</div></div>
+          <div class="mock-stat"><span class="n">94%</span><span class="l">Confidence above threshold</span></div>
+          <div class="mock-btn-row"><button class="mock-btn">Open trace <i data-lucide="arrow-right"></i></button></div>`
+        },
+        integrations: { name: "Integrations", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Connected systems</div><div class="mock-status"><span class="live"></span>Healthy</div></div>
+          <div class="field"><div class="field-label">Source systems</div>
+            <div>${pills(["SAP", "Salesforce", "Oracle", "Zoho"], c)}</div>
+          </div>
+          <div class="field"><div class="field-label">Destinations</div>
+            <div>${pills(["Snowflake", "Slack", "Jira", "Email"], "var(--cr-success)")}</div>
+          </div>
+          <div class="field"><div class="field-label">Sync method</div><div class="field-input">API · 2-way · 15s polling</div></div>
+          <div class="mock-btn-row"><button class="mock-btn">Manage connectors <i data-lucide="arrow-right"></i></button></div>`
+        },
+        audit: { name: "Audit & logs", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Action log</div><div class="mock-status"><span class="live"></span>Streaming</div></div>
+          ${[
+            ["1", "Approved claim #4827", "0.94 conf · 2s ago"],
+            ["2", "Escalated claim #4826", "below threshold · 14s ago"],
+            ["3", "Rejected duplicate #4825", "policy match · 32s ago"],
+          ].map(([n, t, s]) => `
+            <div class="mock-step"><div class="n" style="background:${c}">${n}</div><div class="body">${t}<small>${s}</small></div></div>`).join('')}
+          <div class="mock-btn-row"><button class="mock-btn">Export CSV <i data-lucide="arrow-right"></i></button></div>`
+        },
+        reporting: { name: "Reporting", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">This week</div><div class="mock-status"><span class="live"></span>+12% vs LW</div></div>
+          <div class="mock-stat"><span class="n">11.3×</span><span class="l">Return on agent</span></div>
+          <div class="mock-stat"><span class="n" style="color:${c}">92%</span><span class="l">Auto-resolution rate</span></div>
+          <div class="mock-stat"><span class="n">3 days</span><span class="l">Avg payback period</span></div>
+          <div class="field"><div class="field-label">Trend</div>${accentBars(c)}</div>
+          <div class="mock-btn-row"><button class="mock-btn">Full dashboard <i data-lucide="arrow-right"></i></button></div>`
+        },
+      },
+    },
+
+    docxter: {
+      label: "DocXter",
+      tabIcon: "file-text",
+      tabName: "Document Intelligence",
+      accent: "var(--cr-success)",
+      icoBg: "var(--cr-success-100)",
+      right: ["var(--cr-success-700)", "color-mix(in srgb, var(--cr-success-700) 70%, black)", "color-mix(in srgb, var(--cr-success-700) 35%, black)"],
+      title: "Turn unstructured documents into a queryable answer layer.",
+      body: "Ingest contracts, PDFs, scanned forms and images. DocXter extracts intent, structure and entities — then answers questions against them with cited evidence.",
+      story: "How a global law firm cut contract review cycle time by 64%",
+      subs: {
+        ingest: { name: "Ingest", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Inbox</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Reading</div></div>
+          ${[["1","NDA_2026_Acme.pdf","12 pages · OCR complete"],
+             ["2","Vendor-MSA.docx","8 pages · parsed"],
+             ["3","SOW_amendment.pdf","4 pages · indexing"]].map(([n,t,s])=>`
+            <div class="mock-step"><div class="n" style="background:${c}">${n}</div><div class="body">${t}<small>${s}</small></div></div>`).join('')}
+          <div class="mock-btn-row"><button class="mock-btn">Upload more <i data-lucide="arrow-right"></i></button></div>`
+        },
+        extract: { name: "Extract", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Finalize your offer</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Extracted</div></div>
+          <div class="field"><div class="field-label">Job title</div><div class="field-input">Journeyman Electrician</div></div>
+          <div class="field"><div class="field-label">Department</div><div class="field-input">Construction</div></div>
+          <div class="field-row" style="margin-top:14px">
+            <div class="field"><div class="field-label">Start date</div><div class="field-input">Tue, Apr 1</div></div>
+            <div class="field"><div class="field-label">Hourly rate</div><div class="field-input">$48.50</div></div>
+          </div>
+          <div class="mock-btn-row"><button class="mock-btn">Continue <i data-lucide="arrow-right"></i></button></div>`
+        },
+        query: { name: "Query", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Ask a question</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Answering</div></div>
+          <div class="field"><div class="field-label">Question</div><div class="field-input">What's our liability cap with Acme?</div></div>
+          <div class="field"><div class="field-label">Answer</div><div class="field-input" style="background:var(--cr-bg-grey-50)">Capped at $250,000 per incident, $2M aggregate per the 2026 MSA, §8.2.</div></div>
+          <div class="field"><div class="field-label">Cited from</div>
+            <div>${pills(["MSA-2026.pdf p.12", "NDA-rider.docx"], c)}</div>
+          </div>
+          <div class="mock-btn-row"><button class="mock-btn">Ask another <i data-lucide="arrow-right"></i></button></div>`
+        },
+        cite: { name: "Cite", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Evidence chain</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>3 sources</div></div>
+          ${[["§ 8.2","Liability cap clause","MSA-2026.pdf · page 12"],
+             ["§ 3.1","Indemnification scope","MSA-2026.pdf · page 5"],
+             ["Sched. A","Exclusions","NDA-rider.docx"]].map(([n,t,s])=>`
+            <div class="mock-step"><div class="n" style="background:${c};font-size:10px;width:36px;border-radius:6px">${n}</div><div class="body">${t}<small>${s}</small></div></div>`).join('')}
+          <div class="mock-btn-row"><button class="mock-btn">Copy citations <i data-lucide="arrow-right"></i></button></div>`
+        },
+        export: { name: "Export", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Export</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Ready</div></div>
+          <div class="field"><div class="field-label">Format</div>
+            <div>${pills(["CSV", "JSON", "PDF brief", "API webhook"], c)}</div>
+          </div>
+          <div class="field"><div class="field-label">Destination</div><div class="field-input">Snowflake · finance.contracts</div></div>
+          <div class="field"><div class="field-label">Records</div><div class="field-input field-input--figure">1,284</div></div>
+          <div class="mock-btn-row"><button class="mock-btn">Export now <i data-lucide="arrow-right"></i></button></div>`
+        },
+      },
+    },
+
+    jennie: {
+      label: "Jennie",
+      tabIcon: "send",
+      tabName: "Sales Outreach",
+      accent: "var(--cr-amber)",
+      icoBg: "var(--cr-amber-100)",
+      right: ["var(--cr-amber)", "var(--cr-fg-2)", "var(--cr-fg)"],
+      title: "Send outreach your prospects actually want to read.",
+      body: "Jennie researches each account, drafts personalised sequences, books meetings on your calendar, and hands off the warm thread to a human only when the buyer is ready.",
+      story: "How a SaaS team replaced 5 SDR seats with one Example Brand agent",
+      subs: {
+        research: { name: "Research", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Account brief</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Ready</div></div>
+          <div class="field"><div class="field-label">Account</div><div class="field-input">Northwind Logistics · 1,200 FTE · Series D</div></div>
+          <div class="field"><div class="field-label">Signals</div>
+            <div>${pills(["Hiring 12 ops engineers", "Series D · 6 weeks ago", "Switched warehouse software"], c)}</div>
+          </div>
+          <div class="field"><div class="field-label">Suggested wedge</div><div class="field-input">Procurement-cycle reduction post-funding</div></div>
+          <div class="mock-btn-row"><button class="mock-btn">Draft email <i data-lucide="arrow-right"></i></button></div>`
+        },
+        draft: { name: "Draft", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Email draft</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Ready to send</div></div>
+          <div class="field"><div class="field-label">To</div><div class="field-input">jordan@northwind.co</div></div>
+          <div class="field"><div class="field-label">Subject</div><div class="field-input" style="font-weight:600">12 new ops hires — quick thought</div></div>
+          <div class="field"><div class="field-label">Body</div><div class="field-input" style="background:var(--cr-bg-grey-50);font-size:12px;line-height:1.5">Saw you posted 12 ops eng roles right after the D. We helped Acme cut their procurement cycle 47% post-funding without growing the team. 15 min next Tue?</div></div>
+          <div class="mock-btn-row"><button class="mock-btn">Schedule <i data-lucide="arrow-right"></i></button></div>`
+        },
+        send: { name: "Send", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Sequence — Q2 Enterprise</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Sending</div></div>
+          ${[["1","Personalised intro","412 sent"],
+             ["2","Case-study link","318 queued"],
+             ["3","Calendar nudge","204 scheduled"]].map(([n,t,s])=>`
+            <div class="mock-step"><div class="n" style="background:${c}">${n}</div><div class="body">${t}<small>${s}</small></div></div>`).join('')}
+          <div class="mock-btn-row"><button class="mock-btn">View pipeline <i data-lucide="arrow-right"></i></button></div>`
+        },
+        reply: { name: "Reply", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Inbound reply</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Drafting</div></div>
+          <div class="field"><div class="field-label">From</div><div class="field-input">Jordan Kim · VP Ops, Northwind</div></div>
+          <div class="field"><div class="field-label">Their reply</div><div class="field-input" style="background:var(--cr-bg-grey-50);font-size:12px;line-height:1.5">"Interesting — what does a 30-day pilot look like for a team our size?"</div></div>
+          <div class="field"><div class="field-label">Suggested reply</div><div class="field-input" style="background:${c}10;font-size:12px;line-height:1.5">Hi Jordan — for ~1,200 FTE, we'd scope 1 workflow in week 1, blueprint in week 2, shadow-run weeks 3–4. Tue 2pm or Thu 11am?</div></div>
+          <div class="mock-btn-row"><button class="mock-btn">Send reply <i data-lucide="arrow-right"></i></button></div>`
+        },
+        handoff: { name: "Hand-off", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Hand-off to AE</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Ready</div></div>
+          <div class="field"><div class="field-label">Prospect</div><div class="field-input">Jordan Kim · Northwind Logistics</div></div>
+          <div class="field"><div class="field-label">Meeting booked</div><div class="field-input">Thu Apr 17 · 11:00 IST</div></div>
+          <div class="field"><div class="field-label">Owner</div><div class="field-input">Aanya Mehta · Enterprise AE</div></div>
+          <div class="field"><div class="field-label">Brief</div>
+            <div>${pills(["Account brief", "Conversation log", "Suggested deck"], c)}</div>
+          </div>
+          <div class="mock-btn-row"><button class="mock-btn">Open in CRM <i data-lucide="arrow-right"></i></button></div>`
+        },
+      },
+    },
+  };
+
+  // ── State + render ─────────────────────────────────────────────
+  const state = { tab: 'apa', sub: 'workflows' };
+
+  const tabsEl = document.getElementById('tabs');
+  const titleEl = document.getElementById('card-title');
+  const bodyEl = document.getElementById('card-body');
+  const markerEl = document.getElementById('marker-label');
+  const subsEl = document.getElementById('sub-features');
+  const mockEl = document.getElementById('mock');
+  const cardRightEl = document.getElementById('card-right');
+  const storyEl = document.getElementById('story-link');
+  const root = document.documentElement;
+
+  function renderTabs() {
+    tabsEl.innerHTML = Object.entries(CONTENT).map(([k, t]) => `
+      <div class="tab ${k === state.tab ? 'active' : ''}" data-key="${k}"
+           style="--accent:${t.accent}; --ico-bg:${t.icoBg}">
+        <span class="ico"><i data-lucide="${t.tabIcon}"></i></span>
+        <span>${t.tabName}</span>
+      </div>`).join('');
+  }
+
+  function renderCard() {
+    const t = CONTENT[state.tab];
+    const sub = t.subs[state.sub] || t.subs[Object.keys(t.subs)[0]];
+
+    // Apply per-tab accent + creative palette via CSS vars
+    root.style.setProperty('--accent', t.accent);
+    cardRightEl.style.setProperty('--right-1', t.right[0]);
+    cardRightEl.style.setProperty('--right-2', t.right[1]);
+    cardRightEl.style.setProperty('--right-3', t.right[2]);
+
+    titleEl.textContent = t.title;
+    bodyEl.textContent = t.body;
+    markerEl.textContent = t.label + ' · ' + sub.name;
+
+    subsEl.innerHTML = '<span class="pin"></span>' + Object.entries(t.subs).map(([k, s]) =>
+      `<button data-sub="${k}" class="${k === state.sub ? 'is-current' : ''}">${s.name}</button>`).join('');
+
+    storyEl.innerHTML = t.story + ' <i data-lucide="arrow-up-right"></i>';
+
+    // Animate the mock swap
+    mockEl.classList.add('is-changing');
+    setTimeout(() => {
+      mockEl.innerHTML = sub.mock(t.accent);
+      mockEl.classList.remove('is-changing');
+      lucide.createIcons();
+    }, 180);
+  }
+
+  function setTab(k) {
+    state.tab = k;
+    state.sub = Object.keys(CONTENT[k].subs)[0];
+    renderTabs();
+    renderCard();
+    lucide.createIcons();
+  }
+  function setSub(k) {
+    state.sub = k;
+    renderCard();
+  }
+
+  tabsEl.addEventListener('click', e => {
+    const t = e.target.closest('.tab');
+    if (t) setTab(t.dataset.key);
+  });
+  subsEl.addEventListener('click', e => {
+    const b = e.target.closest('button[data-sub]');
+    if (b) setSub(b.dataset.sub);
+  });
+
+  // No initial render — the opening state ships in the markup. (DR-58.)
+  lucide.createIcons();
+</script>
+</body>
+</html>

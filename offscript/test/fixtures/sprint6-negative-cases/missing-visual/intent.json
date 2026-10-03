@@ -1,0 +1,8 @@
+{
+  "id": "missing-visual",
+  "digest": "sha256:c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2",
+  "belief": "an artifact whose visual file does not exist must not be selected",
+  "feature": "automation",
+  "mustInclude": ["never select an unreadable visual"],
+  "section": "feature"
+}

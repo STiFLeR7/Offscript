@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Split · balanced — contact methods</title>
+  <link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+  <!--
+    ════════════════════════════════════════════════════════════════════════
+    v3 SPECIMEN — Form Split · balanced     from component-contact-methods.html
+    ════════════════════════════════════════════════════════════════════════
+    THE CLAIM   **The reader chooses HOW to make contact.** The profile is
+                explicit about why this structure exists at all: "different
+                readers need different channels, and showing the choice removes
+                the friction of a reader who will not use a form and cannot see
+                an alternative." So the two method cards are not decoration
+                beside the form — they are the other half of the offer, and the
+                `balanced` arrangement is the argument. An asymmetric split would
+                rank them, and ranking them is the thing this section refuses.
+
+    STRUCTURE   Unchanged. A 1fr/1fr split: eyebrow → headline → lede → two
+                method cards on the left; form title → three fields → submit on
+                the right. DOM, scripts, ids, `data-*`, `href` and every
+                behavioural hook are byte-compatible with the frozen original
+                (DR-22). The v2 file is beside this one in `_v2/`.
+
+    THE FORM IS FROZEN. Every input, label, `for`, `id` and the submit behaviour
+                are exactly the original's. What moved is presentation: the
+                control radius, one stroke, the raised surface, and a focus
+                indicator that is dark ink rather than a hue.
+
+    NO ABSTRACT BACKGROUND  There is nothing here for the environment pass to
+                replace — no gradient, no blur plate, no glow, no tint wash, no
+                decorative ring. The section is flat by construction and stays
+                flat. It is also the wrong section to invent one for: a
+                photograph behind form fields is exactly the case the direction
+                rules out by name, and the two method cards are a small data
+                surface, not a creative frame. Reported as "none", which is an
+                answer rather than a skipped step.
+
+    SECOND CUE  All three border tokens measure under 3:1 against the page
+                ground, so a hairline cannot be a control's only boundary. v2's
+                inputs were underline-only on a transparent fill, which is that
+                failure twice over — the field had no boundary a low-vision
+                reader could find. They now sit on the RAISED surface inside a
+                full stroke at the control radius: the surface change is the
+                second cue and it is measurable rather than asserted. The method
+                cards take the same treatment for the same reason, which is what
+                makes the two columns read as one component family.
+
+    ACCENT      One moment, and it is the ask. `Send Message` takes the orange.
+                v2 spent brand blue there AND on the focus underline of every
+                field — a form where the accent marks *being in a text box*
+                rather than marking the thing to click. The focus indicator is
+                now dark ink at ~13:1, which is what the pack's default ring is
+                for.
+
+                THE HOVER INVERTS RATHER THAN JUST DARKENING. The fill steps to
+                the deep orange on hover, and dark ink on that step measures
+                1.9:1 — an AA failure if the label stayed put. So the label
+                moves with the fill, to the inverse at 7.4:1, and the nested
+                arrow box inverts with it: ink-on-orange at rest becomes
+                light-on-deep-orange on hover. A fill that darkens without its
+                foreground moving is a contrast bug wearing a hover state.
+
+    RESPONSIVE  The original's breakpoints (1080 / 880 / 600), and the 1080 tier
+                is now empty of everything except what it actually did — its two
+                surviving jobs were a padding step and a headline step, and the
+                pack already owns both ladders. The per-section headline sizes
+                are DELETED rather than converted: a second ramp on top of the
+                pack's resolves to sizes nobody authored.
+    ════════════════════════════════════════════════════════════════════════
+  -->
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--cr-page-ground);
+      font-family: var(--cr-font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Entrance: transform-only rise (always visible, no opacity gate) ──
+       The guard here is opt-IN rather than opt-out — the animation is only
+       ever declared inside `no-preference`, so a reduce preference never
+       reaches a rule that has to be undone. Correct by construction. */
+    @keyframes cc-rise {
+      from { transform: translateY(12px); }
+      to   { transform: none; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .cr-rise {
+        animation: cc-rise .6s cubic-bezier(.16,1,.3,1) both;
+        animation-delay: var(--d, 0s);
+      }
+    }
+
+    /* ── Section shell ──────────────────────────────────────────── */
+    .cc {
+      padding: var(--cr-space-2xl) var(--cr-page-gutter);
+      background-color: var(--cr-page-ground);
+      color: var(--cr-text-secondary);
+      font-size: var(--cr-text-body);
+    }
+    .cc-well {
+      max-width: var(--cr-content-max);
+      margin: 0 auto;
+    }
+    .cc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--cr-space-xl);
+      align-items: start;
+    }
+
+    /* ── Left column ────────────────────────────────────────────── */
+    .cc-eyebrow {
+      font-family: var(--cr-font-body);
+      font-size: var(--cr-text-supporting);
+      font-weight: 400;
+      letter-spacing: 0;              /* supporting text: never tracked, never uppercase */
+      line-height: var(--cr-leading-body);
+      color: var(--cr-text-secondary);
+      margin-bottom: var(--cr-space-s);
+    }
+    .cc-title {
+      font-family: var(--cr-font-display);
+      font-weight: 400;
+      font-size: var(--cr-text-h2);
+      line-height: var(--cr-leading-heading);
+      letter-spacing: var(--cr-tracking-heading);
+      color: var(--cr-text-primary);
+      margin-bottom: var(--cr-rhythm-cluster);
+    }
+    .cc-sub {
+      font-family: var(--cr-font-body);
+      font-weight: 400;
+      font-size: var(--cr-text-body);
+      line-height: var(--cr-leading-body);
+      color: var(--cr-text-secondary);
+      max-width: 420px;               /* the original's measure — untouched */
+      margin-bottom: var(--cr-rhythm-content);
+    }
+
+    /* ── Contact-method cards ───────────────────────────────────── */
+    .cc-methods {
+      display: flex;
+      flex-direction: column;
+      gap: var(--cr-space-s);
+    }
+    .cc-method {
+      display: flex;
+      flex-direction: column;
+      min-height: 150px;              /* the original's card height — a composition
+                                         decision, not a spacing one */
+      padding: var(--cr-space-s);
+      background-color: var(--cr-bg-raised);
+      border: var(--cr-stroke) solid var(--cr-border-default);
+      border-radius: var(--cr-radius-card);
+      text-decoration: none;
+      transition: background-color .2s ease, border-color .2s ease;
+    }
+    .cc-method:hover {
+      background-color: var(--cr-surface-3);
+      border-color: var(--cr-border-strong);
+    }
+    .cc-method:focus-visible {
+      outline: 2px solid var(--cr-focus-ring);
+      outline-offset: 2px;
+    }
+    .cc-method-ico {
+      width: 38px;
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cr-text-primary);
+    }
+    .cc-method-ico svg { width: 24px; height: 24px; stroke-width: var(--cr-icon-stroke-md); }
+
+    .cc-method-foot {
+      margin-top: auto;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: var(--cr-space-s);
+    }
+    .cc-method-txt {
+      display: flex;
+      flex-direction: column;
+      gap: var(--cr-space-xs);
+      min-width: 0;
+    }
+    .cc-method-title {
+      font-family: var(--cr-font-display);
+      font-weight: 500;
+      font-size: var(--cr-text-body);
+      line-height: var(--cr-leading-heading);
+      letter-spacing: var(--cr-tracking-heading);
+      color: var(--cr-text-primary);
+    }
+    .cc-method-sub {
+      font-family: var(--cr-font-body);
+      font-weight: 400;
+      font-size: var(--cr-text-supporting);
+      line-height: var(--cr-leading-body);
+      color: var(--cr-text-secondary);
+    }
+
+    /* Ink square arrow — a marker, not an accent. The section spends its
+       colour once and this is not the once. */
+    .cc-arrow {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--cr-text-primary);
+      border-radius: var(--cr-radius-control);
+      color: var(--cr-text-inverse);
+    }
+    .cc-arrow svg {
+      width: 18px; height: 18px;
+      stroke-width: var(--cr-icon-stroke-sm);
+      transition: transform .2s ease;
+    }
+    .cc-method:hover .cc-arrow svg { transform: translateX(3px); }
+
+    /* ── Right column · form ────────────────────────────────────── */
+    .cc-right { padding-top: var(--cr-space-m); }
+    .cc-form-title {
+      font-family: var(--cr-font-display);
+      font-weight: 400;
+      font-size: var(--cr-text-h5);
+      line-height: var(--cr-leading-heading);
+      letter-spacing: var(--cr-tracking-heading);
+      color: var(--cr-text-primary);
+      margin-bottom: var(--cr-space-m);
+    }
+    .cc-form { display: flex; flex-direction: column; gap: var(--cr-space-s); }
+    .cc-field { display: flex; flex-direction: column; }
+    .cc-label {
+      font-family: var(--cr-font-body);
+      font-size: var(--cr-text-supporting);
+      font-weight: 500;
+      line-height: var(--cr-leading-body);
+      letter-spacing: 0;
+      color: var(--cr-text-secondary);
+      margin-bottom: var(--cr-space-xs);
+    }
+    /* A control never inherits `font-family` — it is stated. */
+    .cc-input,
+    .cc-textarea {
+      width: 100%;
+      font-family: var(--cr-font-body);
+      font-size: var(--cr-text-supporting);
+      line-height: var(--cr-leading-body);
+      color: var(--cr-text-primary);
+      background-color: var(--cr-bg-raised);
+      border: var(--cr-stroke) solid var(--cr-border-default);
+      border-radius: var(--cr-radius-control);   /* inputs take the CONTROL radius */
+      padding: var(--cr-space-xs);
+      outline: none;
+      transition: border-color .18s ease;
+    }
+    .cc-input::placeholder,
+    .cc-textarea::placeholder { color: var(--cr-text-secondary); }
+    /* THE FOCUS INDICATOR IS DARK INK, not a hue. `--cr-focus-ring` resolves to
+       `--cr-text-primary` — ~13:1 on the page ground, where the blue v2's
+       underline reached for measures 2.07:1 and is disqualified outright. */
+    .cc-input:focus-visible,
+    .cc-textarea:focus-visible {
+      border-color: var(--cr-text-primary);
+      outline: 2px solid var(--cr-focus-ring);
+      outline-offset: 2px;
+    }
+    .cc-textarea { resize: none; min-height: 30px; }
+
+    /* ── THE ONE ACCENT MOMENT — the ask ────────────────────────── */
+    .cc-submit {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      margin-top: var(--cr-space-xs);
+      padding: var(--cr-space-xs) var(--cr-space-xs) var(--cr-space-xs) var(--cr-space-s);
+      background-color: var(--cr-accent-orange);
+      border: none;
+      border-radius: var(--cr-radius-control);   /* the pill radius is retired */
+      cursor: pointer;
+      transition: background-color .2s ease;
+    }
+    .cc-submit-label {
+      font-family: var(--cr-font-body);
+      font-weight: 500;
+      font-size: var(--cr-text-supporting);
+      line-height: var(--cr-leading-body);
+      letter-spacing: 0;
+      color: var(--cr-on-accent-light);          /* what sits on orange */
+    }
+    .cc-submit-arrow {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--cr-text-primary);
+      border-radius: var(--cr-radius-control);
+      color: var(--cr-text-inverse);
+      transition: background-color .2s ease, color .2s ease;
+    }
+    .cc-submit-arrow svg {
+      width: 18px; height: 18px;
+      stroke-width: var(--cr-icon-stroke-sm);
+      transition: transform .2s ease;
+    }
+    .cc-submit:hover .cc-submit-arrow svg { transform: translateX(3px); }
+
+    /* THE WHOLE CONTROL INVERTS. Darkening the fill alone would leave the ink
+       label at 1.9:1 on the deep orange step, so the label and the nested box
+       move with it — label to the inverse at 7.4:1, box to a light fill with an
+       ink glyph. Both directions of the pair are checked, not just the fill. */
+    .cc-submit:hover,
+    .cc-submit:focus-visible { background-color: var(--cr-accent-orange-800); }
+    .cc-submit:hover .cc-submit-label,
+    .cc-submit:focus-visible .cc-submit-label { color: var(--cr-text-inverse); }
+    .cc-submit:hover .cc-submit-arrow,
+    .cc-submit:focus-visible .cc-submit-arrow {
+      background-color: var(--cr-text-inverse);
+      color: var(--cr-text-primary);
+    }
+    .cc-submit:focus-visible {
+      outline: 2px solid var(--cr-focus-ring);
+      outline-offset: 3px;
+    }
+
+    /* ── Responsive — the ORIGINAL's breakpoints. The per-section headline
+       and padding steps are deleted, not converted: the pack walks both
+       ladders at its own breakpoints. ───────────────────────────── */
+    @media (max-width: 880px) {
+      .cc-grid { grid-template-columns: 1fr; gap: var(--cr-space-m); }
+      .cc-right { padding-top: 0; }
+      .cc-sub { max-width: 520px; }
+    }
+
+    @media (max-width: 600px) {
+      .cc-submit { justify-content: center; gap: var(--cr-space-s); }
+    }
+  </style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. Nothing here is `directed`: every line is a scale
+     realising itself, which is what a section with no composition change
+     should produce.
+  .cc-eyebrow      | font-size              | type-ramp
+  .cc-eyebrow      | line-height            | type-ramp
+  .cc-eyebrow      | margin-bottom          | spacing-scale
+  .cc-field        | font-size              | type-ramp
+  .cc-form         | column-gap             | spacing-scale
+  .cc-form         | font-size              | type-ramp
+  .cc-form         | row-gap                | spacing-scale
+  .cc-form-title   | font-size              | type-ramp
+  .cc-form-title   | line-height            | type-ramp
+  .cc-form-title   | margin-bottom          | spacing-scale
+  .cc-grid         | column-gap             | spacing-scale
+  .cc-grid         | font-size              | type-ramp
+  .cc-grid         | row-gap                | spacing-scale
+  .cc-input        | border-left-width      | stroke
+  .cc-input        | border-radius          | radius-pair
+  .cc-input        | border-right-width     | stroke
+  .cc-input        | border-top-width       | stroke
+  .cc-input        | line-height            | type-ramp
+  .cc-input        | padding-bottom         | spacing-scale
+  .cc-input        | padding-left           | spacing-scale
+  .cc-input        | padding-right          | spacing-scale
+  .cc-input        | padding-top            | spacing-scale
+  .cc-label        | font-size              | type-ramp
+  .cc-label        | line-height            | type-ramp
+  .cc-label        | margin-bottom          | spacing-scale
+  .cc-left         | font-size              | type-ramp
+  .cc-method       | border-radius          | radius-pair
+  .cc-method       | font-size              | type-ramp
+  .cc-method       | padding-bottom         | spacing-scale
+  .cc-method       | padding-left           | spacing-scale
+  .cc-method       | padding-right          | spacing-scale
+  .cc-method       | padding-top            | spacing-scale
+  .cc-method-foot  | column-gap             | spacing-scale
+  .cc-method-foot  | font-size              | type-ramp
+  .cc-method-foot  | margin-top             | spacing-scale
+  .cc-method-foot  | row-gap                | spacing-scale
+  .cc-method-sub   | font-size              | type-ramp
+  .cc-method-sub   | line-height            | type-ramp
+  .cc-method-title | font-size              | type-ramp
+  .cc-method-title | line-height            | type-ramp
+  .cc-method-txt   | column-gap             | spacing-scale
+  .cc-method-txt   | font-size              | type-ramp
+  .cc-method-txt   | row-gap                | spacing-scale
+  .cc-methods      | column-gap             | spacing-scale
+  .cc-methods      | font-size              | type-ramp
+  .cc-methods      | row-gap                | spacing-scale
+  .cc-right        | font-size              | type-ramp
+  .cc-right        | padding-top            | spacing-scale
+  .cc-sub          | font-size              | type-ramp
+  .cc-sub          | line-height            | type-ramp
+  .cc-sub          | margin-bottom          | spacing-scale
+  .cc-submit       | border-radius          | radius-pair
+  .cc-submit       | column-gap             | spacing-scale
+  .cc-submit       | margin-top             | spacing-scale
+  .cc-submit       | padding-bottom         | spacing-scale
+  .cc-submit       | padding-left           | spacing-scale
+  .cc-submit       | padding-right          | spacing-scale
+  .cc-submit       | padding-top            | spacing-scale
+  .cc-submit       | row-gap                | spacing-scale
+  .cc-submit-label | line-height            | type-ramp
+  .cc-textarea     | border-left-width      | stroke
+  .cc-textarea     | border-radius          | radius-pair
+  .cc-textarea     | border-right-width     | stroke
+  .cc-textarea     | border-top-width       | stroke
+  .cc-textarea     | line-height            | type-ramp
+  .cc-textarea     | padding-bottom         | spacing-scale
+  .cc-textarea     | padding-left           | spacing-scale
+  .cc-textarea     | padding-right          | spacing-scale
+  .cc-textarea     | padding-top            | spacing-scale
+  .cc-title        | font-size              | type-ramp
+  .cc-title        | line-height            | type-ramp
+  .cc-title        | margin-bottom          | spacing-scale
+  .lucide          | font-size              | type-ramp
+  .lucide          | stroke-width           | stroke
+  br               | font-size              | type-ramp
+  br               | line-height            | type-ramp
+  path             | font-size              | type-ramp
+  path             | stroke-width           | stroke
+-->
+  <section class="cc" data-screen-label="Contact"
+           data-archetype="editorial-split" data-hierarchy="closing" data-intent="convert"
+           data-register="human" data-signature="orange-corner" data-density="medium">
+    <div class="cc-well">
+      <div class="cc-grid">
+
+        <!-- ── LEFT — intro + method cards ── -->
+        <div class="cc-left">
+          <p class="cc-eyebrow cr-rise">Contact</p>
+          <h2 class="cc-title cr-rise" style="--d:.05s">Let's build your<br>plan together.</h2>
+          <p class="cc-sub cr-rise" style="--d:.1s">Have a question about agents, integrations, or which engagement fits your team best? Reach out &mdash; we'll help you find your next step forward.</p>
+
+          <div class="cc-methods">
+            <a class="cc-method cr-rise" style="--d:.16s" href="#">
+              <span class="cc-method-ico"><i data-lucide="messages-square"></i></span>
+              <span class="cc-method-foot">
+                <span class="cc-method-txt">
+                  <span class="cc-method-title">Chat</span>
+                  <span class="cc-method-sub">Chat directly with a CR specialist</span>
+                </span>
+                <span class="cc-arrow"><i data-lucide="arrow-right"></i></span>
+              </span>
+            </a>
+
+            <a class="cc-method cr-rise" style="--d:.22s" href="#">
+              <span class="cc-method-ico"><i data-lucide="phone"></i></span>
+              <span class="cc-method-foot">
+                <span class="cc-method-txt">
+                  <span class="cc-method-title">Call us</span>
+                  <span class="cc-method-sub">Mon &ndash; Fri, 9:00 &ndash; 18:00 (IST)</span>
+                </span>
+                <span class="cc-arrow"><i data-lucide="arrow-right"></i></span>
+              </span>
+            </a>
+          </div>
+        </div>
+
+        <!-- ── RIGHT — form ── -->
+        <div class="cc-right cr-rise" style="--d:.18s">
+          <h3 class="cc-form-title">Send a Message</h3>
+          <form class="cc-form" onsubmit="return false">
+            <div class="cc-field">
+              <label class="cc-label" for="cc-name">Full name</label>
+              <input class="cc-input" id="cc-name" type="text" placeholder="Enter your full name">
+            </div>
+            <div class="cc-field">
+              <label class="cc-label" for="cc-email">Email</label>
+              <input class="cc-input" id="cc-email" type="email" placeholder="you@company.com">
+            </div>
+            <div class="cc-field">
+              <label class="cc-label" for="cc-msg">Message</label>
+              <textarea class="cc-textarea" id="cc-msg" rows="3" placeholder="Tell me about your goals or what you'd like help with&hellip;"></textarea>
+            </div>
+            <button class="cc-submit" type="submit">
+              <span class="cc-submit-label">Send Message</span>
+              <span class="cc-submit-arrow"><i data-lucide="arrow-right"></i></span>
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

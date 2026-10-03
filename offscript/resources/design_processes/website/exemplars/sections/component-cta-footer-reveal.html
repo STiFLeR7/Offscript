@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Split · balanced — closing CTA</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Split · balanced      from component-cta-footer-reveal.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **A close that does not raise its voice.** The profile is explicit:
+              this is the one closing structure that stays on the base surface,
+              so the page ends in the same register it argued in. Everything
+              below follows from that — the band keeps the page ground, the ask
+              is the only coloured thing on the screen, and the proof beside it
+              corroborates rather than competes.
+
+  STRUCTURE   Unchanged. Eyebrow row · a two-track split (left content stack,
+              right mini-bento of three cards). DOM, scripts, ids, `data-*`,
+              `aria-*`, `href`, `src` and every behavioural hook are
+              byte-compatible with the frozen original (DR-22). The v2 file is
+              beside this one in `_v2/`.
+
+  THE CREATIVE — NINE GRADIENTS, AND ALL NINE ARE GONE.
+              v2 built its surface out of six radial washes plus a linear base on
+              `.cta-band`, and two more radials on a `::before` running through a
+              36px blur and a 20s drift loop. That is nine abstract creative
+              backgrounds and a depth simulation in one section, standing in for
+              a subject nobody supplied.
+
+              The band itself returns to the page ground, because the profile
+              says the close must not change surface. The environment goes where
+              the profile already puts the media — `Media presence s, anchor
+              right` — onto `.cards`, which becomes a photographic field with the
+              three OPAQUE cards set into it. `dawn-haze` is the catalogue's most
+              cinematic member and the one whose natural negative space is on the
+              light side; here it reads through a 20px margin and the 12px
+              lattice between the cards, which is the whole of its job.
+
+              ONE STACK, three layers: grain on top, grunge under it, the
+              environment underneath both. It has to be one stack — a blend mode
+              composites against what is beneath it in the SAME background, so
+              the grain on a `::before` would resolve `overlay` against
+              transparency and render at full strength as grey static. The URLs
+              are written out rather than reached through `--cr-env-*`, because a
+              `url()` inside a custom property resolves against the CONSUMING
+              document and fails silently.
+
+  NO TYPE ON THE PHOTOGRAPH  Not one word sits on the environment. The headline,
+              the supporting copy and the ask are on the base surface; every word
+              inside the media region lives in an opaque card. Remove the
+              photograph and nothing changes legibility — which is the test, and
+              it passes by construction rather than by measurement.
+
+  THE DECORATION  The two large rounded diamonds are abstract decoration of
+              exactly the kind this pass removes. They are frozen DOM, so they go
+              INERT rather than away — precedent `tabs-panel-below.html`.
+
+  ACCENT      One moment. The ask. v2 also spent brand blue on the eyebrow icon,
+              the status icon tile, the sparkline, and three of the four avatar
+              chips, plus a success green on the running dot — six accents around
+              one button, which is a page where everything is marked and
+              therefore nothing is. All of them are ink or neutral now, and the
+              three avatar chips lost their inline `style` fills, which no
+              stylesheet rule could have out-ranked.
+
+  RESPONSIVE  The original's breakpoints (1024 / 880 / 640), unchanged. The
+              per-section headline steps are GONE rather than converted — the
+              pack already walks h2 down its own ladder, and re-declaring ramp
+              steps per section is the thing the direction forbids. The reduce
+              guard now names the reveal trigger at its own specificity, so the
+              entrance SNAPS instead of merely losing its hidden state.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body); color: var(--cr-text-secondary);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Full-bleed section — THE BASE SURFACE, and that is the point ───
+     The profile's whole distinction from the three accent closes is that this
+     one does not change register at the end. Nine gradients deleted; nothing
+     replaces them here, because the surface was never meant to be a subject. */
+  .cta-band {
+    position: relative; overflow: hidden;
+    width: 100%;
+    padding: var(--cr-space-2xl) var(--cr-page-gutter);
+    background: var(--cr-page-ground);
+  }
+
+  /* The `::before` carried two more radial washes through `filter: blur(36px)`
+     and a 20s drift. It is a pseudo-element, so it simply goes — there is no
+     frozen DOM to preserve. */
+
+  /* Frozen decorative geometry — the two rounded diamonds. Inert, not deleted. */
+  .geo { display: none !important; }
+
+  .band-inner { position: relative; z-index: 2; max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ── Top row — eyebrow ─────────────────────────────────────────── */
+  .top-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--cr-space-m); }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs);
+    border-radius: var(--cr-radius-control);   /* the pill is retired for controls */
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+    letter-spacing: 0;                          /* supporting text is never tracked */
+    color: var(--cr-text-secondary);
+  }
+  .eyebrow svg { width: 15px; height: 15px; stroke-width: var(--cr-icon-stroke-sm); color: currentColor; }
+
+  /* ── Main split — the tracks are the composition and are untouched ── */
+  .main-row {
+    display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.04fr);
+    gap: var(--cr-space-xl);
+    align-items: center;
+  }
+  .left { min-width: 0; }
+
+  .cta-head {
+    font-family: var(--cr-font-display); font-weight: 400;
+    font-size: var(--cr-text-h2);
+    line-height: var(--cr-leading-heading); letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary); margin: 0;
+  }
+  .cta-sub {
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-body); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    margin: var(--cr-space-s) 0 0; max-width: var(--cr-measure-body);
+  }
+
+  /* ── THE ONE ACCENT MOMENT — the ask, and nothing else ──────────── */
+  .cta-btn {
+    margin-top: var(--cr-space-m);
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    background: var(--cr-accent-orange); color: var(--cr-on-accent-light);
+    border: 0; border-radius: var(--cr-radius-control); cursor: pointer;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+    letter-spacing: 0; text-decoration: none;
+    transition: background .16s ease, transform .12s ease;
+  }
+  .cta-btn .arr { display: inline-block; transition: transform .16s ease; }
+  .cta-btn:hover { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+  .cta-btn:hover .arr { transform: translateX(4px); }
+  .cta-btn:active { transform: scale(.97); }
+  .cta-btn:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 3px; }
+
+  /* ── Right cluster — THE ENVIRONMENT, with the cards set into it ──
+     `.cards` was a bare grid over the mesh. It becomes the section's media
+     region: an approved environment carrying the texture stack, seen as a 20px
+     margin around the cluster and as the 12px lattice between the three cards.
+     Every word in the region is inside an OPAQUE card, which is the permitted
+     case and what makes the cards read as artifacts rather than as decoration.
+
+     The last background-position is the asset's measured focus from ASSETS.md
+     (`55% 50%`), not a guess. Never a `background:` shorthand on this element —
+     the shorthand resets `background-image`. */
+  .cards {
+    display: grid;
+    grid-template-columns: 1.12fr 1fr;
+    grid-template-rows: auto auto;
+    gap: var(--cr-space-xs);
+    padding: var(--cr-space-s);
+    border-radius: var(--cr-radius-card);
+    background-color: var(--cr-bg-dark);
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-dawn-haze.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 55% 50%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+  }
+  .card {
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-s);
+  }
+  .card-stat  { grid-row: 1 / 3; display: flex; flex-direction: column; }
+  .card-label {
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+    letter-spacing: 0;                      /* supporting text: never tracked, never uppercase */
+    color: var(--cr-text-secondary);
+    margin: 0;
+  }
+  .stat-num {
+    font-family: var(--cr-font-display); font-weight: 400;
+    font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading); letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary); margin: var(--cr-space-xs) 0;
+  }
+  .stat-cap {
+    font-family: var(--cr-font-body);
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary); margin: 0 0 var(--cr-space-s);
+    max-width: var(--cr-measure-body);
+  }
+  /* The sparkline is a data mark, not a creative background — it stays. What
+     goes is its colour: v2 drew it in brand blue, one of six accents competing
+     with the single ask. Ink. The stroke width is the frozen original's and is
+     deliberately not moved. */
+  .spark { width: 100%; height: auto; margin-top: auto; display: block; }
+  .spark stop { stop-color: var(--cr-text-primary); }
+  .spark path[stroke] { stroke: var(--cr-text-primary); }   /* the LINE only — the area path has no stroke and must not gain one */
+
+  /* Live-status card */
+  .card-info .info-top { display: flex; align-items: center; justify-content: space-between; gap: var(--cr-space-xs); }
+  .info-icon {
+    width: 36px; height: 36px; border-radius: var(--cr-radius-control);
+    background: var(--cr-text-primary); color: var(--cr-text-inverse);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .info-icon svg { width: 18px; height: 18px; stroke-width: var(--cr-icon-stroke-sm); }
+  /* A status marker is not the section's accent. One neutral mark. */
+  .info-dot { display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting); color: var(--cr-text-secondary); }
+  .info-dot i { width: 8px; height: 8px; border-radius: 50%; background: var(--cr-text-secondary); display: inline-block; }
+  .info-title {
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-body);
+    color: var(--cr-text-primary); margin: var(--cr-space-s) 0 var(--cr-space-xs);
+  }
+  .info-cap { font-family: var(--cr-font-body); font-size: var(--cr-text-supporting); color: var(--cr-text-secondary); margin: 0; }
+
+  /* Social-proof card */
+  .card-proof { display: flex; align-items: center; gap: var(--cr-space-xs); }
+  .avis { display: flex; flex-shrink: 0; }
+  /* v2 gave three of these chips inline `style="background:var(--cr-brand)"` —
+     a call-site fill no stylesheet rule can out-rank, and three more accents in
+     a section whose budget is one. The attributes are gone (inline `style` is
+     presentation and migratable); the chips are one ink mark each, which is what
+     an initial is. The overlap moves 11px → 12px so it lands on the scale. */
+  .avi {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: var(--cr-stroke) solid var(--cr-surface-1);
+    margin-left: calc(var(--cr-space-xs) * -1);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+    color: var(--cr-text-inverse); background: var(--cr-text-primary);
+  }
+  .avi:first-child { margin-left: 0; }
+  .avi-more { background: var(--cr-surface-3); color: var(--cr-text-primary); }
+  .proof-txt { min-width: 0; }
+  .proof-num {
+    font-family: var(--cr-font-display); font-weight: 400; font-size: var(--cr-text-body);
+    letter-spacing: var(--cr-tracking-heading); color: var(--cr-text-primary);
+  }
+  .proof-cap {
+    font-family: var(--cr-font-body); font-size: var(--cr-text-supporting);
+    color: var(--cr-text-secondary); line-height: var(--cr-leading-body);
+  }
+
+  /* ── Scroll-reveal — unchanged in kind ──────────────────────────── */
+  .has-js .anim {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity .7s cubic-bezier(.2,.7,.2,1) var(--d, 0ms),
+                transform .7s cubic-bezier(.2,.7,.2,1) var(--d, 0ms);
+  }
+  .cta-band.reveal .anim { opacity: 1; transform: none; }
+
+  /* THE ENTRANCE MUST SNAP, and a guard that loses the cascade does not make it.
+     v2's guard named only `.has-js .anim` (0,2,0) and reached for `!important`
+     to beat the trigger `.cta-band.reveal .anim` (0,3,0). The trigger is named
+     directly instead, at its own specificity, so the reveal arrives already
+     finished rather than transitioning to a state it was forced into. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .anim,
+    .cta-band.reveal .anim { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ── Responsive — the ORIGINAL's breakpoints. The per-section headline
+     steps are deleted, not converted: the pack steps h2 at its own
+     breakpoints and a second ramp on top of it resolves to sizes nobody
+     authored. ─────────────────────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .cta-band { padding-top: var(--cr-space-xl); padding-bottom: var(--cr-space-xl); }
+    .main-row { gap: var(--cr-space-m); }
+  }
+  @media (max-width: 880px) {
+    .main-row { grid-template-columns: 1fr; gap: var(--cr-space-m); }
+  }
+  @media (max-width: 640px) {
+    .cta-band { padding-top: var(--cr-space-m); padding-bottom: var(--cr-space-m); }
+    .top-row { margin-bottom: var(--cr-space-s); }
+    .cta-btn { width: 100%; justify-content: center; }
+    .cards { grid-template-columns: 1fr; }
+    .card-stat { grid-row: auto; }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing.
+  .avi        | border-bottom-width    | stroke
+  .avi        | border-left-width      | stroke
+  .avi        | border-right-width     | stroke
+  .avi        | border-top-width       | stroke
+  .avi        | font-size              | type-ramp
+  .avi        | margin-left            | spacing-scale
+  .card       | border-radius          | radius-pair
+  .card       | column-gap             | spacing-scale
+  .card       | padding-bottom         | spacing-scale
+  .card       | padding-left           | spacing-scale
+  .card       | padding-right          | spacing-scale
+  .card       | padding-top            | spacing-scale
+  .card       | row-gap                | spacing-scale
+  .card-label | font-size              | type-ramp
+  .cards      | border-radius          | radius-pair
+  .cards      | column-gap             | spacing-scale
+  .cards      | grid-template-columns  | directed
+  .cards      | padding-bottom         | spacing-scale
+  .cards      | padding-left           | spacing-scale
+  .cards      | padding-right          | spacing-scale
+  .cards      | padding-top            | spacing-scale
+  .cards      | row-gap                | spacing-scale
+  .cta-band   | padding-bottom         | spacing-scale
+  .cta-band   | padding-left           | spacing-scale
+  .cta-band   | padding-right          | spacing-scale
+  .cta-band   | padding-top            | spacing-scale
+  .cta-btn    | border-radius          | radius-pair
+  .cta-btn    | column-gap             | spacing-scale
+  .cta-btn    | margin-top             | spacing-scale
+  .cta-btn    | padding-bottom         | spacing-scale
+  .cta-btn    | padding-left           | spacing-scale
+  .cta-btn    | padding-right          | spacing-scale
+  .cta-btn    | padding-top            | spacing-scale
+  .cta-btn    | row-gap                | spacing-scale
+  .cta-head   | font-size              | type-ramp
+  .cta-head   | line-height            | type-ramp
+  .cta-sub    | font-size              | type-ramp
+  .cta-sub    | line-height            | type-ramp
+  .cta-sub    | margin-top             | spacing-scale
+  .cta-sub    | max-width              | measure
+  .eyebrow    | border-radius          | radius-pair
+  .eyebrow    | column-gap             | spacing-scale
+  .eyebrow    | font-size              | type-ramp
+  .eyebrow    | padding-bottom         | spacing-scale
+  .eyebrow    | padding-left           | spacing-scale
+  .eyebrow    | padding-right          | spacing-scale
+  .eyebrow    | padding-top            | spacing-scale
+  .eyebrow    | row-gap                | spacing-scale
+  .info-cap   | font-size              | type-ramp
+  .info-dot   | column-gap             | spacing-scale
+  .info-dot   | font-size              | type-ramp
+  .info-dot   | row-gap                | spacing-scale
+  .info-title | font-size              | type-ramp
+  .info-title | margin-bottom          | spacing-scale
+  .info-title | margin-top             | spacing-scale
+  .lucide     | font-size              | type-ramp
+  .lucide     | stroke-width           | stroke
+  .main-row   | column-gap             | spacing-scale
+  .main-row   | row-gap                | spacing-scale
+  .proof-cap  | font-size              | type-ramp
+  .proof-cap  | line-height            | type-ramp
+  .proof-num  | font-size              | type-ramp
+  .spark      | margin-top             | spacing-scale
+  .stat-cap   | font-size              | type-ramp
+  .stat-cap   | line-height            | type-ramp
+  .stat-cap   | margin-bottom          | spacing-scale
+  .stat-cap   | max-width              | measure
+  .stat-num   | font-size              | type-ramp
+  .stat-num   | line-height            | type-ramp
+  .stat-num   | margin-bottom          | spacing-scale
+  br          | font-size              | type-ramp
+  br          | line-height            | type-ramp
+  circle      | font-size              | type-ramp
+  circle      | stroke-width           | stroke
+  path        | font-size              | type-ramp
+  path        | stroke-width           | stroke
+-->
+
+
+<section class="cta-band" data-screen-label="CTA split"
+         data-archetype="editorial-split" data-hierarchy="closing" data-intent="close"
+         data-register="confident" data-signature="editorial-photography" data-density="medium">
+
+  <!-- Simple geometry — two large white rounded diamonds behind the cards' top -->
+  <svg class="geo" viewBox="0 0 720 620" fill="none"
+       xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <g stroke="#ffffff" fill="none">
+      <rect x="310" y="60" width="340" height="340" rx="76"
+            transform="rotate(45 480 230)"
+            stroke-width="1.5" stroke-opacity="0.8" vector-effect="non-scaling-stroke"/>
+      <rect x="170" y="180" width="320" height="320" rx="72"
+            transform="rotate(45 330 340)"
+            stroke-width="1.5" stroke-opacity="0.55" stroke-dasharray="8 10" vector-effect="non-scaling-stroke"/>
+    </g>
+  </svg>
+
+  <div class="band-inner">
+
+    <!-- Top row: eyebrow -->
+    <div class="top-row">
+      <span class="eyebrow anim" style="--d:0ms">
+        <i data-lucide="sparkles"></i> Autonomous Process Automation
+      </span>
+    </div>
+
+    <!-- Split: left content / right cards -->
+    <div class="main-row">
+
+      <div class="left">
+        <h2 class="cta-head anim" style="--d:120ms">Automate The Work,<br>Amplify Your Team.</h2>
+        <p class="cta-sub anim" style="--d:200ms">
+          Production AI agents drop into your existing stack and absorb the
+          routine work — billed on outcomes, live in four weeks. No backlogs,
+          no added headcount.
+        </p>
+        <a class="cta-btn anim" style="--d:280ms" href="#">
+          Book a Demo <span class="arr" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+
+      <div class="cards">
+
+        <!-- Tall stat + sparkline -->
+        <div class="card card-stat anim" style="--d:240ms">
+          <p class="card-label">Automation rate</p>
+          <div class="stat-num">92%</div>
+          <p class="stat-cap">of routine work automated across live deployments</p>
+          <svg class="spark" viewBox="0 0 240 84" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="sparkfill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--cr-brand)" stop-opacity="0.18"/>
+                <stop offset="100%" stop-color="var(--cr-brand)" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M0 64 L34 56 L68 60 L102 40 L136 46 L170 26 L208 31 L240 12 L240 84 L0 84 Z" fill="url(#sparkfill)"/>
+            <path d="M0 64 L34 56 L68 60 L102 40 L136 46 L170 26 L208 31 L240 12"
+                  fill="none" stroke="var(--cr-brand)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <!-- Live status -->
+        <div class="card card-info anim" style="--d:320ms">
+          <div class="info-top">
+            <span class="info-icon"><i data-lucide="activity"></i></span>
+            <span class="info-dot"><i></i> Running</span>
+          </div>
+          <p class="info-title">12 Agents Live</p>
+          <p class="info-cap">Updated just now</p>
+        </div>
+
+        <!-- Social proof -->
+        <div class="card card-proof anim" style="--d:400ms">
+          <div class="avis">
+            <span class="avi">A</span>
+            <span class="avi">R</span>
+            <span class="avi">M</span>
+            <span class="avi avi-more">+30</span>
+          </div>
+          <div class="proof-txt">
+            <span class="proof-num">30+ teams</span>
+            <div class="proof-cap">already automating with Example Brand</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  lucide.createIcons();
+
+  (function () {
+    var band = document.querySelector(".cta-band");
+    if (!band) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { band.classList.add("reveal"); io.disconnect(); }
+      });
+    }, { threshold: 0.12 });
+    io.observe(band);
+  })();
+</script>
+</body>
+</html>

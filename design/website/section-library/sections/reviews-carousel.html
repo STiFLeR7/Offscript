@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reviews carousel · slider</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Reviews carousel            from component-reviews-carousel.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **Volume is the signal, not depth.** The profile is explicit:
+              capacity large-set, pace fast, density medium, emphasis
+              structure. The reader is meant to register quantity, so every
+              card is the same card and the motion is the argument.
+
+  STRUCTURE   Unchanged. Header (eyebrow → headline → lede) · a clipped rail
+              of five identical cards, each an image panel beside a quote,
+              name, role and grade · footer with two buttons and the
+              arrow/counter controls. DOM, the script, ids, `data-*`,
+              `aria-*` and every behavioural hook are byte-compatible with
+              the frozen original. The v2 file is beside this one in `_v2/`.
+
+  CREATIVE    The card's left panel was an abstract blur plate reached
+  BACKGROUND  through an inline custom property, dressed with a grain
+              pseudo-layer and a geometric diagram drawn over the top. It is
+              replaced by an approved environment carrying the standard
+              texture stack — grain, grunge, environment, in ONE background
+              on the CARD's own panel.
+
+              ENVIRONMENT: env-valley-deep, at its recorded focus 64% 45%.
+
+              Three things made this the right place for it and the panel
+              the right element. The panel carries no type, so removing the
+              photograph changes no word's legibility. The photograph sits on
+              the card, not on the viewport or the track — a background on a
+              static viewport does not translate with the slides, so the
+              cards would have slid across a still picture. And the stack is
+              one declaration, because a blend mode composites against what
+              is beneath it in the SAME background: on a pseudo-element the
+              grain has nothing to blend with, resolves against transparency
+              and renders at full strength as grey static.
+
+              The URLs are written out rather than reached through
+              `--cr-env-*`, because a `url()` inside a custom property
+              resolves against the CONSUMING document and fails silently.
+
+              The grain layer and the geometric overlay are real elements the
+              DOM freeze keeps, so both are made inert rather than deleted.
+              The grain is now the first layer of the surface itself, and a
+              photograph does not need a diagram drawn over it.
+
+  FROZEN      The rail's gap stays at its authored value and says so. The
+  GEOMETRY    script advances by `cardWidth + GAP` with GAP hardcoded, so the
+              CSS gap is not a spacing decision — it is half of an arithmetic
+              contract, and moving it onto the scale desyncs the track one
+              slide at a time with nothing to report it.
+
+  ACCENT      ZERO. Twenty-five star glyphs in the emphasis accent is not one
+              accent moment, it is a section where everything is marked and
+              therefore nothing is. The stars are ink; the primary button is
+              the darkest thing on the page because it is ink as a fill, not
+              because it is coloured.
+
+  RATIO       The image panel declared 248/304, an invented proportion. It
+              reads as 3/4 — an approved crop, and the nearest one to what it
+              was already doing.
+
+  RESPONSIVE  The original's breakpoints (980 / 640), unchanged. Type steps
+              on the pack's ramp; `clamp()` is gone from type throughout.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<noscript><style>.anim{opacity:1!important;transform:none!important}</style></noscript>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: var(--cr-font-body); color: var(--cr-text-secondary);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Section ─────────────────────────────────────────────────────── */
+  .section { padding: var(--cr-rhythm-content) var(--cr-page-gutter); background: var(--cr-page-ground); }
+  .inner   { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ── Header — the three named roles of a section opening ─────────── */
+  .head { margin-bottom: var(--cr-rhythm-content); }
+  /* SUPPORTING TEXT IS NEITHER UPPERCASE NOR TRACKED. */
+  .eyebrow {
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    letter-spacing: 0; text-transform: none; color: var(--cr-text-secondary); margin: 0;
+  }
+  .h-title {
+    font-family: var(--cr-font-display); font-weight: 500;
+    font-size: var(--cr-text-h2); line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary); margin: var(--cr-space-xs) 0 0;
+    max-width: var(--cr-measure-title);
+  }
+  /* Heading and its supporting copy are ONE thought; the cluster step says
+     so. v2 opened them at the micro step, which reads as a caption. */
+  .h-lede {
+    font-family: var(--cr-font-body); font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary); margin: var(--cr-rhythm-cluster) 0 0;
+    max-width: var(--cr-measure-body);
+  }
+
+  /* ── Slider wrapper — clips overflow so the next card peeks ─────── */
+  .slider-wrap { overflow: hidden; cursor: grab; margin-left: 0; }
+  .slider-wrap:active { cursor: grabbing; }
+
+  /* ── Track — horizontal row of cards, animated via transform ─────── */
+  /* THIS GAP IS LOAD-BEARING AND MUST STAY AT ITS AUTHORED VALUE. The frozen
+     script computes its offset as `cardWidth + GAP` with GAP declared in JS.
+     The CSS gap is half of that contract; moving it onto the spacing scale
+     desyncs the track progressively, one slide at a time, with nothing to
+     report it. Named here so the exemption is counted rather than assumed. */
+  .track {
+    display: flex;
+    gap: 24px; /* frozen-geometry: the script advances by cardWidth + GAP, GAP hardcoded at 24 in the script */
+    transition: transform .45s cubic-bezier(.25,.1,.25,1);
+    will-change: transform;
+  }
+  .track.no-anim { transition: none; }
+
+  /* ── Card — one card, five times; that repetition IS the argument ── */
+  /* v2 put a white card on a white section and separated it with nothing.
+     The direction holds the page on one ground, so the card takes the raised
+     surface and the single hairline. */
+  .card {
+    flex: 0 0 calc(68% - 12px);   /* ~68% of container; next card peeks ~28% */
+    min-width: 0;
+    min-height: clamp(340px, 38vh, 420px);
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+    padding: 0;
+    display: flex;
+    gap: var(--cr-space-s);
+    align-items: flex-start;
+    user-select: none;
+  }
+
+  /* ── The environment panel — left column ──────────────────────────
+     ONE STACK, THREE LAYERS, IN THIS ORDER: grain on top, grunge under it,
+     the environment underneath both. It has to be one stack — a blend mode
+     composites against what is beneath it in the SAME background. The last
+     position is the asset's recorded focus, not a guess. */
+  .card-logo {
+    flex: 0 0 300px; width: 300px;
+    aspect-ratio: 3 / 4; height: auto;
+    align-self: flex-start;
+    border-radius: var(--cr-radius-card); overflow: hidden; position: relative;
+    background-color: var(--cr-bg-dark);
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-valley-deep.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 64% 45%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+  }
+  /* The grain is now the first layer of the surface itself, so the separate
+     blended plate has nothing left to do — and on its own element it never
+     worked anyway. Kept as an element, made inert. */
+  .card-logo .grain { display: none; }
+  /* The geometric diagram was abstract ornament drawn over a creative, which
+     is exactly what this pass replaces with photography. Kept, made inert. */
+  .card-logo .geo {
+    display: none;
+    position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    width: 100%; height: 100%; overflow: visible;
+  }
+  .card-logo .geo line,
+  .card-logo .geo path,
+  .card-logo .geo circle,
+  .card-logo .geo ellipse {
+    stroke: var(--cr-text-inverse); stroke-width: var(--cr-stroke);
+    fill: none; opacity: 0.48;
+  }
+
+  /* ── Text block — right column ───────────────────────────────────── */
+  .card-body {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column;
+    padding: var(--cr-space-s);
+  }
+  /* The review is the card's subject, so it takes the body step and the
+     primary ink — not a caption a step below its own attribution. */
+  .card-q {
+    font-family: var(--cr-font-body); font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-primary); margin: 0; flex: 1;
+    max-width: var(--cr-measure-body);
+  }
+  .card-meta { margin-top: var(--cr-space-s); }
+  .card-name {
+    font-family: var(--cr-font-display); font-weight: 500;
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    color: var(--cr-text-primary); margin: 0;
+  }
+  .card-role {
+    font-family: var(--cr-font-body); font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body); color: var(--cr-text-secondary); margin: 0;
+  }
+  .card-grade { display: flex; align-items: center; gap: var(--cr-space-xs); margin-top: var(--cr-space-xs); }
+  .g-num {
+    font-family: var(--cr-font-display); font-weight: 500;
+    font-size: var(--cr-text-supporting); color: var(--cr-text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+  /* Glyph-to-glyph inside one mark is not a compositional gap and has no step
+     on the closed scale; the row is one object, so it is set flush. */
+  .stars { display: inline-flex; gap: 0; }
+  /* THE SECTION SPENDS NO ACCENT. Twenty-five coloured stars is not one
+     emphasis moment — it is a page where everything is marked. */
+  .stars svg {
+    width: 14px; height: 14px;
+    fill: var(--cr-text-primary); color: var(--cr-text-primary);
+    stroke-width: var(--cr-icon-stroke-sm);
+  }
+
+  /* ── Controls: ghost arrows + counter ───────────────────────────── */
+  .controls { display: flex; align-items: center; gap: var(--cr-space-xs); }
+  .nav {
+    width: 40px; height: 40px; border-radius: 50%; flex: 0 0 40px;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; color: var(--cr-text-primary);
+    font-family: var(--cr-font-body);
+    border: var(--cr-stroke) solid var(--cr-border-default); cursor: pointer;
+    transition: border-color .18s ease, background .18s ease, transform .1s ease;
+  }
+  .nav:hover  { border-color: var(--cr-text-primary); background: var(--cr-surface-1); }
+  .nav:active { transform: scale(.93); }
+  .nav svg    { width: 16px; height: 16px; stroke-width: var(--cr-icon-stroke-sm); }
+  .counter {
+    font-family: var(--cr-font-body); font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    color: var(--cr-text-secondary); letter-spacing: 0;
+    min-width: 42px; text-align: center;
+  }
+  /* hide old dots — counter replaces them */
+  .dots { display: none; }
+
+  /* ── Footer ──────────────────────────────────────────────────────── */
+  .foot {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: var(--cr-space-s); margin-top: var(--cr-rhythm-content);
+  }
+  .foot-cta { display: flex; gap: var(--cr-space-xs); flex-wrap: wrap; }
+  /* The pill is retired for controls; a button takes the control radius. */
+  .btn {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    border-radius: var(--cr-radius-control);
+    font-family: var(--cr-font-body); font-weight: 500;
+    font-size: var(--cr-text-supporting); letter-spacing: 0;
+    line-height: var(--cr-leading-heading);
+    text-decoration: none; cursor: pointer;
+    border: var(--cr-stroke) solid transparent;
+    transition: background .18s ease, transform .1s ease, border-color .18s ease;
+  }
+  .btn-primary { background: var(--cr-text-primary); color: var(--cr-text-inverse); }
+  .btn-primary:hover { background: var(--cr-neutral-1000); }
+  .btn-ghost { background: transparent; color: var(--cr-text-primary); border-color: var(--cr-border-default); }
+  .btn-ghost:hover { border-color: var(--cr-text-primary); }
+  .btn:active { transform: scale(.975); }
+  .btn .arrow { display: inline-block; transition: transform .18s ease; }
+  .btn-primary:hover .arrow { transform: translateX(4px); }
+
+  /* ── Entrance ─────────────────────────────────────────────────────── */
+  .has-js .anim {
+    opacity: 0; transform: translateY(14px);
+    transition: opacity .55s ease var(--d,0ms), transform .55s ease var(--d,0ms);
+  }
+  .revealed .anim { opacity: 1; transform: none; }
+
+  /* ── Responsive: the original's breakpoints and the original's reflow. ── */
+  @media (max-width: 980px) {
+    .section { padding: var(--cr-space-xl) var(--cr-page-gutter); }
+    .card { flex-basis: calc(88% - 12px); }
+    .card-logo { flex: 0 0 200px; width: 200px; }
+    .card-body { padding: var(--cr-space-s); }
+  }
+  @media (max-width: 640px) {
+    .section { padding: var(--cr-space-m) var(--cr-page-gutter); }
+    .card { flex-basis: calc(96% - 12px); flex-direction: column; }
+    /* Stacked, the panel is a band across the card's head: no declared
+       proportion, so no ratio to conform to. */
+    .card-logo { flex: none; width: 100%; aspect-ratio: auto; height: 220px; }
+    .card-body { padding: var(--cr-space-s); }
+    .foot { flex-direction: column; align-items: flex-start; gap: var(--cr-space-xs); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .track { transition: none !important; }
+    .nav, .dot, .btn, .btn .arrow { transition: none !important; }
+    .has-js .anim { opacity: 1 !important; transform: none !important; transition: none; }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. The rail gap is absent because it did NOT move; it
+     is frozen geometry and names itself as such in the stylesheet.
+  .arrow      | font-size              | type-ramp
+  .arrow      | line-height            | type-ramp
+  .btn        | border-radius          | radius-pair
+  .btn        | column-gap             | spacing-scale
+  .btn        | font-size              | type-ramp
+  .btn        | line-height            | type-ramp
+  .btn        | padding-bottom         | spacing-scale
+  .btn        | padding-left           | spacing-scale
+  .btn        | padding-right          | spacing-scale
+  .btn        | padding-top            | spacing-scale
+  .btn        | row-gap                | spacing-scale
+  .card       | border-bottom-width    | stroke
+  .card       | border-left-width      | stroke
+  .card       | border-radius          | radius-pair
+  .card       | border-right-width     | stroke
+  .card       | border-top-width       | stroke
+  .card       | column-gap             | spacing-scale
+  .card       | row-gap                | spacing-scale
+  .card-grade | column-gap             | spacing-scale
+  .card-grade | row-gap                | spacing-scale
+  .card-logo  | aspect-ratio           | ratio-vocabulary
+  .card-logo  | border-radius          | radius-pair
+  .card-meta  | margin-top             | spacing-scale
+  .card-name  | line-height            | type-ramp
+  .card-q     | font-size              | type-ramp
+  .card-q     | line-height            | type-ramp
+  .card-q     | max-width              | measure
+  .card-role  | font-size              | type-ramp
+  .card-role  | line-height            | type-ramp
+  .card-role  | margin-top             | spacing-scale
+  .counter    | font-size              | type-ramp
+  .eyebrow    | font-size              | type-ramp
+  .eyebrow    | line-height            | type-ramp
+  .foot       | column-gap             | spacing-scale
+  .foot       | margin-top             | spacing-scale
+  .foot       | row-gap                | spacing-scale
+  .g-num      | font-size              | type-ramp
+  .h-lede     | font-size              | type-ramp
+  .h-lede     | line-height            | type-ramp
+  .h-lede     | margin-top             | spacing-scale
+  .h-lede     | max-width              | measure
+  .h-title    | font-size              | type-ramp
+  .h-title    | line-height            | type-ramp
+  .h-title    | max-width              | measure
+  .head       | margin-bottom          | spacing-scale
+  .lucide     | stroke-width           | stroke
+  .stars      | column-gap             | spacing-scale
+  .stars      | row-gap                | spacing-scale
+  path        | stroke-width           | stroke
+-->
+
+<section class="section" data-screen-label="Reviews carousel · horizontal slider"
+         data-archetype="editorial-stack" data-hierarchy="proof" data-intent="build-trust"
+         data-register="confident" data-signature="editorial-photography" data-density="medium">
+  <div class="inner">
+
+    <div class="head">
+      <p class="eyebrow anim" style="--d:0ms">What teams say</p>
+      <h2 class="h-title anim" style="--d:80ms">Reviews From Teams Running Our Agents.</h2>
+      <p class="h-lede anim" style="--d:150ms">Ops leads, controllers and RevOps teams on what changed after their agents went live — billed on outcomes, not seats.</p>
+    </div>
+
+    <div class="slider-wrap anim" id="sliderWrap" style="--d:220ms">
+      <div class="track" id="track">
+
+        <article class="card">
+          <div class="card-logo">
+            <div class="grain"></div>
+            <!-- Card 1: large D-curve from right + one horizontal rule -->
+            <svg class="geo" viewBox="0 0 240 296" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 240 40 C 80 40 80 256 240 256"/>
+              <line x1="-20" y1="148" x2="145" y2="148"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <p class="card-q">&#x201C;Invoice reconciliation used to eat six hours a day. The agent took it over in week three &#x2014; now my team only touches the exceptions it flags.&#x201D;</p>
+            <div class="card-meta">
+              <p class="card-name">Olivia Bennett</p>
+              <p class="card-role">Controller · Northwind Logistics</p>
+              <div class="card-grade">
+                <span class="g-num">5.0</span>
+                <span class="stars"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-logo">
+            <div class="grain"></div>
+            <!-- Card 2: diagonal + large circle mostly off bottom-left -->
+            <svg class="geo" viewBox="0 0 240 296" xmlns="http://www.w3.org/2000/svg">
+              <line x1="-10" y1="30" x2="250" y2="266"/>
+              <circle cx="44" cy="296" r="150"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <p class="card-q">&#x201C;Claims triage runs like clockwork. I start the morning with a clean queue instead of a backlog of three hundred &#x2014; and every decision is logged with a confidence score.&#x201D;</p>
+            <div class="card-meta">
+              <p class="card-name">Emily Thompson</p>
+              <p class="card-role">VP Operations · Meridian Health</p>
+              <div class="card-grade">
+                <span class="g-num">5.0</span>
+                <span class="stars"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-logo">
+            <div class="grain"></div>
+            <!-- Card 3: concentric quarter-arcs from top-left corner -->
+            <svg class="geo" viewBox="0 0 240 296" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 0 110 A 110 110 0 0 1 110 0"/>
+              <path d="M 0 190 A 190 190 0 0 1 190 0"/>
+              <line x1="-10" y1="240" x2="250" y2="240"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <p class="card-q">&#x201C;It plugged straight into our Salesforce and SAP. No rip-and-replace, no licence shuffle &#x2014; and the audit trail is cleaner than what we had before.&#x201D;</p>
+            <div class="card-meta">
+              <p class="card-name">Jason Miller</p>
+              <p class="card-role">Head of RevOps · Tilebridge</p>
+              <div class="card-grade">
+                <span class="g-num">4.6</span>
+                <span class="stars"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star-half"></i></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-logo">
+            <div class="grain"></div>
+            <!-- Card 4: counter-diagonal + small off-centre circle -->
+            <svg class="geo" viewBox="0 0 240 296" xmlns="http://www.w3.org/2000/svg">
+              <line x1="-10" y1="270" x2="250" y2="26"/>
+              <circle cx="160" cy="100" r="56"/>
+              <line x1="104" y1="-10" x2="104" y2="310"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <p class="card-q">&#x201C;We saw payback inside the first quarter. The numbers showed up exactly where they said they would &#x2014; on the P&amp;L, not in a dashboard nobody reads.&#x201D;</p>
+            <div class="card-meta">
+              <p class="card-name">Priya Nair</p>
+              <p class="card-role">CFO · Greaves Manufacturing</p>
+              <div class="card-grade">
+                <span class="g-num">5.0</span>
+                <span class="stars"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-logo">
+            <div class="grain"></div>
+            <!-- Card 5: wide ellipse + vertical rule -->
+            <svg class="geo" viewBox="0 0 240 296" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="120" cy="296" rx="130" ry="95"/>
+              <line x1="-10" y1="80" x2="250" y2="80"/>
+              <line x1="188" y1="-10" x2="188" y2="310"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <p class="card-q">&#x201C;Vendor onboarding dropped from days to hours. My people finally spend their time on judgment calls instead of data entry.&#x201D;</p>
+            <div class="card-meta">
+              <p class="card-name">David Cole</p>
+              <p class="card-role">Director, Shared Services · Aldermark</p>
+              <div class="card-grade">
+                <span class="g-num">4.8</span>
+                <span class="stars"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star-half"></i></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+    <div class="foot">
+      <div class="foot-cta anim" style="--d:300ms">
+        <a class="btn btn-primary" href="#">Book a Demo Call <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="btn btn-ghost" href="#">Read Case Studies</a>
+      </div>
+      <div class="controls anim" style="--d:340ms">
+        <button class="nav" id="prev" aria-label="Previous"><i data-lucide="arrow-left"></i></button>
+        <span class="counter" id="counter">01 / 05</span>
+        <button class="nav" id="next" aria-label="Next"><i data-lucide="arrow-right"></i></button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  (function () {
+    var section    = document.querySelector('.section');
+    var wrap       = document.getElementById('sliderWrap');
+    var track      = document.getElementById('track');
+    var counterEl  = document.getElementById('counter');
+    var prevBtn    = document.getElementById('prev');
+    var nextBtn    = document.getElementById('next');
+    var cards      = track.querySelectorAll('.card');
+    var n          = cards.length;
+    var GAP        = 24;
+    var cur        = 0;
+    var reduce     = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function pad(v) { return v < 10 ? '0' + v : '' + v; }
+    function updateCounter() {
+      if (counterEl) counterEl.textContent = pad(cur + 1) + ' / ' + pad(n);
+    }
+
+    function slide() {
+      var cardW = cards[0].offsetWidth;
+      var offset = cur * (cardW + GAP);
+      track.style.transform = 'translateX(-' + offset + 'px)';
+      updateCounter();
+    }
+
+    function goTo(idx) {
+      cur = Math.max(0, Math.min(n - 1, ((idx % n) + n) % n));
+      if (reduce) { track.classList.add('no-anim'); slide(); track.classList.remove('no-anim'); }
+      else slide();
+    }
+
+    prevBtn.addEventListener('click', function () { goTo(cur - 1); });
+    nextBtn.addEventListener('click', function () { goTo(cur + 1); });
+
+    /* Drag / swipe */
+    var down = false, sx = 0, moved = false;
+    wrap.addEventListener('pointerdown', function (e) { down = true; sx = e.clientX; moved = false; wrap.setPointerCapture(e.pointerId); });
+    wrap.addEventListener('pointermove', function (e) { if (!down) return; if (Math.abs(e.clientX - sx) > 6) moved = true; });
+    wrap.addEventListener('pointerup', function (e) {
+      if (!down) return; down = false;
+      var dx = e.clientX - sx;
+      if (moved && dx < -45) goTo(cur + 1);
+      else if (moved && dx > 45) goTo(cur - 1);
+    });
+
+    /* Entrance */
+    function reveal() { if (section) section.classList.add('revealed'); }
+    if (!('IntersectionObserver' in window)) { reveal(); }
+    else {
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) { reveal(); io.disconnect(); } });
+      }, { threshold: 0.1 });
+      io.observe(section);
+    }
+    if (window.lucide && typeof window.lucide.createIcons === 'function') lucide.createIcons();
+  })();
+</script>
+</body>
+</html>

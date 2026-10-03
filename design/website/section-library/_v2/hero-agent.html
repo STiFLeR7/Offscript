@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CR — Hero · agent (chat demo)</title>
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+<!--
+  COMPONENT: Hero · agent (split — text + AI-agent chat demo)
+  COMPOSITION: A PURE-WHITE hero (#FFFFFF). (0) the CANONICAL CR NAV, LIGHT variant
+    (nav re-tones to the surface: light bg + hairline, logo-color.svg, dark
+    canonical links AI▾/Industry▾/FosterX▾/About us/Resources▾, dark-ink "Let's
+    talk" pill). Body = a 2-COLUMN split (42/58): LEFT a large Urbanist headline
+    (the source's SERIF → CR Urbanist per charter), a 3-line grey sub, and a white
+    EMAIL+CTA pill (an email input + a dark-ink "Book a Demo Call →" button; on
+    pure white the pill carries a 1px hairline border so it reads as a container).
+    RIGHT a CHAT-DEMO "device": a LIGHT-GREY rounded panel (--cr-bg-grey-100, the
+    one tonal block that frames the chat on the white page) holding (a) three TAB
+    pills (white; the middle one ACTIVE in a brand-blue tint) and (b) a white CHAT
+    CARD (#fff) — a right-aligned user bubble (soft
+    brand-tint gradient), two "thinking" lines (Lucide sparkles + grey text), an
+    AI answer bubble (white, bordered) with a "AI agent" label, and a pinned
+    bottom INPUT BAR with a circular send button.
+  INSPIRATION: Gradient Labs hero — composition reproduced faithfully (split text/
+    chat, the tab selector, user/AI bubbles, thinking lines, AI-agent label, input
+    bar, the email+book-demo pill). Re-skinned to CR per the LOCKED rules:
+    customer-support → ops-automation voice; SERIF → Urbanist; emoji → Lucide;
+    the orange active-tab + orange sparkles → CR brand blue; the red input chip
+    removed (dropped per user); Gradient Labs' nav → the canonical CR nav (light variant);
+    the faint contour-line decoration is OMITTED (charter: flat light bands).
+  MOTION: scroll/load reveal (default) — nav, then the left stack
+    (headline→sub→form), then the demo panel + its chat rows fade+rise in
+    sequence. .has-js default-VISIBLE + a setTimeout fallback so a snapshot/
+    headless context that never fires IO can't gate the hero blank;
+    prefers-reduced-motion snaps.
+  RESPONSIVE: nav links hide ≤ 860; the split 2-col ≥ 900 → 1-col ≤ 899 (demo
+    under the text); headline + type scale via clamp; the chat card holds its
+    structure (bubbles wrap, input pinned bottom).
+-->
+<style>
+  .cr-ha {
+    background: var(--cr-bg);
+    font-family: var(--cr-font-body);
+  }
+  .cr-ha *, .cr-ha *::before, .cr-ha *::after { box-sizing: border-box; }
+
+  /* ── (0) Canonical nav — LIGHT variant (per the nav-surface rule) ── */
+  .ha-navband { background: var(--cr-bg); border-bottom: 1px solid rgba(14,14,14,0.08); }
+  .ha-nav {
+    max-width: var(--cr-content-max); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px clamp(20px, 4vw, 48px); gap: 24px;
+  }
+  .ha-logo { height: 30px; width: auto; display: block; flex: 0 0 auto; }
+  .ha-links {
+    display: flex; gap: clamp(20px, 2.6vw, 38px); align-items: center;
+    font-family: var(--cr-font-display); font-weight: 500; font-size: 16px;
+    color: var(--cr-fg); letter-spacing: -0.01em;
+  }
+  .ha-link { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; white-space: nowrap; }
+  .ha-link svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 2; fill: none; opacity: .85; }
+  .ha-navcta {
+    flex: 0 0 auto; background: var(--cr-ink); color: #fff;
+    font-family: var(--cr-font-display); font-weight: 700; font-size: 15px;
+    padding: 12px 26px; border-radius: var(--cr-radius-pill); border: 0; cursor: pointer;
+    letter-spacing: -0.01em; transition: background .18s ease;
+  }
+  .ha-navcta:hover { background: var(--cr-fg); }
+
+  /* ── Body ───────────────────────────────────────────────── */
+  .ha-body {
+    max-width: var(--cr-content-max); margin: 0 auto;
+    padding: clamp(40px, 6vw, 76px) clamp(20px, 4vw, 48px) clamp(56px, 8vw, 100px);
+    display: grid;
+    grid-template-columns: 44fr 56fr;
+    gap: clamp(36px, 5vw, 72px);
+    align-items: center;
+  }
+
+  /* ── LEFT column ────────────────────────────────────────── */
+  .ha-left { min-width: 0; }
+  .ha-title {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(38px, 5vw, 62px);
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    color: var(--cr-fg);
+  }
+  .ha-sub {
+    margin: clamp(22px, 2.4vw, 30px) 0 0;
+    max-width: 460px;
+    font-size: clamp(16px, 1.4vw, 18px);
+    line-height: 1.6;
+    color: var(--cr-fg-3);
+  }
+
+  /* email + CTA pill */
+  .ha-form {
+    display: flex; align-items: center;
+    margin-top: clamp(28px, 3vw, 40px);
+    max-width: 470px;
+    background: #fff;
+    border: 1px solid var(--cr-line);
+    border-radius: var(--cr-radius-pill);
+    padding: 6px 6px 6px 22px;
+    gap: 10px;
+  }
+  .ha-email {
+    flex: 1 1 auto; min-width: 0;
+    border: 0; background: transparent; outline: 0;
+    font-family: var(--cr-font-body); font-size: 15px; color: var(--cr-fg);
+  }
+  .ha-email::placeholder { color: var(--cr-fg-3); }
+  .ha-form-btn {
+    flex: 0 0 auto;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--cr-ink); color: #fff;
+    border: 0; border-radius: var(--cr-radius-pill);
+    padding: 14px 24px; cursor: pointer;
+    font-family: var(--cr-font-display); font-weight: 600; font-size: 15px;
+    white-space: nowrap; text-decoration: none;
+    transition: background .18s ease;
+  }
+  .ha-form-btn:hover { background: var(--cr-fg); }
+  .ha-form-btn svg { width: 16px; height: 16px; stroke-width: 2.2; }
+
+  /* ── RIGHT column — chat demo ───────────────────────────── */
+  .ha-right { min-width: 0; }
+  .ha-demo {
+    background: var(--cr-bg-grey-100);
+    border-radius: 22px;
+    padding: clamp(16px, 1.8vw, 22px);
+  }
+  /* tabs */
+  .ha-tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .ha-tab {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 16px; border-radius: var(--cr-radius-pill);
+    background: #fff; border: 1px solid rgba(14,14,14,0.06);
+    font-size: 14px; font-weight: 500; color: var(--cr-fg-2);
+    white-space: nowrap;
+  }
+  .ha-tab svg { width: 15px; height: 15px; color: var(--cr-fg-3); }
+  .ha-tab.active {
+    background: var(--cr-brand-100);
+    border-color: rgba(20,157,255,0.35);
+    color: var(--cr-brand-700);
+  }
+  .ha-tab.active svg { color: var(--cr-brand); }
+
+  /* chat card */
+  .ha-chat {
+    background: #fff;
+    border-radius: 16px;
+    padding: clamp(18px, 2vw, 26px);
+    min-height: clamp(440px, 50vw, 600px);
+    display: flex; flex-direction: column;
+  }
+  .ha-msgs { display: flex; flex-direction: column; gap: 14px; flex: 1 1 auto; }
+
+  .ha-user {
+    align-self: flex-end; max-width: 72%;
+    padding: 12px 18px; border-radius: 16px 16px 4px 16px;
+    background: linear-gradient(120deg, #E7EEFF 0%, var(--cr-bg-tint) 100%);
+    font-size: 15px; color: var(--cr-fg); line-height: 1.4;
+  }
+  .ha-think { display: flex; align-items: center; gap: 9px; font-size: 14px; color: var(--cr-fg-3); }
+  .ha-think svg { width: 16px; height: 16px; color: var(--cr-brand); flex: 0 0 auto; }
+  .ha-ai {
+    align-self: flex-start; max-width: 78%;
+    margin-top: 4px;
+  }
+  .ha-ai-bubble {
+    padding: 14px 18px; border-radius: 4px 16px 16px 16px;
+    background: #fff; border: 1px solid rgba(14,14,14,0.08);
+    font-size: 15px; color: var(--cr-fg); line-height: 1.45;
+  }
+  .ha-ai-tag { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 13px; color: var(--cr-fg-3); }
+  .ha-ai-tag svg { width: 14px; height: 14px; color: var(--cr-fg-3); }
+
+  .ha-input {
+    margin-top: 16px;
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 12px 12px 18px;
+    background: #fff; border: 1px solid rgba(14,14,14,0.08);
+    border-radius: 14px;
+  }
+  .ha-input-txt { flex: 1 1 auto; min-width: 0; font-size: 15px; color: var(--cr-fg-2); }
+  .ha-send {
+    flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%;
+    background: var(--cr-ink); border: 0; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ha-send svg { width: 17px; height: 17px; color: #fff; stroke-width: 2.2; }
+
+  /* ── Reveal ─────────────────────────────────────────────── */
+  .cr-ha.has-js .reveal { opacity: 0; transform: translateY(16px); }
+  .cr-ha.has-js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cr-ha.has-js .reveal { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ── Responsive ─────────────────────────────────────────── */
+  @media (max-width: 899px) {
+    .ha-body { grid-template-columns: 1fr; gap: 40px; }
+    .ha-sub, .ha-form { max-width: none; }
+  }
+  @media (max-width: 860px) {
+    .ha-links { display: none; }
+  }
+  @media (max-width: 480px) {
+    .ha-form { flex-wrap: wrap; border-radius: 22px; padding: 14px; gap: 12px; }
+    .ha-email { flex-basis: 100%; padding: 4px 0; }
+    .ha-form-btn { flex: 1 1 auto; justify-content: center; }
+    .ha-user, .ha-ai { max-width: 90%; }
+  }
+</style>
+</head>
+<body>
+
+<section class="cr-ha" data-screen-label="Hero · agent (chat demo)">
+
+  <!-- ── (0) Canonical CR nav (light variant) ────────────── -->
+  <div class="ha-navband">
+    <nav class="ha-nav">
+      <img class="ha-logo" src="../assets/../../brand-pack/assets/logo/logo-color.svg" alt="Example Brand">
+      <div class="ha-links">
+        <span class="ha-link">AI <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ha-link">Industry <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ha-link">FosterX <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ha-link">About us</span>
+        <span class="ha-link">Resources <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+      <button class="ha-navcta">Let's talk</button>
+    </nav>
+  </div>
+
+  <!-- ── Body ────────────────────────────────────────────── -->
+  <div class="ha-body">
+
+    <!-- LEFT -->
+    <div class="ha-left">
+      <h1 class="ha-title reveal" style="--d:0ms">The best operations hire you&rsquo;ll ever make</h1>
+      <p class="ha-sub reveal" style="--d:80ms">Our AI agents handle complex operational work end-to-end, learning from plain-language procedures &mdash; no code, no decision trees, no workflows.</p>
+
+      <form class="ha-form reveal" style="--d:160ms" novalidate>
+        <input class="ha-email" type="email" placeholder="Your work email" aria-label="Work email">
+        <a class="ha-form-btn" href="#">Book a Demo Call <i data-lucide="arrow-right"></i></a>
+      </form>
+    </div>
+
+    <!-- RIGHT — chat demo -->
+    <div class="ha-right reveal" style="--d:160ms">
+      <div class="ha-demo">
+
+        <div class="ha-tabs">
+          <span class="ha-tab"><i data-lucide="credit-card"></i>Refund request</span>
+          <span class="ha-tab active"><i data-lucide="file-text"></i>Invoice query</span>
+          <span class="ha-tab"><i data-lucide="package"></i>Order status</span>
+        </div>
+
+        <div class="ha-chat">
+          <div class="ha-msgs">
+            <div class="ha-user">Can you re-issue invoice #3380?</div>
+
+            <div class="ha-think"><i data-lucide="sparkles"></i>Checking invoice record</div>
+            <div class="ha-think"><i data-lucide="sparkles"></i>Checking billing policy</div>
+
+            <div class="ha-ai">
+              <div class="ha-ai-bubble">Hi there &mdash; invoice #3380 has been re-issued and emailed to your AP inbox.</div>
+              <span class="ha-ai-tag"><i data-lucide="message-circle"></i>AI agent</span>
+            </div>
+          </div>
+
+          <div class="ha-input">
+            <span class="ha-input-txt">Great, can you update the PO number too?</span>
+            <button class="ha-send" type="button" aria-label="Send"><i data-lucide="arrow-up"></i></button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<script>
+  (function () {
+    if (window.lucide) lucide.createIcons();
+    var sec = document.querySelector('.cr-ha');
+    if (!sec || !('IntersectionObserver' in window)) return;
+    sec.classList.add('has-js');
+    var done = false;
+    function revealAll() {
+      if (done) return; done = true;
+      sec.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { revealAll(); io.disconnect(); } });
+    }, { threshold: 0.04 });
+    io.observe(sec);
+    setTimeout(revealAll, 1200);
+  })();
+</script>
+</body>
+</html>

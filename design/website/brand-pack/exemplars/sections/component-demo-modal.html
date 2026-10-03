@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR — AI demo modal (book + see-demo combined)</title>
+
+<!--
+  ────────────────────────────────────────────────────────────────────────────
+  COMPONENT: AI demo modal — "book a demo" + "see the AI demo" combined
+  ────────────────────────────────────────────────────────────────────────────
+  COMPOSITION (faithful reproduction of the supplied inspiration — a Handhold
+  interactive-demo modal):
+    • A trigger button ("See AI Demo") on a minimal light page opens a large,
+      TWO-COLUMN modal over a DIMMED backdrop.
+    • LEFT column: a grey rounded stage holding a PRODUCT-UI MOCK (a dark
+      "Example Brand" rail + an Agents dashboard, standing in for the live demo
+      screen-share) with a "Have a question?" chat bubble, and a row of round
+      MIC / SPEAKER controls beneath it.
+    • RIGHT column: a big "Example Brand Demo" heading + a one-line sub, an AGENT
+      card (avatar + name/role + a live "● Available now"), an "allow microphone
+      access" note, an EMAIL field + an optional "Where did you hear about us?"
+      field, a primary "Join session" CTA, and privacy fine print.
+
+  CHARTER NOTES (a modal is the ONE sanctioned exception to several rules):
+    • A modal over a dimmed backdrop is the lone defensible place for a SHADOW —
+      so the panel carries a single soft lift. The backdrop is DIM ONLY
+      (rgba scrim) — NO backdrop-filter blur (charter forbids frosted glass).
+    • Tuned to match the source LITERALLY (per the user): a white TOP BAR with a
+      plain × (top-right, no circle; the top-left brand lockup was removed per the
+      user); the source's BLACK "Join session" button is kept dark — rendered in
+      CR ink (--cr-ink #0E0E0E, not pure black). Heading, agent card + form layout,
+      and the grey-framed product screenshot follow the source's proportions/spacing.
+    • Voice → CR (APA / autonomous agents): the mock is an Agents/runs dashboard;
+      the agent is a CR "AI demo agent". Names/emails/rows are illustrative
+      PLACEHOLDERS.
+
+  ACCESSIBILITY (the real deliverable — most of it doesn't show in a screenshot):
+    • role="dialog" + aria-modal="true" + aria-labelledby → the heading.
+    • The page behind is set `inert` while the modal is open (SR + tab skip it) —
+      the modal is a SIBLING of the page so inert-ing the page never inerts it.
+    • Focus moves INTO the modal on a real user-open and is RESTORED to the
+      trigger on close; Tab / Shift+Tab are trapped inside; Esc + backdrop-click
+      + the × all close. Body scroll is locked while open.
+    • The modal caps at ~90vh and scrolls INTERNALLY (× pinned, right column
+      scrolls) so the CTA stays reachable on short/laptop viewports.
+    • Mic / speaker are real buttons (aria-label + aria-pressed toggles).
+
+  MOTION: open = backdrop fade + panel scale-and-rise; the "Available now" dot
+    pulses (the chat bubble is static). prefers-reduced-motion disables all of
+    it (snap open/close, static dot). Default-open on load for the catalog
+    is a PASSIVE show (no focus-steal / no trap intent) — focus management kicks
+    in only on a real user-open.
+
+  NO-JS: the overlay is visible (open) by default in CSS, so the modal CONTENT is
+    fully readable without JS; JS then takes over open/close + all the a11y
+    behaviour (hidden-unless-open state is scoped to .has-js).
+
+  Responsive: 2-col → single column at ≤860px (preview becomes a top banner, info
+    below; the whole modal scrolls); near-full-width at the mobile floor.
+    Screenshot-verified at desktop 1440 (tall + the 1440×720 laptop-short case),
+    and the ~482px floor; focus-trap / inert / Esc DOM-probed.
+  ────────────────────────────────────────────────────────────────────────────
+-->
+
+<link rel="stylesheet" href="../_frozen-v2-tokens.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--cr-bg); font-family: var(--cr-font-body); color: var(--cr-fg); }
+
+  /* ── Page behind the modal (inert while open) ────────────────────────── */
+  .page {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 48px 24px;
+    background: var(--cr-bg-warm);
+  }
+  .trigger-wrap { max-width: 560px; text-align: center; }
+  .trigger-eyebrow {
+    font-weight: 600; font-size: 13px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--cr-brand-700);
+  }
+  .trigger-h1 {
+    margin: 14px 0 0;
+    font-family: var(--cr-font-display);
+    font-weight: 700; font-size: clamp(30px, 4vw, 46px);
+    line-height: 1.1; letter-spacing: -0.02em; color: var(--cr-fg);
+  }
+  .trigger-p {
+    margin: 16px auto 0; max-width: 460px;
+    font-size: 17px; line-height: 1.55; color: var(--cr-fg-3);
+  }
+  .trigger {
+    margin-top: 28px;
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 14px 24px;
+    font-family: var(--cr-font-body); font-weight: 600; font-size: 15px;
+    color: #fff; background: var(--cr-brand);
+    border: 0; border-radius: var(--cr-radius-pill);
+    cursor: pointer;
+    transition: background .2s ease, transform .1s ease;
+  }
+  .trigger:hover { background: var(--cr-brand-700); }
+  .trigger:active { transform: scale(.98); }
+  .trigger svg { width: 18px; height: 18px; }
+
+  /* ── Overlay + backdrop ──────────────────────────────────────────────── */
+  .demo-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    display: grid; place-items: center;
+    padding: 32px;
+  }
+  .demo-backdrop {
+    position: absolute; inset: 0;
+    background: rgba(10, 13, 18, 0.55);   /* DIM only — no blur (charter) */
+  }
+
+  /* ── Modal panel (the lone sanctioned shadow — over a dimmed backdrop) ── */
+  .demo-modal {
+    position: relative; z-index: 1;
+    width: min(1360px, 100%);
+    max-height: min(90vh, 808px);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    background: var(--cr-bg);
+    border-radius: 24px;
+    box-shadow: 0 30px 90px -24px rgba(10, 10, 30, 0.45),
+                0 8px 30px -12px rgba(10, 10, 30, 0.30);
+  }
+  /* top bar: brand mark (left) + plain close (right) — the source's white header strip */
+  .demo-topbar {
+    flex: none;
+    display: flex; align-items: center; justify-content: flex-end;
+    padding: 14px 16px 8px;
+  }
+  .demo-x {
+    width: 32px; height: 32px;
+    display: grid; place-items: center;
+    background: transparent; color: var(--cr-fg-3);
+    border: 0; border-radius: 8px;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+  }
+  .demo-x:hover { background: var(--cr-bg-grey-100); color: var(--cr-fg); }
+  .demo-x svg { width: 20px; height: 20px; }
+
+  .demo-grid {
+    flex: 1; min-height: 0;
+    display: grid;
+    grid-template-columns: 1.85fr 1fr;
+  }
+
+  /* ── LEFT: demo stage ────────────────────────────────────────────────── */
+  .demo-left {
+    min-width: 0; min-height: 0;
+    display: flex; flex-direction: column;
+    gap: 18px;
+    padding: 18px 30px 30px;
+    overflow: hidden;                     /* clip the mock cleanly inside its column */
+  }
+  .demo-stage {
+    position: relative;
+    flex: 1; min-height: 0;
+    background: var(--cr-bg-grey-100);
+    border-radius: 18px;
+    padding: 30px;                        /* generous grey frame around the screenshot (source rhythm) */
+    overflow: hidden;
+    display: flex;
+  }
+  /* product-UI mock (stands in for the live demo screen) */
+  .mock {
+    flex: 1; min-height: 0;
+    display: flex;
+    background: var(--cr-bg);
+    border: 1px solid var(--cr-line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .mock-rail {
+    width: 29%; max-width: 148px;
+    background: var(--cr-ink); color: #fff;
+    padding: 16px 14px;
+    display: flex; flex-direction: column;
+    font-size: 12px;
+  }
+  .mock-logo { display: flex; align-items: center; gap: 7px; font-weight: 700; font-size: 13px; margin-bottom: 16px; }
+  .mock-logo i { width: 16px; height: 16px; border-radius: 5px; background: var(--cr-brand); display: inline-block; flex: none; }
+  .mock-nav { display: flex; flex-direction: column; gap: 3px; }
+  .mock-nav span {
+    padding: 7px 9px; border-radius: 7px;
+    color: rgba(255,255,255,0.62); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .mock-nav span.on { background: rgba(255,255,255,0.10); color: #fff; }
+  .mock-foot { margin-top: auto; display: flex; align-items: center; gap: 8px; padding-top: 14px; }
+  .mock-foot i { width: 22px; height: 22px; border-radius: 6px; background: rgba(255,255,255,0.16); display: grid; place-items: center; font-size: 10px; font-weight: 700; flex: none; }
+  .mock-foot small { color: rgba(255,255,255,0.5); font-size: 10px; line-height: 1.3; }
+
+  .mock-main { flex: 1; min-width: 0; padding: 16px 16px 0; overflow: hidden; }
+  .mock-title { font-family: var(--cr-font-display); font-weight: 700; font-size: 16px; color: var(--cr-fg); }
+  .mock-filters { display: flex; gap: 6px; margin: 13px 0 10px; }
+  .mock-filters span { font-size: 10.5px; color: var(--cr-fg-3); border: 1px solid var(--cr-line); border-radius: 6px; padding: 5px 9px; white-space: nowrap; }
+  .mock-search {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 10.5px; color: var(--cr-fg-muted);
+    border: 1px solid var(--cr-line); border-radius: 8px;
+    padding: 8px 11px; margin-bottom: 12px;
+  }
+  .mock-search svg { width: 12px; height: 12px; flex: none; color: var(--cr-fg-muted); }
+  .mock-table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+  .mock-table th { text-align: left; color: var(--cr-fg-3); font-weight: 500; padding: 9px 10px; border-bottom: 1px solid var(--cr-line); white-space: nowrap; }
+  .mock-table td { padding: 12px 10px; border-bottom: 1px solid var(--cr-bg-grey-100); color: var(--cr-fg-2); white-space: nowrap; }
+  .mock-table .who { color: var(--cr-fg); font-weight: 500; }
+  .badge { font-size: 9.5px; font-weight: 600; padding: 2px 7px; border-radius: 20px; }
+  .badge--live { background: var(--cr-success-100); color: #1f7a44; }
+  .badge--done { background: var(--cr-bg-grey-100); color: var(--cr-fg-3); }
+  .badge--queue { background: #FBEFD7; color: #946514; }
+  .mock-chev { color: var(--cr-fg-muted); }
+  .mock-chev svg { width: 13px; height: 13px; display: block; }
+
+  /* "Have a question?" chat bubble */
+  .mock-bubble {
+    position: absolute; right: 18px; bottom: 18px;
+    display: flex; align-items: center; gap: 7px;
+    padding: 6px 11px 6px 7px;
+    background: var(--cr-ink); color: #fff;
+    border-radius: 22px;
+    font-size: 11px; font-weight: 500;
+  }
+  .mock-bubble i {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, var(--cr-brand-300), var(--cr-brand) 46%, var(--cr-brand-700) 100%);
+    flex: none;
+  }
+
+  /* mic / speaker controls */
+  .demo-controls { display: flex; justify-content: center; gap: 12px; }
+  .ctrl {
+    width: 44px; height: 44px;
+    display: grid; place-items: center;
+    background: var(--cr-bg-grey-100); color: var(--cr-fg-3);
+    border: 1px solid var(--cr-line); border-radius: 50%;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .ctrl:hover { background: var(--cr-bg-grey-200); color: var(--cr-fg); }
+  .ctrl svg { width: 18px; height: 18px; }
+  .ctrl.ctrl--on { background: var(--cr-bg); color: var(--cr-fg); border-color: var(--cr-fg); }
+
+  /* ── RIGHT: info + form ──────────────────────────────────────────────── */
+  .demo-right {
+    min-width: 0; min-height: 0; overflow-y: auto;
+    padding: 22px 48px 36px 44px;
+    display: flex; flex-direction: column;
+  }
+  .demo-title {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 700; font-size: clamp(23px, 2vw, 29px);
+    line-height: 1.12; letter-spacing: -0.015em; color: var(--cr-fg);
+  }
+  .demo-sub { margin: 16px 0 0; font-size: 16px; line-height: 1.5; color: var(--cr-fg-3); }
+
+  .agent { display: flex; align-items: center; gap: 11px; margin-top: 22px; }
+  .agent-orb {
+    width: 40px; height: 40px; border-radius: 50%; flex: none;
+    background: radial-gradient(circle at 32% 26%, var(--cr-brand-300) 0%, var(--cr-brand) 46%, var(--cr-brand-700) 100%);
+  }
+  .agent-name { font-weight: 700; font-size: 15px; color: var(--cr-fg); }
+  .agent-name span { font-weight: 400; color: var(--cr-fg-3); margin-left: 6px; }
+  .agent-avail { display: flex; align-items: center; gap: 7px; margin-top: 3px; font-size: 13.5px; font-weight: 500; color: var(--cr-success); }
+  .agent-dot { position: relative; width: 9px; height: 9px; border-radius: 50%; background: var(--cr-success); flex: none; }
+  .agent-dot::after {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background: var(--cr-success);
+    animation: demo-pulse 2s ease-out infinite;
+  }
+  @keyframes demo-pulse { 0% { transform: scale(1); opacity: .55; } 100% { transform: scale(2.6); opacity: 0; } }
+
+  .demo-note { display: flex; align-items: center; gap: 8px; margin: 24px 0 0; font-size: 14px; color: var(--cr-fg-3); }
+  .demo-note svg { width: 16px; height: 16px; flex: none; }
+  .demo-note a { color: var(--cr-fg); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--cr-line-soft); }
+  .demo-note a:hover { color: var(--cr-brand-700); text-decoration-color: currentColor; }
+
+  .demo-form { margin-top: 20px; display: flex; flex-direction: column; }
+  .demo-form label { font-weight: 600; font-size: 14px; color: var(--cr-fg); margin-bottom: 8px; }
+  .demo-form label span { font-weight: 400; color: var(--cr-fg-3); }
+  .demo-form input {
+    font-family: var(--cr-font-body); font-size: 15px; color: var(--cr-fg);
+    padding: 14px 20px; margin-bottom: 16px;
+    background: var(--cr-bg);
+    border: 1px solid var(--cr-line); border-radius: var(--cr-radius-pill);  /* CR pill radius — matches the Join-session button */
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .demo-form input::placeholder { color: var(--cr-fg-muted); }
+  .demo-form input:hover { border-color: var(--cr-fg-muted); }
+  .demo-form input:focus { outline: none; border-color: var(--cr-brand); box-shadow: 0 0 0 3px var(--cr-brand-100); }
+  /* canonical CR button = PILL (radius 500); slimmer height for a slick look */
+  .demo-join {
+    margin-top: 10px;
+    padding: 13px 24px;
+    font-family: var(--cr-font-body); font-weight: 600; font-size: 15px;
+    color: #fff; background: var(--cr-ink);
+    border: 0; border-radius: var(--cr-radius-pill);
+    cursor: pointer;
+    transition: background .2s ease, transform .1s ease;
+  }
+  .demo-join:hover { background: var(--cr-fg); }
+  .demo-join:active { transform: scale(.99); }
+  .demo-join:active { transform: scale(.99); }
+  .demo-fine { margin: 16px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--cr-fg-muted); }
+  .demo-fine a { color: var(--cr-fg-3); text-decoration: underline; text-underline-offset: 2px; }
+
+  /* ── JS open/close + animation (hidden-unless-open scoped to .has-js) ──── */
+  .has-js .demo-overlay { display: none; }
+  .has-js .demo-overlay.open { display: grid; }
+  .has-js .demo-overlay .demo-backdrop { opacity: 0; transition: opacity .3s ease; }
+  .has-js .demo-overlay .demo-modal {
+    opacity: 0; transform: translateY(10px) scale(.975);
+    transition: opacity .35s ease, transform .35s cubic-bezier(.22, .61, .36, 1);
+  }
+  .has-js .demo-overlay.show .demo-backdrop { opacity: 1; }
+  .has-js .demo-overlay.show .demo-modal { opacity: 1; transform: none; }
+
+  /* ── Responsive ──────────────────────────────────────────────────────── */
+  @media (max-width: 860px) {
+    .demo-overlay { padding: 0; place-items: stretch; }
+    .demo-modal { width: 100%; max-height: 100vh; max-height: 100dvh; border-radius: 0; }
+    .demo-grid { grid-template-columns: 1fr; overflow-y: auto; overflow-x: hidden; }
+    .demo-left { min-height: 320px; padding: 22px 22px 8px; }
+    .demo-right { overflow: visible; padding: 28px 24px 32px; }
+  }
+  @media (max-width: 560px) {
+    .demo-left { min-height: 280px; }
+    .mock-rail { width: 42%; }
+  }
+
+  /* ── Reduced motion ──────────────────────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .demo-overlay .demo-backdrop,
+    .has-js .demo-overlay .demo-modal { transition: none !important; }
+    .agent-dot::after { animation: none !important; }
+  }
+</style>
+</head>
+
+<body>
+
+  <!-- ── PAGE (behind the modal; set inert while open) ─────────────────── -->
+  <div class="page" id="page">
+    <div class="trigger-wrap">
+      <p class="trigger-eyebrow">Interactive demo</p>
+      <h1 class="trigger-h1">See Example Brand run your work, live</h1>
+      <p class="trigger-p">Watch an AI agent pick up a real workflow and run it end to end — no setup, no sales call.</p>
+      <button class="trigger" id="openDemo" type="button">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        See AI Demo
+      </button>
+    </div>
+  </div>
+
+  <!-- ── MODAL (sibling of .page) ──────────────────────────────────────── -->
+  <div class="demo-overlay open show" id="demoOverlay">
+    <div class="demo-backdrop" data-close></div>
+
+    <div class="demo-modal" role="dialog" aria-modal="true" aria-labelledby="demoTitle">
+      <div class="demo-topbar">
+        <button class="demo-x" type="button" aria-label="Close demo" data-close>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="demo-grid">
+
+        <!-- LEFT: demo stage -->
+        <div class="demo-left">
+          <div class="demo-stage">
+            <div class="mock" aria-hidden="true">
+              <div class="mock-rail">
+                <div class="mock-logo"><i></i> Example Brand</div>
+                <div class="mock-nav">
+                  <span class="on">Agents</span>
+                  <span>Runs</span>
+                  <span>Knowledge</span>
+                  <span>Integrations</span>
+                  <span>Settings</span>
+                </div>
+                <div class="mock-foot"><i>DO</i><small>Demo Org<br/>workspace</small></div>
+              </div>
+              <div class="mock-main">
+                <div class="mock-title">Agents</div>
+                <div class="mock-filters"><span>All time</span><span>All status</span><span>All touchpoints</span></div>
+                <div class="mock-search">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  Search agents…
+                </div>
+                <table class="mock-table">
+                  <thead><tr><th>Agent</th><th>Last run</th><th>Touchpoint</th><th>Status</th><th></th></tr></thead>
+                  <tbody>
+                    <tr><td class="who">Invoice triage</td><td>4:53 PM</td><td>Inbox</td><td><span class="badge badge--live">Live</span></td><td class="mock-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td></tr>
+                    <tr><td class="who">Lead enrichment</td><td>4:54 PM</td><td>CRM</td><td><span class="badge badge--done">Done</span></td><td class="mock-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td></tr>
+                    <tr><td class="who">PO matching</td><td>4:54 PM</td><td>ERP</td><td><span class="badge badge--live">Live</span></td><td class="mock-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td></tr>
+                    <tr><td class="who">Ticket routing</td><td>4:54 PM</td><td>Helpdesk</td><td><span class="badge badge--queue">Queued</span></td><td class="mock-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td></tr>
+                    <tr><td class="who">Contract review</td><td>4:55 PM</td><td>Drive</td><td><span class="badge badge--done">Done</span></td><td class="mock-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td></tr>
+                    <tr><td class="who">Onboarding</td><td>4:55 PM</td><td>HRIS</td><td><span class="badge badge--live">Live</span></td><td class="mock-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td></tr>
+                    <tr><td class="who">Refund approval</td><td>4:56 PM</td><td>Billing</td><td><span class="badge badge--done">Done</span></td><td class="mock-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td></tr>
+                    <tr><td class="who">Doc parsing</td><td>4:56 PM</td><td>Drive</td><td><span class="badge badge--live">Live</span></td><td class="mock-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td></tr>
+                    <tr><td class="who">Data sync</td><td>4:57 PM</td><td>Warehouse</td><td><span class="badge badge--queue">Queued</span></td><td class="mock-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="mock-bubble"><i></i> Have a question?</div>
+          </div>
+
+          <div class="demo-controls">
+            <button class="ctrl" type="button" aria-label="Unmute microphone" aria-pressed="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="2" y1="2" x2="22" y2="22"/><path d="M18.89 13.23A7.12 7.12 0 0 0 19 12v-2"/><path d="M5 10v2a7 7 0 0 0 12 5"/><path d="M15 9.34V5a3 3 0 0 0-5.68-1.33"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+            </button>
+            <button class="ctrl ctrl--on" type="button" aria-label="Mute speaker" aria-pressed="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- RIGHT: info + form -->
+        <div class="demo-right">
+          <h2 class="demo-title" id="demoTitle">Example Brand Demo</h2>
+          <p class="demo-sub">5–10 min interactive session with an automation expert</p>
+
+          <div class="agent">
+            <span class="agent-orb" aria-hidden="true"></span>
+            <div>
+              <div class="agent-name">Aria <span>AI demo agent</span></div>
+              <div class="agent-avail"><span class="agent-dot" aria-hidden="true"></span> Available now</div>
+            </div>
+          </div>
+
+          <p class="demo-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            For the best experience, <a href="#">allow microphone access</a>
+          </p>
+
+          <form class="demo-form" id="demoForm">
+            <label for="demoEmail">Email</label>
+            <input id="demoEmail" name="email" type="email" placeholder="you@company.com" autocomplete="email" />
+            <label for="demoSrc">Where did you hear about us? <span>(optional)</span></label>
+            <input id="demoSrc" name="source" type="text" />
+            <button class="demo-join" type="submit">Join session</button>
+          </form>
+
+          <p class="demo-fine">AI can sometimes make mistakes. By continuing, you agree to our <a href="#">Privacy Policy</a>.</p>
+        </div>
+
+      </div><!-- /.demo-grid -->
+    </div><!-- /.demo-modal -->
+  </div><!-- /.demo-overlay -->
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    root.classList.add('has-js');
+
+    var overlay = document.getElementById('demoOverlay');
+    var modal   = overlay.querySelector('.demo-modal');
+    var page    = document.getElementById('page');
+    var openBtn = document.getElementById('openDemo');
+    var reduce  = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var lastFocus = null;
+    var closeTimer = null;
+
+    function focusables() {
+      return Array.prototype.slice.call(modal.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])'
+      )).filter(function (el) { return el.offsetParent !== null || el === document.activeElement; });
+    }
+
+    function onKey(e) {
+      if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+      if (e.key === 'Tab') {
+        var f = focusables(); if (!f.length) return;
+        var first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    }
+
+    // viaUser=false → passive catalog show (no focus-steal / no trap intent)
+    function open(viaUser) {
+      overlay.removeEventListener('transitionend', finishClose);  // cancel a pending close (rapid reopen)
+      if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+      overlay.classList.add('open');
+      void overlay.offsetWidth;            // reflow so the .show transition runs
+      overlay.classList.add('show');
+      page.setAttribute('inert', '');      // SR + tab skip the page behind
+      document.body.style.overflow = 'hidden';
+      document.addEventListener('keydown', onKey);
+      if (viaUser) {
+        lastFocus = document.activeElement;
+        var x = modal.querySelector('.demo-x'); if (x) x.focus();
+      }
+    }
+
+    function finishClose() {
+      if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+      overlay.removeEventListener('transitionend', finishClose);
+      overlay.classList.remove('open');
+    }
+    function close() {
+      overlay.classList.remove('show');
+      page.removeAttribute('inert');
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', onKey);
+      if (reduce) { finishClose(); }
+      else {
+        overlay.addEventListener('transitionend', finishClose);
+        closeTimer = setTimeout(finishClose, 420);   // fallback: never strand the overlay if transitionend doesn't fire
+      }
+      if (lastFocus && lastFocus.focus) { lastFocus.focus(); }
+      else if (openBtn) { openBtn.focus(); }
+      lastFocus = null;
+    }
+
+    overlay.querySelectorAll('[data-close]').forEach(function (el) {
+      el.addEventListener('click', close);
+    });
+    if (openBtn) openBtn.addEventListener('click', function () { open(true); });
+
+    // mic / speaker toggles (real controls)
+    overlay.querySelectorAll('.ctrl').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var pressed = b.getAttribute('aria-pressed') === 'true';
+        b.setAttribute('aria-pressed', String(!pressed));
+        b.classList.toggle('ctrl--on');
+      });
+    });
+
+    // demo form does not actually submit
+    var form = document.getElementById('demoForm');
+    if (form) form.addEventListener('submit', function (e) { e.preventDefault(); });
+
+    // Catalog default: show open on load, but PASSIVELY (no focus-steal).
+    open(false);
+  })();
+</script>
+</body>
+</html>

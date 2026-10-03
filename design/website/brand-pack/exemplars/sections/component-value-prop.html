@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Value proposition — stat progression</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — Value proposition (stat progression)        component-value-prop.html
+  ════════════════════════════════════════════════════════════════════════
+  COMPOSITION  A FULL-WIDTH PURE-WHITE website section (no frame, no footer).
+               A 1240px content well, left-aligned, holds:
+               • a 3-line headline pinned TOP-LEFT (~60% of the well width);
+               • a big vertical void, then a 4-COLUMN stat row. Each column =
+                 a VERTICAL HAIRLINE on its LEFT edge + a small description
+                 paragraph TOP-aligned + a huge number BOTTOM-aligned (numbers
+                 share one baseline). Description line-counts per column match
+                 the source exactly: 3 / 2 / 3 / 4.
+
+  INSPIRATION  Swiss/editorial presentation slide (stephenkelman.co.uk, slide
+               19) — "Documents are most persuasive…" headline over four
+               description→giant-number columns divided by left hairlines.
+               Layout/proportions reproduced; colours/fonts/copy re-skinned.
+
+  RE-SKIN      Source is strictly MONOCHROME B&W → CR ink-on-white on a
+               PURE-WHITE full-width surface — NO brand blue (it's the action
+               colour and this static value-prop has no action; charter: don't
+               paint surfaces blue). Fonts → Urbanist + Inter. Placeholder demo
+               numbers (12 / 34% / $567 / £89) → REAL CR proof stats with
+               CR-voice copy sized to the same 3/2/3/4 line volume.
+               (Per request: the original dark-frame "slide" treatment and the
+               footer row were dropped — this is now a standard full-width
+               white section.)
+
+  TYPE NOTE    Headline + numbers are Urbanist BOLD 700 — the documented ramp
+               weight ("Display: Urbanist Bold (700) — every section title …
+               stat number"), brand-true over the source's lighter grotesque
+               (weight is a re-skin attribute; the ramp wins, as it did on the
+               integration-grid sub). The bare-number slot carries a small
+               "weeks" unit so the number width rhythm holds.
+
+  MOTION       (none specified → catalog-consistent choice) staggered entrance
+               reveal (headline first, then the four columns at 80ms stagger)
+               + count-up on the numbers on first viewport entry. CSS
+               `animation` gated on `.in-view` (the anti-race pattern), fires
+               once. No-JS safe: numbers render their FINAL value in markup and
+               the hidden reveal-state is scoped to `.has-js`, so without JS
+               everything shows. `prefers-reduced-motion` snaps in / skips the
+               count. No Lucide (the source has no icons). Static content — the
+               ONLY thing that moves is the entrance; no hover (no controls).
+
+  RESPONSIVE   4-col → 2×2 grid (≤960px) → single column (≤560px, the per-row
+               void collapses so each stat reads desc-over-number tightly).
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../_frozen-v2-tokens.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<style>
+  /* ─── scope reset ─────────────────────────────────────────────── */
+  .vp-section, .vp-section * { box-sizing: border-box; }
+  .vp-section {
+    /* per-instance knobs */
+    --vp-num:   clamp(52px, 6.4vw, 92px);
+    --vp-rule:  var(--cr-line);
+
+    background: var(--cr-bg);         /* pure white, full-bleed section */
+    padding: 120px 100px;             /* standard CR section gutter      */
+    font-family: var(--cr-font-body);
+  }
+
+  /* ─── content well (left-aligned, capped) ─────────────────────── */
+  .vp-panel {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+  }
+
+  /* ─── headline (top-left, 3 lines) ────────────────────────────── */
+  .vp-headline {
+    margin: 0;
+    max-width: 14em;                  /* forces ~3 lines, ~60% width   */
+    font-family: var(--cr-font-display);
+    font-weight: 700;                 /* brand ramp weight (see TYPE NOTE) */
+    font-size: clamp(32px, 4.1vw, 56px);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--cr-fg);
+  }
+
+  /* ─── stat row ────────────────────────────────────────────────── */
+  .vp-stats {
+    margin-top: clamp(48px, 7vw, 100px);   /* the gap below the headline */
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 0;                          /* rules sit flush at each col edge */
+  }
+  .vp-col {
+    border-left: 1px solid var(--vp-rule);  /* hairline on EACH column's left */
+    padding: 4px 24px 0;                    /* small indent off the rule */
+    min-height: clamp(220px, 26vw, 300px);  /* holds the desc→number void */
+    display: flex;
+    flex-direction: column;
+  }
+  .vp-desc {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--cr-fg);
+    max-width: 28ch;
+  }
+  .vp-num {
+    margin-top: auto;                 /* bottom-aligns the number      */
+    font-family: var(--cr-font-display);
+    font-weight: 700;                 /* stat number = Urbanist Bold 700 */
+    font-size: var(--vp-num);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--cr-fg);
+    font-variant-numeric: tabular-nums;   /* digits don't wobble while counting */
+    white-space: nowrap;
+  }
+  .vp-suf { font-weight: 700; }                       /* symbolic units (%, ×) — full size */
+  .vp-suf--word {                                     /* word unit (weeks) — smaller, muted */
+    font-size: 0.34em;
+    font-weight: 700;
+    color: var(--cr-fg-3);
+    margin-left: 0.12em;
+    letter-spacing: 0;
+  }
+
+  /* ─── motion: entrance reveal (anti-race, fires once) ─────────── */
+  .has-js .vp-section [data-reveal] { opacity: 0; transform: translateY(18px); }
+  .has-js .vp-section [data-reveal].in-view {
+    animation: vpRise 0.7s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes vpRise { to { opacity: 1; transform: none; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .vp-section [data-reveal],
+    .has-js .vp-section [data-reveal].in-view {
+      opacity: 1; transform: none; animation: none;
+    }
+  }
+
+  /* ─── responsive ──────────────────────────────────────────────── */
+  @media (max-width: 960px) {
+    .vp-section { padding: 88px 48px; }
+    .vp-headline{ max-width: 18em; }
+    .vp-stats   { grid-template-columns: repeat(2, 1fr); row-gap: 48px; }
+    .vp-col     { min-height: clamp(180px, 30vw, 240px); }
+  }
+  @media (max-width: 560px) {
+    .vp-section { padding: 64px 24px; --vp-num: clamp(46px, 15vw, 60px); }
+    .vp-headline{ max-width: none; font-size: clamp(27px, 8vw, 34px); }
+    .vp-stats   { grid-template-columns: 1fr; row-gap: 36px; margin-top: 48px; }
+    .vp-col     { min-height: 0; padding: 2px 18px 0; }
+    .vp-num     { margin-top: 20px; }      /* collapse the void on mobile */
+  }
+</style>
+</head>
+<body>
+
+<!-- composition follows the source: headline TOP-LEFT, stats BOTTOM —
+     the left-headline placement is the reference's, not a hardcoded house rule. -->
+<section class="vp-section" data-screen-label="Value proposition · Stat progression">
+  <div class="vp-panel">
+
+    <h2 class="vp-headline" data-reveal style="--d:0s">The Routine Work Runs Itself When Agents Live Inside The Systems You Already Use.</h2>
+
+    <div class="vp-stats">
+
+      <div class="vp-col" data-reveal style="--d:.10s">
+        <p class="vp-desc">Of routine, judgment-free work runs autonomously inside the systems your team already uses every day.</p>
+        <div class="vp-num"><span class="vp-num-val" data-target="80">80</span><span class="vp-suf">%</span></div>
+      </div>
+
+      <div class="vp-col" data-reveal style="--d:.18s">
+        <p class="vp-desc">Operating cost taken out of the workflows we automate, not relocated.</p>
+        <div class="vp-num"><span class="vp-num-val" data-target="92">92</span><span class="vp-suf">%</span></div>
+      </div>
+
+      <div class="vp-col" data-reveal style="--d:.26s">
+        <p class="vp-desc">Average return on the work our agents absorb, measured against fully-loaded headcount.</p>
+        <div class="vp-num"><span class="vp-num-val" data-target="11.3" data-decimals="1">11.3</span><span class="vp-suf">×</span></div>
+      </div>
+
+      <div class="vp-col" data-reveal style="--d:.34s">
+        <p class="vp-desc">From first kickoff to a live pilot in production, deployed parallel to your current workflow and billed on the outcome.</p>
+        <div class="vp-num"><span class="vp-num-val" data-target="4">4</span><span class="vp-suf vp-suf--word">weeks</span></div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.vp-section');
+  if (!sec) return;
+
+  function fmt(n, dec) { return n.toFixed(dec); }
+
+  function countUp(el) {
+    var target = parseFloat(el.getAttribute('data-target'));
+    var dec = parseInt(el.getAttribute('data-decimals') || '0', 10);
+    var dur = 1400, t0 = null;
+    el.textContent = fmt(0, dec);
+    function step(ts) {
+      if (t0 === null) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      var e = 1 - Math.pow(1 - p, 3);            // ease-out cubic
+      el.textContent = fmt(target * e, dec);
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = fmt(target, dec);    // exact final value
+    }
+    requestAnimationFrame(step);
+  }
+
+  function reveal() {
+    sec.querySelectorAll('[data-reveal]').forEach(function (n) { n.classList.add('in-view'); });
+    if (!reduce) sec.querySelectorAll('.vp-num-val').forEach(countUp);
+  }
+
+  if (reduce) { reveal(); return; }              // CSS snaps in; numbers stay at markup final
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) {
+        if (en.isIntersecting) { reveal(); io.disconnect(); }
+      });
+    }, { threshold: 0.25 });
+    io.observe(sec);
+  } else {
+    reveal();
+  }
+})();
+</script>
+
+</body>
+</html>

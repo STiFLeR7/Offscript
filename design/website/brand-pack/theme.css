@@ -1,0 +1,439 @@
+/*
+  ===========================================================================
+  Example Brand — theme.css (Tailwind v4 @theme block)
+  ---------------------------------------------------------------------------
+  Drop this into your Tailwind v4 entry CSS.
+
+  ALIGNED to the v3 EDITORIAL RESTRAINT direction so the pack carries ONE
+  visual language.
+
+  AUTHORITY: this file is NOT the source of truth. `colors_and_type.css` is
+  the live value layer every page, exemplar and downstream consumer reads.
+  This file is a Tailwind-shaped export of the same system.
+
+  Aligned on the axes the direction covers: colour, typography, type scale,
+  spacing, radius, surfaces, shadows, strokes. Left as authored on the axes
+  it does not cover: motion, breakpoints.
+
+  Theme model: LIGHT-FIRST, EDITORIAL. Dark surfaces exist and are governed
+  — permitted for a hero, closing band, footer, immersive or full-bleed media
+  moment, product reveal or narrative transition, at most two per page. Dark
+  is a compositional device, NOT a theme; there is nothing to switch to.
+  (Was "LIGHT ONLY" — retired 2026-07-30, DR-28.)
+
+  CANONICAL COLOUR FOUNDATION — 2026-07-30. These colour values are canonical
+  and immutable: never modified, interpolated, approximated, replaced or
+  regenerated. This is an export and holds its own literals, so it moves in
+  lockstep with the other three token files — every value change is a
+  four-file change.
+  ===========================================================================
+*/
+
+@theme {
+  /* ═══ CANONICAL COLOUR FOUNDATION — permanently authored ═══════════════
+     Literals rather than var() references, deliberately: Tailwind generates
+     its utility classes from these values, so an indirection here would
+     produce utilities that cannot be resolved at build time. */
+
+  /* Emphasis — editorial emphasis, markers, highlights, badges, chips.
+     Never a page background, band, card fill or wide field. */
+  --color-orange-50:  #FFF5EF;  --color-orange-100: #FFE8DA;
+  --color-orange-200: #FFD0B4;  --color-orange-300: #FFB386;
+  --color-orange-400: #FF9554;  --color-orange-500: #FF7926;
+  --color-orange-600: #E56615;  --color-orange-700: #BF4F00;
+  --color-orange-800: #913B00;  --color-orange-900: #612600;
+  --color-orange-950: #331200;
+
+  /* Success */
+  --color-green-50:  #EEF9F1;  --color-green-100: #D8F0DF;
+  --color-green-200: #B2E1BF;  --color-green-300: #85CC97;
+  --color-green-400: #53AF69;  --color-green-500: #358A4B;
+  --color-green-600: #26763D;  --color-green-700: #1F6132;
+  --color-green-800: #174A25;  --color-green-900: #103319;
+  --color-green-950: #081B0D;
+
+  /* Information — the one accent that legitimately covers a large surface */
+  --color-blue-50:  #F0FBFF;  --color-blue-100: #DAF5FF;
+  --color-blue-200: #B5EAFF;  --color-blue-300: #84DDFF;
+  --color-blue-400: #54CEFF;  --color-blue-500: #26B7FF;
+  --color-blue-600: #129DDF;  --color-blue-700: #0C7CB2;
+  --color-blue-800: #085A81;  --color-blue-900: #043851;
+  --color-blue-950: #021C29;
+
+  /* Intelligence — used sparingly */
+  --color-purple-50:  #F5F0FF;  --color-purple-100: #EADFFF;
+  --color-purple-200: #D5BEFF;  --color-purple-300: #BC95FF;
+  --color-purple-400: #9D66FF;  --color-purple-500: #7F3FFF;
+  --color-purple-600: #6E26FF;  --color-purple-700: #5915DA;
+  --color-purple-800: #4210A3;  --color-purple-900: #2C0A6B;
+  --color-purple-950: #160338;
+
+  /* Text tier. muted is LARGE TEXT ONLY (3.12:1 on the page ground);
+     disabled is never text. */
+  --color-text-primary:   #2A2A2A;
+  --color-text-secondary: #626262;
+  --color-text-muted:     #8B8B8B;
+  --color-text-disabled:  #BBBBBB;
+  --color-text-inverse:   #FFFFFF;
+
+  /* Border tier — all three below 3:1 against the page ground
+     (1.08 / 1.29 / 1.70). Never a control's only boundary. */
+  --color-border-subtle:  #ECECEC;
+  --color-border-default: #D9D9D9;
+  --color-border-strong:  #BEBEBE;
+
+  /* Surface tier. Hierarchy INVERTED from a white-page system: the page
+     ground is surface-4 (warm field); surface-1 (white) is an ELEVATION
+     on top of it (DR-26). */
+  --color-surface-1: #FFFFFF;  --color-surface-2: #FCFCFA;
+  --color-surface-3: #F8F7F3;  --color-surface-4: #F6F5EF;
+  --color-surface-5: #ECEBE3;
+
+  /* Governed section backgrounds (DR-26, DR-28) */
+  --color-page-ground:     #F6F5EF;
+  --color-bg-dark:         #2A2A28;  /* rationed — ≤2 sections per page */
+  --color-bg-accent:       #26B7FF;  /* closing band — takes primary ink, 6.36:1 */
+  --color-bg-intelligence: #6E26FF;  /* premium — takes white, 6.21:1 */
+
+  /* Interaction (DR-24). blue-500 is a SURFACE colour — 2.07:1 on the page
+     ground — so it is never text and never an indicator. The focus ring is
+     NOT downgraded: the primary-ink ring measures 13.14:1 and stays the
+     default; blue-700 (4.23:1) serves only accent and dark surfaces. */
+  --color-focus-ring:        #2A2A2A;
+  --color-focus-ring-accent: #0C7CB2;
+  --color-primary:           #FF7926;
+  --color-primary-hover:     #E56615;
+  --color-primary-active:    #BF4F00;
+  --color-intelligence:      #6E26FF;
+
+  /* ─── Accents by ROLE ───────────────────────────────────────────────── */
+  --color-accent-orange: var(--color-orange-500);  /* EMPHASIS — markers · emphasis · highlights */
+  --color-accent-green:  var(--color-green-600);   /* POSITIVE — success · validation · completion */
+  --color-accent-blue:   var(--color-blue-500);    /* INFORMATION — orientation · environmental surfaces */
+  --color-accent-purple: var(--color-purple-600);  /* INTELLIGENCE — AI orchestration · premium capability */
+
+  /* DEEP STEPS — NOW AUTHORED, no longer derived (DR-23). The OKLCH descent
+     is retired; all eight values changed. Re-measured against their own
+     accent for WCAG 1.4.11's 3:1 non-text separation:
+       orange 900 4.49:1 ✓ (was 3.70 ✓) · blue 900 5.50:1 ✓ (was 3.48 ✓)
+       green  900 2.48:1 ✗ (was 3.18 ✓) · purple 900 2.48:1 ✗ (was 2.24 ✗)
+     Green REGRESSED, so the green and purple bands both take their paired
+     foreground (white) instead of their own 900 step — resolved by role, not
+     by touching a value (DR-34).
+     NOTE the stray "promotional emphasis · highlight surfaces" comment that
+     sat on the green line was a copy-paste from purple and is removed. */
+  --color-accent-orange-800: var(--color-orange-800);  --color-accent-orange-900: var(--color-orange-900);
+  --color-accent-blue-800:   var(--color-blue-800);    --color-accent-blue-900:   var(--color-blue-900);
+  --color-accent-purple-800: var(--color-purple-800);  --color-accent-purple-900: var(--color-purple-900);
+  --color-accent-green-800:  var(--color-green-800);   --color-accent-green-900:  var(--color-green-900);
+
+  /* ─── Colors — brand scale, anchored on the blue accent ───────────────── */
+  --color-redux-50: var(--color-neutral-50);   /* DEPRECATED ramp */
+  --color-redux-100: var(--color-neutral-100);   /* DEPRECATED ramp */
+  --color-redux-200: var(--color-neutral-100);   /* DEPRECATED ramp */
+  --color-redux-300: var(--color-accent-blue);   /* DEPRECATED ramp */
+  --color-redux-400: var(--color-accent-blue);   /* DEPRECATED ramp */
+  --color-redux-500: var(--color-accent-blue);   /* DEPRECATED ramp */
+  --color-redux-600: var(--color-accent-blue-800);   /* DEPRECATED ramp */
+  --color-redux-700: var(--color-accent-blue-800);   /* DEPRECATED ramp */
+  --color-redux-800: var(--color-accent-blue-800);   /* DEPRECATED ramp */
+  --color-redux-900: var(--color-accent-blue-900);   /* DEPRECATED ramp */
+  --color-redux-950: var(--color-accent-blue-900);   /* DEPRECATED ramp */
+
+  --color-coral-300: var(--color-accent-orange);   /* DEPRECATED ramp */
+  --color-coral-500: var(--color-accent-orange);   /* DEPRECATED ramp */
+  --color-coral-700: var(--color-accent-orange-800);   /* DEPRECATED ramp */
+
+  /* Neutrals — the CANONICAL 16-step warm ramp (DR-27).
+     This ramp's numbering previously meant something else entirely: `50`
+     was the page (#F6F5EF, canonically neutral-200), `200` was the stroke
+     (#D9D9D9, canonically border-default), `600`/`800` were the two text
+     values. Canonical numbering now wins; the values those names carried
+     all still exist, at their correct steps or in the text/border tiers.
+     Anything consuming the old meanings should move to the SEMANTIC tokens
+     (--color-page-ground, --color-border-default, --color-text-*). */
+  --color-neutral-0:    #FFFFFF;
+  --color-neutral-25:   #FEFEFD;
+  --color-neutral-50:   #FCFCFA;
+  --color-neutral-75:   #FAF9F6;
+  --color-neutral-100:  #F8F7F3;
+  --color-neutral-150:  #F7F6F1;
+  --color-neutral-200:  #F6F5EF;   /* the page ground */
+  --color-neutral-300:  #ECEBE3;
+  --color-neutral-400:  #DDDCCF;
+  --color-neutral-500:  #C9C8BC;
+  --color-neutral-600:  #A9A89C;
+  --color-neutral-700:  #818075;
+  --color-neutral-800:  #5F5F56;
+  --color-neutral-900:  #403F3B;
+  --color-neutral-950:  #2A2A28;   /* --color-bg-dark */
+  --color-neutral-1000: #171716;
+
+  /* The four accents are the whole decorative vocabulary. */
+  --color-decorative-violet:  #6E26FF;
+  --color-decorative-lime:    #26763D;
+  --color-decorative-coral:   #FF7926;
+  --color-decorative-cyan:    #26B7FF;
+  --color-decorative-magenta: #6E26FF;
+
+  --color-success: #26763D;
+  --color-warning: #FF7926;
+  --color-error:   #D6321F;
+  --color-info:    #26B7FF;
+
+  /* Text — TWO values carry the language. Headings take the primary;
+     paragraphs and all supporting text take the secondary.
+     DEPRECATED names → the canonical typography tier above. */
+  --color-text-title: var(--color-text-primary);    /* DEPRECATED → text-primary */
+  --color-text-body:  var(--color-text-secondary);  /* DEPRECATED → text-secondary */
+
+  /* Accent-on-surface pairing — re-measured 2026-07-30 against canonical:
+       blue-500 → primary text 6.36:1 · orange-500 → primary text 5.48:1
+       purple-600 → white 6.21:1 · green-600 → white 5.61:1
+     Each inverse fails and is never used (white on blue-500 is 2.26:1). */
+  --color-text-on-accent-light: var(--color-text-primary);
+  --color-text-on-accent-deep:  var(--color-text-inverse);
+
+  /* Strokes — one weight, one colour. */
+  --color-stroke-default: var(--color-border-default);
+  --color-divider:        var(--color-border-default);
+
+  /* Surfaces — DEPRECATED 0-INDEXED NUMBERING (DR-31).
+     This scale collided with the canonical surface tier NAME-FOR-NAME: it
+     was 0-indexed, so its `1` was the quiet inset step (#EFEEE7) while
+     canonical `1` is white, and its definitions sat LATER in this same
+     @theme block — silently overriding canonical.
+
+     Canonical --color-surface-1…5 above now stand alone. Only the two names
+     canonical does not use are retained, as deprecated aliases:
+       surface-0        → the page ground (was #F6F5EF, unchanged in value)
+       surface-accent   → the accent band
+     The old surface-1/2/3 meanings are GONE and their consumers move up:
+       old 1 #EFEEE7 (quiet inset) → --color-surface-5
+       old 2 #FFFFFF (cards)       → --color-surface-1
+       old 3 #FFFFFF (nested)      → --color-surface-1 */
+  --color-surface-0: var(--color-surface-4);     /* DEPRECATED → surface-4 (page ground) */
+  --color-surface-accent: var(--color-bg-accent);
+
+  /* Surface treatment — the material a branded surface is made of. Three
+     canonical Brand Pack assets, one fixed composition order, applied to
+     the closing CTA banner and creative surfaces only. Never to the page
+     surface, cards, buttons, nav, inputs, small UI, icons or typography. */
+  --texture-noise:          url("./assets/imagery/textures/noise-texture.webp");
+  --texture-film:           url("./assets/imagery/textures/film-texture.webp");
+  --texture-grunge:         url("./assets/imagery/textures/grunge-retro-texture.webp");
+  --texture-noise-blend:    overlay;        /* 100% — every treated surface */
+  --texture-film-blend:     plus-lighter;   /*  50% — PHOTOGRAPHIC BASES ONLY; a solid
+                                                 colour has no tone to vary, so film
+                                                 there reads as dirt, not as material */
+  --texture-grunge-blend:   overlay;        /*   5% — pre-applied in the asset's alpha */
+
+  /* ─── Typography — ONE typeface ────────────────────────────────────────
+     Manrope is retired; it was never vendored in this pack. */
+  --font-instrument-sans: 'Instrument Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-manrope: var(--font-instrument-sans);  /* DEPRECATED alias */
+  --font-inter:   var(--font-instrument-sans);  /* DEPRECATED alias */
+  --font-heading: var(--font-instrument-sans);
+  --font-body:    var(--font-instrument-sans);
+
+  /* ─── Major Third scale (1.25) from a 20px base, rounded to 4px ────────
+     The authored table is normative: chaining the ratio would put the top
+     step at 76; the scale says 72. */
+  --text-supporting: 16px;  --leading-supporting: 1.45;
+  --text-body:       20px;  --leading-body:       1.45;
+  --text-h6:         24px;  --leading-h6:         1.2;
+  --text-h5:         28px;  --leading-h5:         1.2;
+  --text-h4:         36px;  --leading-h4:         1.2;
+  --text-h3:         44px;  --leading-h3:         1.2;
+  --text-h2:         56px;  --leading-h2:         1.2;
+  --text-h1:         72px;  --leading-h1:         1.2;
+
+  --tracking-heading: -0.04em;   /* inherited by every heading level */
+
+  /* Legacy scale names — re-pointed so nothing lands off the scale. */
+  --text-eyebrow:       16px;  --leading-eyebrow:       1.45;
+  --text-caption:       16px;  --leading-caption:       1.45;
+  --text-body-sm:       16px;  --leading-body-sm:       1.45;
+  --text-body-lg:       20px;  --leading-body-lg:       1.45;
+  --text-body-emphasis: 20px;  --leading-body-emphasis: 1.45;
+  --text-heading-sm:    24px;  --leading-heading-sm:    1.2;
+  --text-heading-md:    24px;  --leading-heading-md:    1.2;
+  --text-heading-lg:    32px;  --leading-heading-lg:    1.2;
+  --text-display-sm:    40px;  --leading-display-sm:    1.2;
+  --text-display-md:    60px;  --leading-display-md:    1.2;
+  --text-display-lg:    72px;  --leading-display-lg:    1.2;
+
+  /* ─── Spacing — the named rhythm, over the numeric grid ───────────────── */
+  --spacing-xs:  12px;   /* tightly related elements */
+  --spacing-m:   40px;   /* related content groups */
+  --spacing-xl:  80px;   /* major visual groups */
+
+  /* Section rhythm — the three NAMED ROLES of a section opening. The
+     generic steps say how far apart two things are; these say what the gap
+     is FOR. The marker introduces the section; the heading begins the
+     narrative; heading + supporting copy are one thought.
+     THE RULE IS THE ORDER: opening > content > cluster, at every viewport. */
+  --spacing-rhythm-opening: 120px;  /* marker → heading */
+  --spacing-rhythm-cluster: 40px;   /* heading → supporting copy */
+  --spacing-rhythm-content: 80px;   /* cluster → primary content */
+
+  /* ─── The four widths — the narrowing between them IS hierarchy ─────────
+     CONTAINER (page frame) · LAYOUT (full container; tables, dashboards,
+     card grids, feature matrices only) · EDITORIAL (h1/h2/h3, hero
+     messaging, CTA headlines) · READING (paragraphs, supporting copy).
+     Headlines and supporting copy intentionally occupy different measures.
+     "Editorial", not "display" — display names a font classification. */
+  /* Two text measures, and only two — DR-14. */
+  --container-title:         750px;   /* the DEFAULT title measure */
+  --container-title-wide:    950px;   /* released only at a third line */
+  --container-body:          750px;
+  --container-editorial:     var(--container-title);        /* DEPRECATED alias (was 1100px) */
+  --container-reading:       var(--container-title-wide);        /* DEPRECATED alias */
+  --container-reading-tight: var(--container-body);         /* DEPRECATED alias */
+
+  /* ─── Creative vocabularies — proportion · presence · placement ─────────
+     CREATIVE-FIRST COMPOSITION: proportion, measure and placement are
+     decided BEFORE the surrounding layout. Layout adapts to the creative;
+     the creative never adapts to available space. */
+  --aspect-square:    1 / 1;
+  --aspect-portrait:  3 / 4;
+  --aspect-landscape: 4 / 3;
+  --aspect-wide:      16 / 9;
+
+  /* Presence — compositional AUTHORITY as a share of the composition. */
+  --presence-xs: 25%;
+  --presence-s:  35%;
+  --presence-m:  50%;
+  --presence-l:  65%;
+  --presence-xl: 100%;
+
+  /* Environmental imagery — the canonical library. Selected by name, never
+     by URL; each binds its measured focus, because every asset is 3:2 and
+     each approved ratio therefore crops it. See ASSETS.md. */
+  --env-cliffside-muted: url("./assets/imagery/environments/env-cliffside-muted.jpg");
+  --env-dawn-haze:       url("./assets/imagery/environments/env-dawn-haze.jpg");
+  --env-lake-mirror:     url("./assets/imagery/environments/env-lake-mirror.jpg");
+  --env-massif-banded:   url("./assets/imagery/environments/env-massif-banded.jpg");
+  --env-massif-clear:    url("./assets/imagery/environments/env-massif-clear.jpg");
+  --env-ridges-distant:  url("./assets/imagery/environments/env-ridges-distant.jpg");
+  --env-valley-deep:     url("./assets/imagery/environments/env-valley-deep.jpg");
+
+  /* The scrim — measured, not chosen. An environment behind text keeps the
+     contrast of the solid surface it replaces (worst case 7.37:1 on the
+     real render vs the solid surface's 6.11:1). Holds across the editorial
+     column, releases past it. A creative shown as the subject is never
+     scrimmed. */
+  --scrim-near: 0.82;
+  --scrim-hold: 0.80;
+  --scrim-far:  0.48;
+
+  --spacing-1:   12px;   /* DEPRECATED — off the closed set */
+  --spacing-2:   12px;   /* DEPRECATED — off the closed set */
+  --spacing-3:   12px;   /* = XS */
+  --spacing-4:   20px;   /* DEPRECATED — off the closed set */
+  --spacing-6:   20px;   /* DEPRECATED — off the closed set */
+  --spacing-8:   40px;   /* DEPRECATED — off the closed set */
+  --spacing-10:  40px;   /* = M  */
+  --spacing-12:  40px;   /* DEPRECATED — off the closed set */
+  --spacing-16:  80px;   /* DEPRECATED — off the closed set */
+  --spacing-20:  80px;   /* = XL */
+  --spacing-24:  80px;   /* DEPRECATED — off the closed set */
+  --spacing-30:  120px;  /* = section padding block */
+  --spacing-32:  120px;   /* DEPRECATED — off the closed set */
+  --spacing-40:  160px;
+  --spacing-48:  160px;   /* DEPRECATED — off the closed set */
+  --spacing-64:  160px;   /* DEPRECATED — off the closed set */
+  --spacing-80:  160px;   /* DEPRECATED — off the closed set */
+  --spacing-120: 160px;   /* DEPRECATED — off the closed set */
+
+  /* ─── Border Radius ───────────────────────────────────────────────────
+     The website CURRENTLY STANDARDIZES ON two radii: control 6px, large
+     surface 12px. The wider vocabulary stays defined for a future
+     component with explicit justification. */
+  --radius-control: 6px;
+  --radius-card:    12px;
+
+  --radius-xs:   6px;
+  --radius-sm:   6px;
+  --radius-md:   12px;
+  --radius-lg:   12px;
+  --radius-xl:   12px;
+  --radius-full: 9999px;   /* genuinely circular affordances only */
+
+  /* ─── Shadows — NOT USED BY THE CURRENT VISUAL LANGUAGE ───────────────
+     Shadows appear nowhere on the website; hierarchy is achieved with
+     spacing, typography, alignment and composition. Retained as `none`
+     rather than removed so any consumer still referencing them renders
+     correctly flat instead of breaking. */
+  --shadow-rest:     none;   /* DEPRECATED — unused */
+  --shadow-hover:    none;   /* DEPRECATED — unused */
+  --shadow-dropdown: none;   /* DEPRECATED — unused */
+  --shadow-modal:    none;   /* DEPRECATED — unused */
+
+  /* ─── Motion — not an axis this direction covers ──────────────────────── */
+  --animate-duration-instant:  0ms;
+  --animate-duration-micro:    80ms;
+  --animate-duration-quick:    160ms;
+  --animate-duration-standard: 240ms;
+  --animate-duration-slow:     400ms;
+  --animate-duration-scene:    640ms;
+
+  --ease-out:         cubic-bezier(0.2, 0, 0, 1);
+  --ease-in:          cubic-bezier(0.4, 0, 1, 1);
+  --ease-in-out:      cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring-soft: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-spring-snap: cubic-bezier(0.16, 1.36, 0.3, 1);
+
+  /* ─── Breakpoints — not an axis this direction covers ─────────────────── */
+  --breakpoint-sm:  640px;
+  --breakpoint-md:  768px;
+  --breakpoint-lg:  1024px;
+  --breakpoint-xl:  1280px;
+  --breakpoint-2xl: 1536px;
+}
+
+/*
+  Dark-theme override — RETIRED AS A MECHANISM. DO NOT APPLY.
+
+  This variant contradicts the governance above and is retained only because
+  nothing in this pack is deleted. DR-28 introduced governed editorial dark
+  surfaces and was explicit that **dark is a compositional device, not a
+  theme — there is nothing to switch to.** A theme variant is exactly the
+  mechanism that produces the whole-page dark the rule forbids: flip one
+  attribute and every section inverts at once, which is the opposite of a
+  section deliberately declaring a dark background for a reason.
+
+  HOW DARK IS ACTUALLY REALIZED: a section declares --color-bg-dark for its
+  own background. Permitted for a hero, closing band, footer, immersive or
+  full-bleed media moment, product reveal or narrative transition — AT MOST
+  TWO PER PAGE. Never for general content, forms, long-form reading, or
+  section-to-section alternation.
+
+  Values are re-pointed onto canonical so that if this is ever applied by
+  accident it cannot describe a different system than the one above. Damage
+  limitation, not endorsement.
+*/
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@variant dark {
+  --color-surface-0: var(--color-neutral-1000);  /* was #0E0E0E */
+  --color-surface-1: var(--color-neutral-950);   /* was #1A1A1A */
+  --color-surface-2: var(--color-neutral-950);   /* was #1F1F1F */
+  --color-surface-3: var(--color-neutral-900);   /* was #292929 */
+
+  /* Measured on neutral-950: text-inverse 14.38:1, neutral-400 10.42:1.
+     The raw #E4E4E4 is retired — off-canonical, and it measured 11.31:1, so
+     nothing legible is lost. */
+  --color-text-title: var(--color-text-inverse);
+  --color-text-body:  var(--color-neutral-400);
+
+  --color-stroke-default: rgba(255, 255, 255, 0.20);
+  --color-divider:        rgba(255, 255, 255, 0.16);
+
+  /* Shadows stay off in every theme — the prohibition is the language, not
+     a light-mode convenience. */
+  --shadow-rest:     none;
+  --shadow-hover:    none;
+  --shadow-dropdown: none;
+  --shadow-modal:    none;
+}

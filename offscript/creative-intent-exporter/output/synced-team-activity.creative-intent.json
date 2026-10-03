@@ -1,0 +1,11 @@
+{
+  "id": "synced-team-activity",
+  "contractVersion": 1,
+  "digest": "sha256:a15813a612e9625589df44256527b5dd9d68c67afb80e9fb81fb88d63acbf54c",
+  "belief": "the whole team sees the exact same handoff the moment it happens",
+  "feature": "collaboration",
+  "ratio": "4:3",
+  "camera": "workflow",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

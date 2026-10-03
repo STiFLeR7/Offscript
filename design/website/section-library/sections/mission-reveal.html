@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Centered stack · pinned — mission reveal</title>
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Centered stack · pinned      from component-mission-reveal.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **The whole field given to a single statement.** The profile is
+              blunt about why this works and how it fails: scarcity is the entire
+              mechanism, and an unremarkable line given this treatment reads as
+              an overreach. So nothing is added. No eyebrow, no rule, no mark, no
+              second voice — the only thing on screen is the sentence, and the
+              only event is it arriving.
+
+  STRUCTURE   Unchanged. A 220vh runway with a 100vh sticky centre holding one
+              left-aligned column of two paragraphs, split word-by-word into
+              spans the scroll handler ramps from .16 opacity to full. DOM,
+              scripts, ids, `data-*`, `aria-*` and every behavioural hook are
+              byte-compatible with the frozen original (DR-22). The v2 file is
+              beside this one in `_v2/`.
+
+  NO ENVIRONMENT — and that is the composition's own answer, not a gap.
+              v2 has **no abstract creative background**: the field is flat, by
+              design. The profile allocates `Media presence none, anchor —`, and
+              DR-46 is a rule about where a photograph goes, not a quota: *a
+              photograph occupies a position the composition allocates to it.*
+              This one allocates none. The only surface an environment could
+              take is the surface the statement is set on, and putting the
+              statement on a photograph is refused outright; putting it on an
+              opaque card floated over one would trade the section's single
+              mechanism — the undivided field — for a decoration. So the field
+              stays flat and this is recorded rather than worked around.
+
+  NO OVERFLOW ANYWHERE. `overflow: hidden/clip/auto` on the section or any
+              ancestor silently kills `position: sticky`, and the scroll maths
+              reads `section.offsetHeight - window.innerHeight` off the tall
+              section — so the 220vh runway is a behavioural value, not a
+              spacing one, and is left alone.
+
+  ACCENT      **Zero.** Monochrome was already the source's decision and it is
+              the right one: an accent word inside a statement this size would
+              be the page telling the reader which part to care about, which is
+              exactly the judgement this section hands them.
+
+  TYPE        Weight 600 → 400. At the section step on the display face, a
+              statement does not need weight to be heavy — it has the whole
+              viewport. `clamp(26 → 52px)` is gone: it resolved to sizes nobody
+              authored, and the ramp has steps for every width it was covering.
+
+  RESPONSIVE  The original's breakpoint (600), plus one type step at 1024 so the
+              statement lands on the ramp rather than between it. The runway is
+              vh-relative, so the reveal's pacing is identical at every width.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  .ms-section, .ms-section * { box-sizing: border-box; }
+  .ms-section {
+    background: var(--cr-page-ground);
+    height: 220vh;                       /* frozen: the scroll runway the handler measures.
+                                            NO overflow here or on any ancestor. */
+    font-family: var(--cr-font-body);
+  }
+  .ms-sticky {
+    position: sticky; top: 0;
+    height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 var(--cr-page-gutter);
+  }
+  .ms-text { max-width: var(--cr-measure-title-wide); width: 100%; }
+
+  /* The one voice in the section. The reveal is pure opacity over ONE ink, so
+     every word resolves to the same token and the front is the only variable. */
+  .ms-para {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h2);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .ms-para + .ms-para { margin-top: var(--cr-space-m); }
+  .ms-w { transition: opacity .12s linear; }     /* tiny smoothing between rAF frames */
+
+  /* faded INITIAL state — scoped to .has-js so without JS every word is full ink */
+  .has-js .ms-section .ms-w { opacity: 0.16; }
+
+  /* Matched to the trigger's specificity — the JS also forces 1; this is the
+     CSS guarantee, and it covers the transient low-opacity state. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .ms-section .ms-w { opacity: 1; }
+  }
+
+  /* No type step is authored here. The pack's ramp already moves H2 down the
+     ladder (56 → 44 → 36) at its own two breakpoints, so a second step on top
+     of it would land the statement at 20px on a phone — the size of a caption,
+     for the one sentence the section exists to make an event of. */
+  @media (max-width: 600px) {
+    .ms-section { height: 200vh; }
+    .ms-sticky { padding: 0 var(--cr-page-gutter); align-items: flex-start; padding-top: 22vh; }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. Six lines, which is the whole section: one statement, one
+     measure, one gap between the paragraphs. There is no `directed` line — the
+     220vh runway and the 100vh sticky are behavioural values the scroll handler
+     measures, and they were not touched.
+  .ms-para | font-size              | type-ramp
+  .ms-para | line-height            | type-ramp
+  .ms-para | margin-top             | spacing-scale
+  .ms-text | max-width              | measure
+  .ms-w    | font-size              | type-ramp
+  .ms-w    | line-height            | type-ramp
+-->
+
+<section class="ms-section" data-screen-label="Mission · scroll reveal"
+         data-archetype="editorial-stack" data-hierarchy="hero" data-intent="inspire"
+         data-register="quiet" data-signature="architectural-whitespace" data-density="low">
+  <div class="ms-sticky">
+    <div class="ms-text">
+      <p class="ms-para"><span class="ms-w">You</span> <span class="ms-w">can't</span> <span class="ms-w">afford</span> <span class="ms-w">backlogs</span> <span class="ms-w">or</span> <span class="ms-w">busywork</span> <span class="ms-w">&mdash;</span> <span class="ms-w">we</span> <span class="ms-w">built</span> <span class="ms-w">Example Brand</span> <span class="ms-w">to</span> <span class="ms-w">put</span> <span class="ms-w">operational</span> <span class="ms-w">excellence</span> <span class="ms-w">inside</span> <span class="ms-w">the</span> <span class="ms-w">systems</span> <span class="ms-w">you</span> <span class="ms-w">already</span> <span class="ms-w">run.</span></p>
+      <p class="ms-para"><span class="ms-w">Our</span> <span class="ms-w">autonomous</span> <span class="ms-w">agents</span> <span class="ms-w">absorb</span> <span class="ms-w">the</span> <span class="ms-w">routine</span> <span class="ms-w">work,</span> <span class="ms-w">catch</span> <span class="ms-w">every</span> <span class="ms-w">exception,</span> <span class="ms-w">and</span> <span class="ms-w">hand</span> <span class="ms-w">your</span> <span class="ms-w">people</span> <span class="ms-w">back</span> <span class="ms-w">the</span> <span class="ms-w">hours</span> <span class="ms-w">that</span> <span class="ms-w">demand</span> <span class="ms-w">real</span> <span class="ms-w">judgment.</span></p>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var section = document.querySelector('.ms-section');
+  if (!section) return;
+  var words = Array.prototype.slice.call(section.querySelectorAll('.ms-w'));
+  var N = words.length;
+  var MIN = 0.16, FADE = 5, END = 0.88;        // front softness (words) + finish progress
+
+  function update(p) {
+    var eff = p / END; eff = eff < 0 ? 0 : (eff > 1 ? 1 : eff);
+    var front = eff * (N + FADE);              // +FADE buffer so the last word reaches full
+    for (var i = 0; i < N; i++) {
+      var o = (front - i) / FADE;
+      o = o < 0 ? 0 : (o > 1 ? 1 : o);
+      words[i].style.opacity = (MIN + (1 - MIN) * o).toFixed(3);
+    }
+  }
+  window.__msUpdate = update;                  // QA hook for a forced-progress still
+
+  if (reduce) { words.forEach(function (w) { w.style.opacity = 1; }); return; }
+
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(function () {
+      var rect = section.getBoundingClientRect();             // TALL section, not the sticky
+      var denom = section.offsetHeight - window.innerHeight;
+      update(denom > 0 ? (-rect.top / denom) : 0);
+      ticking = false;
+    });
+  }
+  update(0);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+})();
+</script>
+
+</body>
+</html>

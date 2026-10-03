@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Form Split · asymmetric — contact page body</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Form Split · asymmetric              from component-contact.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **This one IS the page, not a band within one.** The profile draws
+              the line by hand: it "opens with the page's own top-level heading,
+              which means it *is* the page rather than a band within one; the
+              others are bands." Everything downstream follows from that — the
+              capture gets the page's OPENING weight rather than its closing
+              weight, and reading the structure as a band is the error it
+              invites. So the headline stands alone above a rule, and the form
+              arrives underneath it as the page's second movement.
+
+  STRUCTURE   Unchanged. Top block (headline → intro → two contact pills →
+              hairline rule), then a 0.72fr/1.28fr helper-beside-form split with
+              two 2-up input rows, a full-width comment field and the submit.
+              DOM, scripts, ids, `data-*`, `href` and every behavioural hook are
+              byte-compatible with the frozen original (DR-22). The v2 file is
+              beside this one in `_v2/`.
+
+  THE FORM IS FROZEN. Every input, label, `for`, `id`, `autocomplete`, the
+              `novalidate` and the submit behaviour are exactly the original's.
+              The floating-label mechanism is frozen too — it is pure CSS and it
+              is the affordance, so it keeps working without JS.
+
+  NO ABSTRACT BACKGROUND  Nothing here for the environment pass to replace — no
+              gradient, no blur plate, no glow, no ring, no tint wash. The
+              section is flat by construction and stays flat. It is also the
+              wrong section to invent one for: a photograph behind form fields
+              is the case the direction rules out by name, and there is no
+              type-free region to give one. Reported as "none", which is an
+              answer rather than a skipped step.
+
+  THE HEADLINE  v2 sized it `clamp(56px, 11vw, 150px)`, which resolves to a
+              different unnameable size at every viewport width — 132px at 1200,
+              99px at 900, none of them on any ladder. It is now `h1`, and the
+              pack steps h1 down its OWN ramp (72 / 56 / 44) at its own
+              breakpoints. The word is smaller than v2 rendered it at desktop.
+              That is the ramp doing its job, and the opening weight the profile
+              asks for is carried by the rule and the 80px block rhythm rather
+              than by a headline nobody could name the size of.
+
+  UNDERLINE INPUTS STAY, and that is a decision rather than an omission. The
+              sibling form specimen boxes its fields on the raised surface,
+              because a hairline under 3:1 cannot be a control's only boundary.
+              The same argument applies here and is answered differently: the
+              floating label is anchored to the underline, so boxing the field
+              would relocate an absolutely-positioned label and change the
+              composition rather than restyle it. The SECOND CUE is therefore
+              the 2px ink underline that draws in on focus — `--cr-text-primary`
+              at ~13:1 against the page ground, where the 1px default border
+              measures under 3:1 and v2's brand blue measured 2.07:1. Two cues,
+              both ink, both measurable: the underline draws AND the label lifts.
+
+  ACCENT      One moment, and it is the ask. `Submit` takes the orange. v2 spent
+              brand blue three times over — the submit, the focus underline of
+              every field, and the floating label's focus colour — which is a
+              form where the accent marks *being in a text box* rather than
+              marking the thing to click. The pills stay ink, as the source's
+              dark chips were, because a contact channel is a destination, not
+              the ask.
+
+              THE HOVER INVERTS RATHER THAN JUST DARKENING. The fill steps to
+              the deep orange, and dark ink on that step measures 1.9:1 — an AA
+              failure if the label stayed put. The label moves with the fill, to
+              the inverse at 7.4:1. A fill that darkens without its foreground
+              moving is a contrast bug wearing a hover state.
+
+  RESPONSIVE  The original's breakpoints (900 / 620), unchanged. The per-section
+              headline and pill type steps are DELETED rather than converted —
+              the pack already walks both ladders at its own breakpoints, and a
+              second ramp on top resolves to sizes nobody authored. The reduce
+              guard already named the trigger as well as the hidden state, so
+              the entrance snapped correctly and is left alone.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  .cf-section, .cf-section * { box-sizing: border-box; }
+  .cf-section {
+    background-color: var(--cr-page-ground);
+    padding: var(--cr-space-2xl) var(--cr-page-gutter);
+    font-family: var(--cr-font-body);
+    font-size: var(--cr-text-body);
+    color: var(--cr-text-secondary);
+  }
+  .cf-wrap { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ─── top block ───────────────────────────────────────────────── */
+  .cf-title {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h1);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .cf-intro {
+    margin: var(--cr-rhythm-cluster) 0 0;
+    max-width: 440px;                  /* the original's measure — untouched */
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-primary);
+  }
+  .cf-pills {
+    display: flex; flex-wrap: wrap;
+    gap: var(--cr-space-s);
+    margin-top: var(--cr-rhythm-content);
+  }
+  /* Ink chips, as the source's were. A contact channel is a destination, not
+     the ask — the section spends its accent once and this is not the once. */
+  .cf-pill {
+    display: inline-flex; align-items: center;
+    gap: var(--cr-space-xs);
+    background-color: var(--cr-text-primary);
+    color: var(--cr-text-inverse);
+    border-radius: var(--cr-radius-control);   /* the pill radius is retired */
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    text-decoration: none;
+    transition: transform .12s ease, background-color .2s ease;
+  }
+  .cf-pill i { width: 17px; height: 17px; stroke-width: var(--cr-icon-stroke-sm); flex: none; }
+  .cf-pill:hover { background-color: var(--cr-neutral-1000); }
+  .cf-pill:active { transform: scale(.98); }
+  .cf-pill:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 2px; }
+
+  .cf-rule {
+    border: 0;
+    border-top: var(--cr-stroke) solid var(--cr-border-default);
+    margin: var(--cr-space-xl) 0;
+  }
+
+  /* ─── form block ──────────────────────────────────────────────── */
+  .cf-form-block {
+    display: grid;
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    column-gap: var(--cr-space-xl);
+  }
+  .cf-helper {
+    margin: 0;
+    max-width: 360px;                  /* the original's measure — untouched */
+    min-width: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  .cf-form { min-width: 0; }
+  .cf-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    column-gap: var(--cr-space-m);
+    margin-bottom: var(--cr-space-m);
+  }
+
+  .cf-field { position: relative; min-width: 0; }
+  .cf-field--full { margin-bottom: var(--cr-space-m); }
+  /* A control never inherits `font-family` — it is stated. */
+  .cf-input, .cf-textarea {
+    width: 100%; border: none; outline: none;
+    background-color: transparent;
+    border-bottom: var(--cr-stroke) solid var(--cr-border-default);
+    font-family: var(--cr-font-body);
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-primary);
+    padding: var(--cr-space-s) 0 var(--cr-space-xs);
+  }
+  .cf-textarea { resize: vertical; min-height: 96px; }
+  .cf-label {
+    position: absolute; left: 0; top: var(--cr-space-s);
+    font-family: var(--cr-font-body);
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    color: var(--cr-text-secondary);
+    pointer-events: none; transform-origin: left top;
+    transition: transform .2s ease, color .2s ease;
+  }
+  /* float the label up on focus OR when the field has content */
+  .cf-input:focus + .cf-label,
+  .cf-input:not(:placeholder-shown) + .cf-label,
+  .cf-textarea:focus + .cf-label,
+  .cf-textarea:not(:placeholder-shown) + .cf-label {
+    transform: translateY(-20px) scale(0.8); color: var(--cr-text-secondary);
+  }
+  .cf-input:focus + .cf-label, .cf-textarea:focus + .cf-label { color: var(--cr-text-primary); }
+  /* THE SECOND CUE — an ink underline draws in on focus. The draw is the
+     original's; only the colour moved. `--cr-text-primary` measures ~13:1 on the
+     page ground, where the blue it replaces measures 2.07:1 and is disqualified
+     outright. A focus indicator is dark ink, never a hue. */
+  .cf-field::after {
+    content: ""; position: absolute; left: 0; bottom: 0; height: 2px; width: 100%;
+    background-color: var(--cr-text-primary); transform: scaleX(0); transform-origin: left;
+    transition: transform .3s cubic-bezier(.16,1,.3,1);
+  }
+  .cf-field:focus-within::after { transform: scaleX(1); }
+
+  /* ─── THE ONE ACCENT MOMENT — the ask ─────────────────────────── */
+  .cf-submit {
+    margin-top: var(--cr-space-xs);
+    display: inline-flex; align-items: center;
+    background-color: var(--cr-accent-orange);
+    color: var(--cr-on-accent-light);           /* what sits on orange */
+    border: none;
+    border-radius: var(--cr-radius-control);    /* the pill radius is retired */
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    cursor: pointer;
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    transition: background-color .2s ease, color .2s ease, transform .12s ease;
+  }
+  /* THE LABEL MOVES WITH THE FILL. Ink on the deep orange step measures 1.9:1;
+     the inverse measures 7.4:1. Darkening a fill without moving its foreground
+     is a contrast bug wearing a hover state. */
+  .cf-submit:hover, .cf-submit:focus-visible {
+    background-color: var(--cr-accent-orange-800);
+    color: var(--cr-text-inverse);
+  }
+  .cf-submit:active { transform: scale(.97); }
+  .cf-submit:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 3px; }
+
+  /* ─── reveal (anti-race, fires once; no-JS shows all) ─────────── */
+  .has-js .cf-section [data-reveal] { opacity: 0; transform: translateY(20px); }
+  .has-js .cf-section [data-reveal].in-view {
+    animation: cfRise .65s cubic-bezier(.16,1,.3,1) forwards; animation-delay: var(--d, 0s);
+  }
+  @keyframes cfRise { to { opacity: 1; transform: none; } }
+  /* The guard already named the trigger as well as the hidden state, so the
+     entrance snaps rather than running under a reduce preference. Left alone. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .cf-section [data-reveal],
+    .has-js .cf-section [data-reveal].in-view { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* ─── responsive — the ORIGINAL's breakpoints. The per-section headline
+     and pill type steps are deleted, not converted. ─────────────── */
+  @media (max-width: 900px) {
+    .cf-form-block { grid-template-columns: minmax(0, 1fr); row-gap: var(--cr-space-m); }
+    .cf-helper { max-width: 520px; }
+  }
+  @media (max-width: 620px) {
+    .cf-row { grid-template-columns: 1fr; row-gap: var(--cr-space-m); column-gap: 0; }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. Nothing here is `directed`: the composition is the
+     original's throughout, and every line is a scale realising itself. The
+     absent lines are the argument as much as the present ones — the input
+     fields carry no border or radius row, because the underline construction
+     is kept: the stroke width and the radius are the original's, and only the
+     inset moved onto the scale.
+  .cf-field      | font-size              | type-ramp
+  .cf-field      | margin-bottom          | spacing-scale
+  .cf-form       | font-size              | type-ramp
+  .cf-form-block | column-gap             | spacing-scale
+  .cf-form-block | font-size              | type-ramp
+  .cf-helper     | line-height            | type-ramp
+  .cf-helper     | margin-top             | spacing-scale
+  .cf-input      | line-height            | type-ramp
+  .cf-input      | padding-bottom         | spacing-scale
+  .cf-input      | padding-top            | spacing-scale
+  .cf-intro      | font-size              | type-ramp
+  .cf-intro      | line-height            | type-ramp
+  .cf-intro      | margin-top             | spacing-scale
+  .cf-label      | line-height            | type-ramp
+  .cf-pill       | border-radius          | radius-pair
+  .cf-pill       | column-gap             | spacing-scale
+  .cf-pill       | font-size              | type-ramp
+  .cf-pill       | line-height            | type-ramp
+  .cf-pill       | padding-bottom         | spacing-scale
+  .cf-pill       | padding-left           | spacing-scale
+  .cf-pill       | padding-right          | spacing-scale
+  .cf-pill       | padding-top            | spacing-scale
+  .cf-pill       | row-gap                | spacing-scale
+  .cf-pills      | column-gap             | spacing-scale
+  .cf-pills      | font-size              | type-ramp
+  .cf-pills      | margin-top             | spacing-scale
+  .cf-pills      | row-gap                | spacing-scale
+  .cf-row        | column-gap             | spacing-scale
+  .cf-row        | font-size              | type-ramp
+  .cf-row        | margin-bottom          | spacing-scale
+  .cf-row        | row-gap                | spacing-scale
+  .cf-rule       | font-size              | type-ramp
+  .cf-rule       | margin-bottom          | spacing-scale
+  .cf-rule       | margin-top             | spacing-scale
+  .cf-submit     | border-radius          | radius-pair
+  .cf-submit     | font-size              | type-ramp
+  .cf-submit     | line-height            | type-ramp
+  .cf-submit     | margin-top             | spacing-scale
+  .cf-submit     | padding-bottom         | spacing-scale
+  .cf-submit     | padding-left           | spacing-scale
+  .cf-submit     | padding-right          | spacing-scale
+  .cf-submit     | padding-top            | spacing-scale
+  .cf-textarea   | line-height            | type-ramp
+  .cf-textarea   | padding-bottom         | spacing-scale
+  .cf-textarea   | padding-top            | spacing-scale
+  .cf-title      | font-size              | type-ramp
+  .cf-title      | line-height            | type-ramp
+  .cf-wrap       | font-size              | type-ramp
+  .lucide        | font-size              | type-ramp
+  .lucide        | line-height            | type-ramp
+  path           | font-size              | type-ramp
+  path           | line-height            | type-ramp
+  rect           | font-size              | type-ramp
+  rect           | line-height            | type-ramp
+-->
+
+<section class="cf-section" data-screen-label="Contact"
+         data-archetype="editorial-split" data-hierarchy="hero" data-intent="convert"
+         data-register="instructional" data-signature="architectural-whitespace" data-density="high">
+  <div class="cf-wrap">
+
+    <!-- ── top ────────────────────────────────────────────────── -->
+    <h1 class="cf-title" data-reveal style="--d:0s">Contact</h1>
+    <p class="cf-intro" data-reveal style="--d:.08s">We're interested in the work that's slowing your team down. Tell us where the backlog is, and we'll show you where agents fit.</p>
+
+    <div class="cf-pills" data-reveal style="--d:.14s">
+      <a class="cf-pill" href="tel:+912049001200"><i data-lucide="phone"></i>+91 20 4900 1200</a>
+      <a class="cf-pill" href="mailto:inquiries@example-brand.com"><i data-lucide="mail"></i>inquiries@example-brand.com</a>
+    </div>
+
+    <hr class="cf-rule" data-reveal style="--d:.2s" />
+
+    <!-- ── form ───────────────────────────────────────────────── -->
+    <div class="cf-form-block">
+      <p class="cf-helper" data-reveal style="--d:.24s">If you have a workflow in mind &mdash; or want to see where automation could pay off &mdash; fill out the form below with your contact details and a short description of what your team is dealing with.</p>
+
+      <form class="cf-form" novalidate onsubmit="return false">
+        <div class="cf-row" data-reveal style="--d:.28s">
+          <div class="cf-field">
+            <input class="cf-input" type="text" id="cf-name" placeholder=" " autocomplete="name" />
+            <label class="cf-label" for="cf-name">Full Name</label>
+          </div>
+          <div class="cf-field">
+            <input class="cf-input" type="text" id="cf-company" placeholder=" " autocomplete="organization" />
+            <label class="cf-label" for="cf-company">Company Name</label>
+          </div>
+        </div>
+
+        <div class="cf-row" data-reveal style="--d:.34s">
+          <div class="cf-field">
+            <input class="cf-input" type="tel" id="cf-phone" placeholder=" " autocomplete="tel" />
+            <label class="cf-label" for="cf-phone">Phone Number</label>
+          </div>
+          <div class="cf-field">
+            <input class="cf-input" type="email" id="cf-email" placeholder=" " autocomplete="email" />
+            <label class="cf-label" for="cf-email">E-mail Address</label>
+          </div>
+        </div>
+
+        <div class="cf-field cf-field--full" data-reveal style="--d:.4s">
+          <textarea class="cf-textarea" id="cf-comment" placeholder=" "></textarea>
+          <label class="cf-label" for="cf-comment">Comment (optional)</label>
+        </div>
+
+        <button class="cf-submit" type="submit" data-reveal style="--d:.46s">Submit</button>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.cf-section');
+  if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
+  if (!sec) return;
+
+  function reveal() { sec.querySelectorAll('[data-reveal]').forEach(function (el) { el.classList.add('in-view'); }); }
+  if (reduce) { reveal(); return; }
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) { if (en.isIntersecting) { reveal(); io.disconnect(); } });
+    }, { threshold: 0.08 });
+    io.observe(sec);
+  } else { reveal(); }
+})();
+</script>
+
+</body>
+</html>

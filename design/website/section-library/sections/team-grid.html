@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grid · three-column-equal — team grid</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Grid · three-column-equal        from component-team-grid.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **Even weight across a whole team is the argument.** The profile
+              is explicit: the organisation is a group rather than a figurehead,
+              and the evenness is what says so. So every cell is identical —
+              same frame, same footer, same ink. Nothing is promoted, because
+              promoting one cell would be a different claim.
+
+  STRUCTURE   Unchanged. Eyebrow · two-column header split · 3 × 2 grid of six
+              people. DOM, scripts, ids, `data-*`, `aria-*`, `href`, `src` and
+              every behavioural hook are byte-compatible with the frozen
+              original (DR-22). The v2 file is beside this one in `_v2/`.
+
+  SIX PORTRAITS, UNCHANGED.
+              Six human photographs, and not one of them is touched — same
+              files, same `object-position` on every frame, same `object-fit:
+              cover`, none hidden, none substituted. Human photography is a
+              SUBJECT, never a surface and never a swap.
+
+  NO ENVIRONMENT — and that is a finding, not an omission.
+              v2 carries no abstract creative background: no gradient, no blur
+              plate, no glow, no tint wash. Its only images are the six
+              portraits. The assigned environment therefore has nowhere to go,
+              and nothing was invented to give it one. A photograph behind a
+              roster would put a landscape under twelve lines of type, which is
+              the case the blanket rule exists to prevent.
+
+  ACCENT      **Zero.** v2 spent a hue on six LinkedIn marks — six moments in a
+              section whose ceiling is one, and none of them a primary control.
+              They resolve in ink: secondary at rest, primary on hover and
+              focus, which is the affordance a real link needs and all it needs.
+              A page where every card is marked marks nothing.
+
+  TYPE        The eyebrow was 15px at weight 600; the role labels 15px at 400.
+              Both land on the one supporting step, in sentence case, untracked
+              — a role is supporting text and supporting text never shouts. The
+              names step up to the body size on the display face. Weights are
+              400 and 500 only; `clamp()` is gone, so no size resolves to a
+              number nobody authored.
+
+  FRAME       The portrait frame declared 47/50 — a proportion off the approved
+              vocabulary of four. It becomes `3/4`, the ratio the pack names for
+              human subjects. `cover` crops symmetrically about the declared
+              horizontal centre, so no face moves and nothing stretches. The
+              single-column crop moves 5/4 to `4/3`, the approved landscape step
+              nearest the banner it was reaching for.
+
+  RESPONSIVE  The original's breakpoints (1160 / 880 / 560), unchanged.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  html, body { margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+
+  /* ── Section band ────────────────────────────────────────────────
+     The quiet cream step, so the raised cards separate by SURFACE
+     CONTRAST alone — no border, no depth. That was the v2 composition
+     and it is the correct one; only the token name changed. */
+  .team {
+    background: var(--cr-surface-5);
+    padding: var(--cr-space-2xl) var(--cr-page-gutter);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+    font-size: var(--cr-text-body);
+  }
+  .team *, .team *::before, .team *::after { box-sizing: border-box; }
+  .well { max-width: var(--cr-content-narrow); margin: 0 auto; }
+
+  /* ── Header ──────────────────────────────────────────────────────
+     A kicker, in ink. v2 reasoned its way to a neutral grey because the
+     hue it wanted failed AA on this band; the direction gets there in
+     one step instead — supporting text is ink, and the position above
+     the headline is what makes it read as a kicker. */
+  .eyebrow {
+    margin: 0 0 var(--cr-space-s);
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    color: var(--cr-text-secondary);
+  }
+  /* Headline (wide) beside lede (narrow), top-aligned. The track ratio is
+     the composition and is left exactly as authored. */
+  .head {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    column-gap: var(--cr-space-m);
+    align-items: start;
+  }
+  .head-title {
+    margin: 0; min-width: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .head-lede {
+    margin: 0; min-width: 0;
+    max-width: var(--cr-measure-body);
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* ── Card grid ───────────────────────────────────────────────────
+     Columns tight, rows open — the vertical rhythm the source reads by.
+     Both land on the scale; the ratio between them survives. */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--cr-space-s);
+    row-gap: var(--cr-space-xl);
+    margin-top: var(--cr-rhythm-content);
+  }
+
+  .card {
+    background: var(--cr-bg-raised);
+    border-radius: var(--cr-radius-card);
+    overflow: hidden;                        /* the portrait clips to the card corners */
+    min-width: 0;
+  }
+
+  /* THE PORTRAIT FRAME. `aspect-ratio` alone governs the proportion —
+     no height floor beside it, and the card is a block child of a grid
+     item rather than a stretching flex row, so nothing overrides it. */
+  .photo {
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: var(--cr-surface-5);         /* tone under the frame before the photo paints */
+  }
+  .photo img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: 50% 22%;
+    display: block;
+  }
+
+  /* ── Card footer — name + link, then role ────────────────────────── */
+  .foot { padding: var(--cr-space-s); }
+  .foot-top {
+    display: flex; align-items: center;
+    justify-content: space-between; gap: var(--cr-space-xs);
+  }
+  .name {
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+    min-width: 0;
+  }
+  /* The link mark, in ink. Secondary at rest so it recedes behind the
+     name; primary on hover and focus, which is the state change the
+     affordance actually needs. */
+  .li {
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--cr-text-secondary);
+    border-radius: var(--cr-radius-control);
+    transition: color .2s ease;
+    text-decoration: none;
+  }
+  .li svg { width: 20px; height: 20px; display: block; }
+  .li:hover, .li:focus-visible { color: var(--cr-text-primary); }
+  /* The ring stays ink. A hue here would be a second mark competing with
+     the name for the same cell. */
+  .li:focus-visible { outline: 2px solid var(--cr-text-primary); outline-offset: 3px; }
+  .role {
+    margin-top: var(--cr-space-xs);
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    color: var(--cr-text-secondary);
+  }
+
+  /* ── Entrance reveal — unchanged in kind, default-VISIBLE ────────── */
+  .reveal { opacity: 1; }
+  html.has-js .reveal { opacity: 0; transform: translateY(16px); }
+  html.has-js .team.in-view .reveal {
+    animation: reveal-in .7s cubic-bezier(.22,.61,.36,1) forwards;
+    animation-delay: var(--d, 0ms);
+  }
+  @keyframes reveal-in { to { opacity: 1; transform: none; } }
+  /* Matched to the trigger's specificity — a guard that loses the cascade
+     is not a guard. */
+  @media (prefers-reduced-motion: reduce) {
+    html.has-js .reveal,
+    html.has-js .team.in-view .reveal { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* ── Responsive — the ORIGINAL's breakpoints ─────────────────────── */
+  @media (max-width: 1160px) {
+    .head { grid-template-columns: 1fr; row-gap: var(--cr-space-s); }
+  }
+  @media (max-width: 880px) {
+    .team { padding-top: var(--cr-space-xl); padding-bottom: var(--cr-space-xl); }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--cr-space-m); margin-top: var(--cr-rhythm-cluster); }
+  }
+  @media (max-width: 560px) {
+    .grid { grid-template-columns: 1fr; row-gap: var(--cr-space-s); }
+    .head-title { font-size: var(--cr-text-h4); }
+    .hl-br { display: none; }                 /* let the headline flow at narrow widths */
+    .photo { aspect-ratio: 4 / 3; }           /* the approved landscape step for a full-width crop */
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget
+  Every dimension this specimen moves, declared. Predicate 6 fails on any
+  change not listed here, and on any line here that moved nothing.
+  .card       | border-radius          | radius-pair
+  .card       | font-size              | type-ramp
+  .eyebrow    | font-size              | type-ramp
+  .eyebrow    | line-height            | type-ramp
+  .eyebrow    | margin-bottom          | spacing-scale
+  .foot       | font-size              | type-ramp
+  .foot       | padding-bottom         | spacing-scale
+  .foot       | padding-left           | spacing-scale
+  .foot       | padding-right          | spacing-scale
+  .foot       | padding-top            | spacing-scale
+  .foot-top   | font-size              | type-ramp
+  .grid       | column-gap             | spacing-scale
+  .grid       | font-size              | type-ramp
+  .grid       | margin-top             | spacing-scale
+  .grid       | row-gap                | spacing-scale
+  .head       | column-gap             | spacing-scale
+  .head       | font-size              | type-ramp
+  .head       | row-gap                | spacing-scale
+  .head-lede  | font-size              | type-ramp
+  .head-lede  | margin-top             | spacing-scale
+  .head-lede  | max-width              | measure
+  .head-title | font-size              | type-ramp
+  .head-title | line-height            | type-ramp
+  .hl-br      | font-size              | type-ramp
+  .hl-br      | line-height            | type-ramp
+  .name       | font-size              | type-ramp
+  .name       | line-height            | type-ramp
+  .role       | font-size              | type-ramp
+  .role       | line-height            | type-ramp
+  .role       | margin-bottom          | spacing-scale
+  .role       | margin-top             | spacing-scale
+  .well       | font-size              | type-ramp
+  .well       | margin-left            | spacing-scale
+  .well       | margin-right           | spacing-scale
+  img         | font-size              | type-ramp
+  path        | font-size              | type-ramp
+  svg         | font-size              | type-ramp
+-->
+
+<section class="team" data-screen-label="Team grid"
+         data-archetype="feature-comparison" data-hierarchy="secondary" data-intent="build-trust"
+         data-register="human" data-signature="editorial-photography" data-density="medium">
+  <div class="well">
+
+    <p class="eyebrow reveal" style="--d:0ms">Meet the team</p>
+
+    <div class="head">
+      <h2 class="head-title reveal" style="--d:60ms">We're a focused, <br class="hl-br">outcomes-driven team</h2>
+      <p class="head-lede reveal" style="--d:120ms">Engineers, data scientists and operations leads across four countries — building the autonomous agents that run live inside our clients' core systems.</p>
+    </div>
+
+    <div class="grid">
+
+      <!-- 1 ─────────────────────────────────────────────────────── -->
+      <article class="card reveal" style="--d:200ms">
+        <div class="photo"><img src="../../brand-pack/assets/imagery/avatars/team-6.jpg" alt="Amara Okonkwo" style="object-position:50% 30%"></div>
+        <div class="foot">
+          <div class="foot-top">
+            <span class="name">Amara Okonkwo</span>
+            <a class="li" href="#" aria-label="Amara Okonkwo on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+            </a>
+          </div>
+          <p class="role">Founder &amp; CEO</p>
+        </div>
+      </article>
+
+      <!-- 2 ─────────────────────────────────────────────────────── -->
+      <article class="card reveal" style="--d:270ms">
+        <div class="photo"><img src="../../brand-pack/assets/imagery/avatars/team-2.jpg" alt="Lucía Romero" style="object-position:50% 18%"></div>
+        <div class="foot">
+          <div class="foot-top">
+            <span class="name">Lucía Romero</span>
+            <a class="li" href="#" aria-label="Lucía Romero on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+            </a>
+          </div>
+          <p class="role">Chief Operating Officer</p>
+        </div>
+      </article>
+
+      <!-- 3 ─────────────────────────────────────────────────────── -->
+      <article class="card reveal" style="--d:340ms">
+        <div class="photo"><img src="../../brand-pack/assets/imagery/avatars/team-1.jpg" alt="Daniel Weiss" style="object-position:50% 20%"></div>
+        <div class="foot">
+          <div class="foot-top">
+            <span class="name">Daniel Weiss</span>
+            <a class="li" href="#" aria-label="Daniel Weiss on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+            </a>
+          </div>
+          <p class="role">Head of AI Engineering</p>
+        </div>
+      </article>
+
+      <!-- 4 ─────────────────────────────────────────────────────── -->
+      <article class="card reveal" style="--d:410ms">
+        <div class="photo"><img src="../../brand-pack/assets/imagery/avatars/team-4.jpg" alt="Hannah Pearce" style="object-position:50% 20%"></div>
+        <div class="foot">
+          <div class="foot-top">
+            <span class="name">Hannah Pearce</span>
+            <a class="li" href="#" aria-label="Hannah Pearce on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+            </a>
+          </div>
+          <p class="role">Head of Data Science</p>
+        </div>
+      </article>
+
+      <!-- 5 ─────────────────────────────────────────────────────── -->
+      <article class="card reveal" style="--d:480ms">
+        <div class="photo"><img src="../../brand-pack/assets/imagery/avatars/team-5.jpg" alt="Marcus Tan" style="object-position:50% 16%"></div>
+        <div class="foot">
+          <div class="foot-top">
+            <span class="name">Marcus Tan</span>
+            <a class="li" href="#" aria-label="Marcus Tan on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+            </a>
+          </div>
+          <p class="role">Head of Platform</p>
+        </div>
+      </article>
+
+      <!-- 6 ─────────────────────────────────────────────────────── -->
+      <article class="card reveal" style="--d:550ms">
+        <div class="photo"><img src="../../brand-pack/assets/imagery/avatars/team-3.jpg" alt="Tomás Vidal" style="object-position:50% 18%"></div>
+        <div class="foot">
+          <div class="foot-top">
+            <span class="name">Tomás Vidal</span>
+            <a class="li" href="#" aria-label="Tomás Vidal on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+            </a>
+          </div>
+          <p class="role">Solutions &amp; Delivery Lead</p>
+        </div>
+      </article>
+
+    </div><!-- /grid -->
+  </div><!-- /well -->
+</section>
+
+<script>
+  document.documentElement.classList.add('has-js');
+  var section = document.querySelector('.team');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in-view'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    io.observe(section);
+  } else {
+    section.classList.add('in-view');
+  }
+</script>
+</body>
+</html>

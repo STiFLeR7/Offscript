@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Value prop — Proof stats</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — Value prop · Proof stats             component-value-stats.html
+  ════════════════════════════════════════════════════════════════════════
+  COMPOSITION  A two-column value-proposition / stats section on PURE WHITE
+               (~41% text left | ~59% stat bento right). REUSABLE as a features
+               section — swap the three stats for feature blurbs.
+               • LEFT (a flex column, justify space-between so the bottom cluster
+                 pins to the base of the bento): a grey EYEBROW PILL (icon +
+                 "Performance stats") → a 2-line bold headline → a TWO-TONE sub
+                 (a muted-grey clause running into a dark clause) → a brand-blue
+                 "Explore the full demo →" link → (void) → a small two-tone line
+                 → an OVERLAPPING AVATAR STACK + "rated 4.8/5".
+               • RIGHT bento: a TALL WIDE card on top (spans both columns) + TWO
+                 cards below (2-up). Each card = a small icon + label (top), a big
+                 void, a HUGE stat number, then a caption. Light-grey cards on
+                 white, rounded, NO shadow (separate by surface). The top card is
+                 taller than the bottom row (minmax rows hold the rhythm).
+
+  INSPIRATION  A clean SaaS "Performance stats / Proven by leading sales teams"
+               section (text left, 1-wide-+-2 stat bento right). Layout / two-tone
+               copy / eyebrow pill / avatar-stack / bento geometry reproduced;
+               colours / fonts / copy / stats re-skinned to CR.
+
+  RE-SKIN      The source's GREEN accent → CR brand blue #149DFF (eyebrow icon,
+               card icons, the demo link). Copy → CR voice (ad-tech/sales → ops
+               automation); the stats → real CR numbers (11.3× ROI, 80% routine
+               automated, 92% cost removed). Icons = Lucide; the source uses ONE
+               icon on all three cards (reproduced as `wallet` ×3) — for the
+               features-section reuse, swap in a distinct Lucide icon per item.
+               Avatars = real face crops saved local. The source's ↗ glyph → the
+               CR `→` (the lone allowed unicode char).
+
+  NO SHADOW    Cards lift by SURFACE CONTRAST (grey on white) only — no shadow /
+               border (charter). Overlapping avatars use POSITIONED offsets, not
+               negative margins (charter: no negative margins). Hover lives only
+               on the real controls (the demo link).
+
+  MOTION       (user choice) "Count-up + reveal" — on first viewport entry the
+               left items + the three cards fade up staggered, AND each big stat
+               COUNTS from 0 to its value (11.3× / 80% / 92%, easeOutCubic ~1.2s).
+               IntersectionObserver fires once. NO-JS SAFE: the final numbers are
+               in the HTML and the reveal hidden-state is `.has-js`-scoped, so
+               without JS the cards + final numbers show. `prefers-reduced-motion`
+               (and no-IO) → final numbers shown, no count. Lucide drawn once.
+
+  RESPONSIVE   2-col ≥901px → 1-col ≤900 (text over bento; the bottom cluster's
+               bottom-pin relaxes to a fixed gap). Bento stays 1-wide-+-2 until
+               ≤560, where the two lower cards stack to one column. Type + padding
+               step down. Grid children carry `min-width:0`.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../_frozen-v2-tokens.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  .vs-section, .vs-section * { box-sizing: border-box; }
+  .vs-section {
+    background: var(--cr-bg);
+    padding: 104px 100px;
+    font-family: var(--cr-font-body);
+    color: var(--cr-fg);
+  }
+  .vs-wrap {
+    max-width: var(--cr-content-max); margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+    column-gap: 56px;
+    align-items: stretch;                  /* left column stretches to bento height */
+  }
+
+  /* ─── LEFT column ─────────────────────────────────────────────── */
+  .vs-left { display: flex; flex-direction: column; min-width: 0; }
+
+  .vs-eyebrow {
+    display: inline-flex; align-items: center; gap: 7px; align-self: flex-start;
+    background: var(--cr-bg-grey-100);
+    border-radius: var(--cr-radius-pill);
+    padding: 6px 13px 6px 11px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 13px;
+    color: var(--cr-fg);
+  }
+  .vs-eyebrow i { width: 15px; height: 15px; color: var(--cr-brand); stroke-width: 2; }
+
+  .vs-head {
+    margin: 22px 0 0;
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(33px, 3.6vw, 44px); line-height: 1.12; letter-spacing: -0.02em;
+    color: var(--cr-fg);
+  }
+  .vs-sub {
+    margin: 22px 0 0; max-width: 24em;
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: 18px; line-height: 1.5;
+    color: var(--cr-fg-2);                  /* dark clause */
+  }
+  .vs-sub .vs-muted { color: var(--cr-fg-3); }   /* grey clause */
+
+  .vs-link {
+    margin-top: 22px; align-self: flex-start;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 15px;
+    color: var(--cr-brand); text-decoration: none;
+  }
+  .vs-link .vs-arr { transition: transform .2s ease; }
+  .vs-link:hover .vs-arr { transform: translate(3px, -3px); }   /* nudges up-right (the source's ↗ direction) */
+
+  /* bottom cluster — pinned to the base on desktop, a fixed gap when stacked */
+  .vs-foot { margin-top: auto; padding-top: 56px; }
+  .vs-foot-txt {
+    margin: 0 0 16px;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 14px; line-height: 1.55;
+    color: var(--cr-fg-3); max-width: 30em;
+  }
+  .vs-foot-txt strong { font-weight: 600; color: var(--cr-fg); }
+
+  .vs-rated { display: flex; align-items: center; gap: 12px; }
+  .vs-avatars { position: relative; width: 96px; height: 28px; flex: none; }   /* positioned overlap — no negative margins */
+  .vs-avatars img {
+    position: absolute; top: 0; width: 28px; height: 28px;
+    border-radius: 50%; border: 2px solid var(--cr-bg); object-fit: cover; object-position: center 28%;
+  }
+  .vs-rated-txt { font-family: var(--cr-font-body); font-size: 14px; color: var(--cr-fg-3); }
+
+  /* ─── RIGHT bento ─────────────────────────────────────────────── */
+  .vs-bento {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: minmax(248px, auto) minmax(204px, auto);   /* top card taller (source rhythm) */
+    gap: 18px;
+  }
+  .vs-card {
+    display: flex; flex-direction: column; justify-content: space-between;
+    min-width: 0;
+    background: var(--cr-bg-grey-100);
+    border-radius: var(--cr-radius-xl);
+    padding: 28px 30px;
+  }
+  .vs-card--wide { grid-column: 1 / -1; }
+
+  .vs-card-top {
+    display: flex; align-items: center; gap: 9px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 15px;
+    color: var(--cr-fg-2);
+  }
+  .vs-card-top i { width: 18px; height: 18px; color: var(--cr-brand); stroke-width: 2; flex: none; }
+
+  .vs-num {
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(44px, 4.6vw, 58px); line-height: 1; letter-spacing: -0.02em;
+    color: var(--cr-ink);
+  }
+  .vs-cap {
+    margin: 12px 0 0;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 15px; line-height: 1.4;
+    color: var(--cr-fg-3);
+  }
+
+  /* ─── reveal (anti-race, fires once; no-JS shows all) ─────────── */
+  .has-js .vs-section [data-reveal] { opacity: 0; transform: translateY(18px); }
+  .has-js .vs-section [data-reveal].in-view {
+    animation: vsRise .7s cubic-bezier(.16,1,.3,1) forwards; animation-delay: var(--d, 0s);
+  }
+  @keyframes vsRise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .vs-section [data-reveal],
+    .has-js .vs-section [data-reveal].in-view { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* ─── responsive ──────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .vs-section { padding: 80px 56px; }
+    .vs-wrap { grid-template-columns: minmax(0, 1fr); row-gap: 48px; }
+    .vs-foot { margin-top: 0; padding-top: 8px; }
+    .vs-bento { grid-template-rows: minmax(220px, auto) minmax(190px, auto); }
+  }
+  @media (max-width: 560px) {
+    .vs-section { padding: 60px 24px; }
+    .vs-bento { grid-template-columns: 1fr; grid-template-rows: none; gap: 14px; }
+    .vs-card--wide { grid-column: auto; }
+    .vs-card { min-height: 188px; padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="vs-section" data-screen-label="Value prop · Proof stats">
+  <div class="vs-wrap">
+
+    <!-- ── LEFT ───────────────────────────────────────────────── -->
+    <div class="vs-left">
+      <div class="vs-eyebrow" data-reveal style="--d:0s">
+        <i data-lucide="bar-chart-3"></i><span>Performance stats</span>
+      </div>
+      <h2 class="vs-head" data-reveal style="--d:.06s">Proven by the teams<br>who run on it</h2>
+      <p class="vs-sub" data-reveal style="--d:.12s"><span class="vs-muted">Clear backlogs and remove manual work</span> faster, with agents that run in your own stack.</p>
+      <a class="vs-link" href="#" data-reveal style="--d:.18s">Explore the full demo <span class="vs-arr">&rarr;</span></a>
+
+      <div class="vs-foot" data-reveal style="--d:.24s">
+        <p class="vs-foot-txt"><strong>Running in real time</strong> &mdash; every action logged, every exception caught, and every result measured.</p>
+        <div class="vs-rated">
+          <div class="vs-avatars">
+            <img src="../assets/avatars/leader-2.jpg" alt="" style="left:0" decoding="async" />
+            <img src="../assets/avatars/team-1.jpg" alt="" style="left:17px" decoding="async" />
+            <img src="../assets/avatars/team-jessica.jpg" alt="" style="left:34px" decoding="async" />
+            <img src="../assets/avatars/team-dami.jpg" alt="" style="left:51px" decoding="async" />
+            <img src="../assets/avatars/avatar-olivia.jpg" alt="" style="left:68px" decoding="async" />
+          </div>
+          <span class="vs-rated-txt">&mdash; rated 4.8/5</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT bento ────────────────────────────────────────── -->
+    <div class="vs-bento">
+
+      <div class="vs-card vs-card--wide" data-reveal style="--d:.1s">
+        <div class="vs-card-top"><i data-lucide="wallet"></i><span>Higher ROI</span></div>
+        <div>
+          <div class="vs-num" data-to="11.3" data-decimals="1" data-suffix="&times;">11.3&times;</div>
+          <p class="vs-cap">Average return in the first year</p>
+        </div>
+      </div>
+
+      <div class="vs-card" data-reveal style="--d:.18s">
+        <div class="vs-card-top"><i data-lucide="wallet"></i><span>Faster Throughput</span></div>
+        <div>
+          <div class="vs-num" data-to="80" data-decimals="0" data-suffix="%">80%</div>
+          <p class="vs-cap">Of routine work automated</p>
+        </div>
+      </div>
+
+      <div class="vs-card" data-reveal style="--d:.26s">
+        <div class="vs-card-top"><i data-lucide="wallet"></i><span>Better Efficiency</span></div>
+        <div>
+          <div class="vs-num" data-to="92" data-decimals="0" data-suffix="%">92%</div>
+          <p class="vs-cap">Operational cost removed</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.vs-section');
+  if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
+  if (!sec) return;
+
+  var nums = Array.prototype.slice.call(sec.querySelectorAll('.vs-num'));
+
+  function fmt(v, dec, suf) { return v.toFixed(dec) + suf; }
+  function countUp(el) {
+    var to = parseFloat(el.getAttribute('data-to'));
+    var dec = parseInt(el.getAttribute('data-decimals'), 10) || 0;
+    var suf = el.getAttribute('data-suffix') || '';
+    var dur = 1200, t0 = null;
+    function step(ts) {
+      if (t0 === null) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);          // easeOutCubic
+      el.textContent = fmt(to * eased, dec, suf);
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = fmt(to, dec, suf);     // land exactly on target
+    }
+    requestAnimationFrame(step);
+  }
+
+  function revealOnly() {
+    sec.querySelectorAll('[data-reveal]').forEach(function (el) { el.classList.add('in-view'); });
+  }
+
+  // reduced-motion or no IntersectionObserver → show everything + final numbers (no count)
+  if (reduce || !('IntersectionObserver' in window)) { revealOnly(); return; }
+
+  // pre-set to 0 so the count starts clean, then count up + reveal on first view
+  nums.forEach(function (el) {
+    var dec = parseInt(el.getAttribute('data-decimals'), 10) || 0;
+    el.textContent = fmt(0, dec, el.getAttribute('data-suffix') || '');
+  });
+  var io = new IntersectionObserver(function (ents) {
+    ents.forEach(function (en) {
+      if (en.isIntersecting) {
+        revealOnly();
+        nums.forEach(countUp);
+        io.disconnect();
+      }
+    });
+  }, { threshold: 0.25 });
+  io.observe(sec);
+})();
+</script>
+
+</body>
+</html>

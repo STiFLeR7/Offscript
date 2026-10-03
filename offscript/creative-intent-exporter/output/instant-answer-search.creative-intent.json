@@ -1,0 +1,11 @@
+{
+  "id": "instant-answer-search",
+  "contractVersion": 1,
+  "digest": "sha256:4bb105e93c9e232fbbe9f063ae1c6e71cb4f3ca582634120c68fa510f264578d",
+  "belief": "semantic search finds the right document across every connected source almost instantly",
+  "feature": "search",
+  "ratio": "1:1",
+  "camera": "macro",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

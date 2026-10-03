@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Customer stories — carousel</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Customer stories            from component-customer-story.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **One engagement narrated, not several browsed.** The profile
+              is explicit: capacity singular, load heavy, role proof-primary,
+              registers narrative and human. It is the only structure in the
+              library that carries a complete before-and-after with a named
+              party attached, and it is meant to be the heaviest thing on the
+              page it sits on.
+
+  STRUCTURE   Unchanged. Viewport · track of four stories plus a clone ·
+              each slide a text column (customer wordmark → headline → CTA)
+              beside a landscape still carrying an overlaid stat card · a
+              clickable wordmark nav · the bottom line doubling as the
+              auto-advance timer. DOM, both scripts, ids, `data-*`,
+              `aria-*` and every behavioural hook are byte-compatible with
+              the frozen original. The v2 file is beside this one in `_v2/`.
+
+  CREATIVE    **No environment photograph enters this section, because there
+  BACKGROUND  was never an abstract background to replace.** The section is
+              flat — one page ground, no gradient, no blur plate, no tint
+              wash — and the one image per slide is real customer
+              photography, an office portrait of the person the story is
+              about. That imagery is never substituted. Reported as `none`.
+
+  THE PANEL   The stat card sits over the photograph, and that is the
+  OVER THE    permitted case precisely because it is OPAQUE: it takes the
+  PHOTOGRAPH  raised surface and one hairline, so remove the picture and not
+              one word of the figure or its caption changes legibility. v2
+              filled it with the information accent instead, which spent the
+              section's colour on a number rather than on its ask.
+
+  ACCENT      ONE moment, and it is the ask. The CTA knob is the emphasis
+              accent carrying the paired foreground the pack records for
+              what sits on orange. v2 spent colour three times — the knob,
+              the stat card and the timer fill — so nothing led. The timer
+              is ink; it measures time, it does not ask for anything.
+
+  TYPE        The four wordmarks stayed differentiated, which is the point of
+              a placeholder nav — but by family, weight and size, not by
+              tracked-out uppercase, which supporting text in this direction
+              does not use. Weights resolve to the system's two.
+
+  RATIO       The still declared 13/10 at rest and 16/10 stacked, neither on
+              the approved vocabulary of four. It reads as 4/3 and 16/9 —
+              the nearest approved crops, and the ones it renders at.
+
+  RESPONSIVE  The original's breakpoints (960 / 560), unchanged. Type steps
+              on the pack's ramp; `clamp()` is gone from type throughout.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  .cs-section, .cs-section * { box-sizing: border-box; }
+  .cs-section {
+    /* THE PANEL IS OPAQUE, NOT TINTED. That is what lets it sit over the
+       photograph without a scrim and without borrowing contrast from it. */
+    --cs-card-bg: var(--cr-bg-raised);
+    --cs-dur: 6s;                          /* auto-advance delay (mirrored in JS) */
+    background: var(--cr-page-ground);
+    padding: var(--cr-rhythm-opening) var(--cr-page-gutter);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+  }
+  .cs-well { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ─── carousel viewport + track ───────────────────────────────── */
+  .cs-viewport { overflow: hidden; }
+  .cs-track {
+    display: flex;
+    width: 100%;
+    transform: translateX(calc(var(--i, 0) * -100%));
+    transition: transform 0.6s cubic-bezier(.16,1,.3,1);
+  }
+  .cs-track.cs-noanim { transition: none; }   /* used for the seamless wrap snap */
+  .cs-slide { flex: 0 0 100%; min-width: 0; }
+
+  /* ─── slide: text | media ─────────────────────────────────────── */
+  /* The split is the original's — 1fr / 1.15fr, untouched. Only the room
+     between the columns moves onto the scale: content block to photography
+     is the step the direction names. */
+  .cs-top {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: var(--cr-space-xl);
+    align-items: center;
+  }
+  .cs-text, .cs-media { min-width: 0; }
+
+  /* per-slide brand kicker — the featured CUSTOMER's wordmark */
+  .cs-kicker { display: inline-block; color: var(--cr-text-primary); line-height: var(--cr-leading-heading); }
+  .cs-headline {
+    margin: var(--cr-space-m) 0 0;
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+    max-width: var(--cr-measure-title);
+  }
+
+  /* ─── CTA — the section's ONE accent moment ───────────────────── */
+  .cs-cta { display: inline-flex; align-items: center; gap: var(--cr-space-xs); margin-top: var(--cr-space-m); text-decoration: none; }
+  /* A round knob is a TRUE circle, which the direction keeps; the retired
+     pill radius is for rectangles that should now be controls. Text on the
+     emphasis accent takes the paired foreground the pack records for it. */
+  .cs-cta-knob {
+    flex: none; width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--cr-accent-orange); color: var(--cr-on-accent-light);
+    display: grid; place-items: center; overflow: hidden;
+  }
+  .cs-cta-knob .cs-arrow { font-size: var(--cr-text-body); line-height: var(--cr-leading-heading); transition: transform 150ms ease; }
+  .cs-cta-label { font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting); color: var(--cr-text-primary); }
+  .cs-cta:hover .cs-arrow { transform: translateX(4px); }
+
+  /* ─── media: the customer's own photograph + the stat panel ────
+     REAL CUSTOMER PHOTOGRAPHY, UNTOUCHED. It is the person the story is
+     about, not a creative surface, and this pass does not substitute it. */
+  .cs-media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--cr-radius-card);
+    overflow: hidden;
+    background-color: var(--cr-surface-5);     /* fallback if the photo fails */
+  }
+  .cs-shot { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+  .cs-stat {
+    position: absolute; right: var(--cr-space-s); bottom: var(--cr-space-s);
+    background: var(--cs-card-bg);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-s); min-width: 184px;
+  }
+  .cs-stat-num {
+    font-family: var(--cr-font-display); font-weight: 500;
+    font-size: var(--cr-text-h3); line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary); font-variant-numeric: tabular-nums;
+  }
+  .cs-stat-cap {
+    margin-top: var(--cr-space-xs);
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* ─── brand nav (clickable wordmarks) ─────────────────────────── */
+  .cs-logos {
+    margin-top: var(--cr-rhythm-content);
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: var(--cr-space-m); align-items: center; justify-items: center;
+  }
+  /* A <button> inherits no typeface, so the family is set here and again on
+     every variant that changes it. */
+  .cs-logo {
+    appearance: none; border: 0; background: none;
+    padding: var(--cr-space-xs); margin: 0; cursor: pointer;
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);            /* inactive */
+    text-align: center; line-height: var(--cr-leading-heading); transition: color 200ms ease;
+  }
+  .cs-logo.is-active { color: var(--cr-text-primary); }              /* active = ink */
+  .cs-logo:hover { color: var(--cr-text-primary); }
+  .cs-logo:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 2px; }
+  .cs-logo.is-active:hover { color: var(--cr-text-primary); }
+  /* The four wordmarks stay differentiated — by family, weight and size. The
+     system has two weights, and supporting text is neither uppercase nor
+     tracked, so the variety comes from the parts of the ramp that carry it. */
+  .cs-logo--mark  { font-family: var(--cr-font-display); font-weight: 500; font-size: var(--cr-text-h6); letter-spacing: var(--cr-tracking-heading); }
+  .cs-logo--caps  { font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-body); letter-spacing: 0; text-transform: none; }
+  .cs-logo--stack { font-family: var(--cr-font-display); font-weight: 500; font-size: var(--cr-text-h6); letter-spacing: 0; }
+  .cs-logo--stack small {
+    display: block; margin-top: var(--cr-space-xs);
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-supporting); letter-spacing: 0;
+    color: var(--cr-text-secondary); text-transform: none;
+  }
+  .cs-logo--light { font-family: var(--cr-font-display); font-weight: 400; font-size: var(--cr-text-h6); letter-spacing: 0; }
+
+  /* ─── timer bar (the bottom line, filling left→right) ───────────
+     It measures time; it does not ask for anything, so it is not where the
+     section spends its one accent. */
+  .cs-timer {
+    margin-top: var(--cr-space-m);
+    height: 2px; position: relative; overflow: hidden;
+    background: var(--cr-border-default);
+  }
+  .cs-timer-fill {
+    position: absolute; inset: 0;
+    background: var(--cr-text-primary);
+    transform: scaleX(0); transform-origin: left;
+  }
+
+  /* ─── motion: entrance reveal (anti-race, fires once) ─────────── */
+  .has-js .cs-section [data-reveal] { opacity: 0; transform: translateY(16px); }
+  .has-js .cs-section [data-reveal].in-view {
+    animation: csRise 0.7s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes csRise { to { opacity: 1; transform: none; } }
+
+  /* The guard matches the trigger's specificity, or it is a declaration that
+     never runs. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .cs-section [data-reveal],
+    .has-js .cs-section [data-reveal].in-view { opacity: 1; transform: none; animation: none; }
+    .cs-track { transition: none; }            /* instant slide switches */
+    .cs-cta-knob .cs-arrow { transition: none; }
+  }
+
+  /* ─── responsive: the original's breakpoints and the original's reflow ── */
+  @media (max-width: 960px) {
+    .cs-section { padding: var(--cr-space-xl) var(--cr-page-gutter); }
+    .cs-top { grid-template-columns: 1fr; gap: var(--cr-space-m); }   /* text over media */
+    /* 16/10 was off the approved vocabulary; the wide crop is 16/9. */
+    .cs-media { aspect-ratio: 16 / 9; max-width: 640px; }
+  }
+  @media (max-width: 560px) {
+    .cs-section { padding: var(--cr-space-m) var(--cr-page-gutter); }
+    .cs-headline { margin-top: var(--cr-space-s); }
+    .cs-media { aspect-ratio: 4 / 3; }
+    .cs-stat {
+      right: var(--cr-space-xs); bottom: var(--cr-space-xs);
+      padding: var(--cr-space-xs); min-width: 150px;
+    }
+    .cs-logos { grid-template-columns: repeat(2, 1fr); gap: var(--cr-space-m) var(--cr-space-s); }
+  }
+</style>
+</head>
+<body>
+
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. Nothing in this section required a directed change.
+  .cs-arrow    | line-height            | type-ramp
+  .cs-cta      | column-gap             | spacing-scale
+  .cs-cta      | row-gap                | spacing-scale
+  .cs-headline | font-size              | type-ramp
+  .cs-headline | line-height            | type-ramp
+  .cs-headline | margin-top             | spacing-scale
+  .cs-headline | max-width              | measure
+  .cs-kicker   | font-size              | type-ramp
+  .cs-kicker   | line-height            | type-ramp
+  .cs-logo     | font-size              | type-ramp
+  .cs-logo     | line-height            | type-ramp
+  .cs-logo     | padding-bottom         | spacing-scale
+  .cs-logo     | padding-left           | spacing-scale
+  .cs-logo     | padding-right          | spacing-scale
+  .cs-logo     | padding-top            | spacing-scale
+  .cs-logos    | column-gap             | spacing-scale
+  .cs-logos    | margin-top             | spacing-scale
+  .cs-logos    | row-gap                | spacing-scale
+  .cs-media    | aspect-ratio           | ratio-vocabulary
+  .cs-media    | border-radius          | radius-pair
+  .cs-num-val  | font-size              | type-ramp
+  .cs-num-val  | line-height            | type-ramp
+  .cs-stat     | border-bottom-width    | stroke
+  .cs-stat     | border-left-width      | stroke
+  .cs-stat     | border-right-width     | stroke
+  .cs-stat     | border-top-width       | stroke
+  .cs-stat     | padding-bottom         | spacing-scale
+  .cs-stat     | padding-left           | spacing-scale
+  .cs-stat     | padding-right          | spacing-scale
+  .cs-stat     | padding-top            | spacing-scale
+  .cs-stat-cap | font-size              | type-ramp
+  .cs-stat-cap | line-height            | type-ramp
+  .cs-stat-cap | margin-top             | spacing-scale
+  .cs-stat-num | font-size              | type-ramp
+  .cs-stat-num | line-height            | type-ramp
+  .cs-suf      | font-size              | type-ramp
+  .cs-suf      | line-height            | type-ramp
+  .cs-top      | column-gap             | spacing-scale
+  .cs-top      | row-gap                | spacing-scale
+  small        | font-size              | type-ramp
+  small        | line-height            | type-ramp
+  small        | margin-top             | spacing-scale
+-->
+
+<!-- composition follows the source: text-LEFT / media-RIGHT per slide (the
+     reference's order, not a hardcoded house rule). -->
+<section class="cs-section" data-screen-label="Customer stories · Carousel"
+         data-archetype="storytelling-composition" data-hierarchy="proof" data-intent="build-trust"
+         data-register="narrative" data-signature="editorial-photography" data-density="high">
+  <div class="cs-well">
+
+    <div class="cs-viewport" data-reveal style="--d:0s">
+      <div class="cs-track" style="--i:0">
+
+        <!-- SLIDE 0 · meridian (logistics) -->
+        <article class="cs-slide">
+          <div class="cs-top">
+            <div class="cs-text">
+              <div class="cs-kicker cs-logo--mark">meridian</div>
+              <h2 class="cs-headline">See how Meridian Logistics uses Example Brand to scale global operations autonomously</h2>
+              <a class="cs-cta" href="#"><span class="cs-cta-knob" aria-hidden="true"><span class="cs-arrow">&rarr;</span></span><span class="cs-cta-label">Learn more</span></a>
+            </div>
+            <div class="cs-media">
+              <img class="cs-shot" src="../../brand-pack/assets/imagery/customer-story/cs-meridian.jpg" alt="Operations leader at Meridian Logistics" decoding="async" onerror="this.remove()" />
+              <div class="cs-stat"><div class="cs-stat-num"><span class="cs-num-val" data-target="40">40</span></div><div class="cs-stat-cap">Markets live</div></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- SLIDE 1 · vault (finance / BFSI) -->
+        <article class="cs-slide">
+          <div class="cs-top">
+            <div class="cs-text">
+              <div class="cs-kicker cs-logo--light">vault</div>
+              <h2 class="cs-headline">See how Vault Financial clears its reconciliation backlog without adding headcount</h2>
+              <a class="cs-cta" href="#"><span class="cs-cta-knob" aria-hidden="true"><span class="cs-arrow">&rarr;</span></span><span class="cs-cta-label">Learn more</span></a>
+            </div>
+            <div class="cs-media">
+              <img class="cs-shot" src="../../brand-pack/assets/imagery/customer-story/cs-vault.jpg" alt="Finance leader at Vault Financial" decoding="async" onerror="this.remove()" />
+              <div class="cs-stat"><div class="cs-stat-num"><span class="cs-num-val" data-target="92">92</span><span class="cs-suf">%</span></div><div class="cs-stat-cap">Cost removed</div></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- SLIDE 2 · Staffcore (staffing) -->
+        <article class="cs-slide">
+          <div class="cs-top">
+            <div class="cs-text">
+              <div class="cs-kicker cs-logo--stack">Staffcore<small>Powered by Example Brand</small></div>
+              <h2 class="cs-headline">See how Staffcore places candidates faster with agents working inside their ATS</h2>
+              <a class="cs-cta" href="#"><span class="cs-cta-knob" aria-hidden="true"><span class="cs-arrow">&rarr;</span></span><span class="cs-cta-label">Learn more</span></a>
+            </div>
+            <div class="cs-media">
+              <img class="cs-shot" src="../../brand-pack/assets/imagery/customer-story/cs-staffcore.jpg" alt="Talent leader at Staffcore" decoding="async" onerror="this.remove()" />
+              <div class="cs-stat"><div class="cs-stat-num"><span class="cs-num-val" data-target="3">3</span><span class="cs-suf">&times;</span></div><div class="cs-stat-cap">Faster placements</div></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- SLIDE 3 · cobalt (healthcare) -->
+        <article class="cs-slide">
+          <div class="cs-top">
+            <div class="cs-text">
+              <div class="cs-kicker cs-logo--caps">cobalt</div>
+              <h2 class="cs-headline">See how Cobalt Health turns every patient visit into a documented record</h2>
+              <a class="cs-cta" href="#"><span class="cs-cta-knob" aria-hidden="true"><span class="cs-arrow">&rarr;</span></span><span class="cs-cta-label">Learn more</span></a>
+            </div>
+            <div class="cs-media">
+              <img class="cs-shot" src="../../brand-pack/assets/imagery/customer-story/cs-cobalt.jpg" alt="Clinical lead at Cobalt Health" decoding="async" onerror="this.remove()" />
+              <div class="cs-stat"><div class="cs-stat-num"><span class="cs-num-val" data-target="80">80</span><span class="cs-suf">%</span></div><div class="cs-stat-cap">Notes automated</div></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- CLONE of slide 0 — enables the seamless always-left infinite loop -->
+        <article class="cs-slide" aria-hidden="true">
+          <div class="cs-top">
+            <div class="cs-text">
+              <div class="cs-kicker cs-logo--mark">meridian</div>
+              <h2 class="cs-headline">See how Meridian Logistics uses Example Brand to scale global operations autonomously</h2>
+              <a class="cs-cta" href="#" tabindex="-1"><span class="cs-cta-knob" aria-hidden="true"><span class="cs-arrow">&rarr;</span></span><span class="cs-cta-label">Learn more</span></a>
+            </div>
+            <div class="cs-media">
+              <img class="cs-shot" src="../../brand-pack/assets/imagery/customer-story/cs-meridian.jpg" alt="" decoding="async" onerror="this.remove()" />
+              <div class="cs-stat"><div class="cs-stat-num">40</div><div class="cs-stat-cap">Markets live</div></div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- brand nav — clickable; PLACEHOLDER wordmarks (swap for real customer SVGs) -->
+    <nav class="cs-logos" data-reveal style="--d:.12s" aria-label="Customer stories">
+      <button class="cs-logo cs-logo--mark is-active" type="button" data-go="0" aria-current="true">meridian</button>
+      <button class="cs-logo cs-logo--light"          type="button" data-go="1" aria-current="false">vault</button>
+      <button class="cs-logo cs-logo--stack"          type="button" data-go="2" aria-current="false">Staffcore<small>Powered by Example Brand</small></button>
+      <button class="cs-logo cs-logo--caps"           type="button" data-go="3" aria-current="false">cobalt</button>
+    </nav>
+
+    <!-- the bottom line, doubling as the auto-advance timer -->
+    <div class="cs-timer" data-reveal style="--d:.2s" aria-hidden="true"><div class="cs-timer-fill"></div></div>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.cs-section');
+  if (!sec) return;
+
+  var track  = sec.querySelector('.cs-track');
+  var slides = track.querySelectorAll('.cs-slide');   // 5 (incl. clone)
+  var logos  = sec.querySelectorAll('.cs-logo');
+  var fill   = sec.querySelector('.cs-timer-fill');
+  var N = logos.length;                                // 4 logical brands
+  var DUR = 6000;                                      // matches --cs-dur
+  var i = 0, raf = null, lastTs = null, elapsed = 0, paused = false, started = false;
+
+  function countUp(el) {
+    var target = parseFloat(el.getAttribute('data-target'));
+    var dec = parseInt(el.getAttribute('data-decimals') || '0', 10);
+    var dur = 1300, t0 = null;
+    el.textContent = (0).toFixed(dec);
+    function step(ts) {
+      if (t0 === null) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      var e = 1 - Math.pow(1 - p, 3);
+      el.textContent = (target * e).toFixed(dec);
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = target.toFixed(dec);
+    }
+    requestAnimationFrame(step);
+  }
+  function countSlide(idx) {                            // count the stat of real slide idx (0..N-1)
+    if (reduce || idx >= N) return;
+    var el = slides[idx].querySelector('.cs-num-val');
+    if (el) countUp(el);
+  }
+
+  function setNav(active) {
+    logos.forEach(function (b, bi) {
+      var on = bi === active;
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-current', on ? 'true' : 'false');
+    });
+    slides.forEach(function (s, si) { s.setAttribute('aria-hidden', si === active ? 'false' : 'true'); });
+  }
+
+  function show(n, animate, doCount) {
+    track.classList.toggle('cs-noanim', !animate);
+    i = n;
+    track.style.setProperty('--i', i);
+    setNav(i % N);
+    if (doCount) countSlide(i % N);
+  }
+  function next() { show(i + 1, true, true); }
+
+  // seamless wrap: after the slide-left onto the clone finishes, snap back to 0
+  track.addEventListener('transitionend', function (e) {
+    if (e.propertyName !== 'transform') return;
+    if (i === N) show(0, false, false);   // clone == slide 0 visually → invisible snap
+  });
+
+  // auto-advance timer (rAF) — fills the bottom line, then advances
+  function loop(ts) {
+    if (lastTs === null) lastTs = ts;
+    var dt = ts - lastTs; lastTs = ts;
+    if (!paused) elapsed += dt;
+    fill.style.transform = 'scaleX(' + Math.min(elapsed / DUR, 1) + ')';
+    if (elapsed >= DUR) { elapsed = 0; next(); }
+    raf = requestAnimationFrame(loop);
+  }
+  function resetTimer() { elapsed = 0; lastTs = null; fill.style.transform = 'scaleX(0)'; }
+
+  // manual nav
+  logos.forEach(function (b, bi) {
+    b.addEventListener('click', function () {
+      resetTimer();
+      show(bi, true, true);
+    });
+  });
+
+  // hover-pause (anywhere on the section)
+  sec.addEventListener('pointerenter', function () { paused = true; });
+  sec.addEventListener('pointerleave', function () { paused = false; });
+
+  function start() {
+    if (started) return; started = true;
+    sec.querySelectorAll('[data-reveal]').forEach(function (n) { n.classList.add('in-view'); });
+    setNav(0);
+    countSlide(0);
+    if (!reduce) raf = requestAnimationFrame(loop);   // no auto-advance under reduced-motion
+  }
+
+  if (reduce) { start(); return; }                    // still reveal + set nav; manual nav works
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) { if (en.isIntersecting) { start(); io.disconnect(); } });
+    }, { threshold: 0.2 });
+    io.observe(sec);
+  } else {
+    start();
+  }
+})();
+</script>
+
+</body>
+</html>

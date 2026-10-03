@@ -1,0 +1,17 @@
+{
+  "one-liner": "Turn a clear creative brief into a coherent first draft.",
+  "brand": "Offscript Demo",
+  "audience": "Designers testing the local Offscript foundation",
+  "must-include": [
+    "hero: Start with your creative direction",
+    "feature-grid: Capture direction, produce a draft, review the result",
+    "process: Brief, draft, and review",
+    "faq: Questions about the local demonstration",
+    "cta: Start with a brief",
+    "footer: Offscript demonstration"
+  ],
+  "tone": "Clear, calm, practical",
+  "goals": ["Explain the creative production workflow"],
+  "success-criteria": ["The draft describes the workflow and gives a next step"],
+  "body": "Synthetic demonstration. Capture direction, produce a draft, and review the result. Do not invent customers, testimonials, revenue or adoption figures."
+}

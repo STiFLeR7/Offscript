@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Team — Meet our leadership team</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — Team · Leadership grid              component-team-leadership.html
+  ════════════════════════════════════════════════════════════════════════
+  COMPOSITION  A team/leadership directory on a PURE-WHITE surface.
+               • Oversized headline pinned TOP-LEFT ("Meet our leadership
+                 team."), single-tone — the source headline carries no
+                 emphasis split.
+               • A void, then a 4-COLUMN grid of 7 people: row 1 = 4, row 2 = 3
+                 (the 4th cell of row 2 is empty, per source). Well ~1240px,
+                 column-gap 40px, generous row-gap.
+               • Each person = an ARCH PHOTO (perfect semicircular top, square
+                 bottom) over a LEDGER FOOTER: a hairline rule directly under
+                 the arch, then a name (left) + a LinkedIn "in" mark (right,
+                 brand blue) on one line, then an UPPERCASE letter-spaced grey
+                 role caption beneath. A faint vertical hairline closes each
+                 footer on the right (desktop), giving the structured ledger.
+               • Content volume matches the source: long titles wrap to exactly
+                 2 lines ("HEAD OF BUSINESS / OPERATIONS", "SR. DIRECTOR OF
+                 CLIENT / SUCCESS & SUPPORT"); short titles stay 1 line.
+
+  INSPIRATION  "Meet our leadership team" section (arch-framed team grid).
+               Layout / arch shape / ledger footer / grid geometry / content
+               volume reproduced 1:1; colours / fonts / copy re-skinned to CR.
+
+  RE-SKIN      Pure-WHITE background per the brief (the source sits the cards on
+               a faint grey band — dropped, everything is #FFFFFF). Headline →
+               Urbanist ExtraBold. Role captions → Inter uppercase + letter-spacing
+               (the source's monospaced caption look, rendered in the brand font —
+               the kit ships only Urbanist + Inter). Avatars → real face-cropped
+               portraits saved LOCALLY (assets/avatars/), object-fit:cover, cast
+               to match each name's read (5 men / 2 women; a Black man for Head of
+               Product, East- & South-Asian women for VP People / Sr. Director).
+               LinkedIn mark → the real bare "in" brand glyph as inline SVG
+               (a brand logo, not a UI icon — so it's exempt from the Lucide-only
+               rule, and there are no other icons, so Lucide isn't loaded at all).
+
+  NO SHADOW    Cards have no elevation; the only separators are the 1px
+               `--cr-line` hairlines (top rule under each arch + the vertical
+               ledger rule). Per the charter, hover lives ONLY on a real control
+               — here the LinkedIn link; the arch photos are informational and
+               never react to hover.
+
+  MOTION       (user choice) "Arch unmask" — on first viewport entry each arch
+               photo reveals bottom→top via a clip-path wipe on the INNER <img>
+               (the arch shape itself is held by the container's border-radius +
+               overflow, so the clip only drives the wipe), staggered across the
+               grid (row 1 L→R, then row 2); the name + role fade up just after
+               each arch fills. CSS `animation` gated on `.in-view` (anti-race);
+               IntersectionObserver fires once then disconnects. NO-JS SAFE: the
+               hidden clipped state + the meta's hidden state are scoped to
+               `.has-js`, so without JS every photo + label shows at full
+               opacity. `prefers-reduced-motion` snaps everything in.
+
+  RESPONSIVE   Side padding eases 100→64px ≤1240 so 4-col columns stay ≥~220px
+               (roles keep to ≤2 lines like the source); 4-col ≥1141px → 2-col
+               ≤1140 (ledger right-rule drops, gaps tighten, headline scales via
+               clamp) → tighter padding ≤600. Grid children carry `min-width:0`
+               and the photo uses `aspect-ratio` so the arch proportion holds at
+               every width with no horizontal scroll.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../_frozen-v2-tokens.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<style>
+  /* ─── scope reset ─────────────────────────────────────────────── */
+  .tm-section, .tm-section * { box-sizing: border-box; }
+  .tm-section {
+    background: var(--cr-bg);                  /* pure white, per brief */
+    padding: 120px 100px;
+    font-family: var(--cr-font-body);
+  }
+  .tm-wrap { max-width: var(--cr-content-max); margin: 0 auto; }  /* wide well, air outside */
+
+  /* ─── headline (top-left, single-tone) ────────────────────────── */
+  .tm-head {
+    margin: 0 0 84px;
+    font-family: var(--cr-font-display);
+    font-weight: 800;                          /* Urbanist ExtraBold — editorial */
+    font-size: clamp(38px, 5.2vw, 58px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--cr-fg);
+  }
+
+  /* ─── 4-column people grid ────────────────────────────────────── */
+  .tm-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 40px;
+    row-gap: 60px;
+  }
+  .tm-card { display: flex; flex-direction: column; min-width: 0; }
+
+  /* ─── arch photo (semicircular top, square bottom) ────────────── */
+  .tm-photo {
+    position: relative;
+    aspect-ratio: 1 / 1.06;                    /* arch rise = width/2 ≈ 47% of height (source rhythm) */
+    border-radius: 999px 999px 0 0;            /* clamps to a true semicircle top */
+    overflow: hidden;                          /* holds the arch shape; the img clip only wipes */
+    background: var(--cr-bg-grey-100);         /* placeholder before paint */
+  }
+  .tm-photo img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center 22%;               /* keep faces high in the arch */
+    display: block;
+  }
+
+  /* ─── ledger footer ───────────────────────────────────────────── */
+  .tm-meta {
+    border-top: 1px solid var(--cr-line);      /* hairline directly under the arch */
+    border-right: 1px solid var(--cr-line);    /* vertical ledger rule (desktop) */
+    padding: 16px 14px 22px 0;
+  }
+  .tm-namerow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .tm-name {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: 17px;
+    line-height: 1.3;
+    color: var(--cr-fg);
+  }
+  .tm-li {
+    flex: none;
+    display: inline-flex;
+    color: var(--cr-brand);                    /* LinkedIn "in" — brand blue */
+    transition: color .2s ease, transform .15s ease;
+  }
+  .tm-li svg { width: 19px; height: 19px; display: block; }
+  .tm-li:hover { color: var(--cr-brand-700); } /* hover = real control only */
+  .tm-li:active { transform: scale(.92); }
+  .tm-role {
+    margin: 8px 0 0;
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: 12.5px;
+    line-height: 1.5;
+    letter-spacing: 0.09em;                    /* structured-label feel without a mono font */
+    text-transform: uppercase;
+    color: var(--cr-fg-3);
+  }
+
+  /* ─── MOTION: arch unmask + meta rise (anti-race, fires once) ──── */
+  /* default (no JS): img unclipped, meta visible. Hidden states are .has-js-scoped. */
+  .has-js .tm-section .tm-photo img { clip-path: inset(100% 0 0 0); }      /* hidden: bottom strip */
+  .has-js .tm-section .tm-card.in-view .tm-photo img {
+    animation: tmArch .8s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes tmArch { to { clip-path: inset(0 0 0 0); } }                  /* wipe bottom→top */
+
+  .has-js .tm-section .tm-meta { opacity: 0; transform: translateY(10px); }
+  .has-js .tm-section .tm-card.in-view .tm-meta {
+    animation: tmRise .6s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: calc(var(--d, 0s) + .26s);                            /* fades in as the arch fills */
+  }
+  @keyframes tmRise { to { opacity: 1; transform: none; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .tm-section .tm-photo img,
+    .has-js .tm-section .tm-card.in-view .tm-photo img { clip-path: none; animation: none; }
+    .has-js .tm-section .tm-meta,
+    .has-js .tm-section .tm-card.in-view .tm-meta { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* ─── responsive ──────────────────────────────────────────────── */
+  /* ease the side padding first so 4-col columns stay ≥~220px (roles keep to
+     ≤2 lines like the source) before the 2-col switch — the narrow-end squeeze fix */
+  @media (max-width: 1240px) {
+    .tm-section { padding: 100px 64px; }
+  }
+  @media (max-width: 1140px) {
+    .tm-section { padding: 88px 56px; }
+    .tm-head { margin-bottom: 60px; }
+    .tm-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; row-gap: 48px; }
+    .tm-meta { border-right: none; padding-right: 0; }  /* drop the ledger rule when only 2 wide */
+  }
+  @media (max-width: 600px) {
+    .tm-section { padding: 64px 24px; }
+    .tm-grid { column-gap: 20px; row-gap: 40px; }
+    .tm-name { font-size: 16px; }
+    .tm-role { font-size: 11.5px; letter-spacing: 0.07em; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Headline-top-left + 4-col arch grid follow the SOURCE composition — the
+     placement is per-composition, not a hardcoded house rule. -->
+<section class="tm-section" data-screen-label="Team · Leadership grid">
+  <div class="tm-wrap">
+
+    <h2 class="tm-head">Meet our leadership team.</h2>
+
+    <div class="tm-grid">
+
+      <!-- row 1 -->
+      <article class="tm-card" style="--d:0s">
+        <div class="tm-photo"><img src="../assets/avatars/team-3.jpg" alt="Matt Bivons" decoding="async" /></div>
+        <div class="tm-meta">
+          <div class="tm-namerow">
+            <h3 class="tm-name">Matt Bivons</h3>
+            <a class="tm-li" href="#" aria-label="View Matt Bivons on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="1" y="8.6" width="4" height="13.4" rx="0.4"/><circle cx="3" cy="3.9" r="2.45"/><path d="M8 8.6h3.84v1.83h.05c.53-.96 1.84-1.97 3.79-1.97 4.05 0 4.8 2.5 4.8 5.74V22h-4v-6.3c0-1.5-.03-3.43-2.1-3.43-2.1 0-2.42 1.63-2.42 3.32V22H8V8.6z"/></svg>
+            </a>
+          </div>
+          <p class="tm-role">Founder &amp; CEO</p>
+        </div>
+      </article>
+
+      <article class="tm-card" style="--d:.08s">
+        <div class="tm-photo"><img src="../assets/avatars/team-5.jpg" alt="Justin Potts" decoding="async" /></div>
+        <div class="tm-meta">
+          <div class="tm-namerow">
+            <h3 class="tm-name">Justin Potts</h3>
+            <a class="tm-li" href="#" aria-label="View Justin Potts on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="1" y="8.6" width="4" height="13.4" rx="0.4"/><circle cx="3" cy="3.9" r="2.45"/><path d="M8 8.6h3.84v1.83h.05c.53-.96 1.84-1.97 3.79-1.97 4.05 0 4.8 2.5 4.8 5.74V22h-4v-6.3c0-1.5-.03-3.43-2.1-3.43-2.1 0-2.42 1.63-2.42 3.32V22H8V8.6z"/></svg>
+            </a>
+          </div>
+          <p class="tm-role">Chief Technology Officer</p>
+        </div>
+      </article>
+
+      <article class="tm-card" style="--d:.16s">
+        <div class="tm-photo"><img src="../assets/avatars/team-dami.jpg" alt="Dami Payne" decoding="async" /></div>
+        <div class="tm-meta">
+          <div class="tm-namerow">
+            <h3 class="tm-name">Dami Payne</h3>
+            <a class="tm-li" href="#" aria-label="View Dami Payne on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="1" y="8.6" width="4" height="13.4" rx="0.4"/><circle cx="3" cy="3.9" r="2.45"/><path d="M8 8.6h3.84v1.83h.05c.53-.96 1.84-1.97 3.79-1.97 4.05 0 4.8 2.5 4.8 5.74V22h-4v-6.3c0-1.5-.03-3.43-2.1-3.43-2.1 0-2.42 1.63-2.42 3.32V22H8V8.6z"/></svg>
+            </a>
+          </div>
+          <p class="tm-role">Head of Product</p>
+        </div>
+      </article>
+
+      <article class="tm-card" style="--d:.24s">
+        <div class="tm-photo"><img src="../assets/avatars/team-1.jpg" alt="Kirk Wells" decoding="async" /></div>
+        <div class="tm-meta">
+          <div class="tm-namerow">
+            <h3 class="tm-name">Kirk Wells</h3>
+            <a class="tm-li" href="#" aria-label="View Kirk Wells on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="1" y="8.6" width="4" height="13.4" rx="0.4"/><circle cx="3" cy="3.9" r="2.45"/><path d="M8 8.6h3.84v1.83h.05c.53-.96 1.84-1.97 3.79-1.97 4.05 0 4.8 2.5 4.8 5.74V22h-4v-6.3c0-1.5-.03-3.43-2.1-3.43-2.1 0-2.42 1.63-2.42 3.32V22H8V8.6z"/></svg>
+            </a>
+          </div>
+          <p class="tm-role">Chief Revenue Officer</p>
+        </div>
+      </article>
+
+      <!-- row 2 -->
+      <article class="tm-card" style="--d:.32s">
+        <div class="tm-photo"><img src="../assets/avatars/team-jessica.jpg" alt="Jessica Wu" decoding="async" /></div>
+        <div class="tm-meta">
+          <div class="tm-namerow">
+            <h3 class="tm-name">Jessica Wu</h3>
+            <a class="tm-li" href="#" aria-label="View Jessica Wu on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="1" y="8.6" width="4" height="13.4" rx="0.4"/><circle cx="3" cy="3.9" r="2.45"/><path d="M8 8.6h3.84v1.83h.05c.53-.96 1.84-1.97 3.79-1.97 4.05 0 4.8 2.5 4.8 5.74V22h-4v-6.3c0-1.5-.03-3.43-2.1-3.43-2.1 0-2.42 1.63-2.42 3.32V22H8V8.6z"/></svg>
+            </a>
+          </div>
+          <p class="tm-role">VP of People</p>
+        </div>
+      </article>
+
+      <article class="tm-card" style="--d:.40s">
+        <div class="tm-photo"><img src="../assets/avatars/avatar-jason.jpg" alt="Scott Melman" decoding="async" /></div>
+        <div class="tm-meta">
+          <div class="tm-namerow">
+            <h3 class="tm-name">Scott Melman</h3>
+            <a class="tm-li" href="#" aria-label="View Scott Melman on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="1" y="8.6" width="4" height="13.4" rx="0.4"/><circle cx="3" cy="3.9" r="2.45"/><path d="M8 8.6h3.84v1.83h.05c.53-.96 1.84-1.97 3.79-1.97 4.05 0 4.8 2.5 4.8 5.74V22h-4v-6.3c0-1.5-.03-3.43-2.1-3.43-2.1 0-2.42 1.63-2.42 3.32V22H8V8.6z"/></svg>
+            </a>
+          </div>
+          <p class="tm-role">Head of Business Operations</p>
+        </div>
+      </article>
+
+      <article class="tm-card" style="--d:.48s">
+        <div class="tm-photo"><img src="../assets/avatars/team-trisha.jpg" alt="Trisha Patel Sood" decoding="async" /></div>
+        <div class="tm-meta">
+          <div class="tm-namerow">
+            <h3 class="tm-name">Trisha Patel Sood</h3>
+            <a class="tm-li" href="#" aria-label="View Trisha Patel Sood on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="1" y="8.6" width="4" height="13.4" rx="0.4"/><circle cx="3" cy="3.9" r="2.45"/><path d="M8 8.6h3.84v1.83h.05c.53-.96 1.84-1.97 3.79-1.97 4.05 0 4.8 2.5 4.8 5.74V22h-4v-6.3c0-1.5-.03-3.43-2.1-3.43-2.1 0-2.42 1.63-2.42 3.32V22H8V8.6z"/></svg>
+            </a>
+          </div>
+          <p class="tm-role">Sr. Director of Client Success &amp; Support</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.tm-section');
+  if (!sec) return;
+
+  function reveal() {
+    sec.querySelectorAll('.tm-card').forEach(function (n) { n.classList.add('in-view'); });
+  }
+
+  if (reduce) { reveal(); return; }          // CSS snaps everything in
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) {
+        if (en.isIntersecting) { reveal(); io.disconnect(); }
+      });
+    }, { threshold: 0.15 });
+    io.observe(sec);
+  } else {
+    reveal();
+  }
+})();
+</script>
+
+</body>
+</html>

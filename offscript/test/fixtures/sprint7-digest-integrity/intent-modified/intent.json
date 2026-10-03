@@ -1,0 +1,8 @@
+{
+  "id": "sprint7-intent-modified-intent",
+  "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "belief": "this belief text was edited after the artifact was rendered",
+  "feature": "automation",
+  "mustInclude": ["post-render edit"],
+  "section": "feature"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "autopilot-approval-console",
+  "contractVersion": 1,
+  "digest": "sha256:16a6837ef3e2b0a55c55178faf476e6f468893d3c5b357b5ed0d9d245500a1c5",
+  "belief": "invoice and expense approvals run without a human touching them",
+  "feature": "automation",
+  "ratio": "16:9",
+  "camera": "workflow",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "overnight-sync-complete",
+  "contractVersion": 1,
+  "digest": "sha256:2fcbab3d1f4ee33be34cd99945f0de1d458f873d4840701e1b078b00ed9ec596",
+  "belief": "a nightly sync finished successfully without anyone having to watch it happen",
+  "feature": "automation",
+  "ratio": "1:1",
+  "camera": "macro",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

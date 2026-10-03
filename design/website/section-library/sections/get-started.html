@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Split · asymmetric — get started</title>
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Split · asymmetric               from component-get-started.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **The path shown immediately before it is asked for.** The profile
+              names this precisely: a closing-half structure disguised as an
+              explanatory one. Three steps exist to remove the unspoken objection
+              *what would this actually involve*, and the artifact beside them
+              exists to show that the answer is a console and a snippet, not a
+              project. So the steps stay a bare numbered list — no cards, no
+              icons, no chrome — and everything with a border on this screen is
+              the product, not the page.
+
+  STRUCTURE   Unchanged. A ~40/60 split: headline → three hairline-divided steps
+              → CTA → reassurance on the left; three stacked creative layers
+              cropped off the right and bottom on the right. DOM, scripts, ids,
+              `data-*`, `aria-*`, `src` and every behavioural hook are
+              byte-compatible with the frozen original (DR-22). The v2 file is
+              beside this one in `_v2/`.
+
+  THE CREATIVE  v2's backdrop layer was an abstract creative background: a cream
+              panel with a grain PNG laid over it at 5% multiply, standing in for
+              a subject. It is replaced by an approved environment —
+              `massif-clear`, focus `50% 42%` — as ONE background stack. It has
+              to be one stack: a blend mode composites against what is beneath it
+              in the SAME background, so putting the grain on a child or a
+              pseudo-element resolves `overlay` against transparency and renders
+              at full strength as grey static. `.gs-grain` therefore stops
+              carrying its own texture; the grain it used to supply is now the
+              top layer of the parent's stack. The URLs are written out rather
+              than reached through `--cr-env-*`, because a `url()` inside a
+              custom property resolves against the CONSUMING document and fails
+              silently.
+
+              The layer offsets are untouched, so the environment reads exactly
+              where the cream read: a band above, left of, and below the app
+              screenshot, which the app's own bleed crops on the right.
+
+  NO TYPE ON THE PHOTOGRAPH  Every word in the creative lives inside the app
+              screenshot or the code card, both OPAQUE — an opaque panel over an
+              image is the permitted case, and it is what makes them read as
+              product artifacts rather than page decoration. Remove the
+              environment and not one word changes legibility.
+
+  THE ARTIFACT  The screenshot and the code card are miniature interfaces, marked
+              `cr-graphic` and EXEMPT FROM THE TYPE RAMP — a table row at the
+              supporting size does not fit the console it sits inside, and every
+              exempt rule claims the exemption in its own selector so it stays
+              greppable. COLOUR IS NOT EXEMPT: the rail's two `rgba(255,255,255,…)`
+              states resolve to neutral steps, and every mark inside the mock is
+              a token.
+
+  ACCENT      One moment, and it is the ask. The `Get Started` control takes the
+              orange; v2 also spent brand blue on both in-mock "Add" links and on
+              the Copy control's hover — three more accents inside a picture of
+              an interface, competing with the one thing the section wants
+              clicked. They are ink now.
+
+  RESPONSIVE  The original's breakpoints (1024 / 640), unchanged, including the
+              CSS-var offset knobs that keep the crop reading at every width.
+              Type steps on the pack's ramp; `clamp()` is gone — it resolves to
+              sizes nobody authored. The reduce guard now names the divider's own
+              trigger selector: a guard that loses the cascade is not a guard.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  /* ─── scope reset ─────────────────────────────────────────────── */
+  .gs-section, .gs-section * { box-sizing: border-box; }
+  .gs-section {
+    background: var(--cr-page-ground);
+    padding: var(--cr-space-2xl) var(--cr-page-gutter);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+    font-size: var(--cr-text-body);
+    overflow: hidden;                 /* crops the creative's right/bottom bleed */
+  }
+  .gs-wrap {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+    /* minmax(0,…) so the creative column can't force a min-content blow-out.
+       The split itself is the composition — a track change here is a different
+       section, so it is left exactly as authored. */
+    display: grid;
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);   /* ~40 / 60 split, per source */
+    column-gap: var(--cr-space-xl);
+    align-items: center;              /* vertically centre the two columns against each other */
+  }
+
+  /* ─── LEFT column ─────────────────────────────────────────────── */
+  .gs-left { max-width: 460px; min-width: 0; }
+
+  .gs-head {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h2);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);    /* plain — the source headline has no emphasis split */
+  }
+
+  .gs-steps {
+    margin: var(--cr-rhythm-content) 0 0;
+    padding: 0;
+    list-style: none;                 /* reset <ol> markers — the big numerals are the markers */
+  }
+
+  .gs-step {
+    position: relative;
+    padding: var(--cr-space-s) 0;
+  }
+  .gs-step:first-child { padding-top: 0; }
+  /* hairline divider BETWEEN steps only (none after the last) */
+  .gs-step:not(:last-child)::after {
+    content: "";
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: var(--cr-stroke); background: var(--cr-border-default);
+    transform-origin: left center;          /* visible (scaleX 1) by default → present without JS */
+  }
+  .gs-num {
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .gs-label {
+    margin: var(--cr-space-s) 0 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-primary);
+    max-width: 22em;
+  }
+
+  /* ─── CTA + reassurance — the section's ONE accent moment ─────── */
+  .gs-cta-row { margin-top: var(--cr-space-m); }
+  .gs-cta {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-on-accent-light);
+    background: var(--cr-accent-orange);
+    border: none;
+    border-radius: var(--cr-radius-control);   /* the pill is retired for controls */
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .2s ease, transform .15s ease;
+  }
+  .gs-cta:hover { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+  .gs-cta .gs-arrow { transition: transform .2s ease; }      /* nudges 4px on hover */
+  .gs-cta:hover .gs-arrow { transform: translateX(4px); }
+  .gs-cta:active { transform: scale(.97); }
+  .gs-reassure {
+    margin: var(--cr-space-s) 0 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* ─── RIGHT column · layered product creative ─────────────────── */
+  .gs-media {
+    /* per-instance offset knobs (tuned to the source crop) — untouched, so the
+       environment lands exactly where the cream panel used to */
+    --stage-h: 600px;
+    --bd-l: 6px;   --bd-t: 32px;                 /* environment backdrop offset */
+    --app-l: 56px; --app-t: 76px; --app-h: 478px;/* app screenshot offset/size  */
+    --side-w: 152px;                             /* dark nav-rail width         */
+    --code-l: 372px; --code-t: 128px; --code-w: 430px; --code-h: 388px;
+
+    position: relative;
+    min-width: 0;
+    overflow: hidden;                 /* crops layers' right + bottom bleed */
+    min-height: var(--stage-h);
+    /* no top offset on desktop — the grid's align-items:center handles vertical position
+       (tablet/mobile re-add a stacked top margin below) */
+  }
+  .gs-layer { position: absolute; }
+
+  /* (1) THE BACKDROP — was a cream panel + a grain PNG; now an approved
+     environment. `massif-clear` is the catalogue's most detailed member, which
+     ASSETS.md warns is busy behind copy — and no copy sits on it. Here it is a
+     margin band framing an interface, which is exactly where detail helps.
+
+     ONE STACK, three layers, in this order: grain on top, grunge under it, the
+     environment underneath both. It has to be one stack — a blend mode
+     composites against what is beneath it in the SAME background, so the grain
+     on `.gs-grain` would resolve `overlay` against transparency and render as
+     grey static. The last position is the asset's measured focus from
+     ASSETS.md, not a guess. */
+  .gs-backdrop {
+    left: var(--bd-l); top: var(--bd-t);
+    width: calc(100% + 70px);
+    height: calc(var(--stage-h) + 24px);
+    border-radius: var(--cr-radius-card);
+    z-index: 1;
+    background-color: var(--cr-bg-dark);
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-massif-clear.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 50% 42%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+  }
+  /* The grain moved into the parent's stack, where a blend mode has a base to
+     composite against. This layer stays in place and carries nothing. */
+  .gs-backdrop .gs-grain {
+    position: absolute; inset: 0; border-radius: inherit;
+    background-image: none;
+    pointer-events: none;
+  }
+
+  /* (2) app screenshot — OPAQUE, which is why it may sit over the environment */
+  .gs-app.cr-graphic {
+    left: var(--app-l); top: var(--app-t);
+    width: calc(100% + 120px);
+    height: var(--app-h);
+    display: flex;
+    background: var(--cr-surface-1);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+    overflow: hidden;                         /* clips rail corners + right bleed */
+    z-index: 2;
+  }
+
+  /* dark nav rail — an in-component product surface, not a page band */
+  .cr-graphic .gs-rail {
+    flex: none; width: var(--side-w);
+    background: var(--cr-bg-dark);
+    padding: 20px 12px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .cr-graphic .gs-rail-logo { display: flex; align-items: center; height: 17px; margin: 2px 6px 22px; }
+  .cr-graphic .gs-rail-logo img { height: 16px; width: auto; display: block; }
+  /* v2's hover / active were `rgba(255,255,255,.06)` and `.10` — authored colour
+     functions where the pack already holds the value. Neutral steps instead. */
+  .cr-graphic .gs-rail-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 10px; border-radius: var(--cr-radius-control);
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 13px;
+    color: var(--cr-neutral-500);
+    background: none; border: none; width: 100%; text-align: left;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+  }
+  .cr-graphic .gs-rail-item .gs-i { width: 16px; height: 16px; stroke-width: var(--cr-icon-stroke-sm); flex: none; }
+  .cr-graphic .gs-rail-item:hover { color: var(--cr-text-inverse); background: var(--cr-neutral-900); }
+  .cr-graphic .gs-rail-item.is-active { color: var(--cr-text-inverse); background: var(--cr-neutral-900); }
+
+  /* light content panel */
+  .cr-graphic .gs-panel {
+    flex: 1 1 auto; min-width: 0;
+    padding: 22px 24px;
+    overflow: hidden;
+  }
+  .cr-graphic .gs-panel-title {
+    margin: 0 0 16px;
+    font-family: var(--cr-font-display); font-weight: 500; font-size: 18px;
+    line-height: var(--cr-leading-heading);
+    color: var(--cr-text-primary); white-space: nowrap;
+  }
+  .cr-graphic .gs-tabs {
+    display: flex; gap: 22px;
+    border-bottom: var(--cr-stroke) solid var(--cr-border-default);
+    margin-bottom: 20px;
+  }
+  .cr-graphic .gs-tab {
+    padding: 0 1px 11px; margin-bottom: -1px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 13px;
+    color: var(--cr-text-secondary); white-space: nowrap;
+    border-bottom: 2px solid transparent;
+  }
+  .cr-graphic .gs-tab.is-active { color: var(--cr-text-primary); border-bottom-color: var(--cr-text-primary); }
+
+  .cr-graphic .gs-sub { margin-bottom: 18px; }
+  .cr-graphic .gs-sub-label {
+    margin: 0 0 3px;
+    font-family: var(--cr-font-display); font-weight: 500; font-size: 14px;
+    color: var(--cr-text-primary);
+  }
+  .cr-graphic .gs-sub-help {
+    margin: 0 0 12px;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 12px;
+    line-height: var(--cr-leading-body); color: var(--cr-text-secondary); white-space: nowrap;
+  }
+  .cr-graphic .gs-rowcard {
+    display: flex; align-items: center; gap: 11px;
+    padding: 10px 12px;
+    border: var(--cr-stroke) solid var(--cr-border-default); border-radius: var(--cr-radius-control);
+    white-space: nowrap;
+  }
+  .cr-graphic .gs-tile {
+    flex: none; width: 30px; height: 30px; border-radius: var(--cr-radius-control);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cr-graphic .gs-tile--globe { background: var(--cr-surface-3); border: var(--cr-stroke) solid var(--cr-border-default); color: var(--cr-text-secondary); }
+  .cr-graphic .gs-tile--globe .gs-i { width: 16px; height: 16px; stroke-width: var(--cr-icon-stroke-sm); }
+  .cr-graphic .gs-tile--logo { background: var(--cr-text-primary); }      /* third-party mark tile (placeholder) */
+  .cr-graphic .gs-rowcard-name {
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 13px; color: var(--cr-text-primary);
+  }
+  .cr-graphic .gs-rowcard-sub {
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 11px; color: var(--cr-text-secondary); margin-top: 1px;
+  }
+  /* An in-mock affordance is not the section's accent. Ink. */
+  .cr-graphic .gs-add {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 12px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 13px;
+    color: var(--cr-text-primary);
+    background: none; border: none; padding: 4px 2px; cursor: pointer;
+    transition: color .2s ease;
+  }
+  .cr-graphic .gs-add .gs-i { width: 15px; height: 15px; stroke-width: var(--cr-icon-stroke-md); }
+  .cr-graphic .gs-add:hover { color: var(--cr-text-secondary); }
+
+  /* (3) floating code-snippet card — also opaque, also the product */
+  .gs-code.cr-graphic {
+    left: var(--code-l); top: var(--code-t);
+    width: var(--code-w); height: var(--code-h);
+    background: var(--cr-surface-1);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+    padding: 18px;
+    overflow: hidden;
+    z-index: 3;
+    display: flex; flex-direction: column;
+  }
+  .cr-graphic pre {
+    margin: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+    background: var(--cr-surface-3);               /* differentiates the snippet from the card */
+    border-radius: var(--cr-radius-control);
+    padding: 14px 16px;
+    font-family: var(--cr-font-mono);
+    font-size: 12.5px; line-height: 1.85;
+    color: var(--cr-text-secondary);
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .cr-graphic .gs-code-copy {
+    display: inline-flex; align-items: center; gap: 9px;
+    align-self: flex-start;
+    margin-top: 14px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 14px;
+    color: var(--cr-text-primary);
+    background: none; border: none; padding: 6px 4px; cursor: pointer;
+    border-radius: var(--cr-radius-control);
+    transition: color .2s ease;
+  }
+  .cr-graphic .gs-code-copy .gs-i { width: 18px; height: 18px; stroke-width: var(--cr-icon-stroke-sm); }
+  .cr-graphic .gs-code-copy:hover { color: var(--cr-text-secondary); }
+
+  /* ─── MOTION: layered reveal + step stagger (anti-race, fires once) ── */
+  .has-js .gs-section [data-reveal] { opacity: 0; transform: translateY(20px); }
+  .has-js .gs-section [data-reveal].in-view {
+    animation: gsRise .7s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes gsRise { to { opacity: 1; transform: none; } }
+
+  /* with JS, dividers START collapsed (scaleX 0) and then DRAW IN left→right when
+     their step reveals; without JS this hidden state never applies, so the rules show */
+  .has-js .gs-section .gs-step:not(:last-child)::after { transform: scaleX(0); }
+  .has-js .gs-section .gs-step.in-view:not(:last-child)::after {
+    animation: gsDraw .6s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: calc(var(--d, 0s) + .12s);
+  }
+  @keyframes gsDraw { to { transform: scaleX(1); } }
+
+  /* The guard must match the trigger it is guarding. v2's reset named
+     `.gs-step::after`, two selectors short of the draw-in trigger, so `gsDraw`
+     ran anyway under a reduce preference. Both are named now. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .gs-section [data-reveal],
+    .has-js .gs-section [data-reveal].in-view {
+      opacity: 1; transform: none; animation: none;
+    }
+    .has-js .gs-section .gs-step:not(:last-child)::after,
+    .has-js .gs-section .gs-step.in-view:not(:last-child)::after {
+      transform: scaleX(1); animation: none;
+    }
+  }
+
+  /* ─── responsive ──────────────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .gs-section { padding: var(--cr-space-xl) var(--cr-page-gutter); }
+    .gs-wrap { grid-template-columns: minmax(0, 1fr); row-gap: var(--cr-space-xs); }
+    .gs-left { max-width: 620px; }
+    .gs-steps { margin-top: var(--cr-space-xl); }
+    .gs-media {
+      margin-top: var(--cr-space-m);
+      max-width: 720px;
+      --stage-h: 560px;
+    }
+  }
+  @media (max-width: 640px) {
+    /* No type step is authored here. The pack's ramp already walks the headline
+       and the numerals down its own ladder, and the label is BODY — which the
+       ramp deliberately never moves, because 20px at 145% is the direction's
+       reading floor and a phone is where that matters most. */
+    .gs-section { padding: var(--cr-space-m) var(--cr-page-gutter); }
+    .gs-cta { width: 100%; justify-content: center; }
+    .gs-media {
+      margin-top: var(--cr-space-m);
+      --stage-h: 440px;
+      --bd-l: 4px;   --bd-t: 24px;
+      --app-l: 28px; --app-t: 56px; --app-h: 356px;
+      --side-w: 124px;
+      --code-l: 196px; --code-t: 96px; --code-w: 300px; --code-h: 286px;
+    }
+    .cr-graphic .gs-rail { padding: 16px 9px; }
+    .cr-graphic .gs-panel { padding: 18px 18px; }
+    .gs-code.cr-graphic { padding: 14px; }
+    .cr-graphic pre { font-size: 11.5px; padding: 12px 13px; }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. Everything below realizes a scale the pack already holds —
+     there is no `directed` line, because the Pilot Constraint was not asked to
+     yield anywhere in this section. The creative's offset knobs (`--stage-h`,
+     `--app-l`, `--code-t` …) are untouched, which is why the layer geometry
+     does not appear here at all: the environment took the cream panel's exact
+     position rather than being given a better one.
+  .gs-arrow       | font-size              | type-ramp
+  .gs-arrow       | line-height            | type-ramp
+  .gs-cta         | border-radius          | radius-pair
+  .gs-cta         | column-gap             | spacing-scale
+  .gs-cta         | font-size              | type-ramp
+  .gs-cta         | line-height            | type-ramp
+  .gs-cta         | padding-bottom         | spacing-scale
+  .gs-cta         | padding-left           | spacing-scale
+  .gs-cta         | padding-right          | spacing-scale
+  .gs-cta         | padding-top            | spacing-scale
+  .gs-cta         | row-gap                | spacing-scale
+  .gs-head        | font-size              | type-ramp
+  .gs-head        | line-height            | type-ramp
+  .gs-label       | font-size              | type-ramp
+  .gs-label       | line-height            | type-ramp
+  .gs-label       | margin-top             | spacing-scale
+  .gs-label       | max-width              | measure
+  .gs-layer       | border-radius          | radius-pair
+  .gs-layer       | font-size              | type-ramp
+  .gs-left        | font-size              | type-ramp
+  .gs-media       | font-size              | type-ramp
+  .gs-media       | margin-top             | spacing-scale
+  .gs-num         | font-size              | type-ramp
+  .gs-num         | line-height            | type-ramp
+  .gs-panel       | font-size              | type-ramp
+  .gs-panel-title | line-height            | type-ramp
+  .gs-rail        | font-size              | type-ramp
+  .gs-rail-item   | border-radius          | radius-pair
+  .gs-reassure    | font-size              | type-ramp
+  .gs-reassure    | line-height            | type-ramp
+  .gs-reassure    | margin-top             | spacing-scale
+  .gs-rowcard     | border-radius          | radius-pair
+  .gs-rowcard     | font-size              | type-ramp
+  .gs-step        | font-size              | type-ramp
+  .gs-step        | padding-bottom         | spacing-scale
+  .gs-step        | padding-top            | spacing-scale
+  .gs-steps       | font-size              | type-ramp
+  .gs-steps       | margin-top             | spacing-scale
+  .gs-sub         | font-size              | type-ramp
+  .gs-sub-help    | line-height            | type-ramp
+  .gs-tabs        | font-size              | type-ramp
+  .gs-wrap        | column-gap             | spacing-scale
+  .gs-wrap        | font-size              | type-ramp
+  .gs-wrap        | row-gap                | spacing-scale
+  .lucide         | font-size              | type-ramp
+  br              | font-size              | type-ramp
+  br              | line-height            | type-ramp
+  circle          | font-size              | type-ramp
+  img             | font-size              | type-ramp
+  path            | font-size              | type-ramp
+  pre             | border-radius          | radius-pair
+  span            | font-size              | type-ramp
+  svg             | font-size              | type-ramp
+-->
+
+<!-- The two-column split + left-headline placement follow the SOURCE — not a
+     hardcoded house rule (the rule is intentionally per-composition). -->
+<section class="gs-section" data-screen-label="Features · Get started in minutes"
+         data-archetype="narrative-flow" data-hierarchy="closing" data-intent="explain"
+         data-register="instructional" data-signature="embedded-screenshot" data-density="medium">
+  <div class="gs-wrap">
+
+    <!-- ── LEFT: headline + numbered steps + CTA ───────────────── -->
+    <div class="gs-left">
+      <h2 class="gs-head" data-reveal style="--d:0s">Get Started<br>in Minutes</h2>
+
+      <ol class="gs-steps">
+        <li class="gs-step" data-reveal style="--d:.12s">
+          <div class="gs-num">1.</div>
+          <p class="gs-label">Link your website &amp; knowledge base</p>
+        </li>
+        <li class="gs-step" data-reveal style="--d:.20s">
+          <div class="gs-num">2.</div>
+          <p class="gs-label">Example Brand generates the agents, you refine their goals and messaging</p>
+        </li>
+        <li class="gs-step" data-reveal style="--d:.28s">
+          <div class="gs-num">3.</div>
+          <p class="gs-label">Deploy with a simple code snippet</p>
+        </li>
+      </ol>
+
+      <div class="gs-cta-row" data-reveal style="--d:.36s">
+        <a class="gs-cta" href="#">Get Started <span class="gs-arrow">&rarr;</span></a>
+      </div>
+      <p class="gs-reassure" data-reveal style="--d:.42s">First version ready in minutes &middot; Live in 1&ndash;3 days</p>
+    </div>
+
+    <!-- ── RIGHT: layered product creative (cropped) ───────────── -->
+    <div class="gs-media" aria-label="Example Brand knowledge console — connect a website and embed the agent">
+
+      <!-- (1) environment backdrop -->
+      <div class="gs-layer gs-backdrop" data-reveal style="--d:.16s" aria-hidden="true">
+        <div class="gs-grain"></div>
+      </div>
+
+      <!-- (2) app screenshot -->
+      <div class="gs-layer gs-app cr-graphic" data-reveal style="--d:.26s" aria-hidden="true">
+        <!-- dark nav rail -->
+        <nav class="gs-rail">
+          <div class="gs-rail-logo"><img src="../../brand-pack/assets/logo/logo-white.svg" alt="Example Brand" /></div>
+          <button class="gs-rail-item"><i data-lucide="layout-dashboard" class="gs-i"></i>Overview</button>
+          <button class="gs-rail-item"><i data-lucide="bot" class="gs-i"></i>Agents</button>
+          <button class="gs-rail-item is-active"><i data-lucide="book-open" class="gs-i"></i>Knowledge</button>
+          <button class="gs-rail-item"><i data-lucide="settings" class="gs-i"></i>Settings</button>
+        </nav>
+        <!-- light content panel -->
+        <div class="gs-panel">
+          <h3 class="gs-panel-title">Knowledge &amp; assets</h3>
+          <div class="gs-tabs">
+            <span class="gs-tab is-active">Knowledge sources</span>
+            <span class="gs-tab">Asset library</span>
+          </div>
+
+          <div class="gs-sub">
+            <p class="gs-sub-label">Website</p>
+            <p class="gs-sub-help">Add your website so the agents can use it as a source</p>
+            <div class="gs-rowcard">
+              <span class="gs-tile gs-tile--globe"><i data-lucide="globe" class="gs-i"></i></span>
+              <span>
+                <span class="gs-rowcard-name">www.example-brand.com</span>
+                <span class="gs-rowcard-sub">Last scraped 2 days ago</span>
+              </span>
+            </div>
+            <button class="gs-add"><i data-lucide="plus" class="gs-i"></i>Add website</button>
+          </div>
+
+          <div class="gs-sub">
+            <p class="gs-sub-label">Integrations</p>
+            <p class="gs-sub-help">Connect your knowledge base from a third-party source</p>
+            <div class="gs-rowcard">
+              <!-- placeholder third-party mark (swap for a real partner SVG) -->
+              <span class="gs-tile gs-tile--logo" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 18V6h2.6l6.8 8.4V6H18v12h-2.6L8.6 9.6V18H6Z" fill="#fff"/></svg>
+              </span>
+              <span>
+                <span class="gs-rowcard-name">Notion</span>
+                <span class="gs-rowcard-sub">Last synced 2 days ago</span>
+              </span>
+            </div>
+            <button class="gs-add"><i data-lucide="plus" class="gs-i"></i>Add integration</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- (3) floating code-snippet card -->
+      <div class="gs-layer gs-code cr-graphic" data-reveal style="--d:.36s">
+<pre>&lt;iframe
+  src="https://example-brand.com/demo/019d0675-acf1-763c-93fb-379714df9224/embedded?theme=dark&amp;locale=en"
+  allow="autoplay"
+  style="width:100%;height:100%;overflow:hidden;border:none;border-radius:12px;"
+&gt;&lt;/iframe&gt;
+
+&lt;script src="https://example-brand.com/demo/embed.js"&gt;&lt;/script&gt;</pre>
+        <button class="gs-code-copy" type="button"><i data-lucide="copy" class="gs-i"></i>Copy embed code</button>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.gs-section');
+
+  // Lucide — draw once, guarded (a blocked CDN must not break the section)
+  if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
+
+  if (!sec) return;
+
+  function reveal() {
+    sec.querySelectorAll('[data-reveal]').forEach(function (n) { n.classList.add('in-view'); });
+    sec.querySelectorAll('.gs-step').forEach(function (n) { n.classList.add('in-view'); });
+  }
+
+  if (reduce) { reveal(); return; }      // CSS snaps everything in
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) {
+        if (en.isIntersecting) { reveal(); io.disconnect(); }
+      });
+    }, { threshold: 0.2 });
+    io.observe(sec);
+  } else {
+    reveal();
+  }
+})();
+</script>
+
+</body>
+</html>

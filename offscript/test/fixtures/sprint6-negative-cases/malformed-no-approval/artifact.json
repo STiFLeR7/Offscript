@@ -1,0 +1,10 @@
+{
+  "contractVersion": 1,
+  "id": "malformed-no-approval",
+  "intentDigest": "sha256:c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1",
+  "artifactType": "html",
+  "location": "test/fixtures/sprint6-negative-cases/malformed-no-approval/visual.html",
+  "artifactDigest": "sha256:d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1",
+  "createdAt": "2026-08-12T00:00:00.000Z",
+  "generation": { "sourceSystem": "sprint6-negative-case" }
+}

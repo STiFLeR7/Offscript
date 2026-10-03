@@ -1,0 +1,31 @@
+<!-- CURATED EXEMPLAR — archetype: editorial. Distilled from apa-landing.html #cost. Match the rhythm/discipline; do NOT clone.
+     A dark editorial band that names the reader's pain: ONE oversized magazine-cover statement (the house .cr-editorial —
+     Urbanist ExtraBold 800, var(--cr-font-editorial)) with a single accent word in the .cr-accent class (var(--accent)), plus a short supporting line.
+     Faithful distillation, not a clone: the source's 3-card grid + lucide icons are dropped so the headline stays the lone
+     focal point; the source's "$2.4M …" cost line becomes the quiet supporting line (the house .cr-p-lede), not a second
+     giant number. var()-only (white text = the .cr-on-dark class; no hex in style). NO icons → no var()-in-SVG trap.
+     Dark ground = the house .cr-band-ink = var(--cr-ink) (NEVER indigo). Borders/scale/whitespace carry hierarchy — NEVER
+     shadow. Entrance motion is transform-only with a prefers-reduced-motion no-op; readable without JS. The eyebrow color is
+     handled by the house (.cr-on-dark .cr-eyebrow resolves to var(--cr-brand-300), visible on ink) — no local override. -->
+<section id="editorial" class="cr-section cr-band-ink cr-on-dark" aria-label="The cost of manual work">
+  <style>
+    /* unique layout + motion only — headings/surfaces/eyebrow/body come from the house sheet */
+    #editorial .ed-inner { max-width: 980px; }
+    /* short supporting line — the source's cost figure, kept quiet: a hairline rule + measure cap is the unique layout */
+    #editorial .ed-support { max-width: 560px; margin-top: var(--cr-space-10); padding-top: var(--cr-space-8);
+      border-top: 1px solid var(--cr-line-dark); }
+    #editorial .ed-support strong { color: var(--cr-brand-300); font-weight: 700; }
+    /* motion — transform-only entrance (opacity stays 1 → preview never blank) */
+    #editorial .ed-reveal { animation: edRise .7s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--d, 0s); }
+    @keyframes edRise { from { transform: translateY(16px); } to { transform: none; } }
+    @media (prefers-reduced-motion: reduce) { #editorial .ed-reveal { animation: none; } }
+  </style>
+
+  <div class="cr-container">
+    <div class="ed-inner">
+      <span class="cr-eyebrow ed-reveal" style="--d:.05s">The cost of manual work</span>
+      <h2 class="cr-editorial ed-reveal" style="--d:.14s">Every week, the same hours <span class="cr-accent">vanish</span> into work no one should be doing.</h2>
+      <p class="cr-p-lede ed-support ed-reveal" style="--d:.26s"><strong>$2.4M</strong> in manual drag every year &mdash; before you add a single hire.</p>
+    </div>
+  </div>
+</section>

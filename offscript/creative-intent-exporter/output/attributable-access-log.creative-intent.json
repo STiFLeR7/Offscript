@@ -1,0 +1,11 @@
+{
+  "id": "attributable-access-log",
+  "contractVersion": 1,
+  "digest": "sha256:10a7d81dac03ac6a77bec5ea25fc4604d8dd81be993c61fe56f38a107cdeb2f2",
+  "belief": "every access to sensitive data is logged and attributable to a specific person",
+  "feature": "security",
+  "ratio": "1:1",
+  "camera": "product",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

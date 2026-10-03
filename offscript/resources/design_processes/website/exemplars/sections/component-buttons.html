@@ -1,0 +1,314 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Buttons</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Buttons (atom)                     from component-buttons.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  An ATOM PREVIEW, not a band — the same shape `comparison` and
+                `stat-tiles` turned out to be. The v2 file is twenty-three
+                lines: five buttons, a caption, and a six-declaration sheet
+                whose layout classes (`col` / `row` / `gap-*` / `surface-dark`
+                / `muted`) all come from `card.css`, the harness the atom
+                previews inside. That link is kept and repointed; the file it
+                names does not exist anywhere in the repo, so BOTH the control
+                and this specimen resolve it to nothing and the preview shape
+                is declared in the stylesheet below rather than inherited from
+                the harness.
+
+  WHY IT MATTERS MORE THAN ITS SIZE   Its profile says it plainly: this atom
+                is "the canonical source for every action row in the library",
+                and it exists so one page never carries three button
+                treatments. Every other specimen inherits what is decided
+                here, so the whole point of the file is that each state is
+                correct and each one MEASURES.
+
+  THE VOCABULARY, and what each state measures
+                · DEFAULT PRIMARY — the dark control. Primary ink fill,
+                  inverse label, 14.4:1. Retired from the pill to the control
+                  radius (6px): the signature pill is gone from buttons and
+                  survives only for genuinely circular affordances.
+                  Hover darkens to the deepest neutral step, 17.9:1.
+                · EMPHASIS — ONE per composition, and this atom spends it once,
+                  on the first action of the light row. The emphasis accent at
+                  rest carries the PAIRED LIGHT foreground, 5.48:1. On hover it
+                  darkens to the accent's authored deep step and the label
+                  MUST INVERT, 7.4:1 — keeping the dark ink there would
+                  measure 1.9:1, which is the AA failure this file exists to
+                  not teach. Pressed goes one step deeper still, 11.8:1.
+                · TERTIARY — the quiet action. No fill, primary ink on the
+                  page ground, 13.1:1; hover takes the quiet neutral step,
+                  12.0:1.
+                · ON THE DARK PLATE — the primary INVERTS rather than
+                  disappearing: raised-white fill, primary ink, 14.4:1. Its
+                  secondary is the hairline ghost — inverse label and inverse
+                  hairline on the dark plate, 14.4:1 for both, so the boundary
+                  itself clears the 3:1 a border-only control needs.
+                · FOCUS is a RING OF THE SURFACE'S OWN PRIMARY INK, never a
+                  hue. On the light surfaces that is the default ring token,
+                  13.1:1. On the dark plate the pack's named alternative is
+                  the deep information step at 4.23:1; inverse ink measures
+                  14.4:1 there and is still ink rather than a hue, so it is
+                  what the ring takes. Recorded as a deliberate choice.
+                · DISABLED is DECLARED and not instantiated — the frozen DOM
+                  has no disabled button and one cannot be added. It is a
+                  quiet neutral surface with the disabled ink, never `opacity`,
+                  which would fade the control's own fill along with its label.
+
+  STRUCTURE     Unchanged. One column, two action rows, five buttons, one
+                caption. DOM order, element types and depth are byte-compatible
+                with the frozen original (DR-22). Inline `style` attributes are
+                presentation, not contract, so they move into the sheet — which
+                is most of the migration on a file that barely had one.
+
+  THE CAPTION IS FROZEN, AND IT NOW DESCRIBES WHAT WAS RETIRED. Its text names
+                the pill radius and the old brand fill; text is contract, so it
+                stays exactly as written. Read it as the atom's own record of
+                what it used to be, not as an instruction — the sheet below is
+                the instruction.
+
+  ENVIRONMENT   **None, and correctly.** There is no abstract background in
+                this atom to retire: no gradient, no glow, no blur plate. The
+                dark plate under the second row is a flat governed section
+                surface carrying two controls — type, end to end — so a
+                photograph behind it would be type on a photograph, which the
+                direction refuses. Nothing is invented to satisfy the rule.
+
+  SCALE         Every label lands on the supporting step, which is where a
+                control label belongs; weights are 400 and 500 and nothing
+                else. The two sizes the original expressed by changing the
+                type size are now expressed by INSET alone — one action takes
+                the full control inset, the compact one takes the micro step —
+                so the row still reads as a hierarchy without leaving the ramp.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/sections/card.css">
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<style>
+  html, body {
+    margin: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+  }
+  .bt-col, .bt-col * { box-sizing: border-box; }
+
+  /* The atom's own container. `card.css` would have supplied `.col` / `.row` /
+     `.gap-*` / `.surface-dark` / `.muted`; it is absent, so the preview shape is
+     declared here, on the closed spacing scale. */
+  .bt-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--cr-space-s);
+    padding: var(--cr-space-s);
+  }
+  .bt-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--cr-space-xs);
+  }
+  /* The dark plate is a governed section background, not a decorated panel:
+     one flat surface, the card radius, no shadow and no glass. */
+  .bt-surface {
+    background: var(--cr-bg-dark);
+    padding: var(--cr-space-s);
+    border-radius: var(--cr-radius-card);
+  }
+
+  /* ── The control, and only the control ────────────────────────────────
+     A button never inherits `font-family` — it is stated. The base carries
+     structure and the QUIET treatment; every fill is a modifier, so the
+     tertiary is the base rather than a stripping-back of a filled control. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    background: transparent;
+    color: var(--cr-text-primary);
+    border: var(--cr-stroke) solid transparent;
+    border-radius: var(--cr-radius-control);   /* the pill is retired for buttons */
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .18s ease, color .18s ease,
+                border-color .18s ease, transform .15s ease;
+  }
+  /* The compact size is an INSET decision, not a type decision — the label
+     stays on the supporting step at both sizes. */
+  .btn--compact { padding: var(--cr-space-xs); }
+
+  /* THE DEFAULT PRIMARY — dark ink, 14.4:1. The emphasis accent is not a
+     component identity; the default primary action is this control. */
+  .btn-primary {
+    background: var(--cr-text-primary);
+    color: var(--cr-text-inverse);
+  }
+  .btn-primary:hover,
+  .btn-primary:active { background: var(--cr-neutral-1000); }   /* 17.9:1 */
+
+  /* THE ONE EMPHASIS MOMENT. Rest takes the PAIRED LIGHT foreground on the
+     accent, 5.48:1. Hover darkens the fill to the accent's authored deep step
+     and the label INVERTS — dark ink on that step measures 1.9:1 and fails AA,
+     and it shipped that way in seventeen files before it was caught. Pressed
+     goes one step deeper again, still with the inverse label. */
+  .btn.btn--emphasis {
+    background: var(--cr-accent-orange);
+    color: var(--cr-on-accent-light);
+  }
+  .btn.btn--emphasis:hover {
+    background: var(--cr-accent-orange-800);
+    color: var(--cr-text-inverse);                                /* 7.4:1 */
+  }
+  .btn.btn--emphasis:active {
+    background: var(--cr-accent-orange-900);
+    color: var(--cr-text-inverse);                                /* 11.8:1 */
+  }
+
+  /* THE QUIET ACTION — no fill, primary ink, 13.1:1 on the page ground. */
+  .btn-tertiary {
+    background: transparent;
+    color: var(--cr-text-primary);
+  }
+  .btn-tertiary:hover { background: var(--cr-surface-5); }        /* 12.0:1 */
+
+  /* ── On the dark plate ────────────────────────────────────────────────
+     The primary does not stay dark on a dark surface; it inverts. The
+     secondary beside it is the hairline ghost — the two must not both be a
+     white slab, or the plate carries two primaries and no hierarchy. */
+  .bt-surface .btn-primary {
+    background: var(--cr-surface-1);
+    color: var(--cr-text-primary);                                /* 14.4:1 */
+  }
+  .bt-surface .btn-primary:hover,
+  .bt-surface .btn-primary:active { background: var(--cr-surface-5); }   /* 12.0:1 */
+
+  .btn-secondary-dark {
+    background: transparent;
+    color: var(--cr-text-inverse);                                /* 14.4:1 */
+    border-color: var(--cr-text-inverse);                         /* boundary 14.4:1 */
+  }
+  .btn-secondary-dark:hover,
+  .btn-secondary-dark:active { background: var(--cr-neutral-900); }      /* 10.5:1 */
+
+  /* ── Focus — the surface's own primary ink, never a hue ───────────────
+     `--cr-focus-ring` is the primary ink: 13.1:1 on the page ground, where the
+     information hue it would be tempting to reach for measures 2.07:1 and is
+     disqualified outright (DR-24). On the dark plate the ring flips to the
+     inverse ink at 14.4:1 rather than to the pack's deep information step at
+     4.23:1 — still ink, not a hue, and five times the separation. */
+  .btn:focus-visible {
+    outline: 2px solid var(--cr-focus-ring);
+    outline-offset: 3px;
+  }
+  .bt-surface .btn:focus-visible { outline-color: var(--cr-text-inverse); }
+
+  /* ── Pressed — the original's own tactile affordance, now guarded ───── */
+  .btn:active { transform: scale(.96); }
+
+  /* ── Disabled — DECLARED, not instantiated ────────────────────────────
+     The frozen DOM carries no disabled control and one cannot be added. Stated
+     so the vocabulary is complete where it is consumed. A quiet surface and
+     the disabled ink, never `opacity`: opacity on a filled control fades the
+     control's own surface along with its label, and this one has a surface. */
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    background: var(--cr-surface-5);
+    color: var(--cr-text-disabled);
+    border-color: var(--cr-border-default);
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* The caption. The original set it in the mono face at a size below the
+     ramp's smallest step; the direction gives headings the display family and
+     everything else the body family, so it is the body family at the
+     supporting step. */
+  .bt-note {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* A guard must match the trigger's specificity, and a press must simply not
+     happen rather than happen faster. */
+  @media (prefers-reduced-motion: reduce) {
+    .btn { transition: none; }
+    .btn:active { transform: none; }
+  }
+</style>
+</head><body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing.
+
+     THREE `directed` lines, and all three are the harness rather than the
+     design. `card.css`, which would have declared the column, the two rows and
+     the dark plate as the flex containers their own class names name, does not
+     exist anywhere in the repo, so this atom has been previewing as bare
+     blocks. Declaring the shape its markup already claims makes those
+     containers flex containers and their children flex items, and a flex item's
+     resolved `min-height` reads `auto` where a block's reads zero. Nothing
+     about any control's size is decided by that; it is stated here rather than
+     passed through.
+
+     The dark plate is a row as well as a plate, so the row line covers its gaps
+     and its `min-height`; only its inset is claimed under its own name.
+
+     Note what is NOT here: no width line, no grid line. Every size decision in
+     this atom is an inset or a type step, which is the whole of what a button
+     vocabulary owns.
+  .bt-col     | column-gap             | spacing-scale
+  .bt-col     | padding-bottom         | spacing-scale
+  .bt-col     | padding-left           | spacing-scale
+  .bt-col     | padding-right          | spacing-scale
+  .bt-col     | padding-top            | spacing-scale
+  .bt-col     | row-gap                | spacing-scale
+  .bt-note    | font-size              | type-ramp
+  .bt-note    | line-height            | type-ramp
+  .bt-note    | min-height             | directed
+  .bt-row     | column-gap             | spacing-scale
+  .bt-row     | min-height             | directed
+  .bt-row     | row-gap                | spacing-scale
+  .bt-surface | padding-bottom         | spacing-scale
+  .bt-surface | padding-left           | spacing-scale
+  .bt-surface | padding-right          | spacing-scale
+  .bt-surface | padding-top            | spacing-scale
+  .btn        | border-bottom-width    | stroke
+  .btn        | border-left-width      | stroke
+  .btn        | border-radius          | radius-pair
+  .btn        | border-right-width     | stroke
+  .btn        | border-top-width       | stroke
+  .btn        | column-gap             | spacing-scale
+  .btn        | font-size              | type-ramp
+  .btn        | line-height            | type-ramp
+  .btn        | min-height             | directed
+  .btn        | padding-bottom         | spacing-scale
+  .btn        | padding-left           | spacing-scale
+  .btn        | padding-right          | spacing-scale
+  .btn        | padding-top            | spacing-scale
+  .btn        | row-gap                | spacing-scale
+-->
+<div class="bt-col col gap-6"
+     data-archetype="editorial-stack" data-hierarchy="primary" data-intent="convert"
+     data-register="confident" data-signature="colour-interruption" data-density="low">
+  <div class="bt-row row gap-4">
+    <button class="btn btn-primary btn--emphasis">Book a Demo Call →</button>
+    <button class="btn btn-primary btn--compact">Show for My Ops →</button>
+    <button class="btn btn-tertiary">See Case Studies →</button>
+  </div>
+  <div class="bt-surface bt-row surface-dark row gap-4">
+    <button class="btn btn-primary">Get My No-Cost Process Audit →</button>
+    <button class="btn btn-secondary-dark">Let's talk</button>
+  </div>
+  <div class="bt-note muted">Pill (radius 500) · primary var(--cr-brand) · arrow lives inside the label span, no icon component.</div>
+</div>
+</body></html>

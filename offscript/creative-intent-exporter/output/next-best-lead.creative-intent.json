@@ -1,0 +1,11 @@
+{
+  "id": "next-best-lead",
+  "contractVersion": 1,
+  "digest": "sha256:9b6c28a86d39f8fd1fc72cc782376c356ac45a532553cc1f84b50d1a9dcebf6a",
+  "belief": "the AI already knows which lead to call first, before a rep even opens the queue",
+  "feature": "ai-intelligence",
+  "ratio": "1:1",
+  "camera": "macro",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

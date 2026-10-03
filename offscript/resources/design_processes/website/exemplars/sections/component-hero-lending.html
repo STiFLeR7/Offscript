@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Hero · lending              from component-hero-lending.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **The promise gets the field to itself; the proof arrives as a
+              second beat.** The profile is explicit — a centred stack whose
+              three cards sit *beneath* the headline as peers, so the reader
+              finishes the claim before meeting the evidence. Density low,
+              register editorial, and the opening is meant to reassure before
+              it impresses.
+
+  STRUCTURE   Unchanged. Nav band · centred core (announce → headline with one
+              boxed word → lede → action pair) · 3-card row (1fr 1fr 2fr) ·
+              logo strip. DOM, the two scripts, ids, `data-*`, `src` and every
+              behavioural hook are byte-compatible with the frozen original
+              (DR-22). The v2 file is beside this one in `_v2/`.
+
+  THE PHOTOGRAPH IS KEPT. `hero-work.jpg` is a workplace photograph of people —
+              human imagery is never substituted, and here it is the reason the
+              signature reads `editorial-photography`. The floating stat over it
+              is OPAQUE, which is the permitted case: an opaque panel may sit on
+              an image because no word in it draws contrast from the picture.
+
+  TWO ABSTRACT BACKGROUNDS, TWO DIFFERENT ANSWERS.
+              · The BLUEPRINT GRID (`.hero-grid`) was a full-bleed pair of line
+                gradients under a mask, sitting BEHIND the headline. The blanket
+                rule replaces an abstract background with an approved
+                environment — but type may never sit on a photograph, the layer
+                is full-bleed, and the DOM is frozen so the headline cannot move
+                off it. The honest resolution is retirement, not a photograph
+                and never a scrim: the grid goes, the crosshair marks stay as
+                hairline architecture. Remove the layer and the page loses
+                nothing it was using to communicate.
+              · The BLUE FRAME behind the dashboard (`.hcard-ui`) was a
+                three-stop gradient with no job but colour. That one takes the
+                environment — `env-dawn-haze`, one per section — with the
+                dashboard panel opaque on top of it.
+              · The wireframe card's faint line-grid is retired to a flat raised
+                surface for the same reason as the blueprint: a gradient
+                standing in for texture.
+
+  ACCENT      One moment: `Get Started`. The announce chevron, the stat glyph,
+              the wireframe node and the dashboard's active row were four more
+              coloured marks; they are ink now, because a page where everything
+              is marked marks nothing.
+
+  THE MOCK    The dashboard is miniature interface chrome — 11–13px labels, an
+              8px nav radius. It cannot be typeset on a ramp whose smallest step
+              is the supporting size without ceasing to be a mock, so it claims
+              the graphic exemption by naming it in the selector
+              (`.ui-panel.cr-graphic`). The exemption covers type and geometry.
+              It does NOT cover colour: every value in there is a token.
+
+  RESPONSIVE  The original's breakpoints (1080 / 880 / 720), unchanged. Type
+              steps down the pack's ramp; `clamp()` is gone from type, and the
+              per-breakpoint gutter literals fold into the one page gutter.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CR — Product Hero</title>
+  <link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--cr-page-ground); font-family: var(--cr-font-body); -webkit-font-smoothing: antialiased; }
+
+    /* ── Entrance: transform-only rise (always visible) ── */
+    @keyframes h-rise { from { transform: translateY(16px); } to { transform: none; } }
+    @media (prefers-reduced-motion: no-preference) {
+      .cr-rise { animation: h-rise .6s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--d, 0s); }
+    }
+
+    /* ── Section ──────────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: var(--cr-page-ground);
+      padding-bottom: var(--cr-space-xl);
+    }
+    /* THE BLUEPRINT GRID IS RETIRED. It was two line gradients under a mask —
+       an abstract background standing behind the page's one headline. It cannot
+       become a photograph (type never sits on one) and the type cannot move
+       (the DOM is frozen), so the layer is emptied rather than re-skinned. The
+       element stays; it simply stops painting. */
+    .hero-grid {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    }
+    /* The crosshairs survive as hairline architecture — a mark, not a wash. */
+    .xmark { position: absolute; width: 13px; height: 13px; z-index: 0; pointer-events: none; }
+    .xmark::before, .xmark::after { content: ''; position: absolute; background: var(--cr-border-default); }
+    .xmark::before { left: 50%; top: 0; width: 1.5px; height: 100%; transform: translateX(-50%); }
+    .xmark::after  { top: 50%; left: 0; height: 1.5px; width: 100%; transform: translateY(-50%); }
+
+    .hero-inner { position: relative; z-index: 1; }
+
+    /* ── Nav — light, because the hero surface is light ───────────── */
+    .hnav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--cr-space-s) var(--cr-page-gutter);
+    }
+    .hnav-logo { height: 28px; width: auto; display: block; }
+    .hnav-links {
+      display: flex; align-items: center; gap: var(--cr-space-m);
+      font-family: var(--cr-font-body); font-weight: 400; font-size: var(--cr-text-supporting);
+      color: var(--cr-text-secondary); letter-spacing: 0;
+    }
+    .hnav-link {
+      display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+      cursor: pointer; color: var(--cr-text-secondary); text-decoration: none;
+      transition: color .15s ease;
+    }
+    .hnav-link:hover { color: var(--cr-text-primary); }
+    .hnav-link svg { width: 14px; height: 14px; stroke-width: var(--cr-icon-stroke-sm); }
+    /* The one control on the band. Dark ink, not accent — the accent is a page's
+       single emphasis and it is spent below, on `Get Started`. */
+    .hnav-cta {
+      display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+      background: var(--cr-text-primary); color: var(--cr-text-inverse);
+      font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+      padding: var(--cr-space-xs) var(--cr-space-s); border-radius: var(--cr-radius-control);
+      border: 0; cursor: pointer; letter-spacing: 0;
+      transition: background .2s ease;
+    }
+    .hnav-cta:hover { background: var(--cr-ink); }
+    .hnav-cta svg { width: 15px; height: 15px; stroke-width: var(--cr-icon-stroke-sm); }
+
+    /* ── Hero centre ──────────────────────────────────────────────── */
+    .hero-mid { text-align: center; padding: var(--cr-space-m) var(--cr-page-gutter) 0; }
+
+    .announce {
+      display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+      padding: var(--cr-space-xs); margin-bottom: var(--cr-space-m);
+      background: var(--cr-bg-raised);
+      border: var(--cr-stroke) solid var(--cr-border-default);
+      border-radius: var(--cr-radius-control);
+      font-size: var(--cr-text-supporting); color: var(--cr-text-secondary);
+    }
+    .announce b { font-weight: 500; color: var(--cr-text-primary); }
+    .announce-arrow {
+      width: 30px; height: 30px; flex-shrink: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--cr-text-primary); color: var(--cr-text-inverse);
+      border-radius: var(--cr-radius-control);
+    }
+    .announce-arrow svg { width: 15px; height: 15px; stroke-width: var(--cr-icon-stroke-sm); }
+
+    /* ── Headline — the field's one voice ─────────────────────────── */
+    .hero-title {
+      font-family: var(--cr-font-display);
+      font-weight: 400;
+      font-size: var(--cr-text-h1);
+      line-height: var(--cr-leading-heading);
+      letter-spacing: var(--cr-tracking-heading);
+      color: var(--cr-text-primary);
+      /* The DEFAULT title measure, not the released one — the pack releases 950
+         only at a third line, and this headline holds at two. */
+      max-width: var(--cr-measure-title); margin: 0 auto var(--cr-space-m);
+    }
+    .hero-title .box {
+      display: inline-block;
+      border: var(--cr-stroke) solid var(--cr-border-default);
+      border-radius: var(--cr-radius-card);
+      padding: 0 0.26em;
+      margin: 0 0.04em;
+    }
+    .hero-sub {
+      font-size: var(--cr-text-body); line-height: var(--cr-leading-body); color: var(--cr-text-secondary);
+      max-width: var(--cr-measure-body); margin: 0 auto var(--cr-space-m);
+    }
+
+    .hero-btns { display: inline-flex; gap: var(--cr-space-xs); }
+    .h-btn {
+      display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+      padding: var(--cr-space-xs) var(--cr-space-s); border-radius: var(--cr-radius-control);
+      font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+      text-decoration: none; cursor: pointer;
+      border: var(--cr-stroke) solid transparent;
+      letter-spacing: 0;
+      transition: background .2s ease, border-color .2s ease;
+    }
+    .h-btn svg { width: 16px; height: 16px; stroke-width: var(--cr-icon-stroke-sm); }
+    /* THE SECTION'S ONE ACCENT MOMENT. */
+    .h-btn-ink { background: var(--cr-accent-orange); color: var(--cr-on-accent-light); }
+    .h-btn-ink:hover { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+    .h-btn-ghost { background: var(--cr-bg-raised); color: var(--cr-text-primary); border-color: var(--cr-border-default); }
+    .h-btn-ghost:hover { border-color: var(--cr-text-secondary); }
+
+    /* ── 3-card row — peers under the promise ─────────────────────── */
+    .hero-cards {
+      display: grid; grid-template-columns: 1fr 1fr 2fr; gap: var(--cr-space-s);
+      padding: var(--cr-rhythm-content) var(--cr-page-gutter) 0;
+      align-items: stretch;
+    }
+    .hcard {
+      position: relative; overflow: hidden;
+      border: var(--cr-stroke) solid var(--cr-border-default);
+      border-radius: var(--cr-radius-card);
+      min-height: calc(var(--cr-space-2xl) * 5);
+      background: var(--cr-bg-raised);
+    }
+
+    /* Card 1 — the workplace photograph, kept, and the card's subject.
+       The stat over it is OPAQUE, which is why it may sit there at all. */
+    .hcard-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .float-stat {
+      position: absolute; top: var(--cr-space-s); left: var(--cr-space-s); right: var(--cr-space-s);
+      background: var(--cr-surface-1);
+      border: var(--cr-stroke) solid var(--cr-border-default);
+      border-radius: var(--cr-radius-card);
+      padding: var(--cr-space-xs);
+    }
+    .float-stat-top { display: flex; align-items: center; gap: var(--cr-space-xs); margin-bottom: var(--cr-space-xs); }
+    .float-stat-top svg { width: 17px; height: 17px; color: var(--cr-text-secondary); stroke-width: var(--cr-icon-stroke-sm); }
+    .float-stat-lbl { font-size: var(--cr-text-supporting); font-weight: 400; color: var(--cr-text-secondary); }
+    .float-stat-num {
+      font-family: var(--cr-font-display); font-weight: 400; font-size: var(--cr-text-h5);
+      color: var(--cr-text-primary); letter-spacing: var(--cr-tracking-heading);
+      line-height: var(--cr-leading-heading);
+    }
+
+    /* Card 2 — wireframe geometric. The faint line-grid behind it was another
+       gradient standing in for texture; it goes, and the drawing stands on a
+       flat raised surface. */
+    .hcard-wire {
+      display: flex; align-items: center; justify-content: center;
+      background: var(--cr-bg-raised);
+    }
+    .hcard-wire svg { width: 78%; height: auto; }
+    .wire-line { stroke: var(--cr-border-default); stroke-width: var(--cr-icon-stroke-sm); fill: none; }
+    .wire-accent { stroke: var(--cr-text-primary); stroke-width: var(--cr-icon-stroke-md); fill: none; }
+
+    /* Card 3 — the dashboard, staged on an approved environment.
+       THE STANDARD CREATIVE TREATMENT. One stack, three layers, in this order:
+       grain on top, grunge under it, the environment underneath both. It has to
+       be ONE stack — a blend mode composites against what is beneath it in the
+       SAME background, so putting the grain on a pseudo-element resolves
+       `overlay` against transparency and renders the texture at full strength as
+       grey static. The last position is the asset's measured focus, not a guess.
+
+       The URLs are written out rather than reached through `--cr-env-*`, because
+       a `url()` inside a custom property resolves against the CONSUMING
+       document, not the sheet that declared it, and fails silently.
+
+       Note there is no `background:` shorthand anywhere on this element — the
+       shorthand resets `background-image` and would drop the whole stack. */
+    .hcard-ui {
+      border: none;
+      background-color: var(--cr-bg-dark);
+      background-image:
+        url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+        url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+        url("../../brand-pack/assets/imagery/environments/env-dawn-haze.jpg");
+      background-size: var(--cr-texture-noise-size, auto), cover, cover;
+      background-position: 0 0, center, 55% 50%;
+      background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+      background-repeat: repeat, no-repeat, no-repeat;
+    }
+
+    /* ── The dashboard mock ───────────────────────────────────────────
+       MINIATURE INTERFACE CHROME, and it says so in its own selector. A mock
+       typeset on the supporting step stops being a mock — a table label at 16px
+       does not fit the artifact it sits inside. So every rule below claims the
+       graphic exemption by naming `.cr-graphic`, which is bounded and greppable
+       rather than assumed. The exemption covers the type ramp and the interior
+       geometry. It does NOT cover colour: every value here is a token, and the
+       blue that used to mark the active row and the tall bars is ink now. */
+    .ui-panel.cr-graphic {
+      position: absolute; top: 40px; left: 40px; right: -72px; bottom: -1px;
+      background: var(--cr-surface-1);
+      border-radius: 16px 0 0 0;
+      overflow: hidden;
+      display: flex;
+      font-size: 13px;
+      font-family: var(--cr-font-body);
+      color: var(--cr-text-primary);
+    }
+    .cr-graphic .ui-side { width: 188px; flex-shrink: 0; border-right: var(--cr-stroke) solid var(--cr-border-default); padding: 18px 14px; }
+    .cr-graphic .ui-logo { height: 15px; margin: 4px 6px 22px; display: block; }
+    .cr-graphic .ui-nav { display: flex; flex-direction: column; gap: 3px; }
+    .cr-graphic .ui-nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 11px; border-radius: 8px;
+      color: var(--cr-text-secondary); font-size: 13px;
+    }
+    .cr-graphic .ui-nav-item svg { width: 15px; height: 15px; stroke-width: var(--cr-icon-stroke-sm); }
+    .cr-graphic .ui-nav-item.on { background: var(--cr-surface-5); color: var(--cr-text-primary); font-weight: 500; }
+    .cr-graphic .ui-main { flex: 1; padding: 18px 20px; min-width: 0; }
+    .cr-graphic .ui-crumb { display: flex; align-items: center; gap: 7px; color: var(--cr-text-secondary); font-size: 12px; margin-bottom: 18px; }
+    .cr-graphic .ui-crumb svg { width: 13px; height: 13px; stroke-width: var(--cr-icon-stroke-sm); }
+    .cr-graphic .ui-idlbl { font-size: 12px; color: var(--cr-text-secondary); margin-bottom: 4px; }
+    .cr-graphic .ui-idrow { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+    .cr-graphic .ui-id { font-family: var(--cr-font-display); font-weight: 500; font-size: 26px; color: var(--cr-text-primary); letter-spacing: var(--cr-tracking-heading); }
+    .cr-graphic .ui-badge { font-size: 11px; font-weight: 500; color: var(--cr-text-secondary); background: var(--cr-surface-5); padding: 4px 11px; border-radius: 500px; }
+    .cr-graphic .ui-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+    .cr-graphic .ui-metric { border: var(--cr-stroke) solid var(--cr-border-default); border-radius: 12px; padding: 13px 15px; }
+    .cr-graphic .ui-metric-lbl { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--cr-text-secondary); margin-bottom: 8px; }
+    .cr-graphic .ui-metric-lbl svg { width: 13px; height: 13px; stroke-width: var(--cr-icon-stroke-sm); }
+    .cr-graphic .ui-metric-val { font-family: var(--cr-font-display); font-weight: 500; font-size: 22px; color: var(--cr-text-primary); letter-spacing: var(--cr-tracking-heading); }
+    .cr-graphic .ui-block { border: var(--cr-stroke) solid var(--cr-border-default); border-radius: 12px; padding: 14px 15px; }
+    .cr-graphic .ui-block-h { font-size: 13px; font-weight: 500; color: var(--cr-text-primary); margin-bottom: 9px; }
+    .cr-graphic .ui-block-row { font-size: 12px; color: var(--cr-text-secondary); line-height: 1.55; }
+    .cr-graphic .ui-bars { display: flex; align-items: flex-end; gap: 4px; height: 44px; margin-top: 10px; }
+    .cr-graphic .ui-bars i { flex: 1; background: var(--cr-border-default); border-radius: 2px 2px 0 0; }
+    .cr-graphic .ui-bars i.tall { background: var(--cr-text-primary); }
+
+    /* ── Logo strip — attribution, at the lowest weight on the page ── */
+    .hero-logos {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: var(--cr-space-s); flex-wrap: wrap;
+      padding: var(--cr-rhythm-content) var(--cr-page-gutter) 0;
+    }
+    .hlogo { display: flex; align-items: center; gap: var(--cr-space-xs); opacity: 0.42; }
+    .hlogo svg { width: 22px; height: 22px; color: var(--cr-text-primary); }
+    .hlogo span {
+      font-family: var(--cr-font-display); font-weight: 400; font-size: var(--cr-text-body);
+      color: var(--cr-text-primary); letter-spacing: var(--cr-tracking-heading);
+    }
+
+    /* ── Responsive — the ORIGINAL's breakpoints; type steps on the ramp ── */
+    @media (max-width: 1080px) {
+      .hero-title { font-size: var(--cr-text-h2); }
+      .hero-cards { grid-template-columns: 1fr 1fr; }
+      .hcard-ui { grid-column: 1 / -1; min-height: calc(var(--cr-space-2xl) * 4); }
+    }
+    @media (max-width: 880px) {
+      .hnav-links { display: none; }
+      .hero-title { font-size: var(--cr-text-h3); }
+    }
+    @media (max-width: 720px) {
+      .hero-cards { grid-template-columns: 1fr; }
+      .hcard { min-height: calc(var(--cr-space-xl) * 5); }
+      .hcard-ui { min-height: calc(var(--cr-space-2xl) * 4); }
+      .hero-title { font-size: var(--cr-text-h4); }
+      .hero-sub { font-size: var(--cr-text-supporting); }
+      .hero-btns { display: flex; flex-direction: column; width: 100%; }
+      .h-btn { width: 100%; justify-content: center; }
+      .hero-logos { gap: var(--cr-space-xs) var(--cr-space-s); justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. Every reason is one of the closed six; there is no `directed`
+     line, because nothing about the layout was re-authored — the tracks, the
+     three-card row and the centred stack are the original's. The dashboard mock
+     is absent from this budget by construction: its interior geometry was left
+     exactly as it was, so it produced no diff to claim.
+     `.hcard min-height` is composed from the closed spacing scale, not picked.
+  .announce       | border-radius          | radius-pair
+  .announce       | column-gap             | spacing-scale
+  .announce       | font-size              | type-ramp
+  .announce       | margin-bottom          | spacing-scale
+  .announce       | padding-bottom         | spacing-scale
+  .announce       | padding-left           | spacing-scale
+  .announce       | padding-right          | spacing-scale
+  .announce       | padding-top            | spacing-scale
+  .announce       | row-gap                | spacing-scale
+  .box            | border-radius          | radius-pair
+  .box            | font-size              | type-ramp
+  .box            | line-height            | type-ramp
+  .box            | margin-left            | spacing-scale
+  .box            | margin-right           | spacing-scale
+  .box            | padding-left           | spacing-scale
+  .box            | padding-right          | spacing-scale
+  .float-stat     | padding-bottom         | spacing-scale
+  .float-stat     | padding-left           | spacing-scale
+  .float-stat     | padding-right          | spacing-scale
+  .float-stat     | padding-top            | spacing-scale
+  .float-stat-lbl | font-size              | type-ramp
+  .float-stat-num | font-size              | type-ramp
+  .float-stat-num | line-height            | type-ramp
+  .float-stat-top | column-gap             | spacing-scale
+  .float-stat-top | margin-bottom          | spacing-scale
+  .float-stat-top | row-gap                | spacing-scale
+  .h-btn          | border-radius          | radius-pair
+  .h-btn          | column-gap             | spacing-scale
+  .h-btn          | padding-bottom         | spacing-scale
+  .h-btn          | padding-left           | spacing-scale
+  .h-btn          | padding-right          | spacing-scale
+  .h-btn          | padding-top            | spacing-scale
+  .h-btn          | row-gap                | spacing-scale
+  .hcard          | border-radius          | radius-pair
+  .hcard          | min-height             | spacing-scale
+  .hero           | padding-bottom         | spacing-scale
+  .hero-btns      | column-gap             | spacing-scale
+  .hero-btns      | row-gap                | spacing-scale
+  .hero-cards     | padding-left           | spacing-scale
+  .hero-cards     | padding-right          | spacing-scale
+  .hero-cards     | padding-top            | spacing-scale
+  .hero-logos     | column-gap             | spacing-scale
+  .hero-logos     | padding-left           | spacing-scale
+  .hero-logos     | padding-right          | spacing-scale
+  .hero-logos     | padding-top            | spacing-scale
+  .hero-logos     | row-gap                | spacing-scale
+  .hero-mid       | padding-left           | spacing-scale
+  .hero-mid       | padding-right          | spacing-scale
+  .hero-mid       | padding-top            | spacing-scale
+  .hero-sub       | font-size              | type-ramp
+  .hero-sub       | line-height            | type-ramp
+  .hero-sub       | margin-bottom          | spacing-scale
+  .hero-sub       | margin-left            | spacing-scale
+  .hero-sub       | margin-right           | spacing-scale
+  .hero-sub       | max-width              | measure
+  .hero-title     | font-size              | type-ramp
+  .hero-title     | line-height            | type-ramp
+  .hero-title     | margin-bottom          | spacing-scale
+  .hero-title     | margin-left            | spacing-scale
+  .hero-title     | margin-right           | spacing-scale
+  .hero-title     | max-width              | measure
+  .hlogo          | column-gap             | spacing-scale
+  .hlogo          | row-gap                | spacing-scale
+  .hnav           | padding-bottom         | spacing-scale
+  .hnav           | padding-left           | spacing-scale
+  .hnav           | padding-right          | spacing-scale
+  .hnav           | padding-top            | spacing-scale
+  .hnav-cta       | border-radius          | radius-pair
+  .hnav-cta       | column-gap             | spacing-scale
+  .hnav-cta       | font-size              | type-ramp
+  .hnav-cta       | padding-bottom         | spacing-scale
+  .hnav-cta       | padding-top            | spacing-scale
+  .hnav-cta       | row-gap                | spacing-scale
+  .hnav-link      | column-gap             | spacing-scale
+  .hnav-link      | row-gap                | spacing-scale
+  .lucide         | font-size              | type-ramp
+  .lucide         | stroke-width           | stroke
+  b               | font-size              | type-ramp
+  circle          | stroke-width           | stroke
+  path            | font-size              | type-ramp
+  path            | stroke-width           | stroke
+  rect            | stroke-width           | stroke
+  span            | font-size              | type-ramp
+-->
+
+  <section class="hero" data-screen-label="Product Hero"
+           data-archetype="editorial-stack" data-hierarchy="hero" data-intent="orient"
+           data-register="editorial" data-signature="editorial-photography" data-density="low">
+
+    <!-- Retired blueprint layer + crosshair marks -->
+    <div class="hero-grid" aria-hidden="true"></div>
+    <span class="xmark" style="top:330px; left:7%;"></span>
+    <span class="xmark" style="top:230px; right:9%;"></span>
+    <span class="xmark" style="top:560px; left:4%;"></span>
+
+    <div class="hero-inner">
+
+      <!-- Nav -->
+      <nav class="hnav cr-rise">
+        <img class="hnav-logo" src="../../brand-pack/assets/logo/logo-color.svg" alt="Example Brand">
+        <div class="hnav-links">
+          <a class="hnav-link">AI <i data-lucide="chevron-down"></i></a>
+          <a class="hnav-link">Industry <i data-lucide="chevron-down"></i></a>
+          <a class="hnav-link">FosterX <i data-lucide="chevron-down"></i></a>
+          <a class="hnav-link">About us</a>
+          <a class="hnav-link">Resources <i data-lucide="chevron-down"></i></a>
+        </div>
+        <button class="hnav-cta">Let's talk <i data-lucide="chevron-right"></i></button>
+      </nav>
+
+      <!-- Centre -->
+      <div class="hero-mid">
+        <div class="announce cr-rise" style="--d:.04s">
+          <span><b>[2025 Guide]</b> How to scale AI automation across your operations</span>
+          <span class="announce-arrow"><i data-lucide="arrow-right"></i></span>
+        </div>
+        <h1 class="hero-title cr-rise" style="--d:.08s">Build better <span class="box">AI</span> automation products.</h1>
+        <p class="hero-sub cr-rise" style="--d:.12s">Get everything you need to deploy, run, and scale production AI agents. Plus the ability to operate across your entire stack. All on a single platform.</p>
+        <div class="hero-btns cr-rise" style="--d:.16s">
+          <a class="h-btn h-btn-ink" href="#">Get Started <i data-lucide="chevron-right"></i></a>
+          <a class="h-btn h-btn-ghost" href="#">Explore the Platform <i data-lucide="chevron-right"></i></a>
+        </div>
+      </div>
+
+      <!-- 3-card row -->
+      <div class="hero-cards">
+
+        <!-- Card 1: photograph + opaque floating stat -->
+        <div class="hcard hcard-photo cr-rise" style="--d:.2s">
+          <img src="../../brand-pack/assets/imagery/avatars/hero-work.jpg" alt="">
+          <div class="float-stat">
+            <div class="float-stat-top">
+              <i data-lucide="trending-up"></i>
+              <span class="float-stat-lbl">Total processed</span>
+            </div>
+            <div class="float-stat-num">$1.84M</div>
+          </div>
+        </div>
+
+        <!-- Card 2: wireframe geometric -->
+        <div class="hcard hcard-wire cr-rise" style="--d:.24s">
+          <svg viewBox="0 0 380 580" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- sphere -->
+            <circle class="wire-line" cx="190" cy="172" r="120"/>
+            <ellipse class="wire-line" cx="190" cy="172" rx="84" ry="120"/>
+            <ellipse class="wire-line" cx="190" cy="172" rx="42" ry="120"/>
+            <ellipse class="wire-line" cx="190" cy="172" rx="120" ry="84"/>
+            <ellipse class="wire-line" cx="190" cy="172" rx="120" ry="42"/>
+            <line class="wire-line" x1="190" y1="52" x2="190" y2="292"/>
+            <line class="wire-line" x1="70" y1="172" x2="310" y2="172"/>
+            <!-- node (static, soft) -->
+            <circle cx="190" cy="172" r="25" stroke="var(--cr-border-default)" stroke-opacity="0.20" stroke-width="1.25" fill="none"/>
+            <circle cx="190" cy="172" r="12" fill="url(#nodeGrad)"/>
+            <!-- flow arrows -->
+            <line class="wire-line" x1="112" y1="372" x2="262" y2="372"/>
+            <polyline class="wire-line" points="250,364 264,372 250,380"/>
+            <line class="wire-line" x1="268" y1="404" x2="118" y2="404"/>
+            <polyline class="wire-line" points="130,396 116,404 130,412"/>
+            <line class="wire-line" x1="112" y1="436" x2="262" y2="436"/>
+            <polyline class="wire-line" points="250,428 264,436 250,444"/>
+            <!-- plus in circle -->
+            <circle class="wire-line" cx="190" cy="510" r="32"/>
+            <line class="wire-accent" x1="190" y1="494" x2="190" y2="526"/>
+            <line class="wire-accent" x1="174" y1="510" x2="206" y2="510"/>
+            <defs>
+              <radialGradient id="nodeGrad" cx="0.5" cy="0.4" r="0.6">
+                <stop offset="0" stop-color="var(--cr-text-secondary)"/>
+                <stop offset="1" stop-color="var(--cr-text-primary)"/>
+              </radialGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <!-- Card 3: dashboard mock on an approved environment -->
+        <div class="hcard hcard-ui cr-rise" style="--d:.28s">
+          <div class="ui-panel cr-graphic">
+            <aside class="ui-side">
+              <img class="ui-logo" src="../../brand-pack/assets/logo/logo-color.svg" alt="Example Brand">
+              <nav class="ui-nav">
+                <span class="ui-nav-item"><i data-lucide="layout-dashboard"></i>Dashboard</span>
+                <span class="ui-nav-item on"><i data-lucide="bot"></i>Agents</span>
+                <span class="ui-nav-item"><i data-lucide="workflow"></i>Workflows</span>
+                <span class="ui-nav-item"><i data-lucide="users"></i>Customers</span>
+                <span class="ui-nav-item"><i data-lucide="scroll-text"></i>Logs</span>
+              </nav>
+            </aside>
+            <div class="ui-main">
+              <div class="ui-crumb"><i data-lucide="chevron-left"></i> Agents <span>/</span> 4174391439</div>
+              <div class="ui-idlbl">Agent ID</div>
+              <div class="ui-idrow">
+                <span class="ui-id">4174391439</span>
+                <span class="ui-badge">Active</span>
+              </div>
+              <div class="ui-metrics">
+                <div class="ui-metric">
+                  <div class="ui-metric-lbl"><i data-lucide="check-circle-2"></i> Tasks today</div>
+                  <div class="ui-metric-val">1,284</div>
+                </div>
+                <div class="ui-metric">
+                  <div class="ui-metric-lbl"><i data-lucide="target"></i> Success rate</div>
+                  <div class="ui-metric-val">99.2%</div>
+                </div>
+              </div>
+              <div class="ui-block">
+                <div class="ui-block-h">Customer</div>
+                <div class="ui-block-row">Acme Operations, Inc.</div>
+                <div class="ui-block-row">12 Strawberry Road, Suite 101<br>Atlanta, GA 30391</div>
+                <div class="ui-bars">
+                  <i style="height:40%"></i><i style="height:62%"></i><i style="height:48%"></i>
+                  <i class="tall" style="height:88%"></i><i style="height:54%"></i><i style="height:70%"></i>
+                  <i style="height:44%"></i><i class="tall" style="height:80%"></i><i style="height:58%"></i>
+                  <i style="height:66%"></i><i style="height:38%"></i><i style="height:52%"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Logo strip -->
+      <div class="hero-logos cr-rise" style="--d:.32s">
+        <div class="hlogo">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+          <span>MedFlow</span>
+        </div>
+        <div class="hlogo">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2L22 21H2L12 2Z" stroke="currentColor" stroke-width="1.8"/></svg>
+          <span>Apex</span>
+        </div>
+        <div class="hlogo">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="2" width="8.5" height="8.5" rx="1.5" fill="currentColor"/><rect x="13.5" y="2" width="8.5" height="8.5" rx="1.5" fill="currentColor"/><rect x="2" y="13.5" width="8.5" height="8.5" rx="1.5" fill="currentColor"/><rect x="13.5" y="13.5" width="8.5" height="8.5" rx="1.5" fill="currentColor"/></svg>
+          <span>NovaCorp</span>
+        </div>
+        <div class="hlogo">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2L22 12L12 22L2 12L12 2Z" stroke="currentColor" stroke-width="1.8"/></svg>
+          <span>Meridian</span>
+        </div>
+        <div class="hlogo">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3.6" fill="currentColor"/></svg>
+          <span>OrbisOps</span>
+        </div>
+        <div class="hlogo">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2 17L12 7L22 17" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Vertex</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

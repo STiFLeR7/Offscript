@@ -1,0 +1,82 @@
+{
+  "value-stats": {
+    "lines": 307,
+    "residue_hex": 1,
+    "residue_retired_face": 0,
+    "residue_px": 63,
+    "residue_clamp": 2,
+    "tokens_used": 31
+  },
+  "value-prop": {
+    "lines": 247,
+    "residue_hex": 0,
+    "residue_retired_face": 5,
+    "residue_px": 36,
+    "residue_clamp": 7,
+    "tokens_used": 11
+  },
+  "testimonial-stack": {
+    "lines": 289,
+    "residue_hex": 1,
+    "residue_retired_face": 2,
+    "residue_px": 72,
+    "residue_clamp": 2,
+    "tokens_used": 23
+  },
+  "tabbed-showcase": {
+    "lines": 546,
+    "residue_hex": 9,
+    "residue_retired_face": 20,
+    "residue_px": 170,
+    "residue_clamp": 0,
+    "tokens_used": 37
+  },
+  "sticky-cards": {
+    "lines": 462,
+    "residue_hex": 11,
+    "residue_retired_face": 10,
+    "residue_px": 96,
+    "residue_clamp": 0,
+    "tokens_used": 41
+  },
+  "stat-cards": {
+    "lines": 258,
+    "residue_hex": 3,
+    "residue_retired_face": 3,
+    "residue_px": 38,
+    "residue_clamp": 2,
+    "tokens_used": 11
+  },
+  "backed-by": {
+    "lines": 195,
+    "residue_hex": 0,
+    "residue_retired_face": 2,
+    "residue_px": 38,
+    "residue_clamp": 0,
+    "tokens_used": 18
+  },
+  "case-carousel": {
+    "lines": 370,
+    "residue_hex": 4,
+    "residue_retired_face": 8,
+    "residue_px": 98,
+    "residue_clamp": 0,
+    "tokens_used": 20
+  },
+  "feature-accordion": {
+    "lines": 412,
+    "residue_hex": 4,
+    "residue_retired_face": 6,
+    "residue_px": 85,
+    "residue_clamp": 0,
+    "tokens_used": 18
+  },
+  "how-it-works": {
+    "lines": 374,
+    "residue_hex": 7,
+    "residue_retired_face": 1,
+    "residue_px": 126,
+    "residue_clamp": 0,
+    "tokens_used": 77
+  }
+}

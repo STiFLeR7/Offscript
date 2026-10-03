@@ -1,0 +1,213 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Industry chips</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Industry chips (atom)        from component-industry-chips.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  An ATOM PREVIEW, not a band — the same shape `comparison`,
+                `stat-tiles`, `faq`, `buttons`, `footer-links` and
+                `problem-card` turned out to be. The v2 file is nineteen lines
+                with a five-declaration sheet; the panel that holds the set is
+                an inline `style` attribute, and the only sheet it links besides
+                the token file is `card.css`, the harness the atom previews
+                inside. That link is kept and repointed; the file it names does
+                not exist anywhere in the repo, so BOTH the control and this
+                specimen resolve it to nothing and the preview shape — the
+                panel, the column, the rhythm between chips — is declared in
+                the stylesheet below rather than inherited from the harness.
+
+  THE CLAIM     **It names a set without explaining any member.** The profile
+                is explicit that this is what keeps it an atom rather than a
+                band, and it adds the thing that matters most here: *the set is
+                interchangeable — industries, sectors, roles, regions, use
+                cases; only the naming changed.* A treatment that assigns a
+                meaning to each row cannot survive that swap, which is the whole
+                argument for what follows.
+
+  STRUCTURE     Unchanged. One panel, four chips, each a mark beside a name over
+                a gloss. DOM order, element types and depth are byte-compatible
+                with the frozen original (DR-22). Inline `style` attributes are
+                presentation, not contract, so they move into the sheet.
+
+  THE DECLARATION, and where its archetype comes from. The profile carries no
+                Envelope archetype — an atom inherits the role of its host band
+                — so the declaration names the host SHAPE it contributes into. A
+                stacked run of equal type-bearing rows with no lead item is
+                `editorial-stack`, which is what `faq` and `footer-links`
+                resolve to for exactly the same reason. Everything else is the
+                profile read straight: it leads with `orient`, its density is
+                `low`, and its register inherits — which on a set that names
+                without explaining is `quiet`.
+
+  CHIPS DO NOT EACH TAKE A HUE — the one real decision in this file. v2 gave the
+                four marks four different fills: a deep blue, a green, a blue
+                that was not any token's value, and the amber. Four hues across
+                four rows reads as a legend, and this atom has nothing to
+                legend: the rows are peers, none ranks, none is a state, and the
+                whole set is interchangeable by its own profile. So all four
+                marks take ONE treatment — the primary ink tile with the mark
+                inverted on it, 14.4:1 — and the naming does the naming. Swap
+                BFSI for a region tomorrow and nothing about the palette has to
+                be re-decided, which is what an interchangeable set requires.
+
+  ACCENT        **Zero spent.** Four hues were not one accent moment; they were
+                four, and none of them marked a control, which is the only thing
+                the direction spends its single moment on. The set differentiates
+                by SURFACE instead — the quiet cream step for each chip on the
+                raised panel that holds them — which survives being printed in
+                one colour, and the four hues did not.
+
+  ENVIRONMENT   **None, no abstract background.** There is nothing here to
+                retire — no gradient, no glow, no blur plate. The panel was a
+                flat dark surface and it is now a flat raised one, and every one
+                of its boxes holds either words or a 32px mark, so a photograph
+                behind them would be type on a photograph, which the direction
+                refuses. There is no type-free plate in this atom and none is
+                invented.
+
+  SCALE         The name steps from a hand-written 18 to the ramp's body step
+                and the gloss from a hand-written 13 — below the ramp's floor —
+                up to supporting. That pair is a real hierarchy, which is what a
+                name over its own gloss needs; setting both at one step would
+                make them read as two peers rather than as a label and its
+                explanation. The distance between them is the scale's micro
+                step, which is the value the scale names for exactly this —
+                label to value.
+
+  DORMANT       `.chip-row.host` is declared in the frozen sheet and worn by
+                nothing in the markup. It carried a translucent white fill for a
+                dark host and a narrower cap. The fill is dropped — the base
+                chip now carries its own surface — and the cap is kept, so the
+                variant still says the one thing it was for.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/sections/card.css">
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  html, body {
+    margin: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+  }
+  body { padding: var(--cr-space-s); }
+  .ic-panel, .ic-panel * { box-sizing: border-box; }
+
+  /* The panel. `card.css` would have supplied `.col` / `.gap-2`; it is absent,
+     so the column its own class names claim is declared here, at the micro step
+     the rest of the library uses between stacked cells. The 420px cap is the
+     atom's identity and is carried over untouched; the radius comes onto the
+     card half of the closed pair. */
+  .ic-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cr-space-xs);
+    max-width: 420px;
+    padding: var(--cr-space-s);
+    background: var(--cr-bg-raised);
+    border-radius: var(--cr-radius-card);
+  }
+
+  /* A chip: a control-radius surface with ink text. One treatment, four times. */
+  .chip-row {
+    display: flex;
+    align-items: center;
+    gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    border-radius: var(--cr-radius-control);
+    background: var(--cr-surface-5);
+  }
+  /* DORMANT — see the head comment. Worn by nothing in the frozen markup. */
+  .chip-row.host { max-width: 380px; }
+
+  /* The mark. ONE treatment for all four — see the head comment. Its 32px box
+     and its control radius are the atom's own and do not move. */
+  .chip-icn {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--cr-radius-control);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: var(--cr-text-primary);
+    color: var(--cr-text-inverse);
+  }
+  .chip-icn svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: var(--cr-icon-stroke-sm);
+  }
+
+  /* The name over its gloss, held apart at the scale's label-to-value step. */
+  .chip-txt { display: block; }
+  .chip-t {
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .chip-s {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    margin-top: var(--cr-space-xs);
+  }
+</style>
+</head><body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing.
+     ONE `directed` line, and it is the harness rather than the design. The
+     chip's min-height moves from a resolved zero to `auto` because the panel
+     becomes a flex container and the four chips become flex items. Nothing
+     about a chip's size is decided by it — it is the same box at the same width
+     holding the same words — but the Pilot Constraint has no other reason for
+     it, and `card.css`, which would have declared `.col` as the column its
+     class name names and `.gap-2` as the rhythm between its cells, does not
+     exist anywhere in the repo. The specimen declares the preview shape its own
+     markup already claims, and says so here rather than passing it through.
+
+     The four mark-shaped rows are the icon stroke coming off a hand-set 1.8
+     onto the small icon step. They are named for what the frozen icon script
+     writes — a `lucide` root over its own primitives — rather than for the tile
+     that holds them, because the tile is not what carries the stroke.
+
+     Note what is NOT here: no width line and no padding-top or padding-bottom
+     on the chip. The panel's 420 cap, the mark's 32px box and the chip's
+     vertical inset are all carried over at their original values.
+  .chip-row | border-radius          | radius-pair
+  .chip-row | column-gap             | spacing-scale
+  .chip-row | min-height             | directed
+  .chip-row | padding-left           | spacing-scale
+  .chip-row | padding-right          | spacing-scale
+  .chip-row | row-gap                | spacing-scale
+  .chip-s   | font-size              | type-ramp
+  .chip-s   | line-height            | type-ramp
+  .chip-s   | margin-top             | spacing-scale
+  .chip-t   | font-size              | type-ramp
+  .chip-t   | line-height            | type-ramp
+  .col      | border-radius          | radius-pair
+  .col      | column-gap             | spacing-scale
+  .col      | row-gap                | spacing-scale
+  .lucide   | stroke-width           | stroke
+  circle    | stroke-width           | stroke
+  path      | stroke-width           | stroke
+  polyline  | stroke-width           | stroke
+-->
+<div class="col gap-2 ic-panel"
+     data-archetype="editorial-stack" data-hierarchy="supporting" data-intent="orient"
+     data-register="quiet" data-signature="architectural-whitespace" data-density="low">
+  <div class="chip-row"><div class="chip-icn"><i data-lucide="building-2"></i></div><div class="chip-txt"><div class="chip-t">BFSI</div><div class="chip-s">Compliance, claims, and reconciliation</div></div></div>
+  <div class="chip-row"><div class="chip-icn"><i data-lucide="heart-pulse"></i></div><div class="chip-txt"><div class="chip-t">Healthcare</div><div class="chip-s">Documentation, audits, and intake</div></div></div>
+  <div class="chip-row"><div class="chip-icn"><i data-lucide="users"></i></div><div class="chip-txt"><div class="chip-t">Staffing &amp; Recruitment</div><div class="chip-s">Sourcing, screening, and onboarding</div></div></div>
+  <div class="chip-row"><div class="chip-icn"><i data-lucide="package"></i></div><div class="chip-txt"><div class="chip-t">Supply Chain</div><div class="chip-s">Procurement, invoicing, and tracking</div></div></div>
+</div>
+<script>lucide.createIcons();</script>
+</body></html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR &middot; Contact Us</title>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css" />
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — Contact Us + Newsletter CTA     component-contact-us.html
+  ════════════════════════════════════════════════════════════════════════
+  COMPOSITION  Two stacked sections on white:
+
+    ① CONTACT FORM — centered narrow well (480px).
+       Urbanist 700 40px heading + Inter 16px subtitle.
+       4 stacked fields: Full name / Work email / Company / Message
+       (textarea). Each field = label above + input below, 6px gap.
+       Inputs: 1px --cr-line border, 8px radius, 48px height
+       (textarea min-height 100px). Focus → brand-blue border swap.
+       TWO CTAs below the fields:
+         • Primary: brand-blue (#149DFF) pill "Send Message →" (full-width)
+         • Secondary: outlined pill "Book a Demo Call" (full-width)
+       Text link at base: "Already a client? Sign in →"
+
+    ② NEWSLETTER CTA CARD — contained dark card (1240px well),
+       cool navy→teal gradient (matching CR dark-band palette).
+       2-column grid (1fr / 1fr, 60px gap), 52px 60px padding,
+       20px radius.
+       LEFT:  "Stay Ahead of the Automation Curve" heading (32px)
+              + 2-line body copy.
+       RIGHT: "Stay up to date" eyebrow label → email input +
+              brand-blue "Subscribe" button side-by-side →
+              fine-print privacy line.
+       Orbit ring (::before, 700px, rgba white 6%) for dark-surface
+       motif. No shadow.
+
+  INSPIRATION  "Payable" SaaS — "Create an Account" form + newsletter
+               CTA card. Exact composition matched; palette / fonts /
+               copy / dark-bg replaced with CR kit.
+               Source: dark forest green → CR navy-to-violet gradient.
+               Bright-lime subscribe btn → CR brand blue.
+
+  ROWS/RATIOS  Form: auto-height, fields stack at fixed 48px / 100px.
+               NL card: 2-col equal grid collapses to 1-col at ≤900px.
+
+  MOTION       Transform-only stagger (translateY 16px → 0, 380ms ease,
+               no opacity change). Fields stagger at 0/60/120/180ms.
+               Always visible for screenshot safety.
+
+  RESPONSIVE   Form well: 480px → full-width at ≤560px.
+               NL card: 2-col → 1-col at ≤900px.
+               Padding steps down at 1100 / 768px.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+/* ── Reset ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--cr-bg); }
+
+/* ════════════════════════════════════════════════════════
+   CONTACT FORM SECTION
+   ════════════════════════════════════════════════════════ */
+.contact-section {
+  background: var(--cr-bg);
+  padding: 80px 24px;
+}
+
+.contact-well {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.contact-heading {
+  font-family: var(--cr-font-display);
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--cr-fg);
+  text-align: center;
+  margin-bottom: 8px;
+  animation: rise 380ms ease both;
+}
+
+.contact-sub {
+  font-family: var(--cr-font-body);
+  font-size: 16px;
+  color: var(--cr-fg-3);
+  text-align: center;
+  line-height: 1.5;
+  margin-bottom: 32px;
+  animation: rise 380ms ease both 40ms;
+}
+
+/* ── Form ───────────────────────────────────────────────── */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: rise 380ms ease both;
+}
+.field-group:nth-child(1) { animation-delay: 60ms; }
+.field-group:nth-child(2) { animation-delay: 120ms; }
+.field-group:nth-child(3) { animation-delay: 180ms; }
+.field-group:nth-child(4) { animation-delay: 240ms; }
+
+.field-label {
+  font-family: var(--cr-font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--cr-fg-2);
+}
+
+.field-input,
+.field-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--cr-line);
+  border-radius: var(--cr-radius-md);
+  font-family: var(--cr-font-body);
+  font-size: 16px;
+  color: var(--cr-fg);
+  background: var(--cr-bg);
+  outline: none;
+  transition: border-color 150ms;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.field-input { height: 48px; }
+.field-input::placeholder,
+.field-textarea::placeholder { color: var(--cr-fg-3); }
+.field-input:focus,
+.field-textarea:focus {
+  border-color: var(--cr-brand);
+  box-shadow: none;
+}
+
+.field-textarea {
+  resize: vertical;
+  min-height: 108px;
+  line-height: 1.65;
+}
+
+/* ── CTA buttons ────────────────────────────────────────── */
+.btn-primary {
+  display: block;
+  width: 100%;
+  padding: 14px 24px;
+  background: var(--cr-brand);
+  color: #fff;
+  border: none;
+  border-radius: var(--cr-radius-pill);
+  font-family: var(--cr-font-body);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  text-align: center;
+  transition: opacity 150ms;
+  margin-top: 4px;
+  animation: rise 380ms ease both 280ms;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.btn-primary:hover { opacity: 0.86; }
+
+.btn-outline-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  padding: 13px 24px;
+  background: transparent;
+  color: var(--cr-fg);
+  border: 1px solid var(--cr-line);
+  border-radius: var(--cr-radius-pill);
+  font-family: var(--cr-font-body);
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 150ms;
+  animation: rise 380ms ease both 340ms;
+}
+.btn-outline-action:hover { border-color: var(--cr-fg-2); }
+
+.alt-link {
+  text-align: center;
+  font-family: var(--cr-font-body);
+  font-size: 14px;
+  color: var(--cr-fg-3);
+  animation: rise 380ms ease both 380ms;
+}
+.alt-link a {
+  color: var(--cr-fg-2);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ════════════════════════════════════════════════════════
+   NEWSLETTER CTA CARD
+   ════════════════════════════════════════════════════════ */
+.nl-section {
+  background: var(--cr-bg);
+  padding: 0 100px 80px;
+}
+
+.nl-card {
+  max-width: var(--cr-content-max);
+  margin: 0 auto;
+  background: linear-gradient(135deg, var(--cr-ink-cool) 0%, var(--cr-ink-cool) 55%, var(--cr-ink-card) 100%);
+  border-radius: 20px;
+  padding: 52px 60px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  animation: rise 380ms ease both 120ms;
+}
+
+/* Orbit ring motif */
+.nl-card::before {
+  content: '';
+  position: absolute;
+  width: 680px;
+  height: 680px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.06);
+  top: -280px;
+  right: -180px;
+  pointer-events: none;
+}
+
+.nl-heading {
+  font-family: var(--cr-font-display);
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin-bottom: 14px;
+}
+
+.nl-body {
+  font-family: var(--cr-font-body);
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.55);
+}
+
+.nl-label {
+  display: block;
+  font-family: var(--cr-font-body);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 12px;
+}
+
+.nl-input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.nl-email {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--cr-radius-md);
+  font-family: var(--cr-font-body);
+  font-size: 14px;
+  color: #fff;
+  outline: none;
+  transition: border-color 150ms;
+}
+.nl-email::placeholder { color: rgba(255,255,255,0.38); }
+.nl-email:focus { border-color: var(--cr-brand); }
+
+.btn-subscribe {
+  padding: 12px 22px;
+  background: var(--cr-brand);
+  color: #fff;
+  border: none;
+  border-radius: var(--cr-radius-md);
+  font-family: var(--cr-font-body);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 150ms;
+  flex-shrink: 0;
+}
+.btn-subscribe:hover { background: var(--cr-brand-700); }
+
+.nl-fine {
+  font-family: var(--cr-font-body);
+  font-size: 12px;
+  color: rgba(255,255,255,0.32);
+  line-height: 1.5;
+}
+.nl-fine a {
+  color: rgba(255,255,255,0.5);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── Stagger keyframe ───────────────────────────────────── */
+@keyframes rise {
+  from { transform: translateY(16px); }
+  to   { transform: translateY(0); }
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .nl-section { padding-left: 60px; padding-right: 60px; }
+}
+
+@media (max-width: 900px) {
+  .nl-card {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    padding: 44px 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-section { padding-top: 60px; padding-bottom: 60px; }
+  .nl-section { padding-left: 24px; padding-right: 24px; padding-bottom: 60px; }
+  .contact-heading { font-size: 32px; }
+  .nl-heading { font-size: 26px; }
+}
+
+@media (max-width: 480px) {
+  .nl-input-row { flex-direction: column; }
+  .btn-subscribe { width: 100%; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ── Contact Form ──────────────────────────────────── -->
+<section class="contact-section" data-screen-label="Contact Us">
+  <div class="contact-well">
+
+    <h2 class="contact-heading">Contact Us</h2>
+    <p class="contact-sub">Tell us about your operations. We'll show you where automation applies first.</p>
+
+    <form class="contact-form" novalidate onsubmit="return false">
+
+      <div class="field-group">
+        <label class="field-label" for="cf-name">Full name*</label>
+        <input class="field-input" id="cf-name" type="text" placeholder="Your name" autocomplete="name" />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="cf-email">Work email*</label>
+        <input class="field-input" id="cf-email" type="email" placeholder="you@company.com" autocomplete="email" />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="cf-company">Company*</label>
+        <input class="field-input" id="cf-company" type="text" placeholder="Your company name" autocomplete="organization" />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="cf-message">Message*</label>
+        <textarea class="field-textarea" id="cf-message" rows="4" placeholder="Tell us about your current workflows and what you'd like to automate."></textarea>
+      </div>
+
+      <button class="btn-primary" type="submit">Send Message &nbsp;&rarr;</button>
+
+      <a class="btn-outline-action" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Book a 30-Minute Call
+      </a>
+
+      <p class="alt-link">Already a client? <a href="#">Sign in to your account</a></p>
+
+    </form>
+  </div>
+</section>
+
+<!-- ── Newsletter CTA Card ──────────────────────────── -->
+<section class="nl-section" data-screen-label="Newsletter CTA">
+  <div class="nl-card">
+
+    <div class="nl-left">
+      <h3 class="nl-heading">Stay Ahead of the Automation Curve</h3>
+      <p class="nl-body">Get the latest on AI deployments, enterprise case studies, and outcome benchmarks — delivered to your inbox.</p>
+    </div>
+
+    <div class="nl-right">
+      <span class="nl-label">Stay up to date</span>
+      <div class="nl-input-row">
+        <input class="nl-email" type="email" placeholder="Enter your email" />
+        <button class="btn-subscribe" type="submit">Subscribe</button>
+      </div>
+      <p class="nl-fine">By subscribing you agree to our <a href="#">Privacy Policy</a>.</p>
+    </div>
+
+  </div>
+</section>
+
+</body>
+</html>

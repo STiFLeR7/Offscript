@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FAQ — split column</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Accordion · panel-right          from component-faq-split.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **The heading is held aside so the list can run long without the
+              section losing its subject.** The profile says the aside is the
+              whole reason this structure survives more than six questions, so
+              the split is not a layout preference — it is the section. Nothing
+              here narrows the list column or lets the heading rejoin the flow.
+
+  STRUCTURE   Unchanged. Two tracks, unequal by 1 to 1.6 in the list's favour.
+              Left holds a supporting line and the headline; right holds the
+              accordion the script builds. DOM, the script, every id and every
+              behavioural hook are byte-compatible with the frozen original.
+
+  JS-AUTHORED The list is built from a template literal inside the frozen
+              script, so nothing in that string can be reached from here. It
+              builds MARKUP ONLY — the classes, one data attribute and one
+              aria attribute — and carries no inline style, no colour value and
+              no dimension. Every rule below therefore lands: the residue that
+              would be stranded is nil, and no class was added to any element
+              the literal writes, because a class added there is a class the
+              script cannot know about.
+
+  ACCENT      Zero, and that is the rule rather than a shortage. An FAQ answers
+              doubt; it asks for nothing, so it has no moment to spend. The one
+              state change in the section — the toggle inverting to ink when a
+              question opens — is a value step on the neutral ramp.
+
+  ENVIRONMENT None. The section carries no abstract background to retire: the
+              left column is a heading and a supporting line, the right column
+              is type end to end, and a photograph behind either would be a
+              surface under words rather than a subject.
+
+  TYPE        Headings on the display face at 400 or 500 and nothing else; the
+              supporting line above the headline is neither uppercased nor
+              tracked, which is what supporting text is. The per-breakpoint size
+              overrides are gone rather than re-authored — the ramp already
+              steps at the pack's own breakpoints.
+
+  RESPONSIVE  The original's breakpoints, unchanged. A reduced-motion guard is
+              added, matched to the specificity of every transition it answers,
+              because the original carried none at all.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body); color: var(--cr-text-secondary);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* THE SPLIT IS THE SECTION. The tracks stay exactly as authored — the aside
+     is narrow because it is an aside, and the list gets the room. Only the
+     section's own padding and well come onto the pack's scale. */
+  .section {
+    padding-block: var(--cr-space-2xl);
+    padding-inline: var(--cr-page-gutter);
+    max-width: var(--cr-content-max); margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: var(--cr-space-2xl);
+    align-items: start;
+  }
+
+  /* ── Left column (intro) ──────────────────────────────────── */
+  /* SUPPORTING TEXT IS NEVER UPPERCASED AND NEVER TRACKED. The original set it
+     in caps at 0.18em, which is a label pretending to be a system. It takes the
+     supporting step on the body face and the secondary ink, and says the same
+     thing without the costume. */
+  .eyebrow {
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    letter-spacing: 0; text-transform: none;
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    margin: 0 0 var(--cr-space-xs);
+  }
+  /* The measure is capped by the container as well as by itself: a 750px cap
+     inside a track this narrow is not a measure, and on a phone it is wider
+     than the viewport. Whichever is smaller governs. */
+  .headline {
+    font-family: var(--cr-font-display); font-weight: 400;
+    font-size: var(--cr-text-h2);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+    margin: 0;
+    max-width: min(var(--cr-measure-title), 100%);
+  }
+
+  /* ── Right column (list) ──────────────────────────────────── */
+  .list { border-top: var(--cr-stroke) solid var(--cr-border-default); }
+
+  .qa { border-bottom: var(--cr-stroke) solid var(--cr-border-default); }
+
+  /* Question row. `font: inherit` is already on the button, so the face is
+     carried rather than reset — the one control here that does not need the
+     explicit family a button otherwise demands. */
+  .q {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    gap: var(--cr-space-s); padding: var(--cr-space-s) 0;
+    background: transparent; border: 0; cursor: pointer;
+    font: inherit; color: inherit; text-align: left;
+  }
+  /* THE CLOSED ROWS HOLD THE WHOLE SCOPE WHILE ONE THING IS OPEN, so closed
+     reads as present rather than absent: secondary ink closed, primary open.
+     That is a step on the two-value text ramp, not a colour change. */
+  .qt {
+    font-family: var(--cr-font-display); font-weight: 500;
+    font-size: var(--cr-text-h6);
+    letter-spacing: var(--cr-tracking-heading);
+    line-height: var(--cr-leading-heading);
+    color: var(--cr-text-secondary);
+    transition: color .2s ease;
+  }
+  .qa:hover .qt { color: var(--cr-text-primary); }
+  .qa:hover .qi { border-color: var(--cr-text-primary); }
+  .qa.open .qt { color: var(--cr-text-primary); }
+
+  /* Plus toggle — a true circle, which the radius pair permits, on the default
+     hairline. Open inverts it to ink; the mark on ink is the inverse text
+     value, never an accent. */
+  .qi {
+    flex-shrink: 0;
+    width: 32px; height: 32px; border-radius: 50%;
+    border: var(--cr-stroke) solid var(--cr-border-default); background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--cr-text-primary);
+    transition: transform .3s ease, background .2s ease, border-color .2s ease, color .2s ease;
+  }
+  .qi svg { width: 14px; height: 14px; stroke-width: var(--cr-icon-stroke-sm); transition: transform .25s ease; }
+  .qa.open .qi {
+    transform: rotate(45deg);
+    background: var(--cr-text-primary);
+    border-color: var(--cr-text-primary);
+    color: var(--cr-text-inverse);
+  }
+
+  /* Answer — height transition via the grid-rows trick, carried over verbatim */
+  .a {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .35s ease;
+  }
+  .a-inner { overflow: hidden; min-height: 0; }
+  .qa.open .a { grid-template-rows: 1fr; }
+
+  .a-body {
+    padding: 0 var(--cr-space-xl) var(--cr-space-s) 0;
+    max-width: var(--cr-measure-body);
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    opacity: 0; transform: translateY(-4px);
+    transition: opacity .35s ease .05s, transform .35s ease .05s;
+  }
+  .qa.open .a-body { opacity: 1; transform: none; }
+
+  /* ── Responsive ───────────────────────────────────────────── */
+  /* The original's breakpoints and reflow. The type sizes it re-authored at
+     each one are gone: the ramp steps at the pack's breakpoints, and a second
+     ladder on top of the first resolves to sizes nobody chose. */
+  @media (max-width: 1100px) {
+    .section { padding-block: var(--cr-space-xl); gap: var(--cr-space-xl); grid-template-columns: 1fr 1.4fr; }
+  }
+  @media (max-width: 800px) {
+    .section { grid-template-columns: 1fr; gap: var(--cr-space-m); }
+    .headline { max-width: none; }
+    .a-body { padding-right: 0; }
+  }
+  @media (max-width: 480px) {
+    .section { padding-block: var(--cr-space-m); }
+    .q { padding: var(--cr-space-xs) 0; gap: var(--cr-space-xs); }
+    .qi { width: 28px; height: 28px; }
+  }
+
+  /* A guard that loses the cascade is not a guard, so each rule here matches
+     the specificity of the one it answers. */
+  @media (prefers-reduced-motion: reduce) {
+    .qt, .qi, .qi svg, .a { transition: none; }
+    .qa:hover .qt, .qa.open .qt, .qa:hover .qi, .qa.open .qi { transition: none; }
+    .a-body, .qa.open .a-body { transition: none; }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. Drafted from the measurement and then answered:
+     nothing in it is unexplained, so no line carries the directed reason.
+  .a-body   | font-size              | type-ramp
+  .a-body   | line-height            | type-ramp
+  .a-body   | max-width              | measure
+  .a-body   | padding-bottom         | spacing-scale
+  .eyebrow  | font-size              | type-ramp
+  .eyebrow  | line-height            | type-ramp
+  .eyebrow  | margin-bottom          | spacing-scale
+  .headline | font-size              | type-ramp
+  .headline | line-height            | type-ramp
+  .headline | max-width              | measure
+  .q        | column-gap             | spacing-scale
+  .q        | padding-bottom         | spacing-scale
+  .q        | padding-top            | spacing-scale
+  .q        | row-gap                | spacing-scale
+  .qt       | font-size              | type-ramp
+  .qt       | line-height            | type-ramp
+  .section  | column-gap             | spacing-scale
+  .section  | padding-bottom         | spacing-scale
+  .section  | padding-left           | spacing-scale
+  .section  | padding-right          | spacing-scale
+  .section  | padding-top            | spacing-scale
+  .section  | row-gap                | spacing-scale
+  br        | font-size              | type-ramp
+  br        | line-height            | type-ramp
+-->
+
+<section class="section" data-screen-label="FAQ — split column"
+         data-archetype="editorial-split" data-hierarchy="technical" data-intent="educate"
+         data-register="instructional" data-signature="architectural-whitespace" data-density="medium">
+  <!-- LEFT -->
+  <div>
+    <div class="eyebrow">Questions you may have</div>
+    <h2 class="headline">Frequently<br/>asked questions</h2>
+  </div>
+
+  <!-- RIGHT -->
+  <!-- The questions SHIP. A section is the smallest independently RETRIEVABLE
+       production-ready unit (section-library/README.md), and content that only
+       exists after a script has run is not retrievable — retrieval returned this
+       band with an empty column, so a page composing it rendered a heading and
+       nothing else. The script keeps what it is for: opening one answer at a
+       time. Authorised by DR-58; the hydrated DOM is unchanged, which is the
+       measurement that authorises it. -->
+  <div class="list" id="list">
+      <div class="qa open" data-i="0">
+        <button class="q" aria-expanded="true">
+          <span class="qt">Will this require us to replace our existing system?</span>
+          <span class="qi"><i data-lucide="plus"></i></span>
+        </button>
+        <div class="a"><div class="a-inner"><div class="a-body">We connect to your current tools via API or browser automation — SAP, Salesforce, Zoho, Oracle, Epic, Cerner, or custom spreadsheets. Example Brand deploys parallel to your existing workflow without forcing a rip-and-replace.</div></div></div>
+      </div>
+      <div class="qa" data-i="1">
+        <button class="q" aria-expanded="false">
+          <span class="qt">How is this different from the RPA tools we've tried before?</span>
+          <span class="qi"><i data-lucide="plus"></i></span>
+        </button>
+        <div class="a"><div class="a-inner"><div class="a-body">RPA breaks the moment your screen layout changes. Our agents reason about the task rather than the pixels, so they handle exceptions, draft responses, and escalate the ones that genuinely need a human.</div></div></div>
+      </div>
+      <div class="qa" data-i="2">
+        <button class="q" aria-expanded="false">
+          <span class="qt">What happens if the agent makes a mistake?</span>
+          <span class="qi"><i data-lucide="plus"></i></span>
+        </button>
+        <div class="a"><div class="a-inner"><div class="a-body">Every action is logged with a confidence score. Below the threshold the agent escalates to a human. Above the threshold it acts but flags a sample for review. You see every decision.</div></div></div>
+      </div>
+      <div class="qa" data-i="3">
+        <button class="q" aria-expanded="false">
+          <span class="qt">Is our data safe? What is the security model?</span>
+          <span class="qi"><i data-lucide="plus"></i></span>
+        </button>
+        <div class="a"><div class="a-inner"><div class="a-body">Your data stays in your environment. We deploy inside your VPC or on-prem; we never train on your data; SOC 2 + HIPAA available on request.</div></div></div>
+      </div>
+      <div class="qa" data-i="4">
+        <button class="q" aria-expanded="false">
+          <span class="qt">Which industries have you deployed in?</span>
+          <span class="qi"><i data-lucide="plus"></i></span>
+        </button>
+        <div class="a"><div class="a-inner"><div class="a-body">BFSI, Healthcare, Staffing &amp; Recruitment, and Supply Chain &amp; Logistics. Deeper case studies available on request.</div></div></div>
+      </div>
+      <div class="qa" data-i="5">
+        <button class="q" aria-expanded="false">
+          <span class="qt">What does the 30-day pilot actually look like?</span>
+          <span class="qi"><i data-lucide="plus"></i></span>
+        </button>
+        <div class="a"><div class="a-inner"><div class="a-body">Week 1: process audit. Week 2: blueprint signed. Weeks 3–4: agent live in shadow mode beside your existing workflow. Day 30: cutover or extend.</div></div></div>
+      </div>
+  </div>
+</section>
+
+<script>
+  const list = document.getElementById('list');
+  lucide.createIcons();
+
+  // Accordion behaviour — exactly one open at a time
+  list.addEventListener('click', e => {
+    const btn = e.target.closest('.q');
+    if (!btn) return;
+    const item = btn.parentElement;
+    const wasOpen = item.classList.contains('open');
+    list.querySelectorAll('.qa').forEach(el => {
+      el.classList.remove('open');
+      el.querySelector('.q').setAttribute('aria-expanded', 'false');
+    });
+    if (!wasOpen) {
+      item.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../_card.css">
+<style>
+  /* ─────────────────────────────────────────────────────────────────────
+     DATA VIZ · RING  (doc-scoped .viz-* — pure HTML/CSS + inline SVG, no JS)
+     A percentage RING / radial gauge. Governing RULES live in README-DATA-VIZ.md;
+     the notes below are this idiom's MECHANICS only (doc-scoped — never in colors_and_type.css).
+
+     What it's for (Rulebook §7–§8): ONE percentage = a Level-1 single metric → a
+     metric visualization (magnitude only). NOT a composition (use the donut), NOT
+     progress/timeline. The number is the message; the arc just makes it felt.
+
+     Colour (Rulebook §4 — marks are never navy): the value arc = the accent var(--accent)
+     (set by the component's .tone-*); the track = the inert tonal var(--surface), same hue,
+     faint. The centre numeral reuses .cr-stat-value and stays dark ink (type, not a mark).
+     The arc length IS the value: stroke-dasharray="<pct·C> <C>", C = 2πr = 2π·50 ≈ 314.
+     ───────────────────────────────────────────────────────────────────── */
+  .viz-ring        { position:relative; width:50mm; height:50mm; flex-shrink:0; }
+  .viz-ring--hero  { width:84mm; height:84mm; }                       /* hero / focal size */
+  .viz-ring svg    { width:100%; height:100%; display:block; }
+  .viz-ring-track  { fill:none; stroke:var(--surface, var(--cr-tone-sky)); stroke-width:12; }       /* inert tonal track */
+  .viz-ring-value  { fill:none; stroke:var(--accent); stroke-width:12; stroke-linecap:round; }      /* §4: subject = accent, never navy */
+  .viz-ring-label  { position:absolute; inset:0; display:grid; place-items:center; }
+  .viz-ring-label .cr-stat-value { font-size:42px; }
+  .viz-ring--hero .cr-stat-value { font-size:56px; }
+
+  /* preview-page chrome (matches benchmark-bars.html) */
+  .viz-demo  { max-width:178mm; display:flex; flex-direction:column; gap:34px; }
+  .viz-row   { display:flex; align-items:center; gap:18mm; flex-wrap:wrap; }
+  .viz-cap   { font:400 var(--fs-body)/1.4 var(--font-body); color:var(--cr-charcoal); max-width:140mm; }
+  .viz-caveat{ font:400 13px/1.55 var(--font-body); color:var(--cr-graphite); max-width:178mm; margin-top:26px; }
+</style>
+</head>
+<body style="background:#FFFFFF">
+<div class="viz-demo">
+
+  <!-- (1) Hero · centred focal point + its own caption -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">1 · Hero · centred focal point (the figure + its own one-line caption = one unit)</div>
+    <div style="display:flex; flex-direction:column; align-items:center; gap:6mm; padding:6mm 0">
+      <div class="viz-ring viz-ring--hero tone-sky">
+        <svg viewBox="0 0 120 120" role="img" aria-label="Roughly seventy percent of AI initiatives stall before production">
+          <circle class="viz-ring-track" cx="60" cy="60" r="50"/>
+          <circle class="viz-ring-value" cx="60" cy="60" r="50" stroke-dasharray="220 314" transform="rotate(-90 60 60)"/>
+        </svg>
+        <div class="viz-ring-label"><span class="cr-stat-value">~70<span class="unit">%</span></span></div>
+      </div>
+      <div class="cr-h2" style="color:var(--cr-charcoal); max-width:150mm; text-align:center">of AI initiatives stall before they reach production.</div>
+    </div>
+  </div>
+
+  <!-- (2) Across tones · the accent + track resolve per .tone-* -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">2 · Across tones · the arc + track resolve from each <code>.tone-*</code></div>
+    <div class="viz-row" style="gap:14mm">
+      <div class="viz-ring tone-periwinkle">
+        <svg viewBox="0 0 120 120" role="img" aria-label="About ninety-two percent">
+          <circle class="viz-ring-track" cx="60" cy="60" r="50"/>
+          <circle class="viz-ring-value" cx="60" cy="60" r="50" stroke-dasharray="289 314" transform="rotate(-90 60 60)"/>
+        </svg>
+        <div class="viz-ring-label"><span class="cr-stat-value">92<span class="unit">%</span></span></div>
+      </div>
+      <div class="viz-ring tone-sage">
+        <svg viewBox="0 0 120 120" role="img" aria-label="About sixty-four percent">
+          <circle class="viz-ring-track" cx="60" cy="60" r="50"/>
+          <circle class="viz-ring-value" cx="60" cy="60" r="50" stroke-dasharray="201 314" transform="rotate(-90 60 60)"/>
+        </svg>
+        <div class="viz-ring-label"><span class="cr-stat-value">64<span class="unit">%</span></span></div>
+      </div>
+      <div class="viz-ring tone-lilac">
+        <svg viewBox="0 0 120 120" role="img" aria-label="About thirty-eight percent">
+          <circle class="viz-ring-track" cx="60" cy="60" r="50"/>
+          <circle class="viz-ring-value" cx="60" cy="60" r="50" stroke-dasharray="119 314" transform="rotate(-90 60 60)"/>
+        </svg>
+        <div class="viz-ring-label"><span class="cr-stat-value">38<span class="unit">%</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="viz-caveat">
+    <strong>Ring</strong> · a percentage radial gauge for a <strong>single proportion</strong>
+    (<strong>Level-1 metric → metric visualization</strong>, magnitude only — not a composition, not
+    progress). <strong>Governing rules: the Data-Viz Rulebook</strong> (<code>README-DATA-VIZ.md</code> —
+    §7–§8 selection, §4 colour); the notes here are this idiom's <strong>mechanics</strong> only.
+    The value arc is the accent <code>var(--accent)</code> over the inert tonal track
+    <code>var(--surface)</code> (both from one <code>.tone-*</code>); the centre numeral reuses
+    <code>.cr-stat-value</code> and stays dark ink (type, not a mark). <strong>Pure HTML/CSS + inline
+    SVG, no JavaScript.</strong> Doc-scoped (never in <code>colors_and_type.css</code>). Shown on light
+    grounds; figures are illustrative placeholders.
+  </div>
+
+</div>
+</body></html>

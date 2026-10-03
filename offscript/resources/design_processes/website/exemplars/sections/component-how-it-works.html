@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How it works · scroll-pinned process steps</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  COMPONENT   — How it works: a 4-step process with a scroll-pinned aside
+  SOURCE      — An EXACT extraction of the live apa-landing.html "#how" section
+                (the production homepage "How it works"), lifted verbatim into a
+                standalone catalog component. Composition, copy, mocks and motion
+                are reproduced 1:1; only the wiring changes (links ../colors_and_type.css
+                for tokens + base type ramp; all apa-local classes inlined here;
+                asset paths rewritten ./assets → ../assets).
+  COMPOSITION — A warm full-bleed band. Left-aligned header (eyebrow → section
+                headline → lede). Below, a 2-col grid: a position:sticky aside on
+                the LEFT holding a numbered 4-step nav (01 Find the process →
+                04 Measure the ROI), and a vertical stack of items on the RIGHT.
+                Each item = a CREATIVE panel (image-background creative) holding a
+                light-theme UI mock + a text block (group heading + body) below it.
+                The four mocks: 01 process-audit table, 02 AGENT BLUEPRINT flow
+                (zap "New invoice received/Trigger" → bot "Match to PO?/Decide"
+                [agent-highlighted] → shield "Guardrail" + check "Post to ERP"),
+                03 deployment tracker, 04 ROI chart + tiles.
+  CARD BG     — Creatives doctrine, image mode (the look the user asked to ground
+                in apa-landing): `.cr-creative--img` = a #E9F0FF cool pale-blue base +
+                an atmospheric blur image (../assets/creative-background/web/blur-7,
+                the brand-legal cool atmospheric) + grain (soft-light, low opacity) + a light cool SCRIM
+                (rgba(246,249,253,…)) that lifts the image into a soft pastel wash
+                so the white UI card dominates and separates by hairline — NO shadow.
+  CHARTER     — No shadows (hairline borders + the cool scrim do the separating);
+                icons exclusively Lucide; body copy stays on the Inter ramp; hover
+                only on the nav items (real controls).
+  MOTION      — Sticky aside is vertically CENTRED in the viewport while scrolling
+                (top: calc(50vh - --aside-half); JS writes half the aside height on
+                load/resize/fonts.ready), then native sticky bottom-aligns it with
+                the last item. An IntersectionObserver watches each .how__creative
+                and lights the matching nav item (mid-band rootMargin). Items
+                fade+rise in on first viewport hit ([data-reveal] scoped to .has-js).
+                prefers-reduced-motion disables the fade + uses instant scroll.
+                Visible without JS.
+  Standalone: links ../colors_and_type.css only; own <style>; no shared CSS.
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background: var(--cr-page-ground);
+    font-family: var(--cr-font-body); color: var(--cr-text-primary);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Section shell (apa: cr-section + cr-band-warm) ─────────────────── */
+  .cr-section { position: relative; padding: var(--cr-space-30) var(--cr-page-gutter); }
+  .cr-band-warm { background: var(--cr-page-ground); color: var(--cr-text-primary); }
+
+  /* ── Head / eyebrow (apa-local) ─────────────────────────────────────── */
+  .cr-head { max-width: 780px; display: flex; flex-direction: column; gap: var(--cr-space-4); }
+  .cr-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 14px;
+    letter-spacing: 0; text-transform: none; color: var(--cr-text-secondary);
+  }
+
+  /* ── Lucide icon sizing (apa-local) ─────────────────────────────────── */
+  .cr-ico { width: 24px; height: 24px; stroke: currentColor; stroke-width: var(--cr-icon-stroke-md); fill: none;
+            stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+  /* ── Status dot (used in the deploy mock) ───────────────────────────── */
+  .cr-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent, var(--cr-text-primary)); flex: none; }
+  .cr-dot--live { background: var(--cr-text-primary); animation: cr-pulse 2s ease-in-out infinite; }
+  @keyframes cr-pulse { 0%,100% { opacity: 1 } 50% { opacity: .4 } }
+
+  /* ── Creative-panel recipe — image-background mode (Creatives doctrine) ─ */
+  .cr-creative { position: relative; overflow: hidden; border-radius: var(--cr-radius-card); }
+  /* The v2 fill is dropped: `background` is a SHORTHAND and resets
+     background-image, which would cancel the selected environment. */
+  .cr-grain { position: absolute; inset: 0; pointer-events: none;
+              background-image: url("../../brand-pack/assets/imagery/textures/noise-texture.webp"); background-size: cover; }
+  .cr-creative--img .cr-grain { opacity: .10; mix-blend-mode: soft-light; }
+  /* light cool veil — lifts the pastel image into soft neutral atmosphere so the
+     white UI card dominates + separates by hairline (no shadow) */
+  
+  
+
+  /* ── How: header + 2-col grid (apa-local) ───────────────────────────── */
+  .how__head { margin-bottom: 80px; max-width: 720px; }
+  .how__wrap { display: grid; grid-template-columns: 300px 1fr; column-gap: 80px; align-items: start; }
+  /* sticky aside: vertically centred in the viewport (calc), then native sticky
+     bottom-aligns it with the last item at section end. JS sets --aside-half. */
+  .how__aside { position: sticky; top: calc(50vh - var(--aside-half, 90px)); align-self: start; }
+  .how__nav { display: flex; flex-direction: column; }
+  .how__nav-item {
+    display: flex; align-items: baseline; gap: 14px; padding: 12px 20px;
+    border-left: 2px solid var(--cr-border-default); color: var(--cr-text-secondary);
+    text-decoration: none;
+    font-family: var(--cr-font-display); font-weight: 500; font-size: 16px;
+    transition: color .2s, border-color .2s;
+  }
+  .how__nav-item:hover { color: var(--cr-text-primary); }
+  .how__nav-item.is-active { color: var(--cr-text-primary); border-left-color: var(--cr-text-primary); }
+  .how__nav-num { font-family: var(--cr-font-body); font-weight: 500; font-size: 12px;
+                  letter-spacing: 0; opacity: .5; min-width: 22px; color: var(--cr-text-secondary); }
+  .how__nav-item.is-active .how__nav-num { opacity: 1; color: var(--cr-text-primary); }
+
+  .how__items { display: flex; flex-direction: column; gap: 80px; }
+  .how__item { display: flex; flex-direction: column; gap: 28px; }
+  .how__creative { aspect-ratio: 16/9; }
+  .how__mock {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+    background: var(--cr-bg-raised); border-radius: var(--cr-radius-card); border: 1px solid var(--cr-border-default);
+    width: calc(100% - 64px); max-width: 560px; overflow: hidden;
+    font-family: var(--cr-font-body); z-index: 1;
+  }
+  .how__mhead { display: flex; align-items: center; justify-content: space-between; gap: 10px;
+                padding: 12px 16px; border-bottom: 1px solid var(--cr-border-default); background: var(--cr-surface-2); }
+  .how__mtitle { font-family: var(--cr-font-display); font-weight: 500; font-size: 13.5px; color: var(--cr-text-primary); }
+  .how__mchip { font-size: 11px; font-weight: 500; padding: 4px 9px; border-radius: var(--cr-radius-control);
+                white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+  .how__mchip .cr-ico { width: 12px; height: 12px; stroke-width: var(--cr-icon-stroke-sm); }
+  .how__mchip--ok { color: var(--cr-text-primary); background: var(--cr-surface-3); }
+  .how__mchip--info { color: var(--cr-text-primary); background: var(--cr-surface-3); }
+
+  /* mock 1 · audit table */
+  .how__tbl { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .how__tbl th { text-align: left; font-size: 9.5px; font-weight: 500; letter-spacing: 0;
+                 text-transform: none; color: var(--cr-text-secondary); padding: 9px 16px;
+                 border-bottom: 1px solid var(--cr-border-default); }
+  .how__tbl td { padding: 9px 16px; border-bottom: 1px solid var(--cr-border-default); color: var(--cr-text-secondary); }
+  .how__tbl tr:last-child td { border-bottom: 0; }
+  .how__tbl .wf { color: var(--cr-text-primary); font-weight: 500; }
+  .how__tbl .n { text-align: right; font-variant-numeric: tabular-nums; }
+  .how__trow--hot td { background: var(--cr-surface-3); }
+  .how__pri { font-size: 10px; font-weight: 500; color: var(--cr-bg-raised); background: var(--cr-text-primary);
+              padding: 2px 8px; border-radius: var(--cr-radius-control); }
+  .how__pri--lo { background: var(--cr-surface-3); color: var(--cr-text-secondary); }
+
+  /* mock 2 · agent blueprint flow canvas */
+  .how__flow { padding: 18px; 
+               background-size: 15px 15px; display: flex; flex-direction: column; align-items: center; }
+  .how__fnode { width: min(290px,100%); display: flex; align-items: center; gap: 9px; padding: 10px 13px;
+                border-radius: var(--cr-radius-card); border: 1px solid var(--cr-border-default); background: var(--cr-bg-raised);
+                font-size: 12.5px; font-weight: 500; color: var(--cr-text-primary); }
+  .how__fnode .cr-ico { width: 15px; height: 15px; flex: none; color: var(--cr-text-primary); }
+  .how__fnode--agent { border-color: var(--cr-text-primary); background: var(--cr-surface-3); }
+  .how__ftype { margin-left: auto; font-size: 9.5px; font-weight: 500; text-transform: none;
+                letter-spacing: 0; color: var(--cr-text-secondary); }
+  .how__fconn { width: 2px; height: 13px; background: var(--cr-border-default); }
+  .how__fsplit { display: flex; gap: 10px; width: min(290px,100%); }
+  .how__fsplit .how__fnode { flex: 1; width: auto; justify-content: center; }
+
+  /* mock 3 · deployment tracker */
+  .how__deploy { padding: 18px; }
+  .how__steps { display: flex; align-items: flex-start; margin-bottom: 4px; }
+  .how__stp { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 7px;
+              position: relative; font-size: 11px; color: var(--cr-text-secondary); }
+  .how__stp::before { content: ""; position: absolute; top: 9px; right: 50%; width: 100%; height: 2px; background: var(--cr-border-default); }
+  .how__stp:first-child::before { display: none; }
+  .how__stp-dot { width: 20px; height: 20px; border-radius: 50%; background: var(--cr-bg-raised); border: 2px solid var(--cr-border-default);
+                  display: flex; align-items: center; justify-content: center; position: relative; z-index: 1; }
+  .how__stp-dot .cr-ico { width: 11px; height: 11px; stroke-width: var(--cr-icon-stroke-md); color: var(--cr-bg-raised); }
+  .how__stp--done .how__stp-dot { background: var(--cr-text-primary); border-color: var(--cr-text-primary); }
+  .how__stp--live .how__stp-dot { background: var(--cr-text-primary); border-color: var(--cr-text-primary); }
+  .how__stp--done, .how__stp--live { color: var(--cr-text-primary); font-weight: 500; }
+  .how__counter { border-top: 1px solid var(--cr-border-default); margin: 14px -18px -18px; padding: 13px 18px;
+                  display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--cr-surface-2); }
+  .how__c-num { font-family: var(--cr-font-display); font-weight: 500; font-size: 21px; color: var(--cr-text-primary); font-variant-numeric: tabular-nums; }
+  .how__c-lab { font-size: 11px; color: var(--cr-text-secondary); }
+  .how__c-live { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 500; color: var(--cr-text-primary); white-space: nowrap; }
+
+  /* mock 4 · ROI chart + tiles */
+  .how__roi { padding: 16px 18px; }
+  .how__chart { display: flex; align-items: flex-end; gap: 16px; height: 92px; padding-top: 6px; border-bottom: 1px solid var(--cr-border-default); }
+  .how__bargrp { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+  .how__bars { display: flex; align-items: flex-end; gap: 5px; height: 100%; }
+  .how__bar { width: 15px; border-radius: 0; }
+  .how__bar--base { background: var(--cr-surface-3); }
+  .how__bar--now { background: var(--cr-text-primary); }
+  .how__blab { font-size: 10px; color: var(--cr-text-secondary); }
+  .how__tiles { display: flex; gap: 8px; margin-top: 14px; }
+  .how__tile { flex: 1; border: 1px solid var(--cr-border-default); border-radius: var(--cr-radius-control); padding: 9px 11px; display: flex; flex-direction: column; gap: 2px; }
+  .how__t-num { font-family: var(--cr-font-display); font-weight: 500; font-size: 17px; font-variant-numeric: tabular-nums; color: var(--cr-text-primary); }
+  .how__t-num--g { color: var(--cr-text-primary); }
+  .how__t-lab { font-size: 10px; color: var(--cr-text-secondary); }
+
+  .how__text h3 { margin: 0 0 12px; }
+  .how__text p { max-width: 540px; }
+
+  /* ── Reveal-on-scroll (scoped to .has-js → visible without JS) ───────── */
+  .has-js [data-reveal] { opacity: 0; transform: translateY(18px);
+    transition: opacity .6s cubic-bezier(.22,.61,.36,1), transform .6s cubic-bezier(.22,.61,.36,1); }
+  [data-reveal].is-visible { opacity: 1; transform: none; }
+
+  /* ── Responsive (apa baselines + how overrides) ─────────────────────── */
+  @media (max-width: 1024px) {
+    .cr-section { padding: var(--cr-space-20) 48px; }
+    .cr-h-section, h2.cr { font-size: 36px; }
+    .how__head { margin-bottom: 60px; }
+    .how__wrap { grid-template-columns: 240px 1fr; column-gap: 48px; }
+    .how__items { gap: 64px; }
+  }
+  @media (max-width: 640px) {
+    .cr-section { padding: var(--cr-space-15) 20px; }
+    .cr-h-section, h2.cr { font-size: 28px; }
+    .cr-h-group, h4.cr { font-size: 22px; }
+    .cr-p-lede { font-size: 18px; }
+    .how__wrap { grid-template-columns: 1fr; column-gap: 0; }
+    .how__aside { display: none; }
+    .how__items { gap: 48px; }
+    .how__creative { aspect-ratio: 4/3; }
+    .how__mock { width: calc(100% - 36px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js [data-reveal] { opacity: 1 !important; transform: none !important; transition: none; }
+    .cr-dot--live { animation: none; }
+    .how__nav-item { transition: none; }
+  }
+
+  /* DR-7 — the scrim tokens are retired in full. These two layers existed to
+     dim a photograph so opaque panels could read over it; the panels carry
+     their own contrast, so the photograph is simply the subject. The elements
+     stay (the DOM is frozen) and are made inert. */
+  .cr-creative__scrim { display: none; }
+  /* A pulsing dot is motion on something that is not a control. */
+  .cr-dot--live { animation: none; }
+  /* THE RAIL CARRIES THE SECTION'S ONE ACCENT — the v2 file spent colour in
+     eighteen places against a ceiling of three. Orange stays on the RULE and
+     never on the numeral: it measures 2.4:1 on the page ground and is never
+     text. Everything else in the artifact is neutral. */
+  .how__nav-item.is-active { border-left-color: var(--cr-accent-orange); }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line
+     here that moved nothing. Retrofitted from measurement for the pilot
+     ten; declared before authoring from Phase 1 onward.
+  .cr-h-group    | font-size              | type-ramp
+  .cr-h-group    | line-height            | type-ramp
+  .cr-h-section  | font-size              | type-ramp
+  .cr-h-section  | line-height            | type-ramp
+  .cr-h-section  | margin-bottom          | spacing-scale
+  .cr-h-section  | margin-top             | spacing-scale
+  .cr-h-section  | max-width              | measure
+  .cr-head       | column-gap             | spacing-scale
+  .cr-head       | row-gap                | spacing-scale
+  .cr-p          | font-size              | type-ramp
+  .cr-p          | line-height            | type-ramp
+  .cr-p          | margin-bottom          | spacing-scale
+  .cr-p          | margin-top             | spacing-scale
+  .cr-p-lede     | line-height            | type-ramp
+  .cr-p-lede     | max-width              | measure
+  .cr-section    | padding-bottom         | spacing-scale
+  .cr-section    | padding-left           | spacing-scale
+  .cr-section    | padding-right          | spacing-scale
+  .cr-section    | padding-top            | spacing-scale
+  .how__creative | border-radius          | radius-pair
+  .how__fnode    | border-radius          | radius-pair
+  .how__ftype    | margin-left            | spacing-scale
+  .how__mchip    | border-radius          | radius-pair
+  .how__mock     | border-radius          | radius-pair
+  .how__pri      | border-radius          | radius-pair
+  .how__tile     | border-radius          | radius-pair
+  .lucide        | stroke-width           | stroke
+  path           | stroke-width           | stroke
+-->
+
+
+<section id="how" class="cr-section cr-band-warm how"
+         data-archetype="narrative-flow" data-hierarchy="secondary" data-intent="explain"
+         data-register="instructional" data-signature="architectural-whitespace" data-density="medium" data-screen-label="How it works · scroll-pinned process steps">
+  <header class="cr-head how__head" data-reveal>
+    <span class="cr-eyebrow">How it works</span>
+    <h2 class="cr-h-section">From bottleneck to live agent in weeks — not quarters.</h2>
+    <p class="cr-p-lede">We start with one high-value process, prove it in production alongside your team, then expand. Little disruption, measurable from day one.</p>
+  </header>
+  <div class="how__wrap">
+    <aside class="how__aside">
+      <nav class="how__nav" aria-label="How it works steps">
+        <a class="how__nav-item is-active" href="#how-1"><span class="how__nav-num">01</span><span>Find the process</span></a>
+        <a class="how__nav-item" href="#how-2"><span class="how__nav-num">02</span><span>Map the agentic solution</span></a>
+        <a class="how__nav-item" href="#how-3"><span class="how__nav-num">03</span><span>Deploy in weeks</span></a>
+        <a class="how__nav-item" href="#how-4"><span class="how__nav-num">04</span><span>Measure the ROI</span></a>
+      </nav>
+    </aside>
+    <div class="how__items">
+      <article class="how__item" data-reveal>
+        <!-- ANCHOR is declared; PRESENCE is not, and the omission is measured rather than
+             an oversight. COMPOSE.md §A2.2 binds both to the archetype, and no specimen in
+             the library declared either. The anchor vocabulary has no CSS behind it — it is
+             a pure declaration and costs nothing. `cr-presence-*` is a WIDTH, so declaring
+             it is inert in a specimen and not inert in a page: applied here it narrowed the
+             creative in composition and pushed 10px labels onto a busier part of the
+             photograph, three new AA failures. A vocabulary that cannot be declared without
+             changing layout is a finding about the vocabulary. (LIBRARY-AUDIT.md C-3.) -->
+        <div class="how__creative cr-creative cr-creative--img cr-env-ridges-distant cr-anchor-inline" id="how-1" aria-hidden="true">
+          <div class="cr-grain"></div><div class="cr-creative__scrim" aria-hidden="true"></div>
+          <div class="how__mock">
+            <div class="how__mhead"><span class="how__mtitle">Process audit</span><span class="how__mchip how__mchip--ok"><i data-lucide="check" class="cr-ico"></i>Scan complete</span></div>
+            <table class="how__tbl">
+              <thead><tr><th>Workflow</th><th class="n">Hrs/wk</th><th class="n">Cost/yr</th><th>Priority</th></tr></thead>
+              <tbody>
+                <tr><td class="wf">Claims triage</td><td class="n">210</td><td class="n">$0.4M</td><td><span class="how__pri how__pri--lo">Med</span></td></tr>
+                <tr class="how__trow--hot"><td class="wf">Invoice reconciliation</td><td class="n">305</td><td class="n">$0.9M</td><td><span class="how__pri">High</span></td></tr>
+                <tr><td class="wf">Vendor onboarding</td><td class="n">190</td><td class="n">$0.3M</td><td><span class="how__pri how__pri--lo">Low</span></td></tr>
+                <tr><td class="wf">Payroll exceptions</td><td class="n">120</td><td class="n">$0.2M</td><td><span class="how__pri how__pri--lo">Low</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="how__text"><h3 class="cr-h-group">Find the process</h3><p class="cr-p">We audit your operation and pinpoint the highest-friction, highest-cost workflow worth automating first — the one bleeding hours every week.</p></div>
+      </article>
+      <article class="how__item" data-reveal>
+        <div class="how__creative cr-creative cr-creative--img cr-env-ridges-distant" id="how-2" aria-hidden="true">
+          <div class="cr-grain"></div><div class="cr-creative__scrim cr-creative__scrim--soft" aria-hidden="true"></div>
+          <div class="how__mock">
+            <div class="how__mhead"><span class="how__mtitle">Agent blueprint</span><span class="how__mchip how__mchip--info">Draft</span></div>
+            <div class="how__flow">
+              <div class="how__fnode"><i data-lucide="zap" class="cr-ico"></i>New invoice received<span class="how__ftype">Trigger</span></div>
+              <span class="how__fconn"></span>
+              <div class="how__fnode how__fnode--agent"><i data-lucide="bot" class="cr-ico"></i>Match to PO?<span class="how__ftype">Decide</span></div>
+              <span class="how__fconn"></span>
+              <div class="how__fsplit">
+                <div class="how__fnode"><i data-lucide="shield" class="cr-ico"></i>Guardrail</div>
+                <div class="how__fnode"><i data-lucide="check" class="cr-ico"></i>Post to ERP</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="how__text"><h3 class="cr-h-group">Map the agentic solution</h3><p class="cr-p">We design the agent taskforce, the decisions it owns, and the guardrails it works within — mapped onto the tools you already run.</p></div>
+      </article>
+      <article class="how__item" data-reveal>
+        <div class="how__creative cr-creative cr-creative--img cr-env-ridges-distant" id="how-3" aria-hidden="true">
+          <div class="cr-grain"></div><div class="cr-creative__scrim" aria-hidden="true"></div>
+          <div class="how__mock">
+            <div class="how__mhead"><span class="how__mtitle">Deployment</span><span class="how__mchip how__mchip--ok"><i data-lucide="check" class="cr-ico"></i>Live · Week 3</span></div>
+            <div class="how__deploy">
+              <div class="how__steps">
+                <div class="how__stp how__stp--done"><span class="how__stp-dot"><i data-lucide="check" class="cr-ico"></i></span>Build</div>
+                <div class="how__stp how__stp--done"><span class="how__stp-dot"><i data-lucide="check" class="cr-ico"></i></span>Test</div>
+                <div class="how__stp how__stp--live"><span class="how__stp-dot"></span>Live</div>
+              </div>
+              <div class="how__counter">
+                <div><span class="how__c-num">1,284</span> <span class="how__c-lab">processed today · 6 escalated</span></div>
+                <span class="how__c-live"><span class="cr-dot cr-dot--live"></span>Running</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="how__text"><h3 class="cr-h-group">Deploy in weeks</h3><p class="cr-p">Your first agent goes live in production in about three weeks, working alongside your team. No rip-and-replace, no six-month project.</p></div>
+      </article>
+      <article class="how__item" data-reveal>
+        <div class="how__creative cr-creative cr-creative--img cr-env-ridges-distant" id="how-4" aria-hidden="true">
+          <div class="cr-grain"></div><div class="cr-creative__scrim cr-creative__scrim--soft" aria-hidden="true"></div>
+          <div class="how__mock">
+            <div class="how__mhead"><span class="how__mtitle">Outcome vs baseline</span><span class="how__mchip how__mchip--info">90 days</span></div>
+            <div class="how__roi">
+              <div class="how__chart">
+                <div class="how__bargrp"><div class="how__bars"><div class="how__bar how__bar--base" style="height:88%"></div><div class="how__bar how__bar--now" style="height:24%"></div></div><span class="how__blab">Cycle time</span></div>
+                <div class="how__bargrp"><div class="how__bars"><div class="how__bar how__bar--base" style="height:28%"></div><div class="how__bar how__bar--now" style="height:96%"></div></div><span class="how__blab">Throughput</span></div>
+                <div class="how__bargrp"><div class="how__bars"><div class="how__bar how__bar--base" style="height:38%"></div><div class="how__bar how__bar--now" style="height:80%"></div></div><span class="how__blab">Cost saved</span></div>
+              </div>
+              <div class="how__tiles">
+                <div class="how__tile"><span class="how__t-num how__t-num--g">−73%</span><span class="how__t-lab">Cycle time</span></div>
+                <div class="how__tile"><span class="how__t-num">4.2×</span><span class="how__t-lab">Throughput</span></div>
+                <div class="how__tile"><span class="how__t-num">$750K</span><span class="how__t-lab">Saved / yr</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="how__text"><h3 class="cr-h-group">Measure the ROI</h3><p class="cr-p">We track cycle time, cost, and throughput against your baseline — so the value shows up where it counts: on your next P&amp;L.</p></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var howSec = document.getElementById("how");
+
+    // 1) Reveal items on first viewport hit (always reveal if IO is unavailable).
+    var reveals = howSec.querySelectorAll("[data-reveal]");
+    if (!("IntersectionObserver" in window)) {
+      reveals.forEach(function (el) { el.classList.add("is-visible"); });
+    } else {
+      var revIO = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("is-visible"); revIO.unobserve(e.target); } });
+      }, { threshold: 0.12 });
+      reveals.forEach(function (el) { revIO.observe(el); });
+    }
+
+    // 2) Sticky aside centering + active-nav tracking (the apa "#how" pattern).
+    var howAside = howSec.querySelector(".how__aside");
+    var howCreatives = howSec.querySelectorAll(".how__creative");
+    var howNav = howSec.querySelectorAll(".how__nav-item");
+    var setHalf = function () { if (howAside) howAside.style.setProperty("--aside-half", (howAside.offsetHeight / 2) + "px"); };
+    setHalf();
+    window.addEventListener("resize", setHalf);
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(setHalf); }
+
+    if ("IntersectionObserver" in window) {
+      var navIO = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          var id = "#" + e.target.id;
+          howNav.forEach(function (n) { n.classList.toggle("is-active", n.getAttribute("href") === id); });
+        });
+      }, { rootMargin: "-30% 0px -45% 0px" });
+      howCreatives.forEach(function (c) { navIO.observe(c); });
+    }
+
+    howNav.forEach(function (n) {
+      n.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        var t = howSec.querySelector(n.getAttribute("href"));
+        if (t) t.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+      });
+    });
+
+    // 3) Lucide last, behind a guard (a blocked CDN must never break the section).
+    if (window.lucide && typeof window.lucide.createIcons === "function") { window.lucide.createIcons(); }
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!-- CURATED EXEMPLAR — archetype: founder. Authored on the house .cr-* system (v2 re-theme); rhythm referenced from Website-offscript-v2/fragments/team-leadership.html. Match the rhythm/discipline; do NOT clone. -->
+<section id="founder" class="cr-band-warm cr-section" aria-label="A note from the founder">
+  <style>
+    /* doc-scoped: centred note column + signature block ONLY. The note uses the
+       house .cr-quote / editorial type; portrait is a tonal monogram (no <img>). */
+    #founder .fn-col { max-width: 720px; margin-inline: auto; display: flex; flex-direction: column;
+      align-items: center; text-align: center; gap: var(--cr-space-6); }
+    #founder .fn-note { color: var(--cr-fg); }
+    #founder .fn-note .cr-quote { line-height: 1.45; color: var(--cr-fg); }
+    #founder .fn-sign { display: flex; align-items: center; gap: var(--cr-space-4); margin-top: var(--cr-space-2); }
+    #founder .fn-mono { width: 56px; height: 56px; flex: none; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--cr-brand-100); color: var(--cr-brand-700);
+      font-family: var(--cr-font-display); font-weight: 800; font-size: 18px; }
+    #founder .fn-who { text-align: left; }
+    #founder .fn-name { font-family: var(--cr-font-display); font-weight: 700; font-size: 17px; color: var(--cr-fg); }
+    #founder .fn-role { font-family: var(--cr-font-body); font-size: 14px; color: var(--cr-fg-3); }
+    #founder .fn-reveal { animation: fnRise .65s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--d, 0s); }
+    @keyframes fnRise { from { transform: translateY(14px); } to { transform: none; } }
+    @media (prefers-reduced-motion: reduce) { #founder .fn-reveal { animation: none; } }
+  </style>
+
+  <div class="cr-container fn-col">
+    <span class="cr-eyebrow fn-reveal" style="--d:.02s">From the founder</span>
+    <blockquote class="fn-note fn-reveal" style="--d:.08s">
+      <p class="cr-quote">We started Acme because the best people we knew were spending their days on work no one should have to do by hand. We don&rsquo;t want to replace them &mdash; we want to give them their judgment back. Every agent we ship is built to earn a person&rsquo;s trust before it earns their workload.</p>
+    </blockquote>
+    <div class="fn-sign fn-reveal" style="--d:.16s">
+      <span class="fn-mono" aria-hidden="true">AR</span>
+      <span class="fn-who">
+        <span class="fn-name">Alex Rivera</span><br>
+        <span class="fn-role">Co-founder &amp; CEO, Acme</span>
+      </span>
+    </div>
+  </div>
+</section>

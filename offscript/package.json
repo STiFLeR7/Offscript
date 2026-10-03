@@ -1,0 +1,45 @@
+{
+  "name": "offscript",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "bin": {
+    "offscript": "./dist/cli.js"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:render": "OFFSCRIPT_PLAYWRIGHT=1 vitest run",
+    "build": "tsc",
+    "offscript": "tsx src/cli.ts",
+    "dry-run": "tsx scripts/dry-run.ts",
+    "harden": "tsx scripts/harden.ts",
+    "harden:review": "tsx scripts/harden-review.ts",
+    "knowledge:materialize": "tsx scripts/materialize-knowledge.ts",
+    "knowledge:build": "tsx scripts/knowledge-build.ts repository",
+    "check:isolation": "tsx scripts/check-package-isolation.ts",
+    "check:capabilities": "tsx scripts/check-capability-closure.ts",
+    "check:runtime-flag-docs": "tsx scripts/check-runtime-flag-docs.ts"
+  },
+  "dependencies": {
+    "@babel/core": "^7.29.7",
+    "@babel/preset-react": "^7.29.7",
+    "hast-util-from-html": "^2.0.3",
+    "hast-util-to-html": "^9.0.4",
+    "lucide-static": "^1.16.0",
+    "postcss": "^8.4.47",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "yaml": "^2.5.1"
+  },
+  "devDependencies": {
+    "@types/babel__core": "^7.20.5",
+    "@types/hast": "^3.0.4",
+    "@types/node": "^22.7.4",
+    "@types/react": "^18.3.29",
+    "@types/react-dom": "^18.3.7",
+    "playwright": "^1.60.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.2"
+  }
+}

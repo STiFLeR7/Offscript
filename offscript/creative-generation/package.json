@@ -1,0 +1,28 @@
+{
+  "name": "creative-generation",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Standalone CreativeIntent authoring and validation pipeline producing digest-verified, approval-pending CreativeArtifacts with supplied project branding.",
+  "type": "module",
+  "bin": {
+    "creative-generation": "./src/cli.ts"
+  },
+  "scripts": {
+    "generate": "tsx src/cli.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "creative-artifact-contract": "file:../creative-artifact-contract",
+    "creative-intent-exporter": "file:../creative-intent-exporter"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0",
+    "vitest": "^2.1.0"
+  }
+}

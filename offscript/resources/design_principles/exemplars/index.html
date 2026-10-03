@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Example Brand — Executive Collateral (A4)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Design system tokens + A4 collateral layout. No frameworks, no network JS. -->
+<link rel="stylesheet" href="../colors_and_type.css" />
+<style>
+  /* Document-specific helpers (system classes live in colors_and_type.css) */
+  .feat-title  { font:500 var(--fs-h4)/1.3 var(--font-display); letter-spacing:-.02em; color:var(--cr-charcoal); }
+  .chk         { width:15px; height:15px; flex-shrink:0; margin-top:2px; }
+  .fill        { height:100%; display:flex; flex-direction:column; }
+  .center      { text-align:center; align-items:center; margin-left:auto; margin-right:auto; }
+</style>
+</head>
+<body>
+<div class="cr-doc">
+
+  <!-- ───────────────────────── PAGE 1 · COVER ───────────────────────── -->
+  <section class="cr-page cr-page--bleed cr-page--dark">
+    <div style="position:absolute; inset:0; background:url('../assets/imagery/dark-tech-3.jpg') center/cover no-repeat"></div>
+    <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(2,11,27,.74) 0%, rgba(2,11,27,.46) 36%, rgba(2,11,27,.56) 66%, rgba(2,11,27,.92) 100%)"></div>
+    <div style="position:absolute; inset:0; padding:18mm 16mm; display:flex; flex-direction:column; justify-content:space-between">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-white.svg" alt="Example Brand" />
+        <div class="cr-eyebrow" style="color:rgba(255,255,255,.6)">Agentic Process Automation</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:7mm; max-width:158mm">
+        <div class="cr-eyebrow" style="color:var(--cr-electric)">The operating layer for modern operations</div>
+        <h1 class="cr-display-xl" style="color:#fff; font-size:44px; line-height:1.18">Automate the Manual Glue in Your Business.</h1>
+        <p class="cr-body-lg" style="color:rgba(255,255,255,.82); max-width:150mm">You want to scale, but operations are hitting a ceiling and your best people are drowning in manual work. Example Brand deploys autonomous digital workers that handle it for you — without changing the software you already run.</p>
+      </div>
+      <div class="cr-page-foot" style="color:rgba(255,255,255,.82); border:0">
+        <span style="font-weight:600; letter-spacing:.06em; text-transform:uppercase; font-size:12px">example-brand.com</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────── PAGE 2 · THE PROBLEM ───────────────────── -->
+  <section class="cr-page">
+    <div class="cr-page-header">
+      <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+      <div class="cr-eyebrow">The Hidden Tax</div>
+    </div>
+    <div style="margin-top:15mm; display:flex; flex-direction:column; gap:8mm">
+      <div class="cr-headline-block">
+        <h2 class="cr-display-lg">You're Paying Skilled People to Do Work That Costs Pennies to Automate.</h2>
+        <p class="cr-body" style="max-width:150mm">Every operations team carries a tax it never put on the balance sheet. It surfaces as overtime, avoidable errors, and the strategic work that never gets done. Here is where it hides.</p>
+      </div>
+      <div class="cr-stack">
+        <div class="cr-list-row"><div class="cr-list-num">01</div><div class="cr-list-label">The Labor Tax</div><div class="cr-list-body">You're paying skilled staff $30–50/hour to run repetitive work that an agent handles for pennies — and today the only way to add capacity is to add headcount.</div></div>
+        <div class="cr-list-row"><div class="cr-list-num">02</div><div class="cr-list-label">The Error Cost</div><div class="cr-list-body">Human processing at scale means inevitable mistakes — missed overcharges, duplicate payments, and compliance gaps that only surface once they're already expensive.</div></div>
+        <div class="cr-list-row"><div class="cr-list-num">03</div><div class="cr-list-label">The Opportunity Cost</div><div class="cr-list-body">Your team spends its day on data entry instead of the strategic work that drives revenue. The ceiling on growth becomes your headcount plan.</div></div>
+        <div class="cr-list-row"><div class="cr-list-num">04</div><div class="cr-list-label">The Middleman Tax</div><div class="cr-list-body">Every handoff between disconnected tools needs a person to copy, paste, and reconcile. That "manual glue" stays invisible until the day it breaks.</div></div>
+      </div>
+      <div style="margin-top:4mm; display:flex; flex-direction:column; gap:4mm">
+        <div class="cr-divider"></div>
+        <div class="cr-body-lg" style="color:var(--cr-charcoal); font-weight:500; max-width:150mm">Most automation tools just speed up volume. Example Brand removes the manual glue between your systems entirely.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────── PAGE 3 · HOW IT WORKS ─────────────────── -->
+  <section class="cr-page">
+    <div class="cr-page-header">
+      <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+      <div class="cr-eyebrow">How Example Brand Executes</div>
+    </div>
+    <div style="margin-top:15mm; display:flex; flex-direction:column; gap:10mm">
+      <div class="cr-headline-block">
+        <h2 class="cr-display-lg">Digital Workers That Plug Into the Stack You Already Run.</h2>
+        <p class="cr-body" style="max-width:152mm">An agent is deployed into your environment, connects to your existing tools, and starts doing the work — supervised by your team and ours. No migration, no rip-and-replace.</p>
+      </div>
+      <div class="cr-grid cr-cols-3">
+        <div style="display:flex; flex-direction:column; gap:5mm">
+          <div class="cr-icon-chip tone-periwinkle"><svg viewBox="0 0 24 24"><path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a6 6 0 0 1-12 0V8z"/></svg></div>
+          <div class="feat-title">No Rip-and-Replace</div>
+          <p class="cr-list-body">Agents connect to your existing CRM, EHR, and tools through their own APIs. Nothing to migrate, nothing to re-platform.</p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:5mm">
+          <div class="cr-icon-chip tone-periwinkle"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="m9 16 2 2 4-4"/></svg></div>
+          <div class="feat-title">Live in About Four Weeks</div>
+          <p class="cr-list-body">From kickoff to a working digital worker in your environment — measured in weeks, not an 18-month roadmap.</p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:5mm">
+          <div class="cr-icon-chip tone-periwinkle"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <div class="feat-title">AI Speed, Human Judgment</div>
+          <p class="cr-list-body">Every workflow pairs autonomous execution with human oversight exactly where accuracy and accountability matter.</p>
+        </div>
+      </div>
+      <div class="cr-data-group tone-sage">
+        <div class="cr-eyebrow" style="margin-bottom:5mm">What a digital worker takes off your team</div>
+        <div class="cr-grid cr-cols-2" style="gap:4mm 10mm">
+          <div style="display:flex; gap:8px; align-items:flex-start"><span style="width:7px;height:7px;border-radius:999px;background:var(--cr-tone-sage-accent);margin-top:6px;flex-shrink:0"></span><span class="cr-body">Invoice ingest, reconciliation &amp; anomaly flagging</span></div>
+          <div style="display:flex; gap:8px; align-items:flex-start"><span style="width:7px;height:7px;border-radius:999px;background:var(--cr-tone-sage-accent);margin-top:6px;flex-shrink:0"></span><span class="cr-body">Auditing 100% of customer calls against your rubric</span></div>
+          <div style="display:flex; gap:8px; align-items:flex-start"><span style="width:7px;height:7px;border-radius:999px;background:var(--cr-tone-sage-accent);margin-top:6px;flex-shrink:0"></span><span class="cr-body">Prospect research &amp; signal-based outreach</span></div>
+          <div style="display:flex; gap:8px; align-items:flex-start"><span style="width:7px;height:7px;border-radius:999px;background:var(--cr-tone-sage-accent);margin-top:6px;flex-shrink:0"></span><span class="cr-body">Clinical note drafting synced to the EHR</span></div>
+          <div style="display:flex; gap:8px; align-items:flex-start"><span style="width:7px;height:7px;border-radius:999px;background:var(--cr-tone-sage-accent);margin-top:6px;flex-shrink:0"></span><span class="cr-body">Cross-tool data entry &amp; record keeping</span></div>
+          <div style="display:flex; gap:8px; align-items:flex-start"><span style="width:7px;height:7px;border-radius:999px;background:var(--cr-tone-sage-accent);margin-top:6px;flex-shrink:0"></span><span class="cr-body">Exception handling &amp; escalation routing</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── PAGE 4 · METRICS ─────────────────────── -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">The Numbers</div>
+      </div>
+      <div class="cr-headline-block center" style="margin-top:14mm; max-width:140mm">
+        <h2 class="cr-display-lg">Outcomes Operators Feel in the First Quarter.</h2>
+        <p class="cr-body">Verified results from recent Example Brand deployments — measured outcomes, not projections.</p>
+      </div>
+      <div class="cr-grid cr-cols-2" style="flex:1; grid-template-rows:1fr 1fr; margin-top:10mm; margin-bottom:6mm">
+        <div class="cr-stat-card tone-periwinkle">
+          <div class="cr-stat-value" style="font-size:54px">40<span class="unit">%</span></div>
+          <div><div class="cr-stat-label">Capacity Reclaimed</div><div class="cr-stat-sub">Of team hours returned to strategic work within the first quarter.</div></div>
+        </div>
+        <div class="cr-stat-card tone-periwinkle">
+          <div class="cr-stat-value" style="font-size:54px">92<span class="unit">%</span></div>
+          <div><div class="cr-stat-label">Lower Cost-per-Task</div><div class="cr-stat-sub">The same work delivered at a fraction of the fully-loaded human cost.</div></div>
+        </div>
+        <div class="cr-stat-card tone-periwinkle">
+          <div class="cr-stat-value" style="font-size:54px">9<span class="unit">+</span></div>
+          <div><div class="cr-stat-label">Hours Saved Daily</div><div class="cr-stat-sub">Per operator, by removing manual research and cross-tool data entry.</div></div>
+        </div>
+        <div class="cr-stat-card tone-periwinkle">
+          <div class="cr-stat-value" style="font-size:54px">4<span class="unit">wk</span></div>
+          <div><div class="cr-stat-label">To Full Deployment</div><div class="cr-stat-sub">From kickoff to a working digital worker live inside your stack.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ────────────────── PAGE 5 · SECURITY & TRUST ────────────────── -->
+  <section class="cr-page">
+    <div class="fill">
+    <div class="cr-page-header">
+      <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+      <div class="cr-eyebrow">Enterprise Security &amp; Compliance</div>
+    </div>
+    <div style="margin-top:15mm; display:flex; flex-direction:column; gap:9mm">
+      <div class="cr-headline-block">
+        <h2 class="cr-display-lg">Built for the Standards Your Auditors Already Expect.</h2>
+        <p class="cr-body" style="max-width:152mm">Digital workers operate inside your security perimeter. Your systems of record stay exactly where they are, and every action an agent takes is logged, reviewable, and reversible.</p>
+      </div>
+      <div class="cr-band tone-sky">
+        <div class="cr-eyebrow" style="margin-bottom:6mm">Controls &amp; Certifications</div>
+        <div class="cr-grid cr-cols-3" style="gap:8mm 9mm">
+          <div style="display:flex; gap:9px"><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="var(--cr-tone-sky-accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg><div><div class="cr-body-strong" style="color:var(--cr-charcoal)">SOC 2 Type II</div><div class="cr-list-body">Independently audited controls.</div></div></div>
+          <div style="display:flex; gap:9px"><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="var(--cr-tone-sky-accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg><div><div class="cr-body-strong" style="color:var(--cr-charcoal)">HIPAA-Aligned</div><div class="cr-list-body">For clinical &amp; PHI workflows.</div></div></div>
+          <div style="display:flex; gap:9px"><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="var(--cr-tone-sky-accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg><div><div class="cr-body-strong" style="color:var(--cr-charcoal)">Role-Based Access</div><div class="cr-list-body">Least-privilege by default.</div></div></div>
+          <div style="display:flex; gap:9px"><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="var(--cr-tone-sky-accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg><div><div class="cr-body-strong" style="color:var(--cr-charcoal)">Full Audit Logs</div><div class="cr-list-body">Every agent action is traceable.</div></div></div>
+          <div style="display:flex; gap:9px"><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="var(--cr-tone-sky-accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg><div><div class="cr-body-strong" style="color:var(--cr-charcoal)">Data Residency</div><div class="cr-list-body">Regional hosting on request.</div></div></div>
+          <div style="display:flex; gap:9px"><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="var(--cr-tone-sky-accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg><div><div class="cr-body-strong" style="color:var(--cr-charcoal)">Encryption Everywhere</div><div class="cr-list-body">In transit and at rest.</div></div></div>
+        </div>
+      </div>
+      </div>
+      <div style="margin-top:auto; display:flex; flex-direction:column; gap:4mm">
+        <div class="cr-divider"></div>
+        <div class="cr-body-lg" style="color:var(--cr-charcoal); font-weight:500; max-width:150mm">We fix this without changing your software. Your systems of record stay exactly where they are.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── PAGE 6 · CLOSE / CTA ─────────────────────── -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">The Bigger Picture</div>
+      </div>
+      <div class="cr-headline-block" style="margin-top:15mm">
+        <h2 class="cr-display-lg">Don't Just Hire More People. Hire Digital Workers.</h2>
+        <p class="cr-body" style="max-width:152mm">We don't believe in 18-month transformation roadmaps. We pair AI speed with human judgment and ship measurable ROI in weeks — starting with the workflow that bleeds the most.</p>
+      </div>
+      <div class="cr-stack" style="margin-top:10mm">
+        <div class="cr-list-row"><div class="cr-list-num">01</div><div class="cr-list-label">Map the Workflow</div><div class="cr-list-body">We find the highest-cost manual process and define exactly what "done" looks like.</div></div>
+        <div class="cr-list-row"><div class="cr-list-num">02</div><div class="cr-list-label">Deploy the Agent</div><div class="cr-list-body">A digital worker goes live in your stack in about four weeks, supervised end to end.</div></div>
+        <div class="cr-list-row"><div class="cr-list-num">03</div><div class="cr-list-label">Measure &amp; Expand</div><div class="cr-list-body">We report the reclaimed hours and cost, then roll the next workflow onto the platform.</div></div>
+      </div>
+      <div style="margin-top:auto; display:flex; flex-direction:column; gap:7mm">
+        <div class="cr-cta-strip">
+          <div style="display:flex; flex-direction:column; gap:3mm">
+            <div style="font:500 var(--fs-h3)/1.25 var(--font-display); letter-spacing:-.02em; color:#fff">Stop Choosing Between Scale &amp; Quality.</div>
+            <div class="cr-body" style="color:var(--cr-stone)">Break the traditional trade-off. Don't compromise.</div>
+          </div>
+          <a class="cr-btn" href="https://example-brand.com">Let's Talk →</a>
+        </div>
+        <div class="cr-page-foot" style="border:0">
+          <span style="font-weight:600">example-brand.com</span>
+          <span style="letter-spacing:.06em; text-transform:uppercase; font-weight:600; font-size:12px">LinkedIn · YouTube · X</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

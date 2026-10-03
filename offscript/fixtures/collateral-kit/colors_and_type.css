@@ -1,0 +1,11 @@
+:root{
+  --cr-ink:#020B1B; --cr-electric:#149DFF; --cr-electric-deep:#0A82EB;
+  --cr-paper:#FFFFFF; --cr-charcoal:#292929; --cr-graphite:#616161; --cr-line:#DEDEDE;
+  --cr-tone-periwinkle:#C9CCF0; --cr-tone-periwinkle-accent:#4F57C4;
+  --cr-violet:#150580; --cr-orchid:#A514FF; /* legacy — must not be USED on a surface */
+  --font-display:'Manrope',sans-serif; --font-text:'Inter',sans-serif;
+}
+.cr-doc{background:#fff} .cr-page{width:210mm;min-height:297mm;padding:16mm;box-sizing:border-box;border-radius:0}
+.cr-stat-card{background:var(--cr-tone-periwinkle);padding:24px}
+.cr-stat-num{font:600 44px/1.3 var(--font-display);color:var(--cr-ink)}
+.cr-btn{background:var(--cr-electric);color:#fff;border-radius:8px;padding:8px 16px}

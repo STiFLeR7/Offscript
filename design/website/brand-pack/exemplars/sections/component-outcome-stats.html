@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CR — Outcome · stats band</title>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css">
+<!--
+  COMPONENT: Outcome · stats band
+  COMPOSITION: Warm off-white band (#F8F8F8). Two vertical regions separated
+    by padding, no dividers. TOP = a 2-column split (~55/45): LEFT has a small
+    grey eyebrow "[ THE RESULT ]" followed by a 3-LINE Urbanist ExtraBold
+    headline (~50px, tight −0.025em tracking, line-height 1.12) where EACH
+    LINE is a COMPLETE PERIOD-TERMINATED sentence (declarative stacking —
+    "Processes run themselves. / Teams focus on what matters. / Results from
+    week four." — all three lines are peers, same size, each ends with a dot).
+    RIGHT has a 4-line Inter 16px body paragraph + a full outlined pill CTA
+    ("Learn More About Us →"), top-aligned with the eyebrow on the left. BOTTOM
+    = a 4-COLUMN stat grid (grid-template-columns: repeat(4,1fr), 0px gap —
+    columns touch; separation comes from the hairline LEFT BORDER on each cell
+    only). Each stat cell = top-left big number (ExtraBold ~58px) + 2-line
+    Inter 13px caption below + a GRADIENT BAR PINNED TO THE BOTTOM of the cell
+    (margin-top:auto in the flex column; height 8px; gradient: dark navy →
+    brand blue → light cyan). Whitespace between caption and bar comes from
+    a flex spacer (min-height ~48px + margin-top:auto).
+  INSPIRATION: Lumos "The Result / More businesses get funding." section —
+    layout/composition only. 3-sentence stacked headline with period terminators,
+    2-col top + 4-col stat band below, hairline left-border per cell, gradient
+    bar at bottom of each cell. Re-skinned to CR: serif → Urbanist ExtraBold;
+    warm cream bg; Lumos loan stats → CR automation stats (92%/11.3×/4 wks/80%);
+    CTA → CR-voice outlined pill; gradient bar → CR navy→brand-blue→cyan.
+  MOTION: "gradient lines animate left to right while reveal" (user spec).
+    On first viewport entry: top-left eyebrow + headline fade+rise (--d 0/80ms);
+    top-right body + CTA fade+rise (--d 80/160ms); stat cells fade+rise
+    left→right (--d 160/240/320/400ms). The gradient BAR on each cell fires
+    immediately after its cell appears: bar 1→4 have transition-delay var(--bar-d)
+    = 280/430/580/730ms. The bar animates transform:scaleX(0→1) with
+    transform-origin:left so it WIPES in from left to right on reveal.
+    IntersectionObserver fires once (threshold 0.08). .has-js default-VISIBLE
+    pattern: without JS bars show at scaleX(1); with JS bars start scaleX(0)
+    and animate in; prefers-reduced-motion snaps everything in.
+  RESPONSIVE: 2-col top → 1-col ≤900px (right stacks below left, gap shrinks);
+    4-col stats → 2-col ≤760px → 1-col ≤480px; headline clamp scales.
+-->
+<style>
+  .cr-ost {
+    background: var(--cr-bg-warm);
+    padding: clamp(72px, 8vw, 112px) clamp(24px, 5vw, 80px);
+    font-family: var(--cr-font-body);
+  }
+  .ost-well {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+  }
+
+  /* ── Top 2-col split ────────────────────────────────────── */
+  .ost-top {
+    display: grid;
+    grid-template-columns: 55fr 45fr;
+    gap: clamp(48px, 7vw, 104px);
+    align-items: start;
+    padding-bottom: clamp(56px, 7vw, 96px);
+  }
+
+  /* Left */
+  .ost-eyebrow {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    color: var(--cr-fg-3);
+  }
+  .ost-headline {
+    margin: 18px 0 0;
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(38px, 4.4vw, 60px);
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    color: var(--cr-fg);
+  }
+
+  /* Right */
+  .ost-body {
+    margin: 0 0 28px;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--cr-fg-2);
+  }
+  .ost-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 26px;
+    border: 1.5px solid var(--cr-fg);
+    border-radius: var(--cr-radius-pill);
+    background: transparent;
+    font-family: var(--cr-font-display);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--cr-fg);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+  }
+  .ost-cta:hover, .ost-cta:focus-visible {
+    background: var(--cr-fg);
+    color: var(--cr-bg-warm);
+  }
+  .ost-cta:focus-visible { outline: 2px solid var(--cr-brand); outline-offset: 3px; }
+
+  /* ── Stats grid ─────────────────────────────────────────── */
+  .ost-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .ost-stat {
+    border-left: 1px solid var(--cr-line);
+    padding: 28px 28px 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 210px;
+  }
+  .ost-num {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 600;
+    font-size: clamp(42px, 4.2vw, 58px);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--cr-fg);
+  }
+  .ost-label {
+    margin: 10px 0 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--cr-fg-3);
+  }
+
+  /* Gradient bar — pins to bottom of cell */
+  .ost-bar {
+    margin-top: auto;
+    height: 14px;
+    background: linear-gradient(
+      90deg,
+      var(--cr-ink-blue-deep)  0%,
+      var(--cr-brand-700) 35%,
+      #0E6AC7 68%,
+      var(--cr-brand) 84%,
+      #60D8FF 100%
+    );
+    transform-origin: left center;
+    /* Default: visible without JS */
+    transform: scaleX(1);
+  }
+
+  /* ── Scroll-reveal ──────────────────────────────────────── */
+  .cr-ost.has-js .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  .cr-ost.has-js .reveal.in {
+    opacity: 1;
+    transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+
+  /* Bar starts hidden with JS; animates to scaleX(1) on .in */
+  .cr-ost.has-js .ost-bar {
+    transform: scaleX(0);
+  }
+  .cr-ost.has-js .ost-bar.in {
+    transform: scaleX(1);
+    transition: transform .9s cubic-bezier(.16,.84,.44,1);
+    transition-delay: var(--bar-d, 0ms);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cr-ost.has-js .reveal,
+    .cr-ost.has-js .reveal.in { opacity: 1; transform: none; transition: none; }
+    .cr-ost.has-js .ost-bar,
+    .cr-ost.has-js .ost-bar.in { transform: scaleX(1); transition: none; }
+  }
+
+  /* ── Responsive ─────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .ost-top {
+      grid-template-columns: 1fr;
+      gap: 36px;
+      padding-bottom: clamp(44px, 6vw, 72px);
+    }
+  }
+  @media (max-width: 760px) {
+    .ost-stats { grid-template-columns: repeat(2, 1fr); }
+    .ost-stat { min-height: 190px; }
+  }
+  @media (max-width: 480px) {
+    .ost-stats { grid-template-columns: 1fr; }
+    .ost-stat { min-height: 160px; padding: 22px 20px 0; }
+    .ost-headline { font-size: clamp(32px, 8vw, 44px); }
+  }
+</style>
+</head>
+<body>
+
+<section class="cr-ost" data-screen-label="Outcome · stats band">
+  <div class="ost-well">
+
+    <!-- ── Top 2-col ──────────────────────────────────────── -->
+    <div class="ost-top">
+
+      <div class="ost-left">
+        <p class="ost-eyebrow reveal" style="--d:0ms">[ THE RESULT ]</p>
+        <h2 class="ost-headline reveal" style="--d:80ms">
+          No backlogs.<br>
+          No blind spots.<br>
+          No added headcount.
+        </h2>
+      </div>
+
+      <div class="ost-right">
+        <p class="ost-body reveal" style="--d:80ms">We built Example Brand because manual operations were bottlenecking businesses that deserved to grow faster. Our team combines deep process engineering with purpose-built AI to remove the work that shouldn't exist. The result is a platform where automation delivers from day one — and compounds over time.</p>
+        <a class="ost-cta reveal" style="--d:160ms" href="#">Learn More About Us &rarr;</a>
+      </div>
+
+    </div>
+
+    <!-- ── Stats grid ─────────────────────────────────────── -->
+    <div class="ost-stats">
+
+      <div class="ost-stat reveal" style="--d:160ms">
+        <p class="ost-num">92%</p>
+        <p class="ost-label">ops cost removed<br>per deployment</p>
+        <div class="ost-bar" style="--bar-d:280ms"></div>
+      </div>
+
+      <div class="ost-stat reveal" style="--d:240ms">
+        <p class="ost-num">11.3&times;</p>
+        <p class="ost-label">average client ROI<br>delivered</p>
+        <div class="ost-bar" style="--bar-d:430ms"></div>
+      </div>
+
+      <div class="ost-stat reveal" style="--d:320ms">
+        <p class="ost-num">4 wks</p>
+        <p class="ost-label">from kickoff to<br>live deployment</p>
+        <div class="ost-bar" style="--bar-d:580ms"></div>
+      </div>
+
+      <div class="ost-stat reveal" style="--d:400ms">
+        <p class="ost-num">80%</p>
+        <p class="ost-label">of routine work<br>automated per client</p>
+        <div class="ost-bar" style="--bar-d:730ms"></div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<script>
+  (function () {
+    var sec = document.querySelector('.cr-ost');
+    if (!sec) return;
+    if (!('IntersectionObserver' in window)) return;
+
+    sec.classList.add('has-js');
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        // Reveal content elements
+        sec.querySelectorAll('.reveal').forEach(function (el) {
+          el.classList.add('in');
+        });
+        // Animate gradient bars (separate class so transition applies cleanly)
+        sec.querySelectorAll('.ost-bar').forEach(function (bar) {
+          bar.classList.add('in');
+        });
+        io.disconnect();
+      });
+    }, { threshold: 0.08 });
+
+    io.observe(sec);
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "id": "renewal-lifecycle-tracker",
+  "contractVersion": 1,
+  "digest": "sha256:678f79bdc37c207297c887ec46d7601445814c36953a67b8f37afef2b8cab2e7",
+  "belief": "vendor contract renewals process through their full lifecycle without manual chasing",
+  "feature": "automation",
+  "ratio": "4:3",
+  "camera": "workflow",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

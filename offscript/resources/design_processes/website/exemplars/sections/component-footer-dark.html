@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Editorial stack · contrast — footer dark</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Editorial stack · contrast      from component-footer-dark.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **The page ends by changing register, not by fading out.** The
+              profile is explicit that this is what separates it from
+              `footer-mega`: an accent surface, so the argument visibly
+              concludes — and a newsletter capture inside it to catch the reader
+              who got to the bottom without acting. Everything below serves
+              those two jobs and nothing else.
+
+  STRUCTURE   Unchanged. A full-bleed dark band → a centred well: closing ask ·
+              rule · brand and newsletter · four link columns · rule · legal
+              bar, with the wordmark resting at the band's foot. DOM, scripts,
+              ids, `data-*`, `aria-*`, `href`, `src` and every behavioural hook
+              are byte-compatible with the frozen original (DR-22). The v2 file
+              is beside this one in `_v2/`.
+
+  ENVIRONMENT NONE — and the assigned environment is DECLINED on purpose.
+              There IS an abstract creative background here and it is retired:
+              the giant wordmark was filled by a three-stop white ramp clipped
+              to its glyphs, a fake emboss standing in for depth the language
+              does not author. It is a flat token now.
+
+              What does not follow is a photograph, and the reason is
+              mechanical rather than a matter of taste. The only element that
+              could carry a background across this band is the band itself, and
+              `.fm-well` wraps every word in the section — there is no
+              sub-region that isolates a type-free area. The one candidate, the
+              wordmark band at the foot, IS the type: it is a paragraph, not a
+              plate. Putting an environment anywhere here would break both hard
+              constraints at once — type on a photograph, and a photograph
+              behind four columns of links — and no split exists that does not
+              change the composition. The profile records `Media presence none`
+              for this section, which is the same finding arrived at from the
+              other direction. `integration-grid`, `logo-strip` and
+              `logo-marquee` reached this answer for the same reason.
+
+  DARK, AND GOVERNED  The band stays dark; that is the section's whole
+              proposition and the direction permits a dark band for a footer.
+              It is expressed as `--cr-bg-dark` with `--cr-text-inverse` over
+              it, never a hand-mixed near-black — v2 reached for the deprecated
+              ink alias, which was one of eight near-blacks nobody could tell
+              apart. Held-back text reads `--cr-neutral-500` (~8.4:1 here),
+              because the page-ground secondary token is a page-ground value and
+              measures ~2.3:1 on this surface. Nothing is held back with
+              `opacity`, which would fade an element's own surface along with
+              its words.
+
+  ACCENT      ONE moment, and it is the submit. A footer spends zero or one, and
+              the newsletter submit is the ceiling — so the small circular
+              subscribe control takes the emphasis fill with its paired dark
+              glyph, and inverts that glyph on hover because the deep step is
+              dark enough that the light pairing stops measuring on it. The
+              closing ask is therefore a value contrast rather than a hue: a
+              light pill on the dark band, which is what a primary action is on
+              this surface. v2 spent brand blue on that pill, again on a
+              decorative chip inside the input, and a third time on two focus
+              rings — four colour events for one capture. The chip is a
+              decorative accent plate inside a control and goes inert; the rings
+              are the inverse at ~15:1, which is the same job the dark ring does
+              on the page ground.
+
+  TYPE        Four regions arrived uppercase and letter-spaced — column heads,
+              terms line, copyright, legal links. Supporting text is never
+              uppercase and never tracked here, so all four collapse onto one
+              ramp step, one weight and no tracking, and separate by position
+              instead. The wordmark loses a weight the system does not have and
+              lands on the ramp: a watermark rather than a slab.
+
+  RESPONSIVE  The original's breakpoints (879 / 819 / 779 / 480), unchanged.
+              `clamp()` is gone throughout — the pack steps the ramp at its own
+              breakpoints and a per-section type breakpoint is a second ramp
+              nobody authored. The reduce guard names the `.in` variant as well
+              as the hidden state, because a guard that loses the cascade is not
+              a guard.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  .cr-fm, .cr-fm * { box-sizing: border-box; }
+
+  /* ── The band — a governed dark surface, flat ──────────────────────── */
+  .cr-fm {
+    position: relative;
+    overflow: hidden;
+    background: var(--cr-bg-dark);
+    font-family: var(--cr-font-body);
+    color: var(--cr-neutral-500);
+    font-size: var(--cr-text-body);
+  }
+  /* The well reads the pack's own alignment edge and gutter; horizontal
+     layout is a page concern and a section never redeclares it. The bottom
+     step is what reserves the wordmark's band. */
+  .fm-well {
+    position: relative;
+    z-index: 1;
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+    padding: var(--cr-space-2xl) var(--cr-page-gutter) var(--cr-space-2xl);
+  }
+
+  /* ── (1) The closing ask ────────────────────────────────────────────── */
+  .fm-cta {
+    display: grid;
+    grid-template-columns: 1fr auto;   /* the split IS the composition — untouched */
+    gap: var(--cr-space-m);
+    align-items: center;
+  }
+  .fm-headline {
+    margin: 0;
+    /* no width cap — the grid 1fr track governs the wrap, as authored */
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+  }
+  /* The two-tone headline: the setup clause held back by COLOUR, the focal
+     clause at full ink. Both are dark-surface values. */
+  .fm-h-mute   { color: var(--cr-neutral-600); }
+  .fm-h-strong { color: var(--cr-text-inverse); }
+
+  /* The closing ask. On a dark band the primary action is a VALUE contrast —
+     a light pill — not a hue; the section's one accent is spent on the
+     capture below. The pill radius is retired for controls (DR-25). */
+  .fm-demo {
+    justify-self: end;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    background: var(--cr-surface-1);
+    color: var(--cr-text-primary);
+    border-radius: var(--cr-radius-control);
+    text-decoration: none;
+    transition: background .2s ease;
+    white-space: nowrap;
+  }
+  .fm-demo:hover { background: var(--cr-surface-5); }
+  .fm-demo:focus-visible {
+    outline: var(--cr-stroke) solid var(--cr-text-inverse);
+    outline-offset: var(--cr-stroke);
+  }
+  /* v2's leading knob was a solid ink disc holding a white glyph — a second
+     colour event on an element that should read as one affordance. It is an
+     outline in the control's own ink now. */
+  .fm-demo-ic {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: transparent;
+    border: var(--cr-stroke) solid currentColor;
+    display: flex; align-items: center; justify-content: center;
+    flex: 0 0 auto;
+  }
+  .fm-demo-ic svg { width: 18px; height: 18px; color: currentColor; stroke-width: var(--cr-icon-stroke-md); }
+  .fm-demo-txt {
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-primary);
+  }
+
+  /* ── Hairline rules — the system stroke on a dark surface ───────────── */
+  .fm-rule {
+    border: none;
+    border-top: var(--cr-stroke) solid var(--cr-neutral-800);
+    margin: var(--cr-space-m) 0;
+  }
+
+  /* ── (3) Brand + newsletter ─────────────────────────────────────────── */
+  .fm-mid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--cr-space-m);
+    align-items: start;
+  }
+  .fm-logo { height: 26px; width: auto; display: block; }
+  .fm-tagline {
+    margin: var(--cr-space-s) 0 0;
+    max-width: var(--cr-measure-body);
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-neutral-500);
+  }
+
+  /* Newsletter — restyled, never rewired. Names, types, labels and submit
+     behaviour are frozen; a control does not inherit `font-family`, so it
+     states one. */
+  .fm-news { justify-self: end; width: min(440px, 100%); }
+  .fm-news-label {
+    margin: 0 0 var(--cr-space-xs);
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-inverse);
+    text-align: left;
+  }
+  .fm-news-pill {
+    display: flex;
+    align-items: center;
+    gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs);
+    background: var(--cr-neutral-900);
+    border: var(--cr-stroke) solid var(--cr-neutral-800);
+    border-radius: var(--cr-radius-control);   /* an input takes the control radius */
+    transition: border-color .18s ease;
+  }
+  .fm-news-pill:focus-within { border-color: var(--cr-text-inverse); }
+  .fm-news-mail {
+    width: 18px; height: 18px;
+    color: var(--cr-neutral-500);
+    stroke-width: var(--cr-icon-stroke-sm);
+    flex: 0 0 auto;
+  }
+  .fm-news-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-inverse);
+  }
+  .fm-news-input::placeholder { color: var(--cr-neutral-500); }
+  /* The ring stays a value contrast, never a hue. On the page ground that is
+     dark ink at ~13:1; on this surface the same job is the inverse at ~15:1. */
+  .fm-news-input:focus-visible {
+    outline: var(--cr-stroke) solid var(--cr-text-inverse);
+    outline-offset: var(--cr-stroke);
+  }
+  /* A decorative accent plate inside a control, carrying no meaning and two
+     radii off the pair. Frozen DOM, so it goes inert rather than away, and
+     its rule body goes with it. Precedent: tabs-panel-below. */
+  .fm-news-chip { display: none; }
+
+  /* THE SECTION'S ONE ACCENT MOMENT — the subscribe control. */
+  .fm-news-go {
+    flex: 0 0 auto;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: var(--cr-stroke) solid transparent;
+    background: var(--cr-accent-orange);
+    color: var(--cr-on-accent-light);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .18s ease, color .18s ease;
+  }
+  /* The deep emphasis step is dark enough that the light pairing stops
+     measuring on it, so the glyph inverts with the fill. */
+  .fm-news-go:hover { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+  .fm-news-go:focus-visible {
+    outline: var(--cr-stroke) solid var(--cr-text-inverse);
+    outline-offset: var(--cr-stroke);
+  }
+  .fm-news-go svg { width: 17px; height: 17px; color: currentColor; stroke-width: var(--cr-icon-stroke-md); }
+  .fm-news-terms {
+    margin: var(--cr-space-xs) 0 0;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--cr-neutral-600);
+  }
+
+  /* ── (4) Link columns — ink, and nothing else ───────────────────────── */
+  .fm-cols {
+    margin-top: var(--cr-space-xl);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--cr-space-m);
+  }
+  /* A column head is supporting text: one ramp step, one weight, no tracking
+     and no case transform. */
+  .fm-col-h {
+    margin: 0 0 var(--cr-space-s);
+    font-family: var(--cr-font-body);
+    font-size: var(--cr-text-supporting);
+    font-weight: 500;
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--cr-text-inverse);
+  }
+  .fm-col a {
+    display: block;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-neutral-500);
+    text-decoration: none;
+    padding: var(--cr-space-xs) 0;
+    transition: color .18s ease;
+  }
+  /* A hover in a link column is a presence change, not a colour event. */
+  .fm-col a:hover, .fm-col a:focus-visible { color: var(--cr-text-inverse); }
+
+  /* ── (6) Legal bar ──────────────────────────────────────────────────── */
+  .fm-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--cr-space-s);
+    flex-wrap: wrap;
+  }
+  .fm-copy {
+    margin: 0;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--cr-neutral-600);
+  }
+  .fm-legal { display: flex; gap: var(--cr-space-s); flex-wrap: wrap; }
+  .fm-legal a {
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--cr-neutral-600);
+    text-decoration: none;
+    transition: color .18s ease;
+  }
+  .fm-legal a:hover, .fm-legal a:focus-visible { color: var(--cr-text-inverse); }
+
+  /* ── (7) The wordmark — identity, resting at the band's foot ──────────
+     It stays; a wordmark is not abstract decoration. What goes is the
+     three-stop ramp clipped to its glyphs — a fake emboss standing in for
+     depth the language does not author — and the display weight the system
+     does not have. On the ramp it reads as a watermark rather than a slab. */
+  .fm-wordmark {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h1);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-neutral-900);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+
+  /* ── Scroll-reveal — default-VISIBLE, unchanged in kind ─────────────── */
+  .cr-fm.has-js .reveal { opacity: 0; transform: translateY(16px); }
+  .cr-fm.has-js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  /* Matched to the trigger's specificity — v2's guard named the hidden state
+     but not the `.in` variant that animates over it. Both are named now. */
+  @media (prefers-reduced-motion: reduce) {
+    .cr-fm.has-js .reveal,
+    .cr-fm.has-js .reveal.in { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ── Responsive — the ORIGINAL's breakpoints ────────────────────────── */
+  @media (max-width: 879px) {
+    .fm-mid { grid-template-columns: 1fr; gap: var(--cr-space-m); }
+    .fm-news { justify-self: stretch; width: 100%; }
+  }
+  @media (max-width: 819px) {
+    .fm-cols { grid-template-columns: 1fr 1fr; gap: var(--cr-space-m); }
+  }
+  @media (max-width: 779px) {
+    .fm-cta { grid-template-columns: 1fr; gap: var(--cr-space-s); }
+    .fm-demo { justify-self: start; }
+    .fm-headline { max-width: none; }
+  }
+  @media (max-width: 480px) {
+    .fm-cols { grid-template-columns: 1fr; gap: var(--cr-space-s); }
+  }
+</style>
+</head>
+<body>
+
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. There is no directed line: the Pilot Constraint was not
+     asked to yield anywhere in this section, and every track declaration is
+     exactly as authored.
+
+     The grid-template-columns line needs saying out loud. `.fm-mid` is a pair
+     of 1fr and auto whose auto track is content-sized — the newsletter block.
+     The track declaration was not touched: the control's own inset came onto
+     the closed scale and the auto track followed it. The proportion is a
+     consequence of the spacing, which is why it reads spacing-scale rather
+     than a layout decision.
+
+     `.fm-cta` carried the same claim until the page inset was removed. It is a
+     1fr/auto pair too, but with the specimen no longer inset 8px from the
+     viewport its two tracks now hold the same proportion as the control's, so
+     the change it declared no longer happens and the line is gone. Measured,
+     not assumed: the tracks were read against the control at all three
+     viewports before it was removed.
+  .cr-fm         | font-size              | type-ramp
+  .fm-bottom     | column-gap             | spacing-scale
+  .fm-bottom     | font-size              | type-ramp
+  .fm-bottom     | row-gap                | spacing-scale
+  .fm-brand      | font-size              | type-ramp
+  .fm-col        | font-size              | type-ramp
+  .fm-col-h      | font-size              | type-ramp
+  .fm-col-h      | line-height            | type-ramp
+  .fm-col-h      | margin-bottom          | spacing-scale
+  .fm-cols       | column-gap             | spacing-scale
+  .fm-cols       | font-size              | type-ramp
+  .fm-cols       | margin-top             | spacing-scale
+  .fm-cols       | row-gap                | spacing-scale
+  .fm-copy       | font-size              | type-ramp
+  .fm-copy       | line-height            | type-ramp
+  .fm-cta        | column-gap             | spacing-scale
+  .fm-cta        | font-size              | type-ramp
+  .fm-cta        | row-gap                | spacing-scale
+  .fm-demo       | border-radius          | radius-pair
+  .fm-demo       | column-gap             | spacing-scale
+  .fm-demo       | font-size              | type-ramp
+  .fm-demo       | padding-bottom         | spacing-scale
+  .fm-demo       | padding-left           | spacing-scale
+  .fm-demo       | padding-right          | spacing-scale
+  .fm-demo       | padding-top            | spacing-scale
+  .fm-demo       | row-gap                | spacing-scale
+  .fm-demo-txt   | line-height            | type-ramp
+  .fm-h-mute     | font-size              | type-ramp
+  .fm-h-mute     | line-height            | type-ramp
+  .fm-h-strong   | font-size              | type-ramp
+  .fm-h-strong   | line-height            | type-ramp
+  .fm-headline   | font-size              | type-ramp
+  .fm-headline   | line-height            | type-ramp
+  .fm-legal      | column-gap             | spacing-scale
+  .fm-legal      | font-size              | type-ramp
+  .fm-legal      | row-gap                | spacing-scale
+  .fm-logo       | font-size              | type-ramp
+  .fm-mid        | column-gap             | spacing-scale
+  .fm-mid        | font-size              | type-ramp
+  .fm-mid        | grid-template-columns  | spacing-scale
+  .fm-mid        | row-gap                | spacing-scale
+  .fm-news       | font-size              | type-ramp
+  .fm-news-input | font-size              | type-ramp
+  .fm-news-input | line-height            | type-ramp
+  .fm-news-label | line-height            | type-ramp
+  .fm-news-label | margin-bottom          | spacing-scale
+  .fm-news-pill  | border-radius          | radius-pair
+  .fm-news-pill  | column-gap             | spacing-scale
+  .fm-news-pill  | font-size              | type-ramp
+  .fm-news-pill  | padding-bottom         | spacing-scale
+  .fm-news-pill  | padding-left           | spacing-scale
+  .fm-news-pill  | padding-right          | spacing-scale
+  .fm-news-pill  | padding-top            | spacing-scale
+  .fm-news-pill  | row-gap                | spacing-scale
+  .fm-news-terms | font-size              | type-ramp
+  .fm-news-terms | line-height            | type-ramp
+  .fm-news-terms | margin-top             | spacing-scale
+  .fm-rule       | font-size              | type-ramp
+  .fm-rule       | margin-bottom          | spacing-scale
+  .fm-rule       | margin-top             | spacing-scale
+  .fm-tagline    | font-size              | type-ramp
+  .fm-tagline    | line-height            | type-ramp
+  .fm-tagline    | margin-top             | spacing-scale
+  .fm-tagline    | max-width              | measure
+  .fm-well       | font-size              | type-ramp
+  .fm-well       | padding-bottom         | spacing-scale
+  .fm-well       | padding-left           | spacing-scale
+  .fm-well       | padding-right          | spacing-scale
+  .fm-well       | padding-top            | spacing-scale
+  .fm-wordmark   | font-size              | type-ramp
+  .fm-wordmark   | line-height            | type-ramp
+  .lucide        | font-size              | type-ramp
+  .lucide        | stroke-width           | stroke
+  a              | font-size              | type-ramp
+  a              | line-height            | type-ramp
+  a              | padding-bottom         | spacing-scale
+  a              | padding-top            | spacing-scale
+  path           | font-size              | type-ramp
+  path           | stroke-width           | stroke
+  rect           | font-size              | type-ramp
+  rect           | stroke-width           | stroke
+-->
+
+<section class="cr-fm" data-screen-label="Footer · dark (CTA + columns)"
+         data-archetype="editorial-stack" data-hierarchy="closing" data-intent="orient"
+         data-register="closing" data-signature="colour-interruption" data-density="high">
+  <div class="fm-well">
+
+    <!-- ── (1) CTA row ───────────────────────────────────── -->
+    <div class="fm-cta">
+      <h2 class="fm-headline reveal" style="--d:0ms"><span class="fm-h-mute">Discover how Example Brand can help you </span><span class="fm-h-strong">automate the work that holds your operations back.</span></h2>
+      <a class="fm-demo reveal" style="--d:120ms" href="#">
+        <span class="fm-demo-ic"><i data-lucide="arrow-right"></i></span>
+        <span class="fm-demo-txt">Book a Demo Call</span>
+      </a>
+    </div>
+
+    <hr class="fm-rule reveal" style="--d:160ms">
+
+    <!-- ── (3) Mid row ───────────────────────────────────── -->
+    <div class="fm-mid">
+      <div class="fm-brand">
+        <img class="fm-logo reveal" style="--d:120ms" src="../../brand-pack/assets/logo/logo-white.svg" alt="Example Brand">
+        <p class="fm-tagline reveal" style="--d:180ms">Production AI agents that absorb the routine operational work &mdash; built to deploy in weeks, not quarters.</p>
+      </div>
+
+      <div class="fm-news reveal" style="--d:240ms">
+        <p class="fm-news-label">Subscribe to our newsletter</p>
+        <form class="fm-news-form" novalidate>
+          <div class="fm-news-pill">
+            <i class="fm-news-mail" data-lucide="mail"></i>
+            <input class="fm-news-input" type="email" placeholder="Enter your email" aria-label="Email address">
+            <span class="fm-news-chip" aria-hidden="true"></span>
+            <button type="submit" class="fm-news-go" aria-label="Subscribe">
+              <i data-lucide="arrow-right"></i>
+            </button>
+          </div>
+        </form>
+        <p class="fm-news-terms">By subscribing you agree to our terms.</p>
+      </div>
+    </div>
+
+    <!-- ── (4) Link columns ──────────────────────────────── -->
+    <nav class="fm-cols" aria-label="Footer">
+      <div class="fm-col reveal" style="--d:120ms">
+        <p class="fm-col-h">Links</p>
+        <a href="#">Home</a>
+        <a href="#">Platform</a>
+        <a href="#">About</a>
+        <a href="#">Careers</a>
+        <a href="#">Contact us</a>
+      </div>
+      <div class="fm-col reveal" style="--d:180ms">
+        <p class="fm-col-h">Platform</p>
+        <a href="#">Our Platform</a>
+        <a href="#">Why Example Brand?</a>
+      </div>
+      <div class="fm-col reveal" style="--d:240ms">
+        <p class="fm-col-h">Resources</p>
+        <a href="#">Case Studies</a>
+        <a href="#">Blog &amp; Insights</a>
+        <a href="#">Research</a>
+        <a href="#">FAQ</a>
+      </div>
+      <div class="fm-col reveal" style="--d:300ms">
+        <p class="fm-col-h">Socials</p>
+        <a href="#">LinkedIn</a>
+        <a href="#">X (Formerly Twitter)</a>
+      </div>
+    </nav>
+
+    <hr class="fm-rule reveal" style="--d:120ms">
+
+    <!-- ── (6) Bottom bar ────────────────────────────────── -->
+    <div class="fm-bottom">
+      <p class="fm-copy reveal" style="--d:120ms">&copy; Copyright 2026 Example Brand.com</p>
+      <div class="fm-legal reveal" style="--d:180ms">
+        <a href="#">Terms of Service</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Data Platform TOS</a>
+      </div>
+    </div>
+
+  </div><!-- /.fm-well -->
+
+  <!-- ── (7) Giant embossed wordmark ─────────────────────── -->
+  <p class="fm-wordmark" aria-hidden="true">EXAMPLE BRAND</p>
+</section>
+
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<script>
+  (function () {
+    if (window.lucide) lucide.createIcons();
+
+    var sec = document.querySelector('.cr-fm');
+    if (!sec || !('IntersectionObserver' in window)) return;
+    sec.classList.add('has-js');
+
+    var done = false;
+    function revealAll() {
+      if (done) return;
+      done = true;
+      sec.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        revealAll();
+        io.disconnect();
+      });
+    }, { threshold: 0.04 });
+    io.observe(sec);
+
+    // Safety net: some snapshot/headless contexts never fire IO.
+    setTimeout(revealAll, 1200);
+  })();
+</script>
+</body>
+</html>

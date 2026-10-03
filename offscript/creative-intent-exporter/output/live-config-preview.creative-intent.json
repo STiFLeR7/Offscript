@@ -1,0 +1,11 @@
+{
+  "id": "live-config-preview",
+  "contractVersion": 1,
+  "digest": "sha256:fdc8312b5dd74dcdffc6218c3a23b29c2d32c4e039c50aead1459652e332ae00",
+  "belief": "you see the effect of a configuration change before you commit to saving it",
+  "feature": "configuration",
+  "ratio": "4:3",
+  "camera": "workflow",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

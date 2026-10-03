@@ -1,0 +1,11 @@
+{
+  "id": "global-scope-toggle",
+  "contractVersion": 1,
+  "digest": "sha256:ac8761a37a2083ab88665f2e91e39a2e31167bf0bcccca0ff909cddbc5a8f569",
+  "belief": "one toggle changes a setting for every workspace at once",
+  "feature": "configuration",
+  "ratio": "16:9",
+  "camera": "product",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

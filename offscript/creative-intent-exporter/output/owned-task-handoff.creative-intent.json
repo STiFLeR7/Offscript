@@ -1,0 +1,11 @@
+{
+  "id": "owned-task-handoff",
+  "contractVersion": 1,
+  "digest": "sha256:198a726db00df79dcf5589e6d10371777d091913363d17e7cfeb5de29ee6f8e4",
+  "belief": "nothing falls through the cracks because every task always has a clear, visible owner",
+  "feature": "collaboration",
+  "ratio": "16:9",
+  "camera": "component",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

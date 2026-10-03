@@ -1,0 +1,11 @@
+{
+  "id": "stale-access-revoked",
+  "contractVersion": 1,
+  "digest": "sha256:94eb4d7f737f7054c61842cb13a815f6a33781729baffc2c43b3df8ee1994f36",
+  "belief": "excess and stale access permissions are caught and revoked before they can be exploited",
+  "feature": "security",
+  "ratio": "3:4",
+  "camera": "workflow",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

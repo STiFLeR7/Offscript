@@ -1,0 +1,177 @@
+/* ════════════════════════════════════════════════════════════════════════
+   Example Brand Accent Color System — secondary encoding palette
+   ════════════════════════════════════════════════════════════════════════
+   EXTENDS the design system; it does NOT replace or modify any brand or
+   soft-clay token. (That is why this is a separate file — colors_and_type.css
+   stays untouched.) Load it per-document with a <link>, AFTER colors_and_type.css.
+
+   PURPOSE — the official SECONDARY COLOR PALETTE: an active expression layer
+     (no longer occasional decoration) that carries information, categorization
+     and visual richness across data-viz series · charts · diagram marks ·
+     illustrations · tags · status & category indicators · and SUPPORTING UI
+     (cards, data modules, insight blocks, badges, labels, filters, tabs,
+     supporting buttons & backgrounds).
+   PRIMARY keeps brand AUTHORITY — the soft-clay + brand chrome owns primary
+     buttons, navigation, key CTAs, core typography and global structure; the
+     secondary palette adds expression but never replaces that anchor.
+   BALANCE per composition: primary 60–70% · secondary 25–35% · neutral 5–15%
+     (directional). Secondary colour is NOT decorative by default — every
+     application reinforces meaning, hierarchy or categorization.
+   ORANGE — the brand ANCHOR stays orange-free, but this palette legitimately
+     includes orange / deep-orange for encoding & supporting expression; that
+     never makes orange a brand / primary-chrome colour.
+
+   16 independent Material-Design families, each an 11-step scale 50→950.
+     • 500 = the family BASE (identity anchor — NOT a contrast guarantee).
+     • 50–900 are the canonical Material Design hexes, verbatim.
+     • 950 is NOT a Material step. It is derived UNIFORMLY across all 16 families:
+       950 = the family's 900 darkened ~18% toward black (each channel × 0.82).
+
+   USAGE GUIDANCE (accessibility is by step-choice, not by retuning values):
+     • Text / glyphs on white  → use a step that clears WCAG AA (4.5:1); the
+       safe step VARIES BY FAMILY (700 is NOT a blanket text-safe step).
+       Cool darks clear early — purple/deep-purple/indigo from 400, grey 600,
+       pink 600, red/blue/teal 700. Warm & light families need the deep end —
+       light-blue/cyan/green/orange 800–950, light-green/lime/deep-orange 900 —
+       and YELLOW has no AA step at all (fills / large-text only).
+       Live per-step contrast ratios are shown in preview/colors-accent.html.
+     • Fills / surfaces / tags / track  → 50–300.
+     • Marks / status dots / chart series  → 500–600.
+     • Colour-pairing: a mark shares the EXACT step token of its legend/label.
+     • Not decorative by default: use a purposeful, meaning-driven set per
+       artifact so every hue reinforces meaning, hierarchy or categorization.
+     • --cr-grey-* is encoding / fill only — body text stays --cr-stone /
+       --cr-graphite / --cr-charcoal.
+
+   PRINT: accent fills print wherever they are used INSIDE a .cr-page, via the
+   existing `print-color-adjust: exact` on .cr-page (colors_and_type.css:159).
+   There is no global print rule and none is added here.
+
+   CONSUME: apply a family with the .tone-{family} modifier (sets --surface /
+   --accent exactly like the soft-clay .tone-* classes), or reference a step
+   token directly, e.g. var(--cr-blue-600).
+   ════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Red ───────────────────────────────────────────────────────── */
+  --cr-red-50:  #FFEBEE;  --cr-red-100: #FFCDD2;  --cr-red-200: #EF9A9A;
+  --cr-red-300: #E57373;  --cr-red-400: #EF5350;  --cr-red-500: #F44336; /* base */
+  --cr-red-600: #E53935;  --cr-red-700: #D32F2F;  --cr-red-800: #C62828;
+  --cr-red-900: #B71C1C;  --cr-red-950: #961717;
+
+  /* ── Pink ──────────────────────────────────────────────────────── */
+  --cr-pink-50:  #FCE4EC;  --cr-pink-100: #F8BBD0;  --cr-pink-200: #F48FB1;
+  --cr-pink-300: #F06292;  --cr-pink-400: #EC407A;  --cr-pink-500: #E91E63; /* base */
+  --cr-pink-600: #D81B60;  --cr-pink-700: #C2185B;  --cr-pink-800: #AD1457;
+  --cr-pink-900: #880E4F;  --cr-pink-950: #700B41;
+
+  /* ── Purple ────────────────────────────────────────────────────── */
+  --cr-purple-50:  #F3E5F5;  --cr-purple-100: #E1BEE7;  --cr-purple-200: #CE93D8;
+  --cr-purple-300: #BA68C8;  --cr-purple-400: #AB47BC;  --cr-purple-500: #9C27B0; /* base */
+  --cr-purple-600: #8E24AA;  --cr-purple-700: #7B1FA2;  --cr-purple-800: #6A1B9A;
+  --cr-purple-900: #4A148C;  --cr-purple-950: #3D1073;
+
+  /* ── Deep Purple ───────────────────────────────────────────────── */
+  --cr-deep-purple-50:  #EDE7F6;  --cr-deep-purple-100: #D1C4E9;  --cr-deep-purple-200: #B39DDB;
+  --cr-deep-purple-300: #9575CD;  --cr-deep-purple-400: #7E57C2;  --cr-deep-purple-500: #673AB7; /* base */
+  --cr-deep-purple-600: #5E35B1;  --cr-deep-purple-700: #512DA8;  --cr-deep-purple-800: #4527A0;
+  --cr-deep-purple-900: #311B92;  --cr-deep-purple-950: #281678;
+
+  /* ── Indigo ────────────────────────────────────────────────────── */
+  --cr-indigo-50:  #E8EAF6;  --cr-indigo-100: #C5CAE9;  --cr-indigo-200: #9FA8DA;
+  --cr-indigo-300: #7986CB;  --cr-indigo-400: #5C6BC0;  --cr-indigo-500: #3F51B5; /* base */
+  --cr-indigo-600: #3949AB;  --cr-indigo-700: #303F9F;  --cr-indigo-800: #283593;
+  --cr-indigo-900: #1A237E;  --cr-indigo-950: #151D67;
+
+  /* ── Blue ──────────────────────────────────────────────────────── */
+  --cr-blue-50:  #E3F2FD;  --cr-blue-100: #BBDEFB;  --cr-blue-200: #90CAF9;
+  --cr-blue-300: #64B5F6;  --cr-blue-400: #42A5F5;  --cr-blue-500: #2196F3; /* base */
+  --cr-blue-600: #1E88E5;  --cr-blue-700: #1976D2;  --cr-blue-800: #1565C0;
+  --cr-blue-900: #0D47A1;  --cr-blue-950: #0B3A84;
+
+  /* ── Light Blue ────────────────────────────────────────────────── */
+  --cr-light-blue-50:  #E1F5FE;  --cr-light-blue-100: #B3E5FC;  --cr-light-blue-200: #81D4FA;
+  --cr-light-blue-300: #4FC3F7;  --cr-light-blue-400: #29B6F6;  --cr-light-blue-500: #03A9F4; /* base */
+  --cr-light-blue-600: #039BE5;  --cr-light-blue-700: #0288D1;  --cr-light-blue-800: #0277BD;
+  --cr-light-blue-900: #01579B;  --cr-light-blue-950: #01477F;
+
+  /* ── Cyan ──────────────────────────────────────────────────────── */
+  --cr-cyan-50:  #E0F7FA;  --cr-cyan-100: #B2EBF2;  --cr-cyan-200: #80DEEA;
+  --cr-cyan-300: #4DD0E1;  --cr-cyan-400: #26C6DA;  --cr-cyan-500: #00BCD4; /* base */
+  --cr-cyan-600: #00ACC1;  --cr-cyan-700: #0097A7;  --cr-cyan-800: #00838F;
+  --cr-cyan-900: #006064;  --cr-cyan-950: #004F52;
+
+  /* ── Teal ──────────────────────────────────────────────────────── */
+  --cr-teal-50:  #E0F2F1;  --cr-teal-100: #B2DFDB;  --cr-teal-200: #80CBC4;
+  --cr-teal-300: #4DB6AC;  --cr-teal-400: #26A69A;  --cr-teal-500: #009688; /* base */
+  --cr-teal-600: #00897B;  --cr-teal-700: #00796B;  --cr-teal-800: #00695C;
+  --cr-teal-900: #004D40;  --cr-teal-950: #003F34;
+
+  /* ── Green ─────────────────────────────────────────────────────── */
+  --cr-green-50:  #E8F5E9;  --cr-green-100: #C8E6C9;  --cr-green-200: #A5D6A7;
+  --cr-green-300: #81C784;  --cr-green-400: #66BB6A;  --cr-green-500: #4CAF50; /* base */
+  --cr-green-600: #43A047;  --cr-green-700: #388E3C;  --cr-green-800: #2E7D32;
+  --cr-green-900: #1B5E20;  --cr-green-950: #164D1A;
+
+  /* ── Light Green ───────────────────────────────────────────────── */
+  --cr-light-green-50:  #F1F8E9;  --cr-light-green-100: #DCEDC8;  --cr-light-green-200: #C5E1A5;
+  --cr-light-green-300: #AED581;  --cr-light-green-400: #9CCC65;  --cr-light-green-500: #8BC34A; /* base */
+  --cr-light-green-600: #7CB342;  --cr-light-green-700: #689F38;  --cr-light-green-800: #558B2F;
+  --cr-light-green-900: #33691E;  --cr-light-green-950: #2A5619;
+
+  /* ── Lime ──────────────────────────────────────────────────────── */
+  --cr-lime-50:  #F9FBE7;  --cr-lime-100: #F0F4C3;  --cr-lime-200: #E6EE9C;
+  --cr-lime-300: #DCE775;  --cr-lime-400: #D4E157;  --cr-lime-500: #CDDC39; /* base */
+  --cr-lime-600: #C0CA33;  --cr-lime-700: #AFB42B;  --cr-lime-800: #9E9D24;
+  --cr-lime-900: #827717;  --cr-lime-950: #6B6213;
+
+  /* ── Yellow ────────────────────────────────────────────────────── */
+  --cr-yellow-50:  #FFFDE7;  --cr-yellow-100: #FFF9C4;  --cr-yellow-200: #FFF59D;
+  --cr-yellow-300: #FFF176;  --cr-yellow-400: #FFEE58;  --cr-yellow-500: #FFEB3B; /* base */
+  --cr-yellow-600: #FDD835;  --cr-yellow-700: #FBC02D;  --cr-yellow-800: #F9A825;
+  --cr-yellow-900: #F57F17;  --cr-yellow-950: #C96813;
+
+  /* ── Orange ────────────────────────────────────────────────────── */
+  --cr-orange-50:  #FFF3E0;  --cr-orange-100: #FFE0B2;  --cr-orange-200: #FFCC80;
+  --cr-orange-300: #FFB74D;  --cr-orange-400: #FFA726;  --cr-orange-500: #FF9800; /* base */
+  --cr-orange-600: #FB8C00;  --cr-orange-700: #F57C00;  --cr-orange-800: #EF6C00;
+  --cr-orange-900: #E65100;  --cr-orange-950: #BD4200;
+
+  /* ── Deep Orange ───────────────────────────────────────────────── */
+  --cr-deep-orange-50:  #FBE9E7;  --cr-deep-orange-100: #FFCCBC;  --cr-deep-orange-200: #FFAB91;
+  --cr-deep-orange-300: #FF8A65;  --cr-deep-orange-400: #FF7043;  --cr-deep-orange-500: #FF5722; /* base */
+  --cr-deep-orange-600: #F4511E;  --cr-deep-orange-700: #E64A19;  --cr-deep-orange-800: #D84315;
+  --cr-deep-orange-900: #BF360C;  --cr-deep-orange-950: #9D2C0A;
+
+  /* ── Grey ──────────────────────── (encoding / fill only) ──────── */
+  --cr-grey-50:  #FAFAFA;  --cr-grey-100: #F5F5F5;  --cr-grey-200: #EEEEEE;
+  --cr-grey-300: #E0E0E0;  --cr-grey-400: #BDBDBD;  --cr-grey-500: #9E9E9E; /* base */
+  --cr-grey-600: #757575;  --cr-grey-700: #616161;  --cr-grey-800: #424242;
+  --cr-grey-900: #212121;  --cr-grey-950: #1B1B1B;
+}
+
+/* ── Tonal modifier classes ──────────────────────────────────────────────
+   Apply on a component (or chart container) to set its colour, e.g.
+   <div class="viz-cluster tone-blue">. Mirrors the soft-clay .tone-* contract:
+   --surface (light fill / track) = 100, --accent (mark / border / icon) = 700.
+   SECONDARY EXPRESSION LAYER — fine on supporting UI / surfaces, never on the
+   primary brand chrome (primary buttons / nav / key CTAs); see header.
+   Light families (Yellow, Lime, Light Green, Cyan) read weak at 700 as --accent;
+   for a strong accent in those hues reference the deep step directly, e.g.
+   var(--cr-yellow-900). */
+.tone-red          { --surface: var(--cr-red-100);          --accent: var(--cr-red-700); }
+.tone-pink         { --surface: var(--cr-pink-100);         --accent: var(--cr-pink-700); }
+.tone-purple       { --surface: var(--cr-purple-100);       --accent: var(--cr-purple-700); }
+.tone-deep-purple  { --surface: var(--cr-deep-purple-100);  --accent: var(--cr-deep-purple-700); }
+.tone-indigo       { --surface: var(--cr-indigo-100);       --accent: var(--cr-indigo-700); }
+.tone-blue         { --surface: var(--cr-blue-100);         --accent: var(--cr-blue-700); }
+.tone-light-blue   { --surface: var(--cr-light-blue-100);   --accent: var(--cr-light-blue-700); }
+.tone-cyan         { --surface: var(--cr-cyan-100);         --accent: var(--cr-cyan-700); }
+.tone-teal         { --surface: var(--cr-teal-100);         --accent: var(--cr-teal-700); }
+.tone-green        { --surface: var(--cr-green-100);        --accent: var(--cr-green-700); }
+.tone-light-green  { --surface: var(--cr-light-green-100);  --accent: var(--cr-light-green-700); }
+.tone-lime         { --surface: var(--cr-lime-100);         --accent: var(--cr-lime-700); }
+.tone-yellow       { --surface: var(--cr-yellow-100);       --accent: var(--cr-yellow-700); }
+.tone-orange       { --surface: var(--cr-orange-100);       --accent: var(--cr-orange-700); }
+.tone-deep-orange  { --surface: var(--cr-deep-orange-100);  --accent: var(--cr-deep-orange-700); }
+.tone-grey         { --surface: var(--cr-grey-100);         --accent: var(--cr-grey-700); }

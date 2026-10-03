@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Form Split · balanced — contact us + newsletter</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css" />
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Form Split · balanced         from component-contact-us.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **Two asks at different commitment levels, and they must be
+              visibly unequal or they compete.** That sentence is the profile's,
+              and it decides almost everything below: one enquiry that costs the
+              reader something, one subscription that costs them nothing, and
+              exactly one of the two allowed to look like the thing to click.
+
+  STRUCTURE   Unchanged. Two stacked sections — a centred enquiry form, then a
+              contained newsletter card in a 1fr/1fr grid. DOM, ids, `data-*`,
+              `aria-*` and `href` are byte-compatible with the frozen original
+              (DR-22). The file has no script at all. The v2 file is beside this
+              one in `_v2/`.
+
+              TWO SECTIONS, ONE PROFILE. COMPOSITION.md profiles this file as a
+              single `Form Split`, so the six-field declaration goes on the FIRST
+              section element and is not duplicated onto the second — a
+              declaration is a claim about the composition, and there is one.
+
+  THE FORM IS FROZEN. Every input, label, `for`, `rows` and the submit behaviour
+              are exactly the original's. What moved is presentation: the control
+              radius, one stroke, and a focus indicator that is ink rather than a
+              hue.
+
+  THE CREATIVE  `.nl-card` was a three-stop `linear-gradient` with a white orbit
+              ring on a `::before` — an abstract creative background standing in
+              for a subject. (Worth recording: both of its stops re-point to
+              `--cr-neutral-1000` in the v3 pack, so the gradient had already
+              collapsed to a flat fill and was carrying nothing.) It is replaced
+              by an approved environment carrying the texture stack.
+              `massif-clear` is the catalogue's most detailed member — ASSETS.md
+              warns it is busy enough to compete with copy and should be used as
+              a SUBJECT rather than behind text, which is precisely how it is
+              used here: no copy sits on it.
+
+              ONE STACK, three layers: grain on top, grunge under it, the
+              environment underneath both. It has to be one stack — a blend mode
+              composites against what is beneath it in the SAME background, so
+              putting the grain on a pseudo-element would resolve `overlay`
+              against transparency and render at full strength as grey static.
+              The URLs are written out rather than reached through `--cr-env-*`,
+              because a `url()` inside a custom property resolves against the
+              CONSUMING document and fails silently.
+
+              The orbit ring was a pseudo-element, so it simply goes — there is
+              no frozen DOM to preserve.
+
+  NO TYPE ON THE PHOTOGRAPH — and no photograph behind fields.
+              The enquiry form never meets the environment: it stays on the base
+              surface in its own section. Inside the newsletter card, DR-46's
+              move applies — `.nl-left` and `.nl-right` each become an OPAQUE
+              dark panel, and the environment takes the region that carries no
+              type: an 80px band on all four sides of the card and the 80px
+              channel between the two columns. The subscribe field sits on its
+              panel, not on the picture.
+
+              Remove the photograph and not one word changes legibility. That is
+              the test, and it passes by construction rather than by measurement
+              — so no scrim, veil or overlay was needed to win contrast back.
+
+  ACCENT      One moment for the whole file, and the profile supplies the
+              argument for which: the two asks must be visibly unequal. `Send
+              Message` — the high-commitment ask — takes the orange. `Subscribe`
+              becomes a light control on the dark panel, and `Book a
+              30-Minute Call` stays an outlined ghost. v2 gave brand blue to all
+              three plus every field's focus border, which is what made them
+              compete.
+
+  RESPONSIVE  The original's breakpoints (1100 / 900 / 768 / 480), unchanged. The
+              per-section heading steps are GONE rather than converted — the pack
+              already walks the ramp at its own breakpoints. v2 had NO
+              reduced-motion guard at all; there is one now, naming every
+              animated selector at its own specificity, so the stagger snaps.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+/* ── Reset ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--cr-page-ground); }
+
+/* ════════════════════════════════════════════════════════
+   CONTACT FORM SECTION — base surface, no photograph
+   ════════════════════════════════════════════════════════ */
+.contact-section {
+  background: var(--cr-page-ground);
+  padding: var(--cr-space-2xl) var(--cr-page-gutter);
+  font-family: var(--cr-font-body);
+}
+
+.contact-well {
+  max-width: 480px;          /* the original's well — a composition decision, untouched */
+  margin: 0 auto;
+}
+
+.contact-heading {
+  font-family: var(--cr-font-display);
+  font-weight: 400;
+  font-size: var(--cr-text-h3);
+  line-height: var(--cr-leading-heading);
+  letter-spacing: var(--cr-tracking-heading);
+  color: var(--cr-text-primary);
+  text-align: center;
+  margin-bottom: var(--cr-space-xs);
+  animation: rise 380ms ease both;
+}
+
+.contact-sub {
+  font-family: var(--cr-font-body);
+  font-size: var(--cr-text-body);
+  color: var(--cr-text-secondary);
+  text-align: center;
+  line-height: var(--cr-leading-body);
+  margin-bottom: var(--cr-space-m);
+  animation: rise 380ms ease both 40ms;
+}
+
+/* ── Form — frozen behaviour, restyled surface ──────────── */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cr-space-s);
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cr-space-xs);
+  animation: rise 380ms ease both;
+}
+.field-group:nth-child(1) { animation-delay: 60ms; }
+.field-group:nth-child(2) { animation-delay: 120ms; }
+.field-group:nth-child(3) { animation-delay: 180ms; }
+.field-group:nth-child(4) { animation-delay: 240ms; }
+
+.field-label {
+  font-family: var(--cr-font-body);
+  font-size: var(--cr-text-supporting);
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--cr-text-secondary);
+}
+
+/* A control never inherits `font-family` — it is stated. */
+.field-input,
+.field-textarea {
+  width: 100%;
+  padding: var(--cr-space-xs);
+  border: var(--cr-stroke) solid var(--cr-border-default);
+  border-radius: var(--cr-radius-control);   /* inputs take the CONTROL radius */
+  font-family: var(--cr-font-body);
+  font-size: var(--cr-text-supporting);
+  line-height: var(--cr-leading-body);
+  color: var(--cr-text-primary);
+  background: var(--cr-bg-raised);           /* the raised surface IS the second cue */
+  outline: none;
+  transition: border-color 150ms;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.field-input { height: 48px; }
+.field-input::placeholder,
+.field-textarea::placeholder { color: var(--cr-text-secondary); }
+/* THE FOCUS INDICATOR IS DARK INK, not a hue. `--cr-focus-ring` is
+   `--cr-text-primary` — 13.14:1 on the page ground, where the blue the v2 border
+   reached for measures 2.07:1 and is disqualified outright (DR-24). */
+.field-input:focus-visible,
+.field-textarea:focus-visible {
+  border-color: var(--cr-text-primary);
+  outline: 2px solid var(--cr-focus-ring);
+  outline-offset: 2px;
+}
+
+.field-textarea {
+  resize: vertical;
+  min-height: 108px;          /* the original's field height — not a spacing decision */
+}
+
+/* ── THE ONE ACCENT MOMENT — the high-commitment ask ────── */
+.btn-primary {
+  display: block;
+  width: 100%;
+  padding: var(--cr-space-xs) var(--cr-space-s);
+  background: var(--cr-accent-orange);
+  color: var(--cr-on-accent-light);
+  border: none;
+  border-radius: var(--cr-radius-control);
+  font-family: var(--cr-font-body);
+  font-weight: 500;
+  font-size: var(--cr-text-supporting);
+  letter-spacing: 0;
+  cursor: pointer;
+  text-align: center;
+  transition: background 150ms;
+  margin-top: var(--cr-space-xs);
+  animation: rise 380ms ease both 280ms;
+  -webkit-appearance: none;
+  appearance: none;
+}
+/* v2 dimmed the accent to 86% opacity on hover — an authored tint of a canonical
+   value. The pack holds the deep step; it is read, not computed. */
+.btn-primary:hover { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+.btn-primary:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 3px; }
+
+.btn-outline-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cr-space-xs);
+  width: 100%;
+  padding: var(--cr-space-xs) var(--cr-space-s);
+  background: transparent;
+  color: var(--cr-text-primary);
+  border: var(--cr-stroke) solid var(--cr-border-default);
+  border-radius: var(--cr-radius-control);
+  font-family: var(--cr-font-body);
+  font-weight: 500;
+  font-size: var(--cr-text-supporting);
+  letter-spacing: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 150ms;
+  animation: rise 380ms ease both 340ms;
+}
+.btn-outline-action:hover { border-color: var(--cr-text-secondary); }
+.btn-outline-action:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 3px; }
+.btn-outline-action svg { stroke-width: var(--cr-icon-stroke-sm); }
+
+.alt-link {
+  text-align: center;
+  font-family: var(--cr-font-body);
+  font-size: var(--cr-text-supporting);
+  line-height: var(--cr-leading-body);
+  color: var(--cr-text-secondary);
+  animation: rise 380ms ease both 380ms;
+}
+.alt-link a {
+  color: var(--cr-text-primary);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ════════════════════════════════════════════════════════
+   NEWSLETTER CARD — the environment, with both columns opaque
+   ════════════════════════════════════════════════════════ */
+.nl-section {
+  background: var(--cr-page-ground);
+  padding: 0 var(--cr-page-gutter) var(--cr-space-2xl);
+}
+
+/* THE ENVIRONMENT. One stack, three layers, in this order: grain on top, grunge
+   under it, the environment underneath both. The last background-position is the
+   asset's measured focus from ASSETS.md (`50% 42%`), not a guess. Never a
+   `background:` shorthand on this element — the shorthand resets
+   `background-image`. */
+.nl-card {
+  max-width: var(--cr-content-max);
+  margin: 0 auto;
+  border-radius: var(--cr-radius-card);
+  padding: var(--cr-space-xl);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--cr-space-xl);
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  animation: rise 380ms ease both 120ms;
+  background-color: var(--cr-bg-dark);
+  background-image:
+    url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+    url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+    url("../../brand-pack/assets/imagery/environments/env-massif-clear.jpg");
+  background-size: var(--cr-texture-noise-size, auto), cover, cover;
+  background-position: 0 0, center, 50% 42%;
+  background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+  background-repeat: repeat, no-repeat, no-repeat;
+}
+
+/* THE TWO OPAQUE PANELS — the DR-46 move. The words get their own surface; the
+   photograph gets the band around them and the channel between them. They stay
+   DARK rather than turning white: the copy inside was already inverse, and
+   flipping it would be a composition change dressed up as a colour one. */
+.nl-left,
+.nl-right {
+  position: relative;
+  background: var(--cr-bg-dark);
+  border-radius: var(--cr-radius-card);
+  padding: var(--cr-space-m);
+}
+
+.nl-heading {
+  font-family: var(--cr-font-display);
+  font-weight: 400;
+  font-size: var(--cr-text-h5);
+  line-height: var(--cr-leading-heading);
+  letter-spacing: var(--cr-tracking-heading);
+  color: var(--cr-text-inverse);
+  margin-bottom: var(--cr-space-xs);
+}
+
+.nl-body {
+  font-family: var(--cr-font-body);
+  font-size: var(--cr-text-supporting);
+  line-height: var(--cr-leading-body);
+  color: var(--cr-neutral-500);
+}
+
+.nl-label {
+  display: block;
+  font-family: var(--cr-font-body);
+  font-weight: 500;
+  font-size: var(--cr-text-supporting);
+  letter-spacing: 0;              /* supporting text: never tracked, never uppercase */
+  color: var(--cr-neutral-600);
+  margin-bottom: var(--cr-space-xs);
+}
+
+.nl-input-row {
+  display: flex;
+  gap: var(--cr-space-xs);
+  margin-bottom: var(--cr-space-xs);
+}
+
+.nl-email {
+  flex: 1;
+  min-width: 0;
+  padding: var(--cr-space-xs);
+  background: var(--cr-neutral-1000);
+  border: var(--cr-stroke) solid var(--cr-neutral-800);
+  border-radius: var(--cr-radius-control);
+  font-family: var(--cr-font-body);
+  font-size: var(--cr-text-supporting);
+  color: var(--cr-text-inverse);
+  outline: none;
+  transition: border-color 150ms;
+}
+.nl-email::placeholder { color: var(--cr-neutral-600); }
+/* Dark ink cannot be a ring on a dark surface. The ring stays INK — the inverse
+   ink — rather than becoming a hue, which is the rule the blue was breaking. */
+.nl-email:focus-visible {
+  border-color: var(--cr-neutral-400);
+  outline: 2px solid var(--cr-text-inverse);
+  outline-offset: 2px;
+}
+
+/* The low-commitment ask. Neutral by decision, not by omission: the profile
+   requires the two asks to be visibly unequal, and the accent is already spent
+   on the one that costs the reader something. */
+.btn-subscribe {
+  padding: var(--cr-space-xs) var(--cr-space-s);
+  background: var(--cr-surface-1);
+  color: var(--cr-text-primary);
+  border: none;
+  border-radius: var(--cr-radius-control);
+  font-family: var(--cr-font-body);
+  font-weight: 500;
+  font-size: var(--cr-text-supporting);
+  letter-spacing: 0;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 150ms;
+  flex-shrink: 0;
+}
+.btn-subscribe:hover { background: var(--cr-surface-5); }
+.btn-subscribe:focus-visible { outline: 2px solid var(--cr-text-inverse); outline-offset: 3px; }
+
+.nl-fine {
+  font-family: var(--cr-font-body);
+  font-size: var(--cr-text-supporting);
+  color: var(--cr-neutral-600);
+  line-height: var(--cr-leading-body);
+}
+.nl-fine a {
+  color: var(--cr-neutral-400);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── Stagger keyframe ───────────────────────────────────── */
+@keyframes rise {
+  from { transform: translateY(16px); }
+  to   { transform: translateY(0); }
+}
+
+/* v2 had NO reduced-motion guard on this file. Every animated selector is named
+   here at its own specificity, so the stagger snaps to its final position rather
+   than playing. */
+@media (prefers-reduced-motion: reduce) {
+  .contact-heading,
+  .contact-sub,
+  .field-group,
+  .btn-primary,
+  .btn-outline-action,
+  .alt-link,
+  .nl-card { animation: none; transform: none; }
+}
+
+/* ── Responsive — the ORIGINAL's breakpoints. The per-section heading
+   steps are deleted, not converted. ────────────────────── */
+@media (max-width: 1100px) {
+  .nl-section { padding-left: var(--cr-page-gutter); padding-right: var(--cr-page-gutter); }
+}
+
+@media (max-width: 900px) {
+  .nl-card {
+    grid-template-columns: 1fr;
+    gap: var(--cr-space-m);
+    padding: var(--cr-space-m);
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-section { padding-top: var(--cr-space-xl); padding-bottom: var(--cr-space-xl); }
+  .nl-section { padding-bottom: var(--cr-space-xl); }
+}
+
+@media (max-width: 480px) {
+  .nl-input-row { flex-direction: column; }
+  .btn-subscribe { width: 100%; }
+}
+</style>
+</head>
+
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing.
+  .alt-link           | font-size              | type-ramp
+  .alt-link           | line-height            | type-ramp
+  .btn-outline-action | border-radius          | radius-pair
+  .btn-outline-action | column-gap             | spacing-scale
+  .btn-outline-action | font-size              | type-ramp
+  .btn-outline-action | padding-bottom         | spacing-scale
+  .btn-outline-action | padding-left           | spacing-scale
+  .btn-outline-action | padding-right          | spacing-scale
+  .btn-outline-action | padding-top            | spacing-scale
+  .btn-outline-action | row-gap                | spacing-scale
+  .btn-primary        | border-radius          | radius-pair
+  .btn-primary        | font-size              | type-ramp
+  .btn-primary        | margin-top             | spacing-scale
+  .btn-primary        | padding-bottom         | spacing-scale
+  .btn-primary        | padding-left           | spacing-scale
+  .btn-primary        | padding-right          | spacing-scale
+  .btn-primary        | padding-top            | spacing-scale
+  .btn-subscribe      | border-radius          | radius-pair
+  .btn-subscribe      | font-size              | type-ramp
+  .btn-subscribe      | padding-left           | spacing-scale
+  .btn-subscribe      | padding-right          | spacing-scale
+  .contact-form       | column-gap             | spacing-scale
+  .contact-form       | row-gap                | spacing-scale
+  .contact-heading    | font-size              | type-ramp
+  .contact-heading    | line-height            | type-ramp
+  .contact-heading    | margin-bottom          | spacing-scale
+  .contact-sub        | font-size              | type-ramp
+  .contact-sub        | line-height            | type-ramp
+  .contact-sub        | margin-bottom          | spacing-scale
+  .contact-well       | margin-left            | spacing-scale
+  .contact-well       | margin-right           | spacing-scale
+  .field-group        | column-gap             | spacing-scale
+  .field-group        | row-gap                | spacing-scale
+  .field-input        | border-radius          | radius-pair
+  .field-input        | line-height            | type-ramp
+  .field-input        | padding-left           | spacing-scale
+  .field-input        | padding-right          | spacing-scale
+  .field-label        | font-size              | type-ramp
+  .field-textarea     | border-radius          | radius-pair
+  .field-textarea     | line-height            | type-ramp
+  .field-textarea     | padding-left           | spacing-scale
+  .field-textarea     | padding-right          | spacing-scale
+  .nl-body            | font-size              | type-ramp
+  .nl-body            | line-height            | type-ramp
+  .nl-card            | border-radius          | radius-pair
+  .nl-card            | column-gap             | spacing-scale
+  .nl-card            | grid-template-columns  | directed
+  .nl-card            | padding-bottom         | spacing-scale
+  .nl-card            | padding-left           | spacing-scale
+  .nl-card            | padding-right          | spacing-scale
+  .nl-card            | padding-top            | spacing-scale
+  .nl-card            | row-gap                | spacing-scale
+  .nl-email           | border-radius          | radius-pair
+  .nl-email           | font-size              | type-ramp
+  .nl-email           | padding-left           | spacing-scale
+  .nl-email           | padding-right          | spacing-scale
+  .nl-fine            | font-size              | type-ramp
+  .nl-fine            | line-height            | type-ramp
+  .nl-heading         | font-size              | type-ramp
+  .nl-heading         | line-height            | type-ramp
+  .nl-heading         | margin-bottom          | spacing-scale
+  .nl-input-row       | column-gap             | spacing-scale
+  .nl-input-row       | row-gap                | spacing-scale
+  .nl-label           | font-size              | type-ramp
+  .nl-left            | border-radius          | radius-pair
+  .nl-left            | padding-bottom         | spacing-scale
+  .nl-left            | padding-left           | spacing-scale
+  .nl-left            | padding-right          | spacing-scale
+  .nl-left            | padding-top            | spacing-scale
+  .nl-right           | border-radius          | radius-pair
+  .nl-right           | padding-bottom         | spacing-scale
+  .nl-right           | padding-left           | spacing-scale
+  .nl-right           | padding-right          | spacing-scale
+  .nl-right           | padding-top            | spacing-scale
+  a                   | font-size              | type-ramp
+  a                   | line-height            | type-ramp
+  path                | font-size              | type-ramp
+  path                | stroke-width           | stroke
+  rect                | font-size              | type-ramp
+  rect                | stroke-width           | stroke
+  svg                 | font-size              | type-ramp
+  svg                 | stroke-width           | stroke
+-->
+
+
+<!-- ── Contact Form ──────────────────────────────────── -->
+<section class="contact-section" data-screen-label="Contact Us"
+         data-archetype="editorial-split" data-hierarchy="closing" data-intent="convert"
+         data-register="human" data-signature="editorial-photography" data-density="high">
+  <div class="contact-well">
+
+    <h2 class="contact-heading">Contact Us</h2>
+    <p class="contact-sub">Tell us about your operations. We'll show you where automation applies first.</p>
+
+    <form class="contact-form" novalidate onsubmit="return false">
+
+      <div class="field-group">
+        <label class="field-label" for="cf-name">Full name*</label>
+        <input class="field-input" id="cf-name" type="text" placeholder="Your name" autocomplete="name" />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="cf-email">Work email*</label>
+        <input class="field-input" id="cf-email" type="email" placeholder="you@company.com" autocomplete="email" />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="cf-company">Company*</label>
+        <input class="field-input" id="cf-company" type="text" placeholder="Your company name" autocomplete="organization" />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="cf-message">Message*</label>
+        <textarea class="field-textarea" id="cf-message" rows="4" placeholder="Tell us about your current workflows and what you'd like to automate."></textarea>
+      </div>
+
+      <button class="btn-primary" type="submit">Send Message &nbsp;&rarr;</button>
+
+      <a class="btn-outline-action" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Book a 30-Minute Call
+      </a>
+
+      <p class="alt-link">Already a client? <a href="#">Sign in to your account</a></p>
+
+    </form>
+  </div>
+</section>
+
+<!-- ── Newsletter CTA Card ──────────────────────────── -->
+<section class="nl-section" data-screen-label="Newsletter CTA">
+  <div class="nl-card">
+
+    <div class="nl-left">
+      <h3 class="nl-heading">Stay Ahead of the Automation Curve</h3>
+      <p class="nl-body">Get the latest on AI deployments, enterprise case studies, and outcome benchmarks — delivered to your inbox.</p>
+    </div>
+
+    <div class="nl-right">
+      <span class="nl-label">Stay up to date</span>
+      <div class="nl-input-row">
+        <input class="nl-email" type="email" placeholder="Enter your email" />
+        <button class="btn-subscribe" type="submit">Subscribe</button>
+      </div>
+      <p class="nl-fine">By subscribing you agree to our <a href="#">Privacy Policy</a>.</p>
+    </div>
+
+  </div>
+</section>
+
+</body>
+</html>

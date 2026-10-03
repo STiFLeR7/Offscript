@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CTA banner</title>
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background: var(--cr-bg-grey-50);
+    font-family: var(--cr-font-body); color: var(--cr-ink-flat);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* The section is the white/cream band; the *card* sits inside the page
+     gutter. Add the class .bleed on .banner to make it span the full
+     viewport width with no surrounding margin. */
+  .section {
+    padding: 80px 100px;
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }
+  .section.bleed { padding: 0; max-width: none; }
+
+  .banner {
+    position: relative; overflow: hidden;
+    border-radius: 24px;
+    /* Solid Ink surface from the brand — no indigo cast */
+    background: var(--cr-ink-flat);
+    /* Subtle white dot grid — the recurring CR "system" motif */
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,0.06) 1px, transparent 0);
+    background-size: 18px 18px;
+    color: #fff;
+    padding: 120px 60px;
+    text-align: center;
+  }
+  .section.bleed .banner { border-radius: 0; padding: 140px 60px; }
+
+  /* Two-line headline — first line strong, second line muted */
+  .h-strong, .h-muted {
+    font-family: "Urbanist", sans-serif; font-weight: 700;
+    font-size: 56px; line-height: 1.1; letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .h-strong { color: #fff; }
+  .h-muted  { color: var(--cr-fg-3); margin-top: 4px; }
+
+  .actions {
+    margin-top: 56px;
+    display: inline-flex; gap: 16px; align-items: center;
+    position: relative;
+  }
+
+  /* Primary button — pill with an icon chip on the left, brand blue */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 6px 24px 6px 6px;
+    background: var(--cr-brand); color: #fff;
+    border: 0; border-radius: 500px; cursor: pointer;
+    font-family: "Inter", sans-serif; font-weight: 500; font-size: 16px;
+    transition: background .15s ease, transform .15s ease;
+  }
+  .btn-primary:hover { background: var(--cr-brand-700); }
+  .btn-primary:active { transform: scale(.97); }
+  .btn-primary .chip {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .btn-primary .chip svg { width: 16px; height: 16px; stroke-width: 1.5; color: #fff; }
+
+  /* Secondary button — ghost pill, white text, hairline border */
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 28px;
+    background: transparent; color: #fff;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 500px; cursor: pointer;
+    font-family: "Inter", sans-serif; font-weight: 500; font-size: 16px;
+    transition: border-color .15s ease, background .15s ease, transform .15s ease;
+  }
+  .btn-ghost:hover { border-color: #fff; background: rgba(255,255,255,0.04); }
+  .btn-ghost:active { transform: scale(.97); }
+
+  /* ── Responsive ───────────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .section { padding: 60px 40px; }
+    .banner { padding: 96px 40px; }
+    .h-strong, .h-muted { font-size: 44px; }
+  }
+  @media (max-width: 640px) {
+    .section { padding: 40px 20px; }
+    .banner { padding: 72px 24px; border-radius: 20px; }
+    .h-strong, .h-muted { font-size: 30px; line-height: 1.15; }
+    .actions { flex-direction: column; width: 100%; margin-top: 40px; gap: 12px; }
+    .btn-primary, .btn-ghost { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<section class="section" data-screen-label="CTA banner">
+  <div class="banner">
+    <h2 class="h-strong">Autonomous Operations, In Production.</h2>
+    <h2 class="h-muted">No Platform Shopping. No Long Roadmaps.</h2>
+
+    <div class="actions">
+      <button class="btn-primary">
+        <span class="chip"><i data-lucide="sparkles"></i></span>
+        Book a Demo Call
+      </button>
+      <button class="btn-ghost">
+        Talk to Sales <i data-lucide="arrow-right" style="width:16px;height:16px;stroke-width:1.5"></i>
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

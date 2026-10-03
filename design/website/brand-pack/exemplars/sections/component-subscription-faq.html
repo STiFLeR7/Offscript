@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR — Subscription (dashed plan cards + FAQ)</title>
+
+<!--
+  ────────────────────────────────────────────────────────────────────────────
+  COMPONENT: Subscription — dashed plan cards + side-by-side FAQ
+  ────────────────────────────────────────────────────────────────────────────
+  COMPOSITION (faithful reproduction of the supplied inspiration — a Roomservice
+  subscription page; app nav was OUT of scope, the FAQ below was IN scope):
+    • A LIGHT white section. A header row: a left "Subscription" title + a
+      right-aligned Monthly/Annual SEGMENTED toggle (the "-15%" discount sits as a
+      small badge inside the Annual segment).
+    • A row of FOUR plan cards. THREE are DASHED-OUTLINE cards (transparent fill,
+      1px dashed border, feature rows divided by dashed hairlines) — the source's
+      signature "wireframe" card. The SECOND card is the HIGHLIGHT ("Most popular")
+      and is rendered SOLID + TALLER so it pops out of the row.
+    • Below, an FAQ block in the source's distinctive RIGHT-WEIGHTED, SIDE-BY-SIDE
+      layout: a left section heading, then a list where each row places the
+      QUESTION and its ANSWER in ADJACENT columns (answer to the RIGHT of the
+      question, not below) with a +/× toggle at the far right.
+
+  RE-SKIN / CHARTER TRANSLATION (the source's highlight card breaks several CR
+  hard constraints — translated, not copied):
+    • Source highlight = a WARM-ORANGE gradient card with a DROP SHADOW, popped
+      out LARGER and OVERLAPPING its neighbours. CR forbids shadows, warm
+      gradients on light, and overlap/negative margins. → Re-skinned to a CR
+      Ink/Night card with a MODERN atmospheric gradient: a deep cool navy base +
+      a soft BRAND-BLUE glow (#149DFF) blooming from the lower edge + a cool-navy
+      mid-tone bridge for depth + a top vignette that keeps the price + badge crisp
+      + a grain overlay. Fully on-brand; the blue glow harmonises with the
+      brand-blue Subscribe button. No blur filter (a layered gradient glow — the
+      allowed dark-band motif). It pops by being TALLER + by CONTRAST against the
+      light dashed cards — achieved with `align-items:center`
+      + extra padding, so NO shadow and NO negative margin. Its Subscribe button is
+      the canonical brand-blue primary (the source's black button).
+    • Dashed outlines + dashed row dividers are kept (a border treatment — fully
+      on-charter; the same dotted/dashed-hairline device the FAQ components use).
+    • Copy → CR voice (APA / autonomous agents): plan names + features describe an
+      agent-automation ladder; the FAQ answers are real CR plan answers (the
+      source's interior-design "replace the couch…" copy was app content). PRICES
+      kept from the source for Monthly; ANNUAL prices (−15%: $8.50/$17/$34/$51) are
+      an ASSUMPTION (the source shows Monthly only) — illustrative, swap for real.
+      Source typos fixed ("quesions"→"questions", "iteriors"→"interiors").
+
+  MOTION:
+    • Monthly/Annual toggle = a PURE-CSS radio control (two sr-only radios are the
+      FIRST children of .sub; labels drive them; `#bill-a:checked ~ .sub-inner …`
+      reaches the thumb + every price). Works WITHOUT JS: thumb slides (bordered
+      thumb on a grey track — border not shadow, charter), active label inks, and
+      all four prices crossfade-swap to the annual value. The mo/annual spans share
+      ONE inline-grid cell (stable width, no reflow); the INACTIVE price uses
+      `visibility:hidden` (not just opacity) so a screen reader never reads
+      "$20 $17" — and that holds without JS too.
+    • FAQ = single-open accordion; the answer reveals to the SIDE (the row's answer
+      column expands via the grid-rows 0fr→1fr trick) and the +/× icon rotates.
+      Clicking a question (or its row / icon) opens it and closes the others.
+    • JS adds a one-time scroll-reveal entrance (header → toggle → cards L→R → FAQ
+      heading → rows stagger). Content is fully visible + the toggle fully works
+      WITHOUT JS (collapse + reveal hidden-states scoped to .has-js; no-JS shows
+      every FAQ answer open). prefers-reduced-motion snaps in + makes the swaps
+      instant (everything stays functional).
+    • HOVER only on real controls — the toggle, the Subscribe buttons, the FAQ
+      question rows. Card surfaces are inert (no lift / no glow — charter).
+
+  DISTINCT FROM: `pricing` (solid bordered cards, warm band, centred toggle +
+    trust strip) — THIS is the dashed-wireframe-card variant with a dark gradient
+    highlight + a side-by-side FAQ. Distinct from the other FAQ components (this
+    one places the answer in a column BESIDE the question).
+
+  Responsive: 4 cards → 2×2 (≤1000px) → 1 col (≤600px); FAQ heading/list 2-col →
+    stacked (≤760px) where each row becomes question+icon over a full-width answer.
+    Screenshot-verified at desktop 1440 (Monthly + Annual), tablet 768, and the
+    ~482px headless floor, with FAQ open/closed + the no-JS path.
+  ────────────────────────────────────────────────────────────────────────────
+-->
+
+<link rel="stylesheet" href="../_frozen-v2-tokens.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--cr-bg); font-family: var(--cr-font-body); }
+
+  /* ── Section ─────────────────────────────────────────────────────────── */
+  .sub {
+    position: relative;
+    width: 100%;
+    background: var(--cr-bg);                 /* clean white (cooler than the warm `pricing` band) */
+    padding: clamp(64px, 8vw, 104px) 0;
+    overflow: hidden;
+  }
+  .sub-inner {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+    padding: 0 var(--cr-page-gutter);
+  }
+  /* pure-CSS toggle radios — sr-only but focusable; FIRST children of .sub so
+     `:checked ~ .sub-inner …` reaches the whole subtree */
+  .sub-radio { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+  /* ── Header row: title (left) + toggle (right) ───────────────────────── */
+  .sub-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .sub-title {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(24px, 2.4vw, 30px);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--cr-fg);
+  }
+
+  /* segmented toggle */
+  .sub-toggle {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: max-content;
+    padding: 4px;
+    background: var(--cr-bg-grey-100);
+    border: 1px solid var(--cr-line);
+    border-radius: var(--cr-radius-pill);
+  }
+  .sub-thumb {
+    position: absolute;
+    top: 4px; bottom: 4px; left: 4px;
+    width: 50%;
+    background: var(--cr-bg);
+    border: 1px solid var(--cr-line);          /* border, NOT shadow (charter) */
+    border-radius: var(--cr-radius-pill);
+    transition: transform .35s cubic-bezier(.4, 0, .2, 1);
+  }
+  .sub-seg {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 8px 20px;
+    font-family: var(--cr-font-body);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1;
+    color: var(--cr-fg-3);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    border-radius: var(--cr-radius-pill);
+    transition: color .25s ease;
+  }
+  .sub-off {
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--cr-success);                  /* the "-15%" discount */
+  }
+  #bill-m:checked ~ .sub-inner .sub-seg--m { color: var(--cr-fg); }
+  #bill-a:checked ~ .sub-inner .sub-seg--a { color: var(--cr-fg); }
+  #bill-a:checked ~ .sub-inner .sub-thumb  { transform: translateX(100%); }
+  .sub-radio:focus-visible ~ .sub-inner .sub-toggle { outline: 2px solid var(--cr-brand); outline-offset: 3px; }
+
+  /* ── Cards grid ──────────────────────────────────────────────────────── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    align-items: center;                       /* lets the taller popular card pop ABOVE + BELOW with no shadow/overlap */
+    margin-top: clamp(28px, 3.5vw, 44px);
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    min-height: 380px;
+    padding: 24px 22px;
+    border: 1px dashed var(--cr-line);          /* dashed wireframe outline */
+    border-radius: var(--cr-radius-lg);
+    background: transparent;
+  }
+
+  .card-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 1;
+    color: var(--cr-fg-3);
+  }
+  .card-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: var(--cr-radius-pill);
+    background: var(--cr-success-soft);  /* on-brand green accent — pops on the navy card */
+    color: var(--cr-ink);                /* dark ink text — high contrast on the bright pill */
+    font-weight: 700;
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+
+  .amt {
+    display: inline-grid;                       /* stack mo/annual → stable width, crossfade */
+    margin-top: 8px;
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(30px, 3vw, 38px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--cr-fg);
+  }
+  .card-desc {
+    margin-top: 12px;
+    font-weight: 400;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--cr-fg-3);
+  }
+
+  /* feature rows — divided by dashed hairlines */
+  .feat-rows { margin-top: 18px; }
+  .frow {
+    padding: 10px 0;
+    border-top: 1px dashed var(--cr-line);
+    font-weight: 400;
+    font-size: 13.5px;
+    line-height: 1.35;
+    color: var(--cr-fg-2);
+  }
+
+  /* Subscribe button — pinned to the card bottom */
+  .sub-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 16px;
+    margin-top: 20px;                            /* base spacing; pinned to bottom by the rule below */
+    font-family: var(--cr-font-body);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1;
+    color: var(--cr-fg);
+    background: var(--cr-bg);
+    border: 1px solid var(--cr-line);
+    border-radius: var(--cr-radius-md);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .2s ease, border-color .2s ease, color .2s ease;
+  }
+  .feat-rows + .sub-btn { margin-top: auto; }    /* push to bottom when features precede it */
+  .sub-btn:hover { background: var(--cr-bg-grey-50); border-color: var(--cr-fg-3); }
+  .sub-btn .spk { width: 16px; height: 16px; flex: none; }
+
+  /* ── Popular card — CR Ink/Night gradient, taller, pops by size + contrast ── */
+  .card--pop {
+    position: relative;
+    overflow: hidden;
+    min-height: 0;
+    padding: 48px 24px;                          /* taller than the dashed cards → pops above + below */
+    border: 0;
+    border-radius: var(--cr-radius-xl);
+    color: #fff;
+    /* CR dark-band, modernised — deep cool navy base + a soft BRAND-BLUE glow
+       (var(--cr-brand)) blooming from the lower edge, a cool-navy mid-tone BRIDGE for
+       atmospheric depth, and a top VIGNETTE that keeps the price + badge crisp.
+       Fully on-brand; the blue glow harmonises with the brand-blue Subscribe
+       button. No blur filter (a layered gradient glow, the allowed dark-band motif). */
+    background:
+      radial-gradient(120% 66% at 50% -12%, rgba(5,9,20,0.55) 0%, rgba(5,9,20,0) 56%),
+      radial-gradient(125% 88% at 50% 114%, rgba(20,157,255,0.50) 0%, rgba(20,120,235,0.18) 38%, rgba(20,120,235,0) 62%),
+      radial-gradient(150% 112% at 50% 96%, rgba(30,110,110,0.26) 0%, rgba(30,110,110,0) 58%),
+      linear-gradient(168deg, var(--cr-ink-blue-deep) 0%, var(--cr-ink-violet) 52%, var(--cr-ink-blue-deep) 100%);
+  }
+  /* grain overlay (tile native — never set background-size) */
+  .card--pop::after {
+    content: ""; position: absolute; inset: 0; z-index: 1;
+    background: url("../assets/texture-grain.png");
+    opacity: 0.06; pointer-events: none;
+  }
+  .card--pop > * { position: relative; z-index: 2; }   /* content above the orbit + grain */
+
+  .card--pop .card-label { color: rgba(255,255,255,0.72); }
+  .card--pop .amt { color: #fff; }
+  .card--pop .card-desc { color: rgba(255,255,255,0.66); }
+  .card--pop .frow { border-top-color: rgba(255,255,255,0.16); color: rgba(255,255,255,0.82); }
+  .card--pop .sub-btn {
+    background: var(--cr-brand);                 /* canonical CR primary (the source's black button) */
+    border-color: var(--cr-brand);
+    color: #fff;
+  }
+  .card--pop .sub-btn:hover { background: var(--cr-brand-700); border-color: var(--cr-brand-700); }
+
+  /* ── Price swap (mo ⇄ annual) — visibility flips so SR drops the inactive ── */
+  .amt > span {
+    grid-area: 1 / 1;
+    transition: opacity .3s ease, transform .3s ease, visibility 0s linear .3s;
+  }
+  .amt .amt--m {                                 /* monthly = active by default → shown */
+    opacity: 1; transform: none; visibility: visible;
+    transition: opacity .3s ease, transform .3s ease, visibility 0s;
+  }
+  .amt .amt--a { opacity: 0; transform: translateY(8px); visibility: hidden; }
+  #bill-a:checked ~ .sub-inner .amt .amt--m {
+    opacity: 0; transform: translateY(-8px); visibility: hidden;
+    transition: opacity .3s ease, transform .3s ease, visibility 0s linear .3s;
+  }
+  #bill-a:checked ~ .sub-inner .amt .amt--a {
+    opacity: 1; transform: none; visibility: visible;
+    transition: opacity .3s ease, transform .3s ease, visibility 0s;
+  }
+
+  /* ── FAQ ─────────────────────────────────────────────────────────────── */
+  .faq {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 2.4fr);
+    column-gap: clamp(40px, 6vw, 96px);
+    margin-top: clamp(72px, 9vw, 120px);
+  }
+  .faq-title {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(26px, 2.8vw, 34px);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: var(--cr-fg);
+  }
+
+  .qa {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) 22px;
+    column-gap: clamp(24px, 3vw, 44px);
+    align-items: start;
+    padding: 22px 0;
+    border-top: 1px solid var(--cr-line);        /* hairline incl. above the first */
+  }
+  .qa-q {
+    grid-column: 1;
+    margin: 0;
+    padding: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.4;
+    color: var(--cr-fg);
+    background: none;
+    border: 0;
+    text-align: left;
+    cursor: pointer;
+  }
+  /* answer sits in the column BESIDE the question; reveals via grid-rows trick */
+  .qa-ans {
+    grid-column: 2;
+    display: grid;
+    grid-template-rows: 1fr;                      /* default (no-JS) = open */
+    opacity: 1;
+  }
+  .qa-ans > div { overflow: hidden; }
+  .qa-ans p { margin: 0 0 10px; font-size: 14.5px; line-height: 1.6; color: var(--cr-fg-3); }
+  .qa-ans p:last-child { margin-bottom: 0; }
+  .qa-ico {
+    grid-column: 3;
+    position: relative;
+    width: 18px; height: 18px;
+    margin-top: 3px;
+    transition: transform .3s ease;
+    pointer-events: none;                         /* the row click handles the toggle */
+  }
+  .qa-ico::before, .qa-ico::after {
+    content: ""; position: absolute; background: var(--cr-fg-3); border-radius: 2px;
+  }
+  .qa-ico::before { left: 0; top: 50%; width: 100%; height: 1.6px; transform: translateY(-50%); }
+  .qa-ico::after  { top: 0; left: 50%; height: 100%; width: 1.6px; transform: translateX(-50%); }
+
+  /* with JS: collapse answers, rotate the + into a × when open */
+  /* visibility (not just opacity/0fr) flips so a collapsed answer leaves the a11y
+     tree — matching aria-expanded; same standard as the price swap. Scoped to
+     .has-js so the no-JS path keeps every answer open + in-tree. The transition
+     lives on BOTH rules: delayed visibility on close, immediate on open. */
+  .has-js .qa-ans {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    visibility: hidden;
+    transition: grid-template-rows .4s cubic-bezier(.4, 0, .2, 1), opacity .3s ease, visibility 0s linear .4s;
+  }
+  .has-js .qa.open .qa-ans {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    visibility: visible;
+    transition: grid-template-rows .4s cubic-bezier(.4, 0, .2, 1), opacity .3s ease, visibility 0s;
+  }
+  .has-js .qa.open .qa-ico { transform: rotate(45deg); }
+  .has-js .qa:hover .qa-q { color: var(--cr-fg); }
+
+  /* ── Entrance reveal (JS-gated, fires once) ──────────────────────────── */
+  .has-js .sub-head,
+  .has-js .sub-toggle,
+  .has-js .card,
+  .has-js .faq-title,
+  .has-js .qa {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity .6s cubic-bezier(.22, .61, .36, 1),
+                transform .6s cubic-bezier(.22, .61, .36, 1);
+    transition-delay: var(--d, 0ms);
+  }
+  /* keep the answer's own transition independent of the reveal */
+  .has-js .sub.in .sub-head,
+  .has-js .sub.in .sub-toggle,
+  .has-js .sub.in .card,
+  .has-js .sub.in .faq-title,
+  .has-js .sub.in .qa { opacity: 1; transform: none; }
+
+  /* ── Responsive ──────────────────────────────────────────────────────── */
+  @media (max-width: 1000px) {
+    .sub-inner { padding: 0 56px; }
+    .cards { grid-template-columns: repeat(2, 1fr); gap: 16px; align-items: stretch; }
+    .card--pop { min-height: 380px; }            /* match the dashed cards when 2×2 */
+  }
+  @media (max-width: 900px) {
+    .faq { grid-template-columns: 1fr; row-gap: 28px; }
+    .qa { grid-template-columns: minmax(0, 1fr) 22px; column-gap: 18px; }
+    .qa-q { grid-column: 1; }
+    .qa-ico { grid-column: 2; }
+    .qa-ans { grid-column: 1 / -1; }             /* answer drops below the question */
+    .has-js .qa.open .qa-ans { margin-top: 12px; }
+  }
+  @media (max-width: 600px) {
+    .sub-inner { padding: 0 22px; }
+    .cards { grid-template-columns: 1fr; gap: 14px; }
+    .sub-head { gap: 16px; }
+    .card--pop { padding: 36px 22px; }
+  }
+
+  /* ── Reduced motion: keep everything functional, drop the animation ──── */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .sub-head,
+    .has-js .sub-toggle,
+    .has-js .card,
+    .has-js .faq-title,
+    .has-js .qa { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .sub-thumb, .amt > span, .qa-ico { transition: none !important; }
+    .has-js .qa-ans { transition: none !important; }
+  }
+</style>
+</head>
+
+<body>
+<section class="sub" data-screen-label="Subscription — plans + FAQ">
+
+  <!-- pure-CSS toggle state (sr-only radios; Monthly default) -->
+  <input type="radio" name="sub-bill" id="bill-m" class="sub-radio" checked aria-label="Bill monthly" />
+  <input type="radio" name="sub-bill" id="bill-a" class="sub-radio" aria-label="Bill annually (save 15%)" />
+
+  <div class="sub-inner">
+
+    <!-- ── Pricing header ──────────────────────────────────────────────── -->
+    <div class="sub-head" style="--d:0ms">
+      <h2 class="sub-title">Subscription</h2>
+      <div class="sub-toggle">
+        <span class="sub-thumb" aria-hidden="true"></span>
+        <label for="bill-m" class="sub-seg sub-seg--m">Monthly</label>
+        <label for="bill-a" class="sub-seg sub-seg--a">Annual <span class="sub-off">-15%</span></label>
+      </div>
+    </div>
+
+    <!-- ── Plan cards ──────────────────────────────────────────────────── -->
+    <div class="cards">
+
+      <!-- Starter (dashed) -->
+      <article class="card" style="--d:90ms">
+        <div class="card-label"><span>Starter</span></div>
+        <span class="amt"><span class="amt--m">$10</span><span class="amt--a">$8.50</span></span>
+        <p class="card-desc">Automate the work your team repeats, end to end.</p>
+        <div class="feat-rows">
+          <div class="frow">1 active agent</div>
+          <div class="frow">500 runs / month</div>
+          <div class="frow">Core integrations</div>
+          <div class="frow">Community support</div>
+        </div>
+        <a href="#" class="sub-btn">
+          <svg class="spk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+          Subscribe
+        </a>
+      </article>
+
+      <!-- Growth (POPULAR — dark CR gradient card) -->
+      <article class="card card--pop" style="--d:160ms">
+        <div class="card-label"><span>Growth</span><span class="card-badge">Most popular</span></div>
+        <span class="amt"><span class="amt--m">$20</span><span class="amt--a">$17</span></span>
+        <p class="card-desc">Automate the work your team repeats, end to end.</p>
+        <div class="feat-rows">
+          <div class="frow">5 active agents</div>
+          <div class="frow">5,000 runs / month</div>
+          <div class="frow">Priority support</div>
+          <div class="frow">Analytics dashboard</div>
+        </div>
+        <a href="#" class="sub-btn">
+          <svg class="spk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+          Subscribe
+        </a>
+      </article>
+
+      <!-- Business (dashed) -->
+      <article class="card" style="--d:230ms">
+        <div class="card-label"><span>Business</span></div>
+        <span class="amt"><span class="amt--m">$40</span><span class="amt--a">$34</span></span>
+        <p class="card-desc">Automate the work your team repeats, end to end.</p>
+        <div class="feat-rows">
+          <div class="frow">20 active agents</div>
+          <div class="frow">25,000 runs / month</div>
+          <div class="frow">SSO &amp; roles</div>
+          <div class="frow">API access</div>
+        </div>
+        <a href="#" class="sub-btn">
+          <svg class="spk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+          Subscribe
+        </a>
+      </article>
+
+      <!-- Enterprise (dashed) -->
+      <article class="card" style="--d:300ms">
+        <div class="card-label"><span>Enterprise</span></div>
+        <span class="amt"><span class="amt--m">$60</span><span class="amt--a">$51</span></span>
+        <p class="card-desc">Automate the work your team repeats, end to end.</p>
+        <div class="feat-rows">
+          <div class="frow">Unlimited agents</div>
+          <div class="frow">Custom run volume</div>
+          <div class="frow">Dedicated success manager</div>
+          <div class="frow">Audit logs &amp; SLA</div>
+        </div>
+        <a href="#" class="sub-btn">
+          <svg class="spk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+          Subscribe
+        </a>
+      </article>
+
+    </div><!-- /.cards -->
+
+    <!-- ── FAQ (side-by-side question / answer columns) ─────────────────── -->
+    <div class="faq">
+      <h2 class="faq-title" style="--d:0ms">Frequently asked<br />questions</h2>
+
+      <div class="faq-list">
+
+        <div class="qa open" style="--d:80ms">
+          <button class="qa-q" aria-expanded="true">How many automation runs do I get on the Starter plan?</button>
+          <div class="qa-ans"><div>
+            <p>The Starter plan includes 500 agent runs per month — enough to automate one or two recurring workflows end to end.</p>
+            <p>Runs reset on the first of each month, and you can top up or move to Growth at any time without losing your agents or configurations.</p>
+          </div></div>
+          <span class="qa-ico" aria-hidden="true"></span>
+        </div>
+
+        <div class="qa" style="--d:150ms">
+          <button class="qa-q" aria-expanded="false">Can I change plans later?</button>
+          <div class="qa-ans"><div>
+            <p>Yes — upgrade or downgrade anytime from your account. Changes are prorated to the day, and your agents, integrations, and run history carry over untouched.</p>
+          </div></div>
+          <span class="qa-ico" aria-hidden="true"></span>
+        </div>
+
+        <div class="qa" style="--d:220ms">
+          <button class="qa-q" aria-expanded="false">Do unused runs roll over?</button>
+          <div class="qa-ans"><div>
+            <p>Unused runs don't roll over month to month, but you can set usage alerts and auto-top-ups so an agent never stalls in the middle of a process.</p>
+          </div></div>
+          <span class="qa-ico" aria-hidden="true"></span>
+        </div>
+
+        <div class="qa" style="--d:290ms">
+          <button class="qa-q" aria-expanded="false">Is there a discount for annual billing?</button>
+          <div class="qa-ans"><div>
+            <p>Annual billing saves 15% versus monthly on every plan. Switch the toggle above to "Annual" to see the per-month price for each tier.</p>
+          </div></div>
+          <span class="qa-ico" aria-hidden="true"></span>
+        </div>
+
+      </div><!-- /.faq-list -->
+    </div><!-- /.faq -->
+
+  </div><!-- /.sub-inner -->
+</section>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    root.classList.add('has-js');
+    var sec = document.querySelector('.sub');
+    if (!sec) return;
+
+    // Single-open FAQ accordion. Clicking a row (or its question / icon) opens it
+    // and closes the others; <a> clicks inside an answer are ignored.
+    var rows = Array.prototype.slice.call(sec.querySelectorAll('.qa'));
+    rows.forEach(function (row) {
+      row.addEventListener('click', function (e) {
+        if (e.target.closest('a')) return;
+        var isOpen = row.classList.contains('open');
+        rows.forEach(function (r) {
+          r.classList.remove('open');
+          var b = r.querySelector('.qa-q'); if (b) b.setAttribute('aria-expanded', 'false');
+        });
+        if (!isOpen) {
+          row.classList.add('open');
+          var btn = row.querySelector('.qa-q'); if (btn) btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+
+    // One-time entrance reveal.
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) { sec.classList.add('in'); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { sec.classList.add('in'); io.disconnect(); }
+      });
+    }, { threshold: 0.12 });
+    io.observe(sec);
+  })();
+</script>
+</body>
+</html>

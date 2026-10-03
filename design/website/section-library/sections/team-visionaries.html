@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grid · three-column-equal — team visionaries</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Grid · three-column-equal   from component-team-visionaries.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **A small team shown small looks intentional.** The profile says
+              choosing the structure to match the count is the entire decision
+              here — the same five people in a grid built for twelve would look
+              depleted. Two cells carry no portrait at all (the header, and one
+              member), and they sit on a diagonal that balances each other.
+              That diagonal is the composition; nothing in this pass touches it.
+
+  STRUCTURE   Unchanged. A 3 × 2 grid whose top-left cell is the section header
+              and whose bottom-right cell is a photo-less member plate. DOM,
+              scripts, ids, `data-*`, `aria-*`, `href`, `src` and every
+              behavioural hook are byte-compatible with the frozen original
+              (DR-22). The v2 file is beside this one in `_v2/`.
+
+  FOUR PORTRAITS, UNCHANGED.
+              Four human photographs, none touched — same files, same
+              `object-position` on every frame, same `object-fit: cover`, none
+              hidden, none substituted. The fifth member's cell was already
+              photo-less in the frozen original and stays that way; it is a
+              composition decision, not a missing image, and it is not a slot
+              for a landscape.
+
+  NO ENVIRONMENT — and that is a finding, not an omission.
+              v2 carries no abstract creative background: no gradient, no blur
+              plate, no glow, no tint wash. The photo-less cell is a name plate
+              — a functional surface, flat and quiet, and the frozen comment is
+              explicit that it is not an atmospheric band. The assigned
+              environment therefore has nowhere to go, and putting one in the
+              empty cell would turn the section's balancing void into a picture.
+
+  ACCENT      **Zero.** v2 spent a hue three ways — the eyebrow square, the
+              eyebrow label, and the hover on four LinkedIn marks. All resolve
+              in ink. The section's register is *quiet*; a quiet band that
+              marks six things is not quiet, it is just small.
+
+  TYPE        The eyebrow label was 14px, weight 600, UPPERCASE and tracked at
+              0.08em. It lands on the one supporting step, sentence case,
+              untracked — supporting text never shouts. The role captions do
+              the same. Names hold the h6 step at weight 500; the headline
+              drops from a `clamp()` to the h3 step at 400.
+
+  FRAME       The portrait frame declared 1/1.06 — off the approved vocabulary
+              of four. It becomes `3/4`, the ratio the pack names for human
+              subjects. All four photos still render the same height, so both
+              rows still match and the photo-less cell still stretches to meet
+              them. `cover` crops symmetrically about the declared horizontal
+              centre, so no face moves and nothing stretches.
+
+  RESPONSIVE  The original's 920 / 560 breakpoints, unchanged in kind.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  .cr-team {
+    background: var(--cr-page-ground);
+    padding: var(--cr-space-2xl) var(--cr-page-gutter);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+    font-size: var(--cr-text-body);
+  }
+  .cr-team *, .cr-team *::before, .cr-team *::after { box-sizing: border-box; }
+  .team-well { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--cr-space-xs);
+  }
+
+  /* ── Header cell (top-left) ─────────────────────────────── */
+  .team-head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    padding: 0;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--cr-space-xs);
+  }
+  /* The square is a typographic mark, not a signal. In ink it reads as
+     punctuation before the label; in a hue it was a third accent moment
+     in a section entitled to none. */
+  .eyebrow .sq {
+    width: 9px; height: 9px;
+    background: var(--cr-text-primary);
+    border-radius: 0;
+    flex: 0 0 auto;
+  }
+  .eyebrow .lbl {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    color: var(--cr-text-secondary);
+  }
+  .team-head h2 {
+    margin: var(--cr-space-m) 0 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+
+  /* ── Leader card ────────────────────────────────────────── */
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: var(--cr-surface-5);
+    min-width: 0;
+  }
+  /* THE PORTRAIT FRAME. `aspect-ratio` alone governs the proportion — no
+     height floor beside it, and the card is a flex COLUMN, so the frame
+     is a main-axis item that never stretches to the row height. */
+  .card .photo {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: var(--cr-surface-5);          /* tone under the frame before the photo paints */
+  }
+  .card .photo img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .card .plate {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: var(--cr-space-xs);
+    padding: var(--cr-space-s);
+  }
+  .card .meta { min-width: 0; }
+  .card .name {
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-h6);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .card .role {
+    margin-top: var(--cr-space-xs);
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    color: var(--cr-text-secondary);
+  }
+
+  /* The link mark — the lone control, and it resolves in ink. Secondary
+     at rest so it recedes behind the name; primary on hover and focus. */
+  .li {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px; height: 34px;
+    margin: 0;
+    color: var(--cr-text-secondary);
+    transition: color .2s ease;
+  }
+  .li:hover, .li:focus-visible { color: var(--cr-text-primary); }
+  .li:focus-visible { outline: 2px solid var(--cr-text-primary); outline-offset: 2px; }
+  .li svg { width: 19px; height: 19px; display: block; fill: currentColor; }
+
+  /* ── Scroll-reveal — unchanged in kind, visible without JS ── */
+  .cr-team.has-js .reveal { opacity: 0; transform: translateY(16px); }
+  .cr-team.has-js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  /* Matched to the trigger's specificity — a guard that loses the cascade
+     is not a guard. */
+  @media (prefers-reduced-motion: reduce) {
+    .cr-team.has-js .reveal,
+    .cr-team.has-js .reveal.in { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ── Responsive ─────────────────────────────────────────── */
+  @media (max-width: 920px) {
+    .cr-team { padding-top: var(--cr-space-xl); padding-bottom: var(--cr-space-xl); }
+    .team-grid { grid-template-columns: repeat(2, 1fr); }
+    .team-head { grid-column: 1 / -1; padding-bottom: var(--cr-space-xs); }
+    .team-head h2 { margin-top: var(--cr-space-s); }
+    .card.noimg { grid-column: 1 / -1; }   /* the photo-less cell becomes a full-width name bar */
+  }
+  @media (max-width: 560px) {
+    .cr-team { padding-top: var(--cr-space-m); padding-bottom: var(--cr-space-m); }
+    .team-grid { grid-template-columns: 1fr; }
+    .team-head h2 { font-size: var(--cr-text-h4); }
+    .card .name { font-size: var(--cr-text-body); }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget
+  Every dimension this specimen moves, declared. Predicate 6 fails on any
+  change not listed here, and on any line here that moved nothing.
+  The auto track of the name plate is the link mark. v2 pulled it outward with a
+  negative optical margin off the spacing scale; at zero the mark measures its own
+  width and the track follows, which is why that line reads as spacing.
+  .card      | font-size              | type-ramp
+  .eyebrow   | column-gap             | spacing-scale
+  .eyebrow   | font-size              | type-ramp
+  .eyebrow   | margin-bottom          | spacing-scale
+  .eyebrow   | margin-top             | spacing-scale
+  .eyebrow   | row-gap                | spacing-scale
+  .lbl       | font-size              | type-ramp
+  .lbl       | line-height            | type-ramp
+  .meta      | font-size              | type-ramp
+  .name      | font-size              | type-ramp
+  .name      | line-height            | type-ramp
+  .plate     | font-size              | type-ramp
+  .plate     | grid-template-columns  | spacing-scale
+  .plate     | padding-bottom         | spacing-scale
+  .plate     | padding-left           | spacing-scale
+  .plate     | padding-right          | spacing-scale
+  .role      | font-size              | type-ramp
+  .role      | line-height            | type-ramp
+  .role      | margin-top             | spacing-scale
+  .team-grid | font-size              | type-ramp
+  .team-head | font-size              | type-ramp
+  .team-head | padding-bottom         | spacing-scale
+  .team-head | padding-right          | spacing-scale
+  .team-head | padding-top            | spacing-scale
+  br         | font-size              | type-ramp
+  br         | line-height            | type-ramp
+  h2         | font-size              | type-ramp
+  h2         | line-height            | type-ramp
+  h2         | margin-top             | spacing-scale
+  img        | font-size              | type-ramp
+  path       | font-size              | type-ramp
+  svg        | font-size              | type-ramp
+-->
+
+<section class="cr-team" data-screen-label="Team · visionaries roster"
+         data-archetype="editorial-stack" data-hierarchy="supporting" data-intent="build-trust"
+         data-register="quiet" data-signature="editorial-photography" data-density="low">
+  <div class="team-well">
+    <div class="team-grid">
+
+      <!-- Header cell (top-left) -->
+      <header class="team-head reveal" style="--d:0ms">
+        <p class="eyebrow"><span class="sq"></span><span class="lbl">Our Leadership Team</span></p>
+        <h2>Meet the<br>builders.</h2>
+      </header>
+
+      <!-- 1 — CEO -->
+      <article class="card reveal" style="--d:90ms">
+        <div class="photo"><img src="../../brand-pack/assets/imagery/avatars/leader-1.jpg" alt="Rohan Deshpande" style="object-position:center 16%"></div>
+        <div class="plate">
+          <div class="meta">
+            <div class="name">Rohan Deshpande</div>
+            <div class="role">Chief Executive Officer</div>
+          </div>
+          <a class="li" href="#" aria-label="Rohan Deshpande on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+        </div>
+      </article>
+
+      <!-- 2 — CFO -->
+      <article class="card reveal" style="--d:150ms">
+        <div class="photo"><img src="../../brand-pack/assets/imagery/avatars/leader-2.jpg" alt="Ananya Iyer" style="object-position:center 24%"></div>
+        <div class="plate">
+          <div class="meta">
+            <div class="name">Ananya Iyer</div>
+            <div class="role">Chief Financial Officer</div>
+          </div>
+          <a class="li" href="#" aria-label="Ananya Iyer on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+        </div>
+      </article>
+
+      <!-- 3 — CTO -->
+      <article class="card reveal" style="--d:210ms">
+        <div class="photo"><img src="../../brand-pack/assets/imagery/avatars/leader-3.jpg" alt="Arjun Nair" style="object-position:center 14%"></div>
+        <div class="plate">
+          <div class="meta">
+            <div class="name">Arjun Nair</div>
+            <div class="role">Chief Technology Officer</div>
+          </div>
+          <a class="li" href="#" aria-label="Arjun Nair on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+        </div>
+      </article>
+
+      <!-- 4 — COO -->
+      <article class="card reveal" style="--d:270ms">
+        <div class="photo"><img src="../../brand-pack/assets/imagery/avatars/leader-4.jpg" alt="Meera Kulkarni" style="object-position:center 12%"></div>
+        <div class="plate">
+          <div class="meta">
+            <div class="name">Meera Kulkarni</div>
+            <div class="role">Chief Operating Officer</div>
+          </div>
+          <a class="li" href="#" aria-label="Meera Kulkarni on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+        </div>
+      </article>
+
+      <!-- 5 — CPO (no-photo cell, plate pinned top) -->
+      <article class="card noimg reveal" style="--d:330ms">
+        <div class="plate">
+          <div class="meta">
+            <div class="name">Karthik Reddy</div>
+            <div class="role">Chief Product Officer</div>
+          </div>
+          <a class="li" href="#" aria-label="Karthik Reddy on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var sec = document.querySelector('.cr-team');
+    if (!sec || !('IntersectionObserver' in window)) return;
+    sec.classList.add('has-js');
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          sec.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+          io.disconnect();
+        }
+      });
+    }, { threshold: 0.15 });
+    io.observe(sec);
+  })();
+</script>
+</body>
+</html>

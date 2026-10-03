@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Accent Color System — swatch reference</title>
+<link rel="stylesheet" href="_card.css">
+<link rel="stylesheet" href="../../../design_principles/accent-palette.css">
+<style>
+  /* Screen review card (.card), not a .cr-page — fills are for review; real print
+     fidelity rides the .cr-page print mechanism (see accent-palette.css header).
+     Contrast badges are computed LIVE (WCAG 2.x relative luminance, each step vs white). */
+  .legend { font: 400 11px/1.5 var(--font-body); color: var(--fg-muted); max-width: 82ch; margin: 0 0 4px; }
+  .legend b { color: var(--fg); font-weight: 600; }
+  .fam-row { display: flex; gap: 6px; flex-wrap: nowrap; align-items: flex-start; }
+  .fam-row .tile { flex: 1; min-width: 0; gap: 3px; }
+  .fam-row .swatch { aspect-ratio: auto; height: 44px; }
+  .fam-row .swatch.base { outline: 2px solid var(--fg); outline-offset: 2px; }
+  .fam-row .name { font: 600 10px/1.2 var(--font-body); }
+  .fam-row .tok  { font: 400 8px/1.25 var(--font-mono); color: var(--fg-muted); overflow-wrap: anywhere; }
+  .fam-row .meta { font: 400 9px/1.2 var(--font-mono); color: var(--fg); }
+  .fam-row .aa   { font: 600 8px/1.2 var(--font-mono); letter-spacing: .02em; }
+  .aa-pass { color: var(--cr-green-900); }       /* ≥ 4.5:1 — body text on white ok */
+  .aa-lg   { color: var(--cr-deep-orange-900); } /* 3.0–4.5:1 — large / UI text only */
+  .aa-no   { color: var(--fg-faint); }           /* < 3.0:1 — decorative / fill only */
+  .fam-name { font: 600 13px/1.4 var(--font-display); color: var(--fg); margin-top: 8px; }
+  .fam-name .use { font: 400 10px/1.4 var(--font-mono); color: var(--fg-faint); text-transform: none; letter-spacing: 0; margin-left: 8px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="label">Accent Color System · Secondary Color Palette — expression layer · 16 Material families × 50–950 · 500 = base</div>
+  <p class="legend">
+    The official <b>Secondary Color Palette</b> — an active expression layer (no longer occasional decoration). It carries information,
+    categorization &amp; visual richness across data-viz series, diagram marks, charts, illustrations, tags, status &amp; category indicators,
+    and <b>supporting UI</b>: cards, data modules, insight blocks, badges, labels, filters, tabs, supporting buttons &amp; backgrounds.
+    <b>Primary (navy + electric) keeps brand authority</b> — primary buttons, navigation, key CTAs, core typography. Target balance per composition:
+    <b>primary 60–70% · secondary 25–35% · neutral 5–15%</b> (directional).
+    Step guidance: <b>50–300</b> = fills / surfaces / tags / track · <b>500–600</b> = marks / status dots / chart series (500 = base, ringed).
+    Each swatch shows its <b>token</b>, <b>hex</b>, and live <b>contrast vs white</b>:
+    <span class="aa aa-pass">AA</span> ≥ 4.5:1 (body text) ·
+    <span class="aa aa-lg">Lg</span> ≥ 3.0:1 (large / UI text only) ·
+    <span class="aa aa-no">—</span> &lt; 3.0:1 (decorative / fill only).
+    <b>The text-safe step varies by family</b> (each row notes its body-text floor) — cool darks clear early, warm &amp; light families need the deep end, and <b>yellow has no AA step</b> (fills / large-text only).
+    A mark shares the <b>exact</b> step token of its label/legend (colour-pairing); secondary colour is <b>not decorative by default</b> — use a
+    purposeful, meaning-driven set so every hue reinforces meaning, hierarchy or categorization.
+  </p>
+  <div id="palette"></div>
+</div>
+
+<script>
+  var FAMILIES = [
+    ["Red", "red"], ["Pink", "pink"], ["Purple", "purple"], ["Deep Purple", "deep-purple"],
+    ["Indigo", "indigo"], ["Blue", "blue"], ["Light Blue", "light-blue"], ["Cyan", "cyan"],
+    ["Teal", "teal"], ["Green", "green"], ["Light Green", "light-green"], ["Lime", "lime"],
+    ["Yellow", "yellow"], ["Orange", "orange"], ["Deep Orange", "deep-orange"], ["Grey", "grey"]
+  ];
+  var STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+
+  function toHex(rgb) {
+    var m = rgb.match(/\d+/g);
+    if (!m) return rgb;
+    return "#" + m.slice(0, 3).map(function (n) {
+      return ("0" + parseInt(n, 10).toString(16)).slice(-2);
+    }).join("").toUpperCase();
+  }
+  // WCAG 2.x relative luminance + contrast ratio of a colour against white.
+  function chan(c) { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+  function ratioOnWhite(rgb) {
+    var m = rgb.match(/\d+/g); if (!m) return 0;
+    var L = 0.2126 * chan(+m[0]) + 0.7152 * chan(+m[1]) + 0.0722 * chan(+m[2]);
+    return 1.05 / (L + 0.05);
+  }
+  function tier(r) { return r >= 4.5 ? ["AA", "aa-pass"] : r >= 3.0 ? ["Lg", "aa-lg"] : ["—", "aa-no"]; }
+
+  var root = document.getElementById("palette");
+  FAMILIES.forEach(function (fam) {
+    var name = fam[0], slug = fam[1];
+    var title = document.createElement("div");
+    title.className = "fam-name";
+    root.appendChild(title);
+
+    var row = document.createElement("div");
+    row.className = "row fam-row";
+    root.appendChild(row);                 // attach to live DOM so CSS vars resolve
+
+    var firstAA = null;                    // lowest step that clears AA (4.5:1) on white
+    STEPS.forEach(function (step) {
+      var tile = document.createElement("div");
+      tile.className = "tile";
+      row.appendChild(tile);
+
+      var sw = document.createElement("div");
+      sw.className = "swatch" + (step >= 700 ? " dark" : "") + (step === 500 ? " base" : "");
+      sw.style.background = "var(--cr-" + slug + "-" + step + ")";
+      tile.appendChild(sw);
+
+      var rgb = getComputedStyle(sw).backgroundColor;   // sw now live → var resolves
+      var r = ratioOnWhite(rgb), t = tier(r);
+      if (firstAA === null && r >= 4.5) firstAA = step;
+
+      var nm = document.createElement("div");
+      nm.className = "name";
+      nm.textContent = step + (step === 500 ? " · base" : "");
+      tile.appendChild(nm);
+
+      var tk = document.createElement("div");
+      tk.className = "tok";
+      tk.textContent = "--cr-" + slug + "-" + step;       // token this swatch represents
+      tile.appendChild(tk);
+
+      var mt = document.createElement("div");
+      mt.className = "meta";
+      mt.textContent = toHex(rgb);
+      tile.appendChild(mt);
+
+      var aa = document.createElement("div");
+      aa.className = "aa " + t[1];
+      aa.textContent = r.toFixed(1) + ":1 " + t[0];
+      tile.appendChild(aa);
+    });
+
+    title.innerHTML = name + '<span class="use">' +
+      (firstAA ? "body text on white: ≥ " + firstAA
+               : "no AA step on white — fills / large-text only") + "</span>";
+  });
+</script>
+</body>
+</html>

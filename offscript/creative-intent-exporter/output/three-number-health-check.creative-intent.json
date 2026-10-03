@@ -1,0 +1,11 @@
+{
+  "id": "three-number-health-check",
+  "contractVersion": 1,
+  "digest": "sha256:ae578a7266acd43672e5b48319999cb05f100f90bdd17ed98894f6b13035f5ac",
+  "belief": "three KPI numbers tell the whole health story of the business at a glance",
+  "feature": "analytics",
+  "ratio": "16:9",
+  "camera": "establishing",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

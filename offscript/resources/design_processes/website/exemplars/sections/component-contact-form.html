@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Form Split · asymmetric — contact</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Form Split · asymmetric      from component-contact-form.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **Reassurance beside the fields, not above them.** The profile
+              names the reason precisely: hesitation arrives *while the reader is
+              looking at the form and deciding whether to start*, so the answer
+              has to be in the same glance. That is the whole argument for the
+              62/38 split, and it is why the right column is not decoration —
+              it is the other half of the ask.
+
+  STRUCTURE   Unchanged. A 62fr/38fr split: eyebrow → headline → form → submit on
+              the left; blurb → media panel on the right, both columns starting
+              at the same top edge. DOM, scripts, ids, `data-*`, `aria-*`,
+              `href`, `src` and every behavioural hook are byte-compatible with
+              the frozen original (DR-22). The v2 file is beside this one in
+              `_v2/`.
+
+  THE FORM IS FROZEN. Every input, name, label, `for`, `option` and the submit
+              behaviour are exactly the original's. What moved is presentation:
+              the control radius, one stroke, the raised surface, and a focus
+              indicator that is dark ink rather than a hue.
+
+  THE CREATIVE  `.ctf-panel` was an abstract creative plate — a blur raster
+              (`blur-7.png`) on a hand-picked slate fill, with a grain PNG at 18%
+              and two concentric white orbit rings over it. That is a decorative
+              stand-in for a subject, and it is replaced by an approved
+              environment carrying the texture stack. `lake-mirror` is the
+              catalogue's bright, calm, deliberately centred member — explicitly
+              *a closing surface, not a hero* — which is what a tall panel beside
+              a closing form wants to be.
+
+              ONE STACK, three layers: grain on top, grunge under it, the
+              environment underneath both. It has to be one stack — a blend mode
+              composites against what is beneath it in the SAME background, so
+              leaving the grain on `.ctf-panel-grain` would resolve `overlay`
+              against transparency and render at full strength as grey static.
+              That layer stays in place and carries nothing. The URLs are written
+              out rather than reached through `--cr-env-*`, because a `url()`
+              inside a custom property resolves against the CONSUMING document
+              and fails silently.
+
+              The two orbit rings are the abstract decoration this pass removes.
+              They are frozen DOM, so they go INERT rather than away — precedent
+              `tabs-panel-below.html`.
+
+  NO TYPE ON THE PHOTOGRAPH  There is no photograph behind the form: the fields
+              stay on the base surface, on the left, where the environment never
+              reaches. The one word set on the panel — the `Zero commitment`
+              label — takes its own OPAQUE chip, which is the permitted case.
+              Remove the environment and not one word changes legibility.
+
+  ACCENT      One moment, and it is the ask. `Book a Demo Call` takes the orange;
+              v2 also spent brand blue on the focus border of every one of the
+              nine fields, on the circular icon button and on the submit hover —
+              which is a form where the accent marks *being in a text box*
+              rather than marking the thing to click. The focus indicator is now
+              dark ink at ~13:1, which is what the pack's default ring is for.
+
+  SECOND CUE  All three border tokens measure under 3:1 against the page ground,
+              so a border alone cannot be a control's only boundary. The inputs
+              therefore sit on the RAISED surface against the cream page: the
+              surface change is the second cue, and it is measurable rather than
+              asserted.
+
+  RESPONSIVE  The original's breakpoints (860 / 560), unchanged. The per-section
+              headline steps are GONE rather than converted — the pack already
+              walks h1 down its own ladder at its own breakpoints, and a second
+              ramp on top of it resolves to sizes nobody authored. The reduce
+              guard now names the reveal trigger as well as the hidden state, so
+              the entrance snaps.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  .cr-ctf {
+    background: var(--cr-page-ground);
+    padding: var(--cr-space-2xl) var(--cr-page-gutter);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+    font-size: var(--cr-text-body);
+  }
+  .cr-ctf *, .cr-ctf *::before, .cr-ctf *::after { box-sizing: border-box; }
+  .ctf-well {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+  }
+
+  /* ── 2-col grid — the split IS the composition and the tracks are untouched ── */
+  .ctf-grid {
+    display: grid;
+    grid-template-columns: 62fr 38fr;
+    gap: var(--cr-space-xl);
+    align-items: start;
+  }
+
+  /* ── Left column ────────────────────────────────────────── */
+  .ctf-left { display: flex; flex-direction: column; min-width: 0; }
+
+  .ctf-eyebrow {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    letter-spacing: 0;                 /* supporting text: never tracked, never uppercase */
+    color: var(--cr-text-secondary);
+  }
+  .ctf-headline {
+    margin: var(--cr-space-s) 0 var(--cr-space-m);
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h1);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+
+  /* ── Form — frozen behaviour, restyled surface ───────────── */
+  .ctf-form { display: flex; flex-direction: column; gap: var(--cr-space-s); }
+
+  .ctf-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--cr-space-s);
+  }
+  .ctf-field { display: flex; flex-direction: column; gap: var(--cr-space-xs); }
+  .ctf-label {
+    font-family: var(--cr-font-body);
+    font-size: var(--cr-text-supporting);
+    font-weight: 500;
+    color: var(--cr-text-secondary);
+    letter-spacing: 0;
+  }
+  /* A control never inherits `font-family` — it is stated. */
+  .ctf-input,
+  .ctf-select,
+  .ctf-textarea {
+    font-family: var(--cr-font-body);
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    padding: var(--cr-space-xs);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-control);   /* inputs take the CONTROL radius */
+    background: var(--cr-bg-raised);           /* the raised surface IS the second cue */
+    color: var(--cr-text-primary);
+    outline: none;
+    transition: border-color .18s ease;
+    width: 100%;
+  }
+  .ctf-input::placeholder,
+  .ctf-textarea::placeholder { color: var(--cr-text-secondary); }
+  /* THE FOCUS INDICATOR IS DARK INK, not a hue. `--cr-focus-ring` is
+     `--cr-text-primary` — 13.14:1 on the page ground, where the blue the v2
+     border reached for measures 2.07:1 and is disqualified outright (DR-24). */
+  .ctf-input:focus-visible,
+  .ctf-select:focus-visible,
+  .ctf-textarea:focus-visible {
+    border-color: var(--cr-text-primary);
+    outline: 2px solid var(--cr-focus-ring);
+    outline-offset: 2px;
+  }
+  .ctf-select:focus {
+    border-color: var(--cr-text-primary);
+    /* chevron flips up when dropdown is open */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23626262' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 15 12 9 18 15'%3E%3C/polyline%3E%3C/svg%3E");
+  }
+
+  .ctf-select {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    padding-right: var(--cr-space-m);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23626262' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right var(--cr-space-xs) center;
+  }
+  .ctf-select option { color: var(--cr-text-primary); }
+
+  .ctf-textarea {
+    resize: vertical;
+    min-height: 112px;               /* the original's field height — not a spacing decision */
+  }
+
+  /* ── THE ONE ACCENT MOMENT — the ask ────────────────────── */
+  .ctf-submit-row {
+    display: flex;
+    align-items: center;
+    gap: var(--cr-space-xs);
+    margin-top: var(--cr-space-xs);
+    flex-wrap: wrap;
+  }
+  .ctf-submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    background: var(--cr-accent-orange);
+    color: var(--cr-on-accent-light);
+    border: none;
+    border-radius: var(--cr-radius-control);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    letter-spacing: 0;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .2s ease;
+    white-space: nowrap;
+  }
+  .ctf-submit-btn:hover, .ctf-submit-btn:focus-visible {
+    background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+  .ctf-submit-btn:focus-visible {
+    outline: 2px solid var(--cr-focus-ring);
+    outline-offset: 3px;
+  }
+  /* Declared but not instantiated in this composition — kept in step with the
+     button beside it, and neutral, because the section spends its accent once. */
+  .ctf-submit-icon {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--cr-text-primary);
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex: 0 0 auto;
+    color: var(--cr-text-inverse);
+    transition: background .2s ease;
+  }
+  .ctf-submit-icon:hover, .ctf-submit-icon:focus-visible {
+    background: var(--cr-text-secondary);
+  }
+  .ctf-submit-icon:focus-visible {
+    outline: 2px solid var(--cr-focus-ring);
+    outline-offset: 3px;
+  }
+  .ctf-submit-icon svg { width: 18px; height: 18px; stroke-width: var(--cr-icon-stroke-md); }
+
+  /* ── Right column — reassurance, then the environment ───── */
+  .ctf-right {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cr-space-s);
+    align-self: stretch; /* match left col height */
+  }
+  .ctf-blurb {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* THE ENVIRONMENT. One stack, three layers, in this order: grain on top,
+     grunge under it, the environment underneath both. The last
+     background-position is the asset's measured focus from ASSETS.md
+     (`50% 50%`), not a guess. Never a `background:` shorthand on this element —
+     the shorthand resets `background-image`. */
+  .ctf-panel {
+    flex: 1;
+    min-height: 340px;
+    border-radius: var(--cr-radius-card);
+    position: relative;
+    overflow: hidden;
+    background-color: var(--cr-bg-dark);
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-lake-mirror.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 50% 50%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+  }
+  /* The grain moved into the panel's own stack, where a blend mode has a base to
+     composite against. This layer stays in place and carries nothing. */
+  .ctf-panel-grain {
+    position: absolute; inset: 0;
+    background-image: none;
+    pointer-events: none;
+  }
+  /* Decorative orbit rings — frozen DOM, made inert rather than deleted. */
+  .ctf-panel-orbit,
+  .ctf-panel-orbit-2 { display: none !important; }
+
+  /* The one word on the picture takes its own OPAQUE chip. An opaque panel over
+     a photograph is the permitted case; white type drawing its contrast from the
+     picture is not. */
+  .ctf-panel-pill {
+    position: absolute;
+    top: var(--cr-space-s); right: var(--cr-space-s);
+    padding: var(--cr-space-xs);
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-control);
+    font-family: var(--cr-font-body);
+    font-size: var(--cr-text-supporting);
+    font-weight: 500;
+    color: var(--cr-text-primary);
+    letter-spacing: 0;
+    pointer-events: none;
+  }
+
+  /* ── Scroll-reveal ──────────────────────────────────────── */
+  .cr-ctf.has-js .reveal { opacity: 0; transform: translateY(14px); }
+  .cr-ctf.has-js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  /* The guard must match the trigger it is guarding. v2's reset named only
+     `.cr-ctf.has-js .reveal`, one class short of the trigger, so the transition
+     ran anyway under a reduce preference. Both are named now, and the entrance
+     snaps. */
+  @media (prefers-reduced-motion: reduce) {
+    .cr-ctf.has-js .reveal,
+    .cr-ctf.has-js .reveal.in { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ── Responsive — the ORIGINAL's breakpoints. The per-section headline
+     steps are deleted, not converted. ─────────────────────── */
+  @media (max-width: 860px) {
+    .ctf-grid { grid-template-columns: 1fr; gap: var(--cr-space-m); }
+    .ctf-right { align-self: auto; }
+    .ctf-panel { min-height: 260px; flex: none; }
+  }
+  @media (max-width: 560px) {
+    .ctf-row { grid-template-columns: 1fr; }
+    .ctf-submit-btn { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing.
+  .ctf-blurb      | font-size              | type-ramp
+  .ctf-blurb      | line-height            | type-ramp
+  .ctf-eyebrow    | font-size              | type-ramp
+  .ctf-field      | column-gap             | spacing-scale
+  .ctf-field      | font-size              | type-ramp
+  .ctf-field      | row-gap                | spacing-scale
+  .ctf-form       | column-gap             | spacing-scale
+  .ctf-form       | font-size              | type-ramp
+  .ctf-form       | row-gap                | spacing-scale
+  .ctf-grid       | column-gap             | spacing-scale
+  .ctf-grid       | font-size              | type-ramp
+  .ctf-grid       | row-gap                | spacing-scale
+  .ctf-headline   | font-size              | type-ramp
+  .ctf-headline   | line-height            | type-ramp
+  .ctf-headline   | margin-bottom          | spacing-scale
+  .ctf-headline   | margin-top             | spacing-scale
+  .ctf-input      | border-radius          | radius-pair
+  .ctf-input      | font-size              | type-ramp
+  .ctf-input      | line-height            | type-ramp
+  .ctf-input      | padding-bottom         | spacing-scale
+  .ctf-input      | padding-left           | spacing-scale
+  .ctf-input      | padding-right          | spacing-scale
+  .ctf-input      | padding-top            | spacing-scale
+  .ctf-label      | font-size              | type-ramp
+  .ctf-left       | font-size              | type-ramp
+  .ctf-panel      | border-radius          | radius-pair
+  .ctf-panel      | font-size              | type-ramp
+  .ctf-panel-pill | border-radius          | radius-pair
+  .ctf-panel-pill | font-size              | type-ramp
+  .ctf-panel-pill | padding-bottom         | spacing-scale
+  .ctf-panel-pill | padding-left           | spacing-scale
+  .ctf-panel-pill | padding-right          | spacing-scale
+  .ctf-panel-pill | padding-top            | spacing-scale
+  .ctf-right      | column-gap             | spacing-scale
+  .ctf-right      | font-size              | type-ramp
+  .ctf-right      | row-gap                | spacing-scale
+  .ctf-row        | column-gap             | spacing-scale
+  .ctf-row        | font-size              | type-ramp
+  .ctf-row        | row-gap                | spacing-scale
+  .ctf-select     | border-radius          | radius-pair
+  .ctf-select     | font-size              | type-ramp
+  .ctf-select     | line-height            | type-ramp
+  .ctf-select     | padding-bottom         | spacing-scale
+  .ctf-select     | padding-left           | spacing-scale
+  .ctf-select     | padding-right          | spacing-scale
+  .ctf-select     | padding-top            | spacing-scale
+  .ctf-submit-btn | border-radius          | radius-pair
+  .ctf-submit-btn | column-gap             | spacing-scale
+  .ctf-submit-btn | font-size              | type-ramp
+  .ctf-submit-btn | padding-bottom         | spacing-scale
+  .ctf-submit-btn | padding-left           | spacing-scale
+  .ctf-submit-btn | padding-right          | spacing-scale
+  .ctf-submit-btn | padding-top            | spacing-scale
+  .ctf-submit-btn | row-gap                | spacing-scale
+  .ctf-textarea   | border-radius          | radius-pair
+  .ctf-textarea   | font-size              | type-ramp
+  .ctf-textarea   | line-height            | type-ramp
+  .ctf-textarea   | padding-bottom         | spacing-scale
+  .ctf-textarea   | padding-left           | spacing-scale
+  .ctf-textarea   | padding-right          | spacing-scale
+  .ctf-textarea   | padding-top            | spacing-scale
+  option          | font-size              | type-ramp
+  option          | line-height            | type-ramp
+-->
+
+
+<section class="cr-ctf" data-screen-label="Contact · form"
+         data-archetype="editorial-split" data-hierarchy="closing" data-intent="convert"
+         data-register="human" data-signature="editorial-photography" data-density="medium">
+  <div class="ctf-well">
+    <div class="ctf-grid">
+
+      <!-- ── Left column ───────────────────────────────────── -->
+      <div class="ctf-left">
+        <p class="ctf-eyebrow reveal" style="--d:0ms">[ GET IN TOUCH ]</p>
+        <h2 class="ctf-headline reveal" style="--d:80ms">Contact Us</h2>
+
+        <form class="ctf-form" novalidate onsubmit="return false">
+
+          <div class="ctf-row reveal" style="--d:160ms">
+            <div class="ctf-field">
+              <label class="ctf-label" for="ctf-name">Full name</label>
+              <input class="ctf-input" type="text" id="ctf-name" name="name"
+                     placeholder="Your full name" autocomplete="name">
+            </div>
+            <div class="ctf-field">
+              <label class="ctf-label" for="ctf-email">Work email</label>
+              <input class="ctf-input" type="email" id="ctf-email" name="email"
+                     placeholder="name@company.com" autocomplete="email">
+            </div>
+          </div>
+
+          <div class="ctf-row reveal" style="--d:220ms">
+            <div class="ctf-field">
+              <label class="ctf-label" for="ctf-company">Company</label>
+              <input class="ctf-input" type="text" id="ctf-company" name="company"
+                     placeholder="Company Inc." autocomplete="organization">
+            </div>
+            <div class="ctf-field">
+              <label class="ctf-label" for="ctf-role">Your role</label>
+              <input class="ctf-input" type="text" id="ctf-role" name="role"
+                     placeholder="VP of Operations">
+            </div>
+          </div>
+
+          <div class="ctf-row reveal" style="--d:280ms">
+            <div class="ctf-field">
+              <label class="ctf-label" for="ctf-focus">What are you automating?</label>
+              <select class="ctf-select" id="ctf-focus" name="focus">
+                <option value="" disabled selected>Choose a focus area&hellip;</option>
+                <option value="ops">Operations / Back-office</option>
+                <option value="sales">Sales &amp; CRM Automation</option>
+                <option value="docs">Document Processing (DocXter)</option>
+                <option value="erp">SAP / ERP Integration</option>
+                <option value="custom">Custom AI Development</option>
+                <option value="strategy">AI Strategy &amp; Assessment</option>
+              </select>
+            </div>
+            <div class="ctf-field">
+              <label class="ctf-label" for="ctf-teamsize">Team size</label>
+              <select class="ctf-select" id="ctf-teamsize" name="teamsize">
+                <option value="" disabled selected>Select team size&hellip;</option>
+                <option value="1-10">1&ndash;10 people</option>
+                <option value="11-50">11&ndash;50 people</option>
+                <option value="51-200">51&ndash;200 people</option>
+                <option value="201+">201+ people</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="ctf-field reveal" style="--d:340ms">
+            <label class="ctf-label" for="ctf-message">Message / Project context</label>
+            <textarea class="ctf-textarea" id="ctf-message" name="message"
+                      placeholder="Anything you&apos;d like us to know before the call&hellip;"></textarea>
+          </div>
+
+          <div class="ctf-submit-row reveal" style="--d:400ms">
+            <button type="submit" class="ctf-submit-btn">Book a Demo Call</button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- ── Right column ──────────────────────────────────── -->
+      <div class="ctf-right">
+        <p class="ctf-blurb reveal" style="--d:80ms">Tell us what you&rsquo;re automating and we&rsquo;ll set up a focused 30-minute demo within 24 hours. No pitch decks &mdash; we show you the numbers in your stack first.</p>
+
+        <div class="ctf-panel reveal" style="--d:160ms">
+          <div class="ctf-panel-grain"></div>
+          <div class="ctf-panel-orbit"></div>
+          <div class="ctf-panel-orbit-2"></div>
+          <span class="ctf-panel-pill">Zero commitment</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<script>
+  (function () {
+    if (window.lucide) lucide.createIcons();
+
+    var sec = document.querySelector('.cr-ctf');
+    if (!sec || !('IntersectionObserver' in window)) return;
+    sec.classList.add('has-js');
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          sec.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+          io.disconnect();
+        }
+      });
+    }, { threshold: 0.06 });
+
+    io.observe(sec);
+  })();
+</script>
+</body>
+</html>

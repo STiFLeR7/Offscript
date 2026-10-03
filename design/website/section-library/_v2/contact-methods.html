@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<!--
+  component-contact-methods.html
+  Composition: white section, 2-column contact layout.
+    LEFT  — eyebrow ("Contact") + 2-line Urbanist 700 headline + Inter lede +
+            two stacked CONTACT-METHOD CARDS (grey-filled, Lucide icon top-left,
+            title+sub bottom-left, dark square arrow button bottom-right).
+    RIGHT — "Send a Message" form: underline-style fields (Full name, Email,
+            Message textarea) + full-width brand-blue submit with dark arrow box.
+  Multi-use: contact / get-in-touch / lead-capture sections.
+  Inspiration: Rachel coaching "Let's build your plan together" contact split —
+    orange submit → CR brand blue; coaching copy → CR voice (no exclamation);
+    hours → IST (Example Brand is Pune-based).
+  Motion: transform-only staggered rise on entrance (content always visible — no
+    opacity gate, safe for the live-snapshot preview) + hover on the method cards
+    & arrows + focus-underline on form fields (real controls only).
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CR — Contact</title>
+  <link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--cr-bg);
+      font-family: var(--cr-font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Entrance: transform-only rise (always visible, no opacity gate) ── */
+    @keyframes cc-rise {
+      from { transform: translateY(12px); }
+      to   { transform: none; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .cr-rise {
+        animation: cc-rise .6s cubic-bezier(.16,1,.3,1) both;
+        animation-delay: var(--d, 0s);
+      }
+    }
+
+    /* ── Section shell ──────────────────────────────────────────── */
+    .cc {
+      padding: var(--cr-space-20) var(--cr-page-gutter);
+      background: var(--cr-bg);
+    }
+    .cc-well {
+      max-width: var(--cr-content-max);
+      margin: 0 auto;
+    }
+    .cc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      align-items: start;
+    }
+
+    /* ── Left column ────────────────────────────────────────────── */
+    .cc-eyebrow {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--cr-fg-3);
+      margin-bottom: 18px;
+    }
+    .cc-title {
+      font-family: var(--cr-font-display);
+      font-weight: 700;
+      font-size: 46px;
+      line-height: 1.08;
+      letter-spacing: -0.025em;
+      color: var(--cr-fg);
+      margin-bottom: 20px;
+    }
+    .cc-sub {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--cr-fg-2);
+      max-width: 420px;
+      margin-bottom: 40px;
+    }
+
+    /* ── Contact-method cards ───────────────────────────────────── */
+    .cc-methods {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .cc-method {
+      display: flex;
+      flex-direction: column;
+      min-height: 150px;
+      padding: 22px 24px 24px;
+      background: var(--cr-bg-grey-100);
+      border: 1px solid var(--cr-line);
+      border-radius: var(--cr-radius-lg);
+      text-decoration: none;
+      transition: background .2s ease, border-color .2s ease;
+    }
+    .cc-method:hover {
+      background: var(--cr-bg-grey-200);
+      border-color: var(--cr-fg-muted);
+    }
+    .cc-method-ico {
+      width: 38px;
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cr-fg);
+    }
+    .cc-method-ico svg { width: 24px; height: 24px; stroke-width: 1.75; }
+
+    .cc-method-foot {
+      margin-top: auto;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .cc-method-txt { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .cc-method-title {
+      font-family: var(--cr-font-display);
+      font-weight: 700;
+      font-size: 19px;
+      color: var(--cr-fg);
+    }
+    .cc-method-sub {
+      font-size: 13.5px;
+      color: var(--cr-fg-3);
+      line-height: 1.4;
+    }
+
+    /* Dark square arrow button */
+    .cc-arrow {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--cr-ink);
+      border-radius: var(--cr-radius-sm);
+      color: #fff;
+    }
+    .cc-arrow svg { width: 18px; height: 18px; transition: transform .2s ease; }
+    .cc-method:hover .cc-arrow svg { transform: translateX(3px); }
+
+    /* ── Right column · form ────────────────────────────────────── */
+    .cc-right { padding-top: 52px; }
+    .cc-form-title {
+      font-family: var(--cr-font-display);
+      font-weight: 700;
+      font-size: 28px;
+      letter-spacing: -0.01em;
+      color: var(--cr-fg);
+      margin-bottom: 30px;
+    }
+    .cc-form { display: flex; flex-direction: column; gap: 26px; }
+    .cc-field { display: flex; flex-direction: column; }
+    .cc-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--cr-fg-3);
+      margin-bottom: 9px;
+    }
+    .cc-input,
+    .cc-textarea {
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid var(--cr-line);
+      background: transparent;
+      padding: 9px 0;
+      font-family: var(--cr-font-body);
+      font-size: 16px;
+      color: var(--cr-fg);
+      transition: border-color .2s ease;
+    }
+    .cc-input::placeholder,
+    .cc-textarea::placeholder { color: var(--cr-fg-muted); }
+    .cc-input:focus,
+    .cc-textarea:focus {
+      outline: none;
+      border-bottom-color: var(--cr-brand);
+    }
+    .cc-textarea { resize: none; min-height: 30px; line-height: 1.6; }
+
+    /* Submit — brand-blue bar with dark arrow box */
+    .cc-submit {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      margin-top: 8px;
+      padding: 6px 6px 6px 24px;
+      background: var(--cr-brand);
+      border: none;
+      border-radius: var(--cr-radius-md);
+      cursor: pointer;
+      transition: background .2s ease;
+    }
+    .cc-submit:hover { background: var(--cr-brand-700); }
+    .cc-submit-label {
+      font-family: var(--cr-font-display);
+      font-weight: 600;
+      font-size: 16px;
+      color: #fff;
+    }
+    .cc-submit-arrow {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--cr-ink);
+      border-radius: var(--cr-radius-sm);
+      color: #fff;
+    }
+    .cc-submit-arrow svg { width: 18px; height: 18px; transition: transform .2s ease; }
+    .cc-submit:hover .cc-submit-arrow svg { transform: translateX(3px); }
+
+    /* ── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 1080px) {
+      .cc { padding: 72px 48px; }
+      .cc-grid { gap: 56px; }
+      .cc-title { font-size: 40px; }
+    }
+
+    @media (max-width: 880px) {
+      .cc-grid { grid-template-columns: 1fr; gap: 48px; }
+      .cc-right { padding-top: 0; }
+      .cc-sub { max-width: 520px; }
+    }
+
+    @media (max-width: 600px) {
+      .cc { padding: 56px 18px; }
+      .cc-title { font-size: 34px; }
+      .cc-form-title { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <section class="cc" data-screen-label="Contact">
+    <div class="cc-well">
+      <div class="cc-grid">
+
+        <!-- ── LEFT — intro + method cards ── -->
+        <div class="cc-left">
+          <p class="cc-eyebrow cr-rise">Contact</p>
+          <h2 class="cc-title cr-rise" style="--d:.05s">Let's build your<br>plan together.</h2>
+          <p class="cc-sub cr-rise" style="--d:.1s">Have a question about agents, integrations, or which engagement fits your team best? Reach out &mdash; we'll help you find your next step forward.</p>
+
+          <div class="cc-methods">
+            <a class="cc-method cr-rise" style="--d:.16s" href="#">
+              <span class="cc-method-ico"><i data-lucide="messages-square"></i></span>
+              <span class="cc-method-foot">
+                <span class="cc-method-txt">
+                  <span class="cc-method-title">Chat</span>
+                  <span class="cc-method-sub">Chat directly with a CR specialist</span>
+                </span>
+                <span class="cc-arrow"><i data-lucide="arrow-right"></i></span>
+              </span>
+            </a>
+
+            <a class="cc-method cr-rise" style="--d:.22s" href="#">
+              <span class="cc-method-ico"><i data-lucide="phone"></i></span>
+              <span class="cc-method-foot">
+                <span class="cc-method-txt">
+                  <span class="cc-method-title">Call us</span>
+                  <span class="cc-method-sub">Mon &ndash; Fri, 9:00 &ndash; 18:00 (IST)</span>
+                </span>
+                <span class="cc-arrow"><i data-lucide="arrow-right"></i></span>
+              </span>
+            </a>
+          </div>
+        </div>
+
+        <!-- ── RIGHT — form ── -->
+        <div class="cc-right cr-rise" style="--d:.18s">
+          <h3 class="cc-form-title">Send a Message</h3>
+          <form class="cc-form" onsubmit="return false">
+            <div class="cc-field">
+              <label class="cc-label" for="cc-name">Full name</label>
+              <input class="cc-input" id="cc-name" type="text" placeholder="Enter your full name">
+            </div>
+            <div class="cc-field">
+              <label class="cc-label" for="cc-email">Email</label>
+              <input class="cc-input" id="cc-email" type="email" placeholder="you@company.com">
+            </div>
+            <div class="cc-field">
+              <label class="cc-label" for="cc-msg">Message</label>
+              <textarea class="cc-textarea" id="cc-msg" rows="3" placeholder="Tell me about your goals or what you'd like help with&hellip;"></textarea>
+            </div>
+            <button class="cc-submit" type="submit">
+              <span class="cc-submit-label">Send Message</span>
+              <span class="cc-submit-arrow"><i data-lucide="arrow-right"></i></span>
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Compare table</title>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<noscript><style>.row { opacity: 1 !important; transform: none !important; }</style></noscript>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background: #FFFFFF;
+    font-family: var(--cr-font-body); color: var(--cr-ink-flat);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .section {
+    padding: 120px 100px;
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }
+
+  /* ── Header ────────────────────────────────────────────────── */
+  .header { text-align: center; margin-bottom: 64px; }
+  .header h2 {
+    font-family: "Urbanist", sans-serif; font-weight: 700;
+    font-size: 48px; line-height: 1.1; letter-spacing: -0.02em;
+    color: var(--cr-ink-flat); margin: 0 0 20px;
+  }
+  .header p {
+    font-family: "Inter", sans-serif; font-weight: 400;
+    font-size: 16px; line-height: 1.6; color: var(--cr-fg-2);
+    margin: 0 auto; max-width: 560px;
+  }
+
+  /* ── Compare table ──────────────────────────────────────────────
+     Subgrid table — outer .compare is the master grid; each .row uses
+     `grid-template-columns: subgrid` so its cells align to the master
+     tracks. The .priority-bg lives in the grid as a column-spanning item
+     so changing `--priority-col` shifts the highlight to any column. */
+  .compare-scroll { overflow-x: visible; }
+
+  .compare {
+    /* ── Configurable knobs (set per instance via inline style or class) ─
+       Default = 4 columns (1 label + 3 plans), priority on the MIDDLE plan.
+       To shift the highlight to the rightmost plan: set --priority-col: 4.
+       To shift to the leftmost plan: set --priority-col: 2.
+       To use a different column count: also update --cols-grid. */
+    --cols-grid:    1.5fr 1fr 1fr 1fr;
+    --priority-col: 3;          /* 1-indexed grid column for the highlight */
+    --priority-bg:  var(--cr-bg-grey-50);    /* highlighted column bg (cream default; never indigo) */
+    --check-bg:     var(--cr-brand);    /* check-icon circle (brand blue default) */
+    --zebra-bg:     #FAF7F1;    /* alternate row bg when `.zebra` is on */
+    --line:         var(--cr-line);    /* row divider when `.divided` is on */
+    --pillar-extend: 40px;      /* how far the priority pillar extends past the rows */
+
+    display: grid;
+    grid-template-columns: var(--cols-grid);
+    position: relative;
+    /* Vertical padding reserves space so the priority pillar (which sits
+       at top:0 / bottom:0) extends past the rows by `--pillar-extend`. */
+    padding: var(--pillar-extend) 0;
+    max-width: var(--cr-content-max); margin: 0 auto;
+    /* `isolation: isolate` creates a stacking context so the negative
+       z-index on .priority-bg is bounded to .compare (won't slip behind
+       the page's background). */
+    isolation: isolate;
+  }
+
+  /* Priority column highlight — absolutely positioned, fills the FULL
+     height of `.compare` (top:0 / bottom:0, including the vertical
+     padding) so the pillar covers head row + every feature row + the
+     `--pillar-extend` extension above and below.
+
+     `left` and `width` are set by JS once the layout is settled (they
+     read from the priority column's cell so the pillar tracks whichever
+     column `--priority-col` points at — left / middle / right / any).
+
+     `z-index: -1` — explicitly behind row + cell content. The .compare's
+     `isolation: isolate` keeps this scoped, so the pillar never slips
+     behind the page's body background. */
+  .priority-bg {
+    position: absolute;
+    top: 0; bottom: 0;
+    background: var(--priority-bg);
+    border-radius: 24px;
+    z-index: -1;
+  }
+
+  /* Each row spans all columns and adopts the parent's column tracks via
+     subgrid, so cells align with the priority-bg column perfectly. */
+  .row {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    align-items: center;
+  }
+
+  /* Cells just hold content; no positioning needed — DOM order keeps
+     them above priority-bg. */
+  .cell {
+    padding: 20px 24px;
+  }
+
+  /* Header row */
+  .row.head .cell { padding-top: 28px; padding-bottom: 28px; }
+  .row.head .label {
+    font-family: "Urbanist", sans-serif; font-weight: 500; font-size: 18px;
+    color: var(--cr-fg-2);
+  }
+  .row.head .plan {
+    font-family: "Urbanist", sans-serif; font-weight: 700; font-size: 24px;
+    letter-spacing: -0.01em; color: var(--cr-ink-flat);
+    text-align: center;
+  }
+
+  /* Feature-row label cell (left column) */
+  .cell.label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: "Urbanist", sans-serif; font-weight: 500; font-size: 16px;
+    color: var(--cr-ink-flat);
+  }
+  .cell.label svg {
+    width: 18px; height: 18px; stroke-width: 1;      /* 18px → 1.0 stroke (icon rule) */
+    color: var(--cr-fg-muted); flex-shrink: 0;
+  }
+
+  /* ── Help tooltip ──────────────────────────────────────────────
+     Each help icon is wrapped in a `.tip` span carrying a `data-tip`
+     attribute (the explanation). On hover OR keyboard focus, a small
+     dark pill appears above the icon with a downward arrow pointing
+     at it. This is the ONLY hover state in the section (per user).
+     Cursor stays at the inherited default — no `cursor: help`. */
+  .tip {
+    position: relative;
+    display: inline-flex; align-items: center; justify-content: center;
+    outline: none;
+  }
+  .tip:hover svg,
+  .tip:focus-visible svg { color: var(--cr-ink-flat); }
+
+  /* The tooltip pill and the arrow both anchor with `bottom: 100%` (so
+     their bottom edges sit at .tip's top edge), and use `margin-bottom`
+     to push upward. The arrow has `margin-bottom: 0` so its box.top is
+     12px above .tip — and the tooltip has `margin-bottom: 12px` so its
+     bottom edge meets the arrow's base exactly. This guarantees a
+     visible, properly aligned arrow (apex 6px above the icon, base
+     flush with the tooltip's bottom edge). */
+  .tip::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 100%; left: 50%;
+    margin-bottom: 12px;
+    transform: translateX(-50%);
+    background: var(--cr-ink-flat); color: #FFFFFF;
+    font-family: "Inter", sans-serif; font-weight: 500; font-size: 12px;
+    line-height: 1.4;
+    padding: 8px 12px;
+    border-radius: 8px;
+    /* Cap the tooltip's width so long copy wraps onto multiple lines
+       instead of stretching across the section. `max-width` + `width: max-content`
+       lets short tips stay single-line and only forces wrapping when they
+       hit the cap. */
+    width: max-content;
+    max-width: 240px;
+    white-space: normal;
+    text-align: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .15s ease;
+    z-index: 10;
+  }
+  .tip::before {
+    content: "";
+    position: absolute;
+    bottom: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--cr-ink-flat);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .15s ease;
+    z-index: 10;
+  }
+  .tip:hover::after,
+  .tip:hover::before,
+  .tip:focus-visible::after,
+  .tip:focus-visible::before { opacity: 1; }
+
+  /* Non-label data cells centred */
+  .row:not(.head) .cell:not(.label) { text-align: center; }
+
+  /* Check badge — circle with a Lucide check in brand blue (configurable) */
+  .check {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--check-bg);
+    color: #FFFFFF;
+  }
+  .check svg { width: 14px; height: 14px; stroke-width: 2.5; }
+
+  /* Em-dash for "not included" */
+  .dash {
+    color: var(--cr-fg-muted);
+    font-family: "Inter", sans-serif; font-size: 18px; font-weight: 400;
+  }
+
+  /* Text value (numeric / "Unlimited") */
+  .cell.text {
+    font-family: "Inter", sans-serif; font-weight: 500; font-size: 16px;
+    color: var(--cr-ink-flat);
+  }
+
+  /* ── Flexibility modifiers ─────────────────────────────────── */
+
+  /* `.divided` — 1px hairline between every row. Border lives on the
+     cells (z-index 2) so it draws across the priority bg as a continuous
+     line. */
+  .compare.divided .row:not(.head) .cell {
+    border-top: 1px solid var(--line);
+  }
+
+  /* `.zebra` — alternate row backgrounds. The zebra bg is applied to the
+     CELLS (not the row) and **skips the priority column cell** so the
+     cream pillar stays continuous. JS marks `.priority-cell` on the
+     cell that lives in column `--priority-col`. Uses `:nth-child(... of ...)`
+     to count only non-head rows. */
+  .compare.zebra .row:nth-child(even of .row:not(.head)) .cell:not(.priority-cell) {
+    background: var(--zebra-bg);
+  }
+
+  /* ── Entrance — fade-in on first viewport hit ─────────────────
+     Rows start hidden in the base rule. When `.in-view` is added by the
+     IntersectionObserver, a CSS animation plays (with a per-row delay) so
+     the rows fade + translate-up in sequence. Using an `animation` (not a
+     transition) avoids the race where the IO callback fires before the
+     starting-state transition can paint a frame. A <noscript> tag in the
+     head guarantees the rows are visible if JS doesn't run at all. */
+  .row {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  .section.in-view .row {
+    animation: row-in .5s ease forwards;
+    animation-delay: var(--delay, 0ms);
+  }
+  @keyframes row-in {
+    to { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .row { opacity: 1; transform: none; animation: none; }
+    .section.in-view .row { animation: none; }
+  }
+
+  /* ── Responsive ─────────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .section { padding: 80px 60px; }
+    .header { margin-bottom: 48px; }
+    .header h2 { font-size: 40px; }
+    .row.head .plan { font-size: 20px; }
+    .cell { padding: 18px 18px; }
+  }
+
+  /* Mobile: horizontal scroll wrapper preserves the comparison structure
+     instead of collapsing to a single-column layout. The .compare keeps a
+     `min-width` so columns stay legible while the user swipes sideways. */
+  @media (max-width: 640px) {
+    .section { padding: 56px 20px; }
+    .header { margin-bottom: 40px; }
+    .header h2 { font-size: 28px; line-height: 1.18; }
+    .header p { font-size: 15px; }
+
+    .compare-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 0 -20px;        /* let the scroll area span the section padding */
+      padding: 0 20px 8px;
+    }
+    .compare {
+      min-width: 680px;
+      --pillar-extend: 28px;
+    }
+    .row.head .plan { font-size: 18px; }
+    .row.head .label { font-size: 14px; }
+    .cell { padding: 16px 14px; }
+    .cell.label { font-size: 14px; }
+    .check { width: 22px; height: 22px; }
+    .check svg { width: 13px; height: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="section" data-screen-label="Compare table">
+  <header class="header">
+    <h2>Compare Our Plans</h2>
+    <p>Pick the deployment that fits your stack — every plan includes a no-cost process audit, agent build-out, and a shadow-run before cutover.</p>
+  </header>
+
+  <!--
+    The `--priority-col` CSS var below controls WHICH column gets the highlight.
+    It's not hardcoded — flip it per instance:
+        style="--priority-col: 2"   → leftmost plan
+        style="--priority-col: 3"   → middle plan        (current default)
+        style="--priority-col: 4"   → rightmost plan
+    Add `.divided` and/or `.zebra` to .compare for the optional row treatments.
+  -->
+  <div class="compare-scroll">
+    <div class="compare" id="compare"
+         style="--priority-col: 3; --priority-bg: var(--cr-bg-grey-50); --check-bg: var(--cr-brand); --cols-grid: 1.5fr 1fr 1fr 1fr;">
+      <div class="priority-bg" aria-hidden="true"></div>
+
+      <div class="row head">
+        <div class="cell label">Plan features</div>
+        <div class="cell plan">Starter</div>
+        <div class="cell plan">Growth</div>
+        <div class="cell plan">Enterprise</div>
+      </div>
+
+      <div class="row">
+        <div class="cell label"><span>Custom Workflows</span><span class="tip" tabindex="0" data-tip="Design your own automation steps."><i data-lucide="circle-help"></i></span></div>
+        <div class="cell"><span class="check"><i data-lucide="check"></i></span></div>
+        <div class="cell"><span class="check"><i data-lucide="check"></i></span></div>
+        <div class="cell"><span class="check"><i data-lucide="check"></i></span></div>
+      </div>
+
+      <div class="row">
+        <div class="cell label"><span>Users</span><span class="tip" tabindex="0" data-tip="How many people can use the account."><i data-lucide="circle-help"></i></span></div>
+        <div class="cell text">10</div>
+        <div class="cell text">20</div>
+        <div class="cell text">Unlimited</div>
+      </div>
+
+      <div class="row">
+        <div class="cell label"><span>Individual data</span><span class="tip" tabindex="0" data-tip="Storage included per user."><i data-lucide="circle-help"></i></span></div>
+        <div class="cell text">20GB</div>
+        <div class="cell text">40GB</div>
+        <div class="cell text">Unlimited</div>
+      </div>
+
+      <div class="row">
+        <div class="cell label"><span>Integrations</span><span class="tip" tabindex="0" data-tip="Connect to other tools like Slack and GitHub."><i data-lucide="circle-help"></i></span></div>
+        <div class="cell"><span class="check"><i data-lucide="check"></i></span></div>
+        <div class="cell"><span class="check"><i data-lucide="check"></i></span></div>
+        <div class="cell"><span class="check"><i data-lucide="check"></i></span></div>
+      </div>
+
+      <div class="row">
+        <div class="cell label"><span>Automated workflows</span><span class="tip" tabindex="0" data-tip="Run actions on a schedule or trigger."><i data-lucide="circle-help"></i></span></div>
+        <div class="cell"><span class="dash">&mdash;</span></div>
+        <div class="cell"><span class="check"><i data-lucide="check"></i></span></div>
+        <div class="cell"><span class="check"><i data-lucide="check"></i></span></div>
+      </div>
+
+      <div class="row">
+        <div class="cell label"><span>Performance Analytics</span><span class="tip" tabindex="0" data-tip="Dashboards showing team activity and trends."><i data-lucide="circle-help"></i></span></div>
+        <div class="cell"><span class="dash">&mdash;</span></div>
+        <div class="cell"><span class="check"><i data-lucide="check"></i></span></div>
+        <div class="cell"><span class="check"><i data-lucide="check"></i></span></div>
+      </div>
+
+      <div class="row">
+        <div class="cell label"><span>Support</span><span class="tip" tabindex="0" data-tip="How fast we reply, and on which channels."><i data-lucide="circle-help"></i></span></div>
+        <div class="cell"><span class="check"><i data-lucide="check"></i></span></div>
+        <div class="cell"><span class="check"><i data-lucide="check"></i></span></div>
+        <div class="cell"><span class="check"><i data-lucide="check"></i></span></div>
+      </div>
+
+      <div class="row">
+        <div class="cell label"><span>Advanced permissions</span><span class="tip" tabindex="0" data-tip="Role-based access and granular sharing."><i data-lucide="circle-help"></i></span></div>
+        <div class="cell"><span class="dash">&mdash;</span></div>
+        <div class="cell"><span class="check"><i data-lucide="check"></i></span></div>
+        <div class="cell"><span class="check"><i data-lucide="check"></i></span></div>
+      </div>
+
+      <div class="row">
+        <div class="cell label"><span>Security Features</span><span class="tip" tabindex="0" data-tip="SSO, audit logs, and SOC 2 reports."><i data-lucide="circle-help"></i></span></div>
+        <div class="cell"><span class="dash">&mdash;</span></div>
+        <div class="cell"><span class="dash">&mdash;</span></div>
+        <div class="cell"><span class="check"><i data-lucide="check"></i></span></div>
+      </div>
+
+      <div class="row">
+        <div class="cell label"><span>API Access</span><span class="tip" tabindex="0" data-tip="Programmatic read and write access."><i data-lucide="circle-help"></i></span></div>
+        <div class="cell"><span class="dash">&mdash;</span></div>
+        <div class="cell"><span class="dash">&mdash;</span></div>
+        <div class="cell"><span class="check"><i data-lucide="check"></i></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  lucide.createIcons();
+
+  const section    = document.querySelector('.section');
+  const compare    = document.getElementById('compare');
+  const priorityBg = compare.querySelector('.priority-bg');
+  const rows       = section.querySelectorAll('.row');
+
+  // Mark the cell in the priority column on every row (so zebra striping
+  // can skip it and the cream pillar stays continuous). Reads --priority-col
+  // off the .compare element so the marking automatically follows whatever
+  // the implementer chose.
+  const priorityCol = parseInt(
+    getComputedStyle(compare).getPropertyValue('--priority-col'), 10
+  ) || 3;
+  rows.forEach(row => {
+    const cell = row.children[priorityCol - 1];
+    if (cell) cell.classList.add('priority-cell');
+  });
+
+  // Size the priority pillar to match the priority column's pixel range.
+  // Top/bottom are set in CSS (`top: 0; bottom: 0` covers the full .compare
+  // height including its vertical padding); only left + width are computed
+  // here so the pillar slides to whichever column --priority-col points at.
+  function placePriorityBg() {
+    const firstRow = rows[0];
+    if (!firstRow) return;
+    const cell = firstRow.children[priorityCol - 1];
+    if (!cell) return;
+    const compareRect = compare.getBoundingClientRect();
+    const cellRect    = cell.getBoundingClientRect();
+    priorityBg.style.left  = (cellRect.left  - compareRect.left) + 'px';
+    priorityBg.style.width = cellRect.width + 'px';
+  }
+  placePriorityBg();
+  window.addEventListener('resize', placePriorityBg);
+  // Re-size once fonts are loaded — the head row width may shift slightly
+  // when web fonts swap in, which would move the column's pixel range.
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(placePriorityBg);
+  }
+
+  // Stagger each row's entrance by 50ms via a --delay CSS var.
+  rows.forEach((r, i) => r.style.setProperty('--delay', (i * 50) + 'ms'));
+
+  // Viewport entrance — once per page load, then unobserve.
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in-view');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    io.observe(section);
+  } else {
+    section.classList.add('in-view');
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Split · balanced — more solutions</title>
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Split · balanced           from component-more-solutions.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **Two things mentioned, not re-argued.** The profile is explicit
+              that this section's restraint IS its function — a second full
+              feature grid would tell the reader the first one was incomplete.
+              So it holds low density, one hairline between the pair, and equal
+              weight on both halves.
+
+  STRUCTURE   Unchanged. Left-aligned headline · two columns split by a centred
+              vertical rule · per column a free-floating creative stage above a
+              text block. DOM, scripts, ids, `data-*`, `aria-*`, `src` and every
+              behavioural hook are byte-compatible with the frozen original
+              (DR-22). The v2 file is beside this one in `_v2/`.
+
+  THE CREATIVE  v2 staged its layers on nothing — the card and the portrait
+              floated on the page ground with a thin-line orbit motif drawn
+              beside them, a decorative abstraction standing in for a subject.
+              The stage is now an approved environment: `valley-deep` under the
+              grunge and grain, as ONE background stack. It has to be one stack —
+              a blend mode composites against what is beneath it in the SAME
+              background, so a texture on a pseudo-element resolves `overlay`
+              against transparency and renders as grey static. The URLs are
+              written out rather than reached through `--cr-env-*`, because a
+              `url()` inside a custom property resolves against the CONSUMING
+              document and fails silently.
+
+              The orbit line survives as a mark ON the environment rather than a
+              backdrop instead of one — inverse ink at partial stroke, carried on
+              `stroke-opacity` / `fill-opacity`, so it never has to fight the
+              reveal's own `opacity` for the value.
+
+  NO TYPE ON THE PHOTOGRAPH  Every word in each stage lives inside the UI card,
+              which is OPAQUE — an opaque panel over an image is the permitted
+              case, and it is what makes the card read as the product artifact.
+              The five human photographs (one portrait per column, three
+              reviewer faces) are subjects and stay exactly as they are. Remove
+              the environment and not one word changes legibility.
+
+  THE ARTIFACT  The two UI cards are miniature interfaces, marked `cr-graphic`
+              and EXEMPT FROM THE TYPE RAMP — a table row at the supporting size
+              does not fit the artifact it sits inside, and every exempt rule
+              claims the exemption in its own selector so it stays greppable.
+              COLOUR IS NOT EXEMPT: v2 spent the brand blue on three bookmark
+              glyphs and a chart mark, and the section is now neutral ink
+              throughout. Two peer CTAs cannot both be the accent moment and
+              neither deserves it over the other, so this section spends none.
+
+  RESPONSIVE  The original's breakpoints (900 / 560), unchanged. Type steps on
+              the pack's ramp; `clamp()` is gone — it resolves to sizes nobody
+              authored. The reduce guard now names the backdrop's own selectors:
+              a guard that loses the cascade is not a guard.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  /* ─── scope reset ─────────────────────────────────────────────── */
+  .ms-section, .ms-section * { box-sizing: border-box; }
+  .ms-section {
+    background: var(--cr-page-ground);
+    padding: var(--cr-space-2xl) var(--cr-page-gutter);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+    font-size: var(--cr-text-body);
+  }
+  .ms-wrap { max-width: var(--cr-content-max); margin: 0 auto; }   /* centred well */
+
+  /* ─── headline (left-aligned at the well's top, per source) ───── */
+  .ms-head {
+    margin: 0 0 var(--cr-rhythm-content);
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+
+  /* ─── 2-up grid + centred vertical divider ────────────────────── */
+  .ms-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 0;                        /* divider centred via symmetric column padding */
+  }
+  .ms-col { min-width: 0; padding: 0 var(--cr-space-m); }
+  .ms-col:first-child { padding-left: 0; }
+  .ms-col:last-child  { padding-right: 0; }
+  .ms-col--b { border-left: var(--cr-stroke) solid var(--cr-border-default); }   /* the centred vertical rule */
+
+  /* ─── creative stage — now an environment, not an empty ground ─── */
+  .ms-creative {
+    --photo-w: 136px;
+    --photo-h: 154px;
+    position: relative;
+    min-height: 330px;
+    border-radius: var(--cr-radius-card);
+    overflow: hidden;
+    background-color: var(--cr-bg-dark);
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-valley-deep.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 64% 45%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+  }
+
+  /* the orbit mark — one line and one dot, now drawn ON the environment */
+  .ms-grid-bd {
+    position: absolute;
+    width: 232px; height: 232px;
+    z-index: 0;
+    pointer-events: none;
+    color: var(--cr-text-inverse);
+  }
+  .ms-grid-bd svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  /* Carried on stroke/fill opacity, NOT element opacity — the reveal animates
+     `opacity` to 1 and would erase any value set there. */
+  .ms-grid-bd ellipse { stroke-opacity: .34; }
+  .ms-grid-bd circle,
+  .ms-grid-bd path { fill-opacity: .5; }
+  /* LIGHT: one orbit line (--1) + one lone sparkle (--2) per creative */
+  .ms-creative--a .ms-grid-bd--1 { left: 56%; top: 2%; }                                     /* orbit ellipse — right of card */
+  .ms-creative--a .ms-grid-bd--2 { width: 42px; height: 42px; left: 40px; bottom: 30px; }    /* lone sparkle — bottom-left */
+  .ms-creative--b .ms-grid-bd--1 { left: 54%; top: 8%; }                                     /* dotted orbit — right of card */
+  .ms-creative--b .ms-grid-bd--2 { width: 42px; height: 42px; right: 26%; bottom: 34px; }    /* lone sparkle — bottom */
+
+  /* overlapping photo card — a human subject, kept and unchanged in kind */
+  .ms-photo {
+    position: absolute;
+    width: var(--photo-w); height: var(--photo-h);
+    margin: 0;
+    border-radius: var(--cr-radius-card); overflow: hidden;
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    background-color: var(--cr-surface-1);
+    z-index: 3;
+  }
+  .ms-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ms-creative--a .ms-photo { left: 0;   top: 0; }                 /* top-left  */
+  .ms-creative--b .ms-photo { left: 8px; bottom: 34px; }           /* bottom-left, overlaps card's bottom-row corner (mirror) */
+
+  /* the UI mock card — OPAQUE, which is why it may sit over the photograph */
+  .ms-uicard {
+    position: absolute;
+    background-color: var(--cr-surface-1);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+    overflow: hidden;
+    z-index: 2;
+  }
+  /* cards positioned px-relative to their photo (calc) so the photo↔card overlap AND the
+     header clearance stay CONSTANT across the whole 2-col range — not just tuned to 1440 */
+  .ms-creative--a .ms-uicard { left: calc(var(--photo-w) - 22px); top: 80px; width: min(300px, calc(100% - var(--photo-w) + 22px)); }   /* narrow, photo-anchored */
+  .ms-creative--b .ms-uicard { left: calc(var(--photo-w) - 30px); top: 14px; width: min(332px, calc(100% - var(--photo-w) + 30px)); }   /* narrow, photo-anchored (mirror) */
+
+  /* ─── THE ARTIFACT — miniature interface, type-ramp exempt ─────── */
+  .ms-creative--a .cr-graphic .ms-uihead { padding-left: 34px; }   /* shift header text right of the overlapping photo (the bar still runs under it) */
+
+  .cr-graphic .ms-uihead {
+    background-color: var(--cr-bg-dark);
+    color: var(--cr-text-inverse);
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 13px;
+    padding: 11px 16px;
+  }
+  .cr-graphic .ms-uibody { padding: 2px 16px 12px; }
+  .cr-graphic .ms-uirow {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 13px 0;
+    border-bottom: var(--cr-stroke) solid var(--cr-border-default);
+    font-family: var(--cr-font-body); font-size: 13px; color: var(--cr-text-secondary);
+    white-space: nowrap;
+  }
+  .cr-graphic .ms-uirow:last-child { border-bottom: none; }
+  .cr-graphic .ms-uirow--label { font-family: var(--cr-font-display); font-weight: 500; color: var(--cr-text-primary); }
+
+  /* avatar trio (real faces — labelled "Assigned reviewers", not agents) */
+  .ms-avatars { display: flex; flex: none; }
+  .cr-graphic .ms-avatars img {
+    width: 28px; height: 28px; border-radius: 50%; object-fit: cover;
+    border: var(--cr-stroke) solid var(--cr-text-inverse); margin-left: -8px;
+  }
+  .cr-graphic .ms-avatars img:first-child { margin-left: 0; }
+
+  .ms-chart { color: var(--cr-text-primary); display: flex; flex: none; }     /* neutral ink — decoration spends no accent */
+  .ms-chart .ms-i { width: 22px; height: 22px; stroke-width: var(--cr-icon-stroke-md); }
+
+  /* integration rows */
+  .cr-graphic .ms-introw {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 16px;
+    border-bottom: var(--cr-stroke) solid var(--cr-border-default);
+  }
+  .cr-graphic .ms-introw:last-child { border-bottom: none; }
+  .ms-bookmark { flex: none; display: flex; color: var(--cr-text-primary); }
+  .ms-bookmark .ms-i { width: 18px; height: 18px; fill: var(--cr-text-primary); stroke: var(--cr-text-primary); }
+  .cr-graphic .ms-logo {
+    flex: none; width: 92px;
+    font-family: var(--cr-font-display); font-weight: 500; font-size: 14px; color: var(--cr-text-primary);
+    white-space: nowrap;
+  }
+  .cr-graphic .ms-introw-desc {
+    flex: 1 1 auto; min-width: 0;
+    font-family: var(--cr-font-body); font-size: 12.5px; color: var(--cr-text-secondary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* ─── text block below each creative ──────────────────────────── */
+  .ms-text { margin-top: var(--cr-space-m); }
+  .ms-title {
+    margin: 0 0 var(--cr-space-s);
+    font-family: var(--cr-font-display); font-weight: 400;
+    font-size: var(--cr-text-h5); line-height: var(--cr-leading-heading); letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .ms-body {
+    margin: 0 0 var(--cr-space-m); max-width: var(--cr-measure-body);
+    font-family: var(--cr-font-body); font-weight: 400;
+    font-size: var(--cr-text-body); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  .ms-cta {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+    color: var(--cr-text-primary);
+    background: none;
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-control);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    text-decoration: none; cursor: pointer;
+    transition: border-color .2s ease, color .2s ease, transform .15s ease;
+  }
+  .ms-cta:hover { border-color: var(--cr-text-secondary); }
+  .ms-cta:active { transform: scale(.98); }
+
+  /* ─── MOTION: reveal + backdrop draw-in (anti-race, fires once) ── */
+  .has-js .ms-section [data-reveal] { opacity: 0; transform: translateY(20px); }
+  .has-js .ms-section [data-reveal].in-view {
+    animation: msRise .7s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes msRise { to { opacity: 1; transform: none; } }
+
+  /* geometric backdrop scales IN rather than rising */
+  .has-js .ms-section [data-reveal].ms-grid-bd { transform: scale(.9); }
+  .has-js .ms-section [data-reveal].ms-grid-bd.in-view {
+    animation: msGridIn .9s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes msGridIn { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
+
+  /* The guard must match the trigger it is guarding. The backdrop's own two
+     selectors carry a class more than the generic reveal, so a bare
+     `[data-reveal].in-view` reset loses the cascade and `msGridIn` runs anyway. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .ms-section [data-reveal],
+    .has-js .ms-section [data-reveal].in-view,
+    .has-js .ms-section [data-reveal].ms-grid-bd,
+    .has-js .ms-section [data-reveal].ms-grid-bd.in-view {
+      opacity: 1; transform: none; animation: none;
+    }
+  }
+
+  /* ─── responsive ──────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .ms-section { padding: var(--cr-space-xl) var(--cr-page-gutter); }
+    .ms-grid { grid-template-columns: 1fr; row-gap: var(--cr-space-xl); }
+    .ms-col { padding: 0; }
+    .ms-col--b { border-left: none; border-top: var(--cr-stroke) solid var(--cr-border-default); padding-top: var(--cr-space-xl); }
+    /* cap the now-full-width creative so the narrow card + orbit mark stay grouped */
+    .ms-creative { max-width: 560px; }
+  }
+  @media (max-width: 560px) {
+    .ms-section { padding: var(--cr-space-m) var(--cr-page-gutter); }
+    .ms-head { font-size: var(--cr-text-h4); }
+    .ms-creative {
+      --photo-w: 112px; --photo-h: 128px;
+      min-height: 300px;
+    }
+    /* card positions are calc-derived from --photo-w, so they retune automatically;
+       only nudge the right photo up to overlap the shorter mobile card */
+    .ms-creative--b .ms-photo { bottom: 54px; }
+    .ms-grid-bd { width: 168px; height: 168px; }
+    .cr-graphic .ms-uihead { font-size: 12px; padding: 10px 14px; }
+    .cr-graphic .ms-uibody { padding: 0 14px 10px; }
+    .cr-graphic .ms-uirow, .cr-graphic .ms-introw { font-size: 12px; }
+    .cr-graphic .ms-introw { padding: 11px 14px; }
+    .cr-graphic .ms-logo { width: 80px; font-size: 13px; }
+    .ms-title { font-size: var(--cr-text-h6); }
+    .ms-text { margin-top: var(--cr-space-m); }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. Everything below realizes a scale the pack already
+     holds — there is no `directed` line, because the Pilot Constraint was
+     not asked to yield anywhere in this section.
+  .lucide      | font-size              | type-ramp
+  .ms-body     | font-size              | type-ramp
+  .ms-body     | line-height            | type-ramp
+  .ms-body     | margin-bottom          | spacing-scale
+  .ms-body     | max-width              | measure
+  .ms-col      | font-size              | type-ramp
+  .ms-col      | padding-left           | spacing-scale
+  .ms-col      | padding-right          | spacing-scale
+  .ms-col      | padding-top            | spacing-scale
+  .ms-creative | border-radius          | radius-pair
+  .ms-creative | font-size              | type-ramp
+  .ms-cta      | border-radius          | radius-pair
+  .ms-cta      | column-gap             | spacing-scale
+  .ms-cta      | font-size              | type-ramp
+  .ms-cta      | padding-left           | spacing-scale
+  .ms-cta      | padding-right          | spacing-scale
+  .ms-cta      | row-gap                | spacing-scale
+  .ms-grid     | font-size              | type-ramp
+  .ms-grid     | row-gap                | spacing-scale
+  .ms-head     | font-size              | type-ramp
+  .ms-head     | line-height            | type-ramp
+  .ms-head     | margin-bottom          | spacing-scale
+  .ms-introw   | font-size              | type-ramp
+  .ms-text     | font-size              | type-ramp
+  .ms-text     | margin-top             | spacing-scale
+  .ms-title    | font-size              | type-ramp
+  .ms-title    | line-height            | type-ramp
+  .ms-title    | margin-bottom          | spacing-scale
+  .ms-uibody   | font-size              | type-ramp
+  .ms-uicard   | border-radius          | radius-pair
+  .ms-uicard   | font-size              | type-ramp
+  .ms-wrap     | font-size              | type-ramp
+  circle       | font-size              | type-ramp
+  img          | border-bottom-width    | stroke
+  img          | border-left-width      | stroke
+  img          | border-right-width     | stroke
+  img          | border-top-width       | stroke
+  img          | font-size              | type-ramp
+  path         | font-size              | type-ramp
+  svg          | font-size              | type-ramp
+  -->
+
+
+<!-- The two-up split + left-aligned headline follow the SOURCE — not a
+     hardcoded house rule (composition is intentionally per-section). -->
+<section class="ms-section" data-screen-label="Showcase · More ways to automate"
+         data-archetype="editorial-split" data-hierarchy="supporting" data-intent="educate"
+         data-register="editorial" data-signature="embedded-screenshot" data-density="low">
+  <div class="ms-wrap">
+
+    <h2 class="ms-head" data-reveal style="--d:0s">More Ways to Automate</h2>
+
+    <div class="ms-grid">
+
+      <!-- ── LEFT column: Agent operations ───────────────────────── -->
+      <div class="ms-col ms-col--a">
+        <div class="ms-creative ms-creative--a">
+          <div class="ms-grid-bd ms-grid-bd--1" data-reveal style="--d:.12s" aria-hidden="true">
+            <svg viewBox="0 0 232 232" fill="none">
+              <ellipse cx="116" cy="116" rx="104" ry="62" transform="rotate(-24 116 116)" stroke="currentColor" stroke-width="1.2"/>
+              <circle cx="196" cy="74" r="4.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="ms-grid-bd ms-grid-bd--2" data-reveal style="--d:.18s" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 0 Q 14 10 24 12 Q 14 14 12 24 Q 10 14 0 12 Q 10 10 12 0 Z" fill="currentColor"/>
+            </svg>
+          </div>
+
+          <div class="ms-uicard cr-graphic" data-reveal style="--d:.24s" aria-hidden="true">
+            <div class="ms-uihead">Agent operations</div>
+            <div class="ms-uibody">
+              <div class="ms-uirow ms-uirow--label">Active pipeline</div>
+              <div class="ms-uirow">
+                <span>Assigned reviewers</span>
+                <span class="ms-avatars">
+                  <img src="../../brand-pack/assets/imagery/avatars/avatar-david.jpg" alt="" />
+                  <img src="../../brand-pack/assets/imagery/avatars/avatar-olivia.jpg" alt="" />
+                  <img src="../../brand-pack/assets/imagery/avatars/avatar-priya.jpg" alt="" />
+                </span>
+              </div>
+              <div class="ms-uirow">
+                <span>Throughput analytics</span>
+                <span class="ms-chart"><i data-lucide="trending-up" class="ms-i"></i></span>
+              </div>
+            </div>
+          </div>
+
+          <figure class="ms-photo" data-reveal style="--d:.30s" aria-hidden="true">
+            <img src="../../brand-pack/assets/imagery/avatars/avatar-jason.jpg" alt="" />
+          </figure>
+        </div>
+
+        <div class="ms-text">
+          <h3 class="ms-title" data-reveal style="--d:.36s">Agent operations</h3>
+          <p class="ms-body" data-reveal style="--d:.42s">Watch every workflow run end to end — exceptions surfaced, decisions logged, and throughput measured against your targets.</p>
+          <a class="ms-cta" href="#" data-reveal style="--d:.48s">Explore agent operations</a>
+        </div>
+      </div>
+
+      <!-- ── RIGHT column: Integrations (mirrored) ───────────────── -->
+      <div class="ms-col ms-col--b">
+        <div class="ms-creative ms-creative--b">
+          <div class="ms-grid-bd ms-grid-bd--1" data-reveal style="--d:.26s" aria-hidden="true">
+            <svg viewBox="0 0 232 232" fill="none">
+              <ellipse cx="116" cy="116" rx="102" ry="58" transform="rotate(22 116 116)" stroke="currentColor" stroke-width="1.5" stroke-dasharray="1.5 8" stroke-linecap="round"/>
+              <circle cx="40" cy="150" r="4.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="ms-grid-bd ms-grid-bd--2" data-reveal style="--d:.32s" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 0 Q 14 10 24 12 Q 14 14 12 24 Q 10 14 0 12 Q 10 10 12 0 Z" fill="currentColor"/>
+            </svg>
+          </div>
+
+          <div class="ms-uicard cr-graphic" data-reveal style="--d:.38s" aria-hidden="true">
+            <div class="ms-uihead">Integrations</div>
+            <!-- placeholder partner wordmarks — swap for real SVGs -->
+            <div class="ms-introw">
+              <span class="ms-bookmark"><i data-lucide="bookmark" class="ms-i"></i></span>
+              <span class="ms-logo" style="letter-spacing:.04em">SAP</span>
+              <span class="ms-introw-desc">Real-time ERP and finance sync…</span>
+            </div>
+            <div class="ms-introw">
+              <span class="ms-bookmark"><i data-lucide="bookmark" class="ms-i"></i></span>
+              <span class="ms-logo">Salesforce</span>
+              <span class="ms-introw-desc">Two-way CRM and pipeline updates…</span>
+            </div>
+            <div class="ms-introw">
+              <span class="ms-bookmark"><i data-lucide="bookmark" class="ms-i"></i></span>
+              <span class="ms-logo" style="letter-spacing:.04em">ORACLE</span>
+              <span class="ms-introw-desc">Orders, records and billing kept…</span>
+            </div>
+          </div>
+
+          <figure class="ms-photo" data-reveal style="--d:.44s" aria-hidden="true">
+            <img src="../../brand-pack/assets/imagery/avatars/avatar-emily.jpg" alt="" />
+          </figure>
+        </div>
+
+        <div class="ms-text">
+          <h3 class="ms-title" data-reveal style="--d:.50s">Integrations</h3>
+          <p class="ms-body" data-reveal style="--d:.56s">Your agents drop straight into the systems you already run — SAP, Salesforce, Oracle, Epic and your custom stack.</p>
+          <a class="ms-cta" href="#" data-reveal style="--d:.62s">See all integrations</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.ms-section');
+
+  if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }   // guarded
+
+  if (!sec) return;
+
+  function reveal() {
+    sec.querySelectorAll('[data-reveal]').forEach(function (n) { n.classList.add('in-view'); });
+  }
+
+  if (reduce) { reveal(); return; }
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) {
+        if (en.isIntersecting) { reveal(); io.disconnect(); }
+      });
+    }, { threshold: 0.15 });
+    io.observe(sec);
+  } else {
+    reveal();
+  }
+})();
+</script>
+
+</body>
+</html>

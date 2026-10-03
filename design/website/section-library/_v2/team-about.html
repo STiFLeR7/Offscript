@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Team — Who we are</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — Team · Who we are (about + roster)      component-team-about.html
+  ════════════════════════════════════════════════════════════════════════
+  COMPOSITION  An "about / who we are" team section on a LIGHT-GREY band
+               (`--cr-bg-grey-100`, so the white cards separate by surface
+               contrast — no shadow, per charter).
+               • HEADER: an eyebrow row = a ✦ Lucide `sparkle` + three SEPARATE
+                 outlined pills ("WHO" "WE" "ARE"); then a big TWO-LINE UPPERCASE
+                 headline (Urbanist ExtraBold); then a full-width hairline rule;
+                 then a 2-COL INTRO — a bold uppercase LEAD statement (left,
+                 narrower) beside two grey body paragraphs (right, wider). The
+                 left/right split + top alignment follow the SOURCE (not a
+                 hardcoded house rule). Body paragraph LENGTHS match the source
+                 (~3 lines / ~5 lines) so the column geometry holds.
+               • GRID: 4-col × 2-row of 8 cells. Seven are PHOTO cards (white
+                 rounded card, head-and-shoulders portrait, object-fit:cover);
+                 below each card sits the NAME in an OUTLINED PILL + a grey ROLE
+                 label. The 8th cell (row 1, col 4) is the ACCENT "mystery
+                 member" card.
+               • ACCENT CARD: a solid CR brand-blue cell that replaces a photo —
+                 two social badges (LinkedIn + GitHub) top-left, a dry CR-voice
+                 quote, and a name pill + role pinned to the bottom. It is the
+                 section's single pop of colour (re-skin of the source's lime
+                 card); it spans the full cell height (photo + meta zones).
+
+  INSPIRATION  BlockJoy "A team of web3 experts" who-we-are section. Layout /
+               eyebrow-pills / 2-line uppercase headline / 2-col intro / 4×2 grid
+               / name-pill + role / the green "mystery member" accent card /
+               per-card socials reproduced 1:1; colours / fonts / copy re-skinned.
+
+  RE-SKIN      web3 origin story → CR's APA/automation origin (decisive, no-hype
+               voice; "Now your operators keep the judgment; Example Brand just takes
+               the busywork away."). Headline → "A TEAM OF / AUTOMATION EXPERTS".
+               Illustrated portraits → real face-crop photos saved LOCALLY
+               (assets/avatars/), cast to each name's read. The source's LIME
+               accent card → solid CR brand-blue `#149DFF` (blue leads every CR
+               accent; the one pop of colour). "Blockchain Reliability Engineer"
+               → "Agent Reliability Engineer". The misattributed-quote joke is
+               kept (CR-toned, no exclamation). LinkedIn + GitHub marks are
+               inline brand-logo SVGs (brand-logo carve-out from the Lucide-only
+               rule); the lone Lucide icon is the eyebrow ✦ `sparkle`.
+
+  NO SHADOW    White cards on the grey band separate by SURFACE CONTRAST only —
+               no drop shadow / elevation (charter). The accent card lifts by
+               colour + contrast. Hover is a REAL interaction: each photo card's
+               social badges are links, revealed on hover/focus (progressive
+               disclosure of controls) — the cards themselves don't fake-lift.
+
+  MOTION       (user choice) "Reveal + hover socials" — on first viewport entry
+               the header + intro fade up, then the 8 cells stagger-fade-up
+               (row 1 L→R → row 2); afterwards hovering (or keyboard-focusing) a
+               photo card reveals its LinkedIn/GitHub badges (the accent card
+               shows its badges statically). CSS `animation` gated on `.in-view`
+               (anti-race); IntersectionObserver fires once then disconnects.
+               NO-JS SAFE: the hidden reveal-state is scoped to `.has-js`, so
+               without JS every cell shows at full opacity (the badges still need
+               hover, which is fine without JS — CSS-only). `prefers-reduced-
+               motion` snaps everything in.
+
+  RESPONSIVE   Side padding eases 100→64px ≤1240; grid 4-col ≥1041px → 2-col
+               ≤1040 → ≤600 tighter padding + smaller type. The 2-col intro
+               stacks (lead over body) ≤760. Grid children carry `min-width:0`;
+               the accent card stretches to its row height at every breakpoint.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  /* ─── scope reset ─────────────────────────────────────────────── */
+  .ta-section, .ta-section * { box-sizing: border-box; }
+  .ta-section {
+    background: var(--cr-bg-grey-100);        /* light grey band — white cards pop by surface contrast */
+    padding: 120px 100px;
+    font-family: var(--cr-font-body);
+    color: var(--cr-fg);
+  }
+  .ta-wrap { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ─── header ──────────────────────────────────────────────────── */
+  .ta-eyebrow { display: flex; align-items: center; gap: 8px; }
+  .ta-spark { width: 20px; height: 20px; color: var(--cr-ink); stroke-width: 1.6; }
+  .ta-eye-pill {
+    border: 1px solid rgba(14,14,14,0.32);
+    border-radius: var(--cr-radius-pill);
+    padding: 4px 13px;
+    font-family: var(--cr-font-body);
+    font-weight: 600; font-size: 12px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--cr-fg);
+  }
+
+  .ta-title {
+    margin: 22px 0 0;
+    font-family: var(--cr-font-display);
+    font-weight: 800;                          /* Urbanist ExtraBold — editorial */
+    font-size: clamp(38px, 5.6vw, 66px);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: var(--cr-fg);
+  }
+
+  .ta-rule { border: 0; border-top: 1px solid var(--cr-line); margin: 38px 0 36px; }
+
+  .ta-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.3fr);   /* lead (narrow) | body (wide), per source */
+    column-gap: 64px;
+    align-items: start;
+  }
+  .ta-lead {
+    margin: 0; min-width: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 700; font-size: 15px; line-height: 1.45;
+    letter-spacing: 0.01em; text-transform: uppercase;
+    color: var(--cr-fg);
+  }
+  .ta-body { min-width: 0; max-width: 56ch; }
+  .ta-body p {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400; font-size: 16px; line-height: 1.7;
+    color: var(--cr-fg-2);
+  }
+  .ta-body p + p { margin-top: 20px; }
+
+  /* ─── people grid ─────────────────────────────────────────────── */
+  .ta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 28px;
+    row-gap: 48px;
+    margin-top: 64px;
+    align-items: stretch;                      /* accent card stretches to row height */
+  }
+  .ta-cell { display: flex; flex-direction: column; min-width: 0; }
+
+  /* photo card */
+  .ta-card {
+    position: relative;
+    aspect-ratio: 1 / 1.04;
+    border-radius: var(--cr-radius-lg);        /* 20px */
+    overflow: hidden;
+    background: var(--cr-bg);
+  }
+  .ta-card img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center 22%;
+    display: block;
+  }
+  /* hover/focus reveals the social badges — progressive disclosure of real controls */
+  .ta-card-socials {
+    position: absolute; top: 12px; left: 12px;
+    display: flex; gap: 8px;
+    opacity: 0; transform: translateY(-6px); pointer-events: none;
+    transition: opacity .22s ease, transform .22s ease;
+  }
+  .ta-card:hover .ta-card-socials,
+  .ta-card:focus-within .ta-card-socials { opacity: 1; transform: none; pointer-events: auto; }
+
+  /* name pill + role (below photo cards) */
+  .ta-meta { margin-top: 14px; }
+  .ta-pill {
+    display: inline-block;
+    border: 1px solid rgba(14,14,14,0.24);
+    border-radius: var(--cr-radius-pill);
+    padding: 5px 14px;
+    font-family: var(--cr-font-body);
+    font-weight: 600; font-size: 13.5px; line-height: 1.2;
+    color: var(--cr-fg);
+  }
+  .ta-role {
+    margin: 9px 0 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400; font-size: 14px; line-height: 1.4;
+    color: var(--cr-fg-3);
+  }
+
+  /* social badge */
+  .ta-badge {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--cr-ink);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff; text-decoration: none;
+    transition: transform .15s ease, background .2s ease;
+  }
+  .ta-badge svg { width: 16px; height: 16px; display: block; }
+  .ta-badge:hover { background: #000; transform: translateY(-1px); }
+  .ta-badge:active { transform: scale(.94); }
+
+  /* ─── accent "mystery member" card (brand-blue, full cell height) ─ */
+  .ta-accent {
+    display: flex; flex-direction: column;
+    background: var(--cr-brand);
+    border-radius: var(--cr-radius-lg);
+    padding: 22px;
+    min-height: 0;
+    color: var(--cr-ink);                      /* DARK text on the bright pop — ~7:1, AA-safe (and matches the source's dark-on-bright card; white would clear only ~2.8:1) */
+  }
+  .ta-accent .ta-card-socials {
+    position: static; opacity: 1; transform: none; pointer-events: auto;  /* always visible here */
+  }
+  .ta-accent-quote {
+    margin: 20px 0 0;
+    font-family: var(--cr-font-body);
+    font-weight: 500; font-size: 15px; line-height: 1.5;
+    color: var(--cr-ink);
+  }
+  .ta-accent-quote span { color: rgba(14,14,14,0.66); }   /* the joke attribution */
+  .ta-accent-meta { margin-top: auto; padding-top: 28px; }
+  .ta-accent .ta-pill {
+    border-color: rgba(14,14,14,0.42);
+    color: var(--cr-ink);
+  }
+  .ta-accent .ta-role { color: rgba(14,14,14,0.7); }
+
+  /* ─── MOTION: reveal (anti-race, fires once); no-JS shows everything ── */
+  .has-js .ta-section [data-reveal] { opacity: 0; transform: translateY(20px); }
+  .has-js .ta-section [data-reveal].in-view {
+    animation: taRise .7s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes taRise { to { opacity: 1; transform: none; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .ta-section [data-reveal],
+    .has-js .ta-section [data-reveal].in-view { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* ─── responsive ──────────────────────────────────────────────── */
+  @media (max-width: 1240px) {
+    .ta-section { padding: 100px 64px; }
+  }
+  @media (max-width: 1040px) {
+    .ta-section { padding: 88px 56px; }
+    .ta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 40px; }
+  }
+  @media (max-width: 760px) {
+    .ta-intro { grid-template-columns: minmax(0, 1fr); row-gap: 24px; }
+    .ta-body { max-width: none; }
+  }
+  @media (max-width: 600px) {
+    .ta-section { padding: 64px 24px; }
+    .ta-grid { column-gap: 16px; row-gap: 34px; }
+    .ta-pill { font-size: 12.5px; padding: 4px 12px; }
+    .ta-role { font-size: 13px; }
+    .ta-accent { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="ta-section" data-screen-label="Team · Who we are">
+  <div class="ta-wrap">
+
+    <!-- ── header ─────────────────────────────────────────────── -->
+    <div data-reveal style="--d:0s">
+      <div class="ta-eyebrow">
+        <i data-lucide="sparkle" class="ta-spark"></i>
+        <span class="ta-eye-pill">Who</span>
+        <span class="ta-eye-pill">We</span>
+        <span class="ta-eye-pill">Are</span>
+      </div>
+      <h2 class="ta-title">A Team Of<br>Automation Experts</h2>
+    </div>
+
+    <hr class="ta-rule" data-reveal style="--d:.08s" />
+
+    <!-- left/right intro split follows the SOURCE (not hardcoded) -->
+    <div class="ta-intro" data-reveal style="--d:.14s">
+      <p class="ta-lead">Example Brand started as a tool to take one team's busywork off their plate.</p>
+      <div class="ta-body">
+        <p>We built internal tooling to clear a finance team's repetitive operations work. But the moment it shipped, every other team wanted their backlog gone too &mdash; and our small services shop grew fast.</p>
+        <p>We realised point tools don't scale: each one quietly centralises the work back onto us. So we turned the platform into autonomous agents that drop into your existing stack &mdash; SAP, Salesforce, Epic, custom spreadsheets &mdash; and run the routine work in production. Now your operators keep the judgment; Example Brand just takes the busywork away.</p>
+      </div>
+    </div>
+
+    <!-- ── people grid (4 × 2) ────────────────────────────────── -->
+    <div class="ta-grid">
+
+      <!-- row 1 -->
+      <article class="ta-cell" data-reveal style="--d:.20s">
+        <div class="ta-card">
+          <img src="../assets/../../brand-pack/assets/imagery/avatars/avatar-jason.jpg" alt="Chris Bruce" decoding="async" />
+          <div class="ta-card-socials">
+            <a class="ta-badge" href="#" aria-label="Chris Bruce on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+            <a class="ta-badge" href="#" aria-label="Chris Bruce on GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.23 0 4.62-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg></a>
+          </div>
+        </div>
+        <div class="ta-meta">
+          <span class="ta-pill">Chris Bruce</span>
+          <p class="ta-role">Founder &amp; CEO</p>
+        </div>
+      </article>
+
+      <article class="ta-cell" data-reveal style="--d:.26s">
+        <div class="ta-card">
+          <img src="../assets/../../brand-pack/assets/imagery/avatars/team-1.jpg" alt="Sean Carey" decoding="async" />
+          <div class="ta-card-socials">
+            <a class="ta-badge" href="#" aria-label="Sean Carey on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+            <a class="ta-badge" href="#" aria-label="Sean Carey on GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.23 0 4.62-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg></a>
+          </div>
+        </div>
+        <div class="ta-meta">
+          <span class="ta-pill">Sean Carey</span>
+          <p class="ta-role">Founder &amp; CTO</p>
+        </div>
+      </article>
+
+      <article class="ta-cell" data-reveal style="--d:.32s">
+        <div class="ta-card">
+          <img src="../assets/../../brand-pack/assets/imagery/avatars/team-2.jpg" alt="Aileen Gomes" decoding="async" />
+          <div class="ta-card-socials">
+            <a class="ta-badge" href="#" aria-label="Aileen Gomes on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+            <a class="ta-badge" href="#" aria-label="Aileen Gomes on GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.23 0 4.62-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg></a>
+          </div>
+        </div>
+        <div class="ta-meta">
+          <span class="ta-pill">Aileen Gomes</span>
+          <p class="ta-role">Chief of Staff</p>
+        </div>
+      </article>
+
+      <!-- accent "mystery member" card -->
+      <article class="ta-cell ta-accent" data-reveal style="--d:.38s">
+        <div class="ta-card-socials">
+          <a class="ta-badge" href="#" aria-label="Rambo on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+          <a class="ta-badge" href="#" aria-label="Rambo on GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.23 0 4.62-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg></a>
+        </div>
+        <p class="ta-accent-quote">&ldquo;The best incident is the one you never hear about.&rdquo; <span>&mdash; Marcus Aurelius, probably &mdash; Rambo</span></p>
+        <div class="ta-accent-meta">
+          <span class="ta-pill">&ldquo;Rambo&rdquo;</span>
+          <p class="ta-role">Agent Reliability Engineer</p>
+        </div>
+      </article>
+
+      <!-- row 2 -->
+      <article class="ta-cell" data-reveal style="--d:.44s">
+        <div class="ta-card">
+          <img src="../assets/../../brand-pack/assets/imagery/avatars/team-3.jpg" alt="Thomas Stätter" decoding="async" />
+          <div class="ta-card-socials">
+            <a class="ta-badge" href="#" aria-label="Thomas Stätter on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+            <a class="ta-badge" href="#" aria-label="Thomas Stätter on GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.23 0 4.62-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg></a>
+          </div>
+        </div>
+        <div class="ta-meta">
+          <span class="ta-pill">Thomas Stätter</span>
+          <p class="ta-role">Backend Engineer</p>
+        </div>
+      </article>
+
+      <article class="ta-cell" data-reveal style="--d:.50s">
+        <div class="ta-card">
+          <img src="../assets/../../brand-pack/assets/imagery/avatars/team-oleksii.jpg" alt="Oleksii Suslov" decoding="async" />
+          <div class="ta-card-socials">
+            <a class="ta-badge" href="#" aria-label="Oleksii Suslov on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+            <a class="ta-badge" href="#" aria-label="Oleksii Suslov on GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.23 0 4.62-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg></a>
+          </div>
+        </div>
+        <div class="ta-meta">
+          <span class="ta-pill">Oleksii Suslov</span>
+          <p class="ta-role">Systems Engineer</p>
+        </div>
+      </article>
+
+      <article class="ta-cell" data-reveal style="--d:.56s">
+        <div class="ta-card">
+          <img src="../assets/../../brand-pack/assets/imagery/avatars/team-5.jpg" alt="Joe Harrison" decoding="async" />
+          <div class="ta-card-socials">
+            <a class="ta-badge" href="#" aria-label="Joe Harrison on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+            <a class="ta-badge" href="#" aria-label="Joe Harrison on GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.23 0 4.62-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg></a>
+          </div>
+        </div>
+        <div class="ta-meta">
+          <span class="ta-pill">Joe Harrison</span>
+          <p class="ta-role">Frontend Engineer</p>
+        </div>
+      </article>
+
+      <article class="ta-cell" data-reveal style="--d:.62s">
+        <div class="ta-card">
+          <img src="../assets/../../brand-pack/assets/imagery/avatars/team-jasonalex.jpg" alt="Jason Alex" decoding="async" />
+          <div class="ta-card-socials">
+            <a class="ta-badge" href="#" aria-label="Jason Alex on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+            <a class="ta-badge" href="#" aria-label="Jason Alex on GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.23 0 4.62-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg></a>
+          </div>
+        </div>
+        <div class="ta-meta">
+          <span class="ta-pill">Jason Alex</span>
+          <p class="ta-role">Site Reliability Engineer</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.ta-section');
+
+  // Lucide — draw the lone ✦ sparkle once, guarded (a blocked CDN must not break the section)
+  if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
+
+  if (!sec) return;
+
+  function reveal() {
+    sec.querySelectorAll('[data-reveal]').forEach(function (n) { n.classList.add('in-view'); });
+  }
+  if (reduce) { reveal(); return; }
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) { if (en.isIntersecting) { reveal(); io.disconnect(); } });
+    }, { threshold: 0.12 });
+    io.observe(sec);
+  } else {
+    reveal();
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Backed by — investor logo wall</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — Backed by (investor logo wall)        component-backed-by.html
+  ════════════════════════════════════════════════════════════════════════
+  COMPOSITION  A FULL-WIDTH WHITE section. An uppercase "BACKED BY" eyebrow
+               top-left, then a hairline-BORDERED GRID in two tiers:
+               • TIER 1 — 2 wide, taller cells (the lead investors), larger
+                 wordmarks, divided by a vertical rule.
+               • TIER 2 — 5 narrower, shorter cells, smaller wordmarks.
+               The grid is OPEN, not boxed: horizontal rules (top / between-tiers
+               / bottom) run FREE on both sides, with internal vertical dividers
+               between cells only — NO outer left/right borders. (Container
+               carries `border-top`; cells carry `border-bottom` for the rules
+               and `border-left` for the dividers, dropped on the first cell of
+               each row so the sides stay open at every breakpoint.)
+
+  INSPIRATION  The "Backed by" investor wall beneath a partnership feature
+               block (Madrona / Optum Ventures over General Catalyst / GSV /
+               SV Angel / … in a bordered grid). Only the logo wall was
+               requested; the feature block + photo + timeline were skipped.
+               Layout/proportions reproduced; the feature block is out of scope.
+
+  RE-SKIN      Real VC names → typographically-varied PLACEHOLDER investor
+               wordmarks (using real VC names would be a false backing claim;
+               swap for the client's real investor SVGs). Logos in CR ink (the
+               source logos are dark on white) — tier 1 `--cr-fg`, tier 2
+               slightly muted `--cr-fg-2`. Fonts → Urbanist + Inter. Borders =
+               `--cr-line` hairline (charter: separate by borders, NO shadow).
+               No icon marks (Lucide-only rule + avoids unicode-glyph marks) —
+               pure typographic wordmarks, exactly as the other CR logo
+               components do.
+
+  MOTION       The bordered FRAME is static; the logos STAGGER-FADE into it on
+               first viewport entry (per-logo `--d`, opacity + translateY) — so
+               the borders never jitter (only the wordmarks move). CSS
+               `animation` gated on `.in-view` (the anti-race pattern), fires
+               once. No-JS safe — logos visible (hidden reveal-state scoped to
+               `.has-js`). `prefers-reduced-motion` snaps in. Static credibility
+               strip — NO hover (not controls).
+
+  RESPONSIVE   2 / 5 grid → smaller (≤900px) → at ≤620px tier 2 becomes 2-up
+               with the 5th cell spanning full width; cell heights + type step
+               down. Tier 1 stays 2-up.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../_frozen-v2-tokens.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<style>
+  .bw-section, .bw-section * { box-sizing: border-box; }
+  .bw-section {
+    background: var(--cr-bg);            /* full-width white */
+    padding: 88px 100px;
+    font-family: var(--cr-font-body);
+  }
+  .bw-well { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  .bw-eyebrow {
+    margin: 0 0 28px;
+    font-family: var(--cr-font-body);
+    font-weight: 600; font-size: 13px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--cr-fg-3);
+  }
+
+  /* ─── OPEN grid — horizontal rules run free on both sides; internal vertical
+         dividers only (NO outer left/right borders, no enclosing box) ─── */
+  .bw-grid {
+    border-top: 1px solid var(--cr-line);     /* top rule only — sides stay open */
+  }
+  .bw-tier { display: grid; }
+  .bw-tier--1 { grid-template-columns: repeat(2, 1fr); }
+  .bw-tier--2 { grid-template-columns: repeat(5, 1fr); }
+  .bw-cell {
+    border-left: 1px solid var(--cr-line);    /* internal vertical dividers (between cells) */
+    border-bottom: 1px solid var(--cr-line);  /* horizontal rules */
+    display: grid; place-items: center;
+    padding: 20px;
+  }
+  /* open both outer sides: drop the left border on the first cell of each row */
+  .bw-tier--1 .bw-cell:first-child,
+  .bw-tier--2 .bw-cell:first-child { border-left: none; }
+  .bw-tier--1 .bw-cell { min-height: 132px; }
+  .bw-tier--2 .bw-cell { min-height: 104px; }
+
+  /* ─── placeholder investor wordmarks (swap for real SVGs) ─────── */
+  .bw-logo { color: var(--cr-fg); text-align: center; line-height: 1.1; white-space: nowrap; }
+  .bw-tier--2 .bw-logo { color: var(--cr-fg-2); }
+
+  .bw-logo--word  { font-family: var(--cr-font-display); font-weight: 700; font-size: 27px; letter-spacing: -0.01em; }
+  .bw-logo--ven   { font-family: var(--cr-font-display); font-size: 25px; font-weight: 400; }
+  .bw-logo--ven b { font-weight: 800; letter-spacing: -0.01em; }
+
+  .bw-logo--caps  { font-family: var(--cr-font-body); font-weight: 700; font-size: 16px; letter-spacing: 0.14em; text-transform: uppercase; }
+  .bw-logo--title { font-family: var(--cr-font-display); font-weight: 600; font-size: 19px; letter-spacing: 0.01em; }
+  .bw-logo--sv    { font-family: var(--cr-font-display); font-size: 18px; font-weight: 400; }
+  .bw-logo--sv b  { font-weight: 800; }
+  .bw-logo--light { font-family: var(--cr-font-display); font-weight: 300; font-size: 21px; letter-spacing: 0.06em; }
+  .bw-logo--stack { font-family: var(--cr-font-body); font-weight: 800; font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .bw-logo--stack small { display: block; margin-top: 4px; font-weight: 600; font-size: 11px; letter-spacing: 0.18em; color: var(--cr-fg-muted); }
+
+  /* ─── motion: logos stagger into the static frame (no border jitter) ─── */
+  .has-js .bw-section [data-reveal] { opacity: 0; transform: translateY(14px); }
+  .has-js .bw-section [data-reveal].in-view {
+    animation: bwRise 0.6s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes bwRise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .bw-section [data-reveal],
+    .has-js .bw-section [data-reveal].in-view { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* ─── responsive ──────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .bw-section { padding: 72px 48px; }
+    .bw-tier--1 .bw-cell { min-height: 116px; }
+    .bw-tier--2 .bw-cell { min-height: 92px; padding: 14px; }
+    .bw-logo--word { font-size: 23px; }
+    .bw-logo--ven  { font-size: 21px; }
+    .bw-logo--caps { font-size: 14px; letter-spacing: 0.1em; }
+    .bw-logo--title, .bw-logo--light { font-size: 17px; }
+    .bw-logo--sv { font-size: 16px; }
+  }
+  @media (max-width: 620px) {
+    .bw-section { padding: 56px 24px; }
+    .bw-tier--2 { grid-template-columns: repeat(2, 1fr); }
+    .bw-tier--2 .bw-cell:last-child { grid-column: 1 / -1; }       /* 5th spans full width — no broken half-row */
+    .bw-tier--2 .bw-cell:nth-child(2n+1) { border-left: none; }    /* keep both sides open per 2-col row */
+    .bw-tier--1 .bw-cell { min-height: 104px; }
+    .bw-tier--2 .bw-cell { min-height: 88px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="bw-section" data-screen-label="Backed by · Investor logos">
+  <div class="bw-well">
+
+    <p class="bw-eyebrow" data-reveal style="--d:0s">Backed by</p>
+
+    <!-- bordered grid — PLACEHOLDER investor wordmarks; swap for real investor logo SVGs -->
+    <div class="bw-grid">
+
+      <div class="bw-tier bw-tier--1">
+        <div class="bw-cell"><span class="bw-logo bw-logo--word"  data-reveal style="--d:.10s">Northbridge</span></div>
+        <div class="bw-cell"><span class="bw-logo bw-logo--ven"   data-reveal style="--d:.16s"><b>Helix</b> Ventures</span></div>
+      </div>
+
+      <div class="bw-tier bw-tier--2">
+        <div class="bw-cell"><span class="bw-logo bw-logo--caps"  data-reveal style="--d:.24s">Catalyst</span></div>
+        <div class="bw-cell"><span class="bw-logo bw-logo--title" data-reveal style="--d:.30s">Greenfield</span></div>
+        <div class="bw-cell"><span class="bw-logo bw-logo--sv"    data-reveal style="--d:.36s"><b>SV</b> Foundry</span></div>
+        <div class="bw-cell"><span class="bw-logo bw-logo--light" data-reveal style="--d:.42s">Aperture</span></div>
+        <div class="bw-cell"><span class="bw-logo bw-logo--stack" data-reveal style="--d:.48s">Lumen<small>Deeptech</small></span></div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.bw-section');
+  if (!sec) return;
+
+  function reveal() {
+    sec.querySelectorAll('[data-reveal]').forEach(function (n) { n.classList.add('in-view'); });
+  }
+
+  if (reduce) { reveal(); return; }
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) { if (en.isIntersecting) { reveal(); io.disconnect(); } });
+    }, { threshold: 0.2 });
+    io.observe(sec);
+  } else {
+    reveal();
+  }
+})();
+</script>
+
+</body>
+</html>

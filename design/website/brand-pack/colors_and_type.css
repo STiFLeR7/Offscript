@@ -1,0 +1,2292 @@
+/* ──────────────────────────────────────────────────────────────────
+   Example Brand — Colors & Type  [v3 — EDITORIAL RESTRAINT]
+   Direction : editorial restraint — hierarchy from typography, scale,
+               whitespace, alignment and proportion, never decoration.
+   Color     : warm cream page · two neutrals · four sparing accents
+   Type      : Instrument Sans (single family) · Major Third scale
+   Effects   : none — no shadow, no glass, no depth simulation
+   Token NAMES are the stable contract — only VALUES change + new tokens
+   added. Nothing is deleted; what the current language no longer uses is
+   marked DEPRECATED or DORMANT and left inert.
+   ────────────────────────────────────────────────────────────────── */
+
+/* ─── Webfont ──────────────────────────────────────────────────────
+   ONE typeface for the whole experience. Instrument Sans (Google Fonts,
+   SIL OFL — see fonts/OFL.txt), vendored as a variable font carrying the
+   400–700 weight range the system uses. Self-hosted by relative path, as
+   every face in this pack has been — the pack stays self-contained.
+
+   Urbanist and Inter are DEPRECATED. Their files remain in fonts/ so
+   nothing downstream breaks, but they are no longer declared and must not
+   be referenced. A single typeface is a rule of the current direction,
+   not a limit of the pack. */
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("./fonts/InstrumentSans[wdth,wght].ttf") format("truetype-variations"),
+       url("./fonts/InstrumentSans[wdth,wght].ttf") format("truetype");
+  font-weight: 400 700;
+  font-stretch: 75% 100%;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ─── Tokens ───────────────────────────────────────────────────────── */
+:root {
+  /* ══════════════════════════════════════════════════════════════════
+     CANONICAL COLOUR FOUNDATION — permanently authored, 2026-07-30
+     ══════════════════════════════════════════════════════════════════
+     These values are CANONICAL and IMMUTABLE. Never modify them. Never
+     interpolate them. Never approximate them. Never generate alternatives.
+     Never replace a hexadecimal value. A hue's steps are READ from this
+     ramp, never derived from it — the OKLCH descent that used to compute
+     the deep steps is retired (DR-23).
+
+     HOW TO CONSUME — in this order, and reaching further down needs a
+     reason:
+
+       1. SEMANTIC tokens (--cr-page-ground, --cr-text-primary,
+          --cr-border-default, --cr-bg-raised …). These are the public
+          API of the pack. Components consume these.
+       2. CANONICAL tonal steps (--cr-neutral-200, --cr-blue-700 …), and
+          only when BUILDING a semantic token or defining a new
+          component. A numbered step chosen at a call site is a decision
+          nobody can later find.
+       3. LEGACY aliases (--cr-brand*, --cr-fg*, --cr-line*, --cr-teal* …)
+          — compatibility only, for call sites not yet migrated. Never
+          for new work. Removed once every consumer has moved, not before.
+
+     If a component needs a colour, consume the closest SEMANTIC token.
+     Governance: governance/website/foundation/COLOUR.md (intent + the role
+     table), rulebooks/visual-language.md §15 (usage + the Colour Intent
+     Matrix), component-governance/COMPOSE.md §C.5 (budgets + action tiers).
+     Decisions: governance/DECISION-REGISTER.md DR-23 … DR-33.
+     ────────────────────────────────────────────────────────────────── */
+
+  /* ── Primary brand — EMPHASIS. Rare by nature, not by quota ─────────
+     The emphasis accent: editorial emphasis, section markers, key
+     highlights, important metrics, badges, chips, selected moments of
+     interaction. Never a page background, never a band, never a card
+     fill, never a wide field — a spark, not a wash.
+     Never mandatory for any component: a Primary Button is defined by its
+     semantic role and hierarchy, not by its fill (COMPOSE.md §C.5). */
+  --cr-orange-50:   #FFF5EF;
+  --cr-orange-100:  #FFE8DA;
+  --cr-orange-200:  #FFD0B4;
+  --cr-orange-300:  #FFB386;
+  --cr-orange-400:  #FF9554;
+  --cr-orange-500:  #FF7926;
+  --cr-orange-600:  #E56615;
+  --cr-orange-700:  #BF4F00;
+  --cr-orange-800:  #913B00;
+  --cr-orange-900:  #612600;
+  --cr-orange-950:  #331200;
+
+  /* ── Success — positive states, validation, completion ────────────── */
+  --cr-green-50:    #EEF9F1;
+  --cr-green-100:   #D8F0DF;
+  --cr-green-200:   #B2E1BF;
+  --cr-green-300:   #85CC97;
+  --cr-green-400:   #53AF69;
+  --cr-green-500:   #358A4B;
+  --cr-green-600:   #26763D;
+  --cr-green-700:   #1F6132;
+  --cr-green-800:   #174A25;
+  --cr-green-900:   #103319;
+  --cr-green-950:   #081B0D;
+
+  /* ── Information — information, orientation, focus, wayfinding, and
+        environmental grounding at scale (the one accent that legitimately
+        covers a large surface, e.g. the closing band). ──────────────── */
+  --cr-blue-50:     #F0FBFF;
+  --cr-blue-100:    #DAF5FF;
+  --cr-blue-200:    #B5EAFF;
+  --cr-blue-300:    #84DDFF;
+  --cr-blue-400:    #54CEFF;
+  --cr-blue-500:    #26B7FF;
+  --cr-blue-600:    #129DDF;
+  --cr-blue-700:    #0C7CB2;
+  --cr-blue-800:    #085A81;
+  --cr-blue-900:    #043851;
+  --cr-blue-950:    #021C29;
+
+  /* ── Intelligence — AI orchestration, premium and advanced
+        capability. Used sparingly. ─────────────────────────────────── */
+  --cr-purple-50:   #F5F0FF;
+  --cr-purple-100:  #EADFFF;
+  --cr-purple-200:  #D5BEFF;
+  --cr-purple-300:  #BC95FF;
+  --cr-purple-400:  #9D66FF;
+  --cr-purple-500:  #7F3FFF;
+  --cr-purple-600:  #6E26FF;
+  --cr-purple-700:  #5915DA;
+  --cr-purple-800:  #4210A3;
+  --cr-purple-900:  #2C0A6B;
+  --cr-purple-950:  #160338;
+
+  /* ── Neutral foundation — the architectural canvas ─────────────────
+     WARM by construction (R−B runs +0 → +14 → +1 across the ramp). The
+     interface is ~90–95% neutral and ~5% accent, measured as a PAGE
+     aggregate — not a per-section rule (COMPOSE.md §C.5 holds the
+     per-section ceiling and the accent-surface exemption).
+     Note the text and border tiers below are deliberately NOT members of
+     this ramp: they are pure grey (R−B = 0). Warm surfaces with
+     neutral-grey text is an authored choice, not a mismatch. */
+  --cr-neutral-0:    #FFFFFF;
+  --cr-neutral-25:   #FEFEFD;
+  --cr-neutral-50:   #FCFCFA;
+  --cr-neutral-75:   #FAF9F6;
+  --cr-neutral-100:  #F8F7F3;
+  --cr-neutral-150:  #F7F6F1;
+  --cr-neutral-200:  #F6F5EF;
+  --cr-neutral-300:  #ECEBE3;
+  --cr-neutral-400:  #DDDCCF;
+  --cr-neutral-500:  #C9C8BC;
+  --cr-neutral-600:  #A9A89C;
+  --cr-neutral-700:  #818075;
+  --cr-neutral-800:  #5F5F56;
+  --cr-neutral-900:  #403F3B;
+  --cr-neutral-950:  #2A2A28;
+  --cr-neutral-1000: #171716;
+
+  /* ── Typography tier ──────────────────────────────────────────────── */
+  --cr-text-primary:    #2A2A2A;
+  --cr-text-secondary:  #626262;
+  --cr-text-muted:      #8B8B8B;
+  --cr-text-disabled:   #BBBBBB;
+  --cr-text-inverse:    #FFFFFF;
+
+  /* ── Border tier ──────────────────────────────────────────────────── */
+  --cr-border-subtle:   #ECECEC;
+  --cr-border-default:  #D9D9D9;
+  --cr-border-strong:   #BEBEBE;
+
+  /* ── Surface tier — the canonical tonal surfaces ───────────────────
+     Each is an exact alias of a neutral step; this tier names them as
+     surfaces. NOTE the hierarchy is INVERTED from a conventional
+     white-page system: the page ground is surface-4 (the warm field) and
+     surface-1 (white) is an ELEVATION sitting on top of it. Measured
+     across every approved reference frame, #F6F5EF is the dominant field
+     (55/23/66/36/63/80% of pixels) and white appears as raised cards
+     (10–13%). That inversion is most of why the experience reads as
+     editorial rather than as an application (DR-26). */
+  --cr-surface-1:  #FFFFFF;
+  --cr-surface-2:  #FCFCFA;
+  --cr-surface-3:  #F8F7F3;
+  --cr-surface-4:  #F6F5EF;
+  --cr-surface-5:  #ECEBE3;
+
+  /* ── ROLE LEGALITY — measured, not assumed (DR-29) ──────────────────
+     The role table COMPOSE.md §C.5 points at. A token is used only in a
+     role it MEASURES for; "closest token" selects on hue, and the binding
+     constraint is contrast. Ratios are against the page ground
+     (surface-4) unless stated.
+
+       AS BODY TEXT (needs 4.5:1)
+         text-primary ....... 13.14:1  ✓
+         text-secondary ......  5.58:1  ✓
+         text-muted ..........  3.12:1  ✗  large text only (3:1)
+         text-disabled .......  1.76:1  ✗  never text — disabled state only
+         purple-600 ..........  5.68:1  ✓  legible; reserve for emphasis
+         green-600 ...........  5.14:1  ✓  the one accent meant for body text
+         orange-700 ..........  4.44:1  ✗ body / ✓ large — the deep emphasis step
+         blue-700 ............  4.23:1  ✗ body / ✓ large
+         orange-500 ..........  2.40:1  ✗  never text
+         blue-500 ............  2.07:1  ✗  never text — surface and fill only
+
+       AS A SURFACE, what goes on top (both measured)
+         blue-500   → text-primary  6.36:1 ✓   (white on it: 2.26:1 ✗)
+         orange-500 → text-primary  5.48:1 ✓   (white on it: 2.62:1 ✗)
+         purple-600 → text-inverse  6.21:1 ✓   (text-primary on it: 2.31:1 ✗)
+         green-600  → text-inverse  5.61:1 ✓   (text-primary on it: 2.56:1 ✗)
+
+       AS A FOCUS INDICATOR (needs 3:1, WCAG 1.4.11)
+         text-primary ....... 13.14:1  ✓  the DEFAULT ring
+         blue-700 ............  4.23:1  ✓  on accent / dark surfaces only
+         blue-500 ............  2.07:1  ✗  never a focus ring (DR-24)
+
+       AS A BORDER — all three border tokens measure BELOW 3:1 against
+       the page ground (1.08 / 1.29 / 1.70). Fine as decorative rules and
+       structural separation; NOT sufficient where a border is the ONLY
+       indicator of a control's boundary. Such a control needs a second
+       cue. Recorded, not resolved by changing a value. */
+
+  /* ── Page & text neutrals — the whole hierarchy rests on these ─────
+     Typography stays predominantly neutral; accents are sparing. The
+     eye is meant to be moved by scale and space, not by colour.
+
+     These are the SEMANTIC layer — tier 1 of the consumption order. They
+     now resolve THROUGH the canonical foundation above rather than
+     carrying their own literals. */
+  --cr-bg:              var(--cr-surface-4);   /* Primary background — the default page surface */
+  --cr-page-ground:     var(--cr-surface-4);   /* The canonical default page ground. Canonical, not
+                                                  mandatory: a section may declare another approved
+                                                  background, and the page ground exists only beneath
+                                                  those that have not (DR-26). */
+  /* The two text roles resolve through --cr-fg / --cr-fg-2, which the
+     pairing wrappers below REDEFINE per surface. --cr-fg-base holds the
+     unshadowed primary text value and is never overridden — anything that
+     must stay the primary ink regardless of the surface it sits inside
+     (a button label on an accent band) reads this instead. */
+  --cr-fg-base:         var(--cr-text-primary);
+  --cr-fg:              var(--cr-fg-base);  /* Primary text — headings, nav, buttons, high emphasis */
+  --cr-fg-2:            var(--cr-text-secondary);   /* Secondary text — body, supporting descriptions */
+  --cr-fg-3:            var(--cr-text-secondary);   /* alias of secondary — the ramp has TWO text values, not four */
+  --cr-fg-muted:        var(--cr-text-secondary);   /* alias of secondary (was a 4th neutral; collapsed) */
+  --cr-fg-link:         var(--cr-text-primary);   /* links read as primary text; the underline carries the affordance */
+
+  --cr-line:            var(--cr-border-default);   /* Default stroke — dividers, cards, inputs, structural separation */
+  --cr-stroke:          1px;       /* Default stroke WIDTH — never write the literal per component */
+  --cr-line-soft:       var(--cr-border-default);   /* alias — one stroke colour; heavy borders are out */
+  --cr-line-dark:       rgba(255,255,255,0.20);  /* DORMANT — dark-surface edge; see the ink tier */
+
+  /* ── Accents — used sparingly, never as large text ─────────────────
+     Hierarchy comes from typography and spacing, not colour. Each accent
+     has one job. See the pairing block below before putting anything on
+     top of one. */
+  --cr-accent-orange:   var(--cr-orange-500);   /* EMPHASIS accent — Section Markers · editorial
+                                                   emphasis · key highlights · badges · chips.
+                                                   NEVER a large coloured surface: not a band, not a
+                                                   card fill, not a page background. One bounded
+                                                   exception — a single emphasis-filled action per
+                                                   page, COMPOSE.md §C.5. */
+  --cr-accent-green:    var(--cr-green-600);     /* POSITIVE accent — success · validation · completion */
+  --cr-accent-blue:     var(--cr-blue-500);      /* INFORMATION accent — information · orientation ·
+                                                   environmental grounding at scale. The one accent
+                                                   that legitimately covers a large surface. */
+  --cr-accent-purple:   var(--cr-purple-600);    /* INTELLIGENCE accent — AI orchestration · premium
+                                                   and advanced capability. Used sparingly. */
+
+  /* ── Deep steps of each accent — NOW AUTHORED, no longer derived ─────
+     These were computed by a fixed OKLCH lightness descent (800 = L−0.22,
+     900 = L−0.32). That mechanism is RETIRED (DR-23): the canonical
+     foundation authors all eleven steps of every ramp, and a derivation is
+     a rule for inventing a value — which is the one thing the foundation
+     forbids. Each name below now reads its authored step. Every one of the
+     eight values changed; see DEV-HANDOFF.md for the Was→Now table.
+
+     THE JOB is unchanged: the section marker on a solid accent band. The
+     marker is a brand element, not text, so it wants to belong to the
+     surface rather than contrast with it — a deeper shade of the surface's
+     OWN colour reads as part of the band, where a paired foreground reads
+     as a second colour arriving.
+
+     RE-MEASURED against their own accent (WCAG 1.4.11 asks 3:1 for a
+     non-text graphic). The authored steps are NOT uniformly darker than
+     the derived ones, and the result splits:
+
+                     authored          was (derived)
+       orange 900    4.49:1  ✓          3.70:1  ✓     improved
+       blue   900    5.50:1  ✓          3.48:1  ✓     improved
+       green  900    2.48:1  ✗          3.18:1  ✓     REGRESSED
+       purple 900    2.48:1  ✗          2.24:1  ✗     still fails
+
+     GREEN IS A REAL REGRESSION and is handled, not absorbed. Canonical
+     green-900 is lighter relative to green-600 than the derived step was,
+     so it no longer separates from its own band. Under the precedence in
+     COLOUR.md §11 — accessibility first — the green band's marker
+     therefore takes its PAIRED FOREGROUND (white, 5.61:1) exactly as the
+     purple band already does. Two bands now share one exception instead of
+     purple carrying it alone. See DR-34; the marker rule below is updated.
+
+     No hex was changed to fix this. The palette is canonical; which token
+     is legal in which role is governance, and this is a role decision. */
+  --cr-accent-orange-800: var(--cr-orange-800);
+  --cr-accent-orange-900: var(--cr-orange-900);
+  --cr-accent-blue-800:   var(--cr-blue-800);
+  --cr-accent-blue-900:   var(--cr-blue-900);
+  --cr-accent-purple-800: var(--cr-purple-800);
+  --cr-accent-purple-900: var(--cr-purple-900);
+  --cr-accent-green-800:  var(--cr-green-800);
+  --cr-accent-green-900:  var(--cr-green-900);
+
+  /* ── Accent-on-surface pairing (MEASURED, not assumed) ─────────────
+     The direction assigns accents to surfaces but not what sits on them.
+     Measured against WCAG 2.2 AA (4.5:1 normal text):
+
+       ON THE CREAM PAGE, as text
+         primary #2A2A2A .......... 12.97:1  ✓
+         secondary #626262 .........  5.42:1  ✓
+         green ..................... 5.07:1  ✓  (the one accent legible as body text)
+         purple .................... 5.63:1  ✓  (legible, but reserve for emphasis)
+         orange .................... 2.38:1  ✗  never text
+         blue ...................... 2.12:1  ✗  never text
+
+       AS A SURFACE, what goes on top
+         blue   → primary text  6.11:1  ✓   (white on blue is 2.32:1 ✗)
+         orange → primary text  5.44:1  ✓   (white on orange is 2.60:1 ✗)
+         purple → white         6.15:1  ✓   (primary text on purple is 2.30:1 ✗)
+         green  → white         5.54:1  ✓   (primary text on green is 2.56:1 ✗)
+
+     Realized by .cr-on-accent-light / .cr-on-accent-deep below. */
+  --cr-on-accent-light: var(--cr-fg-base);  /* what sits on blue / orange */
+  --cr-on-accent-deep:  var(--cr-text-inverse);  /* what sits on purple / green */
+
+  /* ── Legacy accent names — RE-POINTED, kept as the stable contract ──
+     The catalogue consumes --cr-brand ~230×. Re-pointing rather than
+     renaming is what lets the whole catalogue re-theme at once.
+
+     THE HAND-PICKED RAMP STEPS ARE GONE — 2026-07-29. Six of these
+     carried their own hexes (#0090D6, #8FDBFF, #E6F6FF, #12401F, #6BA87C,
+     #D8E8DC), and under "never introduce additional colours" a hand-picked
+     tint is exactly what the rule closes off. Each now resolves either to
+     a DERIVED step — a fixed OKLCH descent from an approved accent, which
+     is mechanism rather than a choice — or to the accent itself, or to the
+     neutral tint surface. Nothing here is picked any more.
+
+     Re-pointing rather than deleting is deliberate and unchanged: these
+     names are the stable contract. A consumer that asks for a lighter blue
+     now gets the blue, which is on-palette and wrong-looking if it
+     mattered — visible, and correctable — rather than an off-palette hue
+     that passes review because it is pretty. */
+  --cr-brand:           var(--cr-accent-blue);
+  --cr-brand-700:       var(--cr-accent-blue-800);  /* was #0090D6 — now the derived deep step */
+  --cr-brand-300:       var(--cr-accent-blue);      /* was #8FDBFF — no derived light step exists */
+  --cr-brand-100:       var(--cr-bg-tint);          /* was #E6F6FF — a tint surface, not a hue */
+  --cr-brand-blue:      var(--cr-accent-blue);
+  --cr-brand-blue-700:  var(--cr-brand-700);
+  --cr-brand-blue-300:  var(--cr-brand-300);
+  --cr-brand-blue-100:  var(--cr-brand-100);
+
+  --cr-wordmark-indigo: #150580;   /* WORDMARK ONLY — an identity rule, not a palette choice */
+  --cr-brand-indigo:    #150580;
+
+  /* Teal was the v2 secondary; the direction has no teal. Re-pointed to
+     the green accent so anything still consuming it lands on-palette. */
+  --cr-teal:            var(--cr-accent-green);
+  --cr-teal-900:        var(--cr-accent-green-800);  /* was #12401F */
+  --cr-teal-400:        var(--cr-accent-green);      /* was #6BA87C */
+  --cr-teal-100:        var(--cr-bg-tint);           /* was #D8E8DC */
+
+  /* ── Dark / ink surfaces — DEPRECATED, re-pointed to canonical ───────
+     These eight were a separate family of near-blacks (#0A0A0A … #1A1A1A),
+     off-canonical and each hand-picked. They are now DEPRECATED in favour
+     of --cr-bg-dark and the canonical dark steps, and re-pointed so
+     anything still consuming them lands on-palette rather than on a
+     retired literal. Names retained — nothing is deleted.
+
+     Eight distinct near-blacks was never a design decision the system
+     could act on; nobody can tell #0E0E0E from #121212, so the tier was
+     carrying variation that communicated nothing. Canonical gives two dark
+     steps with a stated difference and that is the whole vocabulary.
+
+     Dark itself is NO LONGER DORMANT — see DR-28 and --cr-bg-dark above.
+     It is a governed editorial device, not a theme. */
+  --cr-ink:             var(--cr-neutral-1000);  /* was #111111 */
+  --cr-ink-deep:        var(--cr-neutral-1000);  /* was #0A0A0A */
+  --cr-ink-night:       var(--cr-neutral-1000);  /* was #141414 */
+  --cr-ink-violet:      var(--cr-neutral-950);   /* was #1A1A1A */
+  --cr-ink-blue-deep:   var(--cr-neutral-1000);  /* was #101010 */
+  --cr-ink-flat:        var(--cr-neutral-1000);  /* was #0E0E0E */
+  --cr-ink-cool:        var(--cr-neutral-1000);  /* was #121212 */
+  --cr-ink-card:        var(--cr-neutral-1000);  /* was #0A0A0A */
+
+  /* ── Neutral surfaces ──────────────────────────────────────────────
+     One page surface, one raised surface. The white is what a card sits
+     on against the cream — the only routine surface change in the
+     language. */
+  --cr-bg-raised:       var(--cr-surface-1);   /* raised/card surface on the cream page */
+  --cr-bg-warm:         var(--cr-surface-1);   /* LEGACY name → the raised surface */
+  /* #EFEEE7 WAS THE ONE LIVE VALUE THE CANONICAL SET DOES NOT CONTAIN.
+     Re-pointed to surface-5 / neutral-300 (#ECEBE3), its nearest canonical
+     neighbour. A small but real visible shift on the quiet inset step —
+     recorded rather than absorbed, precisely because it is visible. The
+     alternative was inventing a step to fit, which is the forbidden
+     "interpolate a missing value". See DR-32. */
+  --cr-bg-warm-2:       var(--cr-surface-5);   /* a quieter cream step, for inset/quiet areas */
+  --cr-bg-tint:         var(--cr-surface-5);
+  --cr-bg-grey-50:      var(--cr-surface-1);
+  --cr-bg-grey-100:     var(--cr-surface-5);
+  --cr-bg-grey-200:     var(--cr-line);
+
+  /* ── Governed section backgrounds (DR-26, DR-28) ────────────────────
+     Every section declares one of these; nothing inherits a background by
+     accident. The page ground exists only beneath sections that have not
+     declared otherwise.
+
+     DARK IS NOT A THEME. It is one more section background, selected for a
+     communicative reason: permitted for a hero, closing band, footer,
+     immersive or full-bleed media moment, product reveal or narrative
+     transition — and AT MOST TWO PER PAGE. Never for general content,
+     forms, long-form reading, or section-to-section alternation. The system
+     is light-first and editorial; there is nothing to switch to.
+
+     The two accent backgrounds bind to the values the approved references
+     MEASURE, not to a darker step: the reference closing band is light
+     blue at 6.36:1 with dark ink, and Frame 2147226587's purple matches
+     purple-600 at exact zero distance. Approved-reference fidelity
+     outranks preference (COLOUR.md §11). */
+  --cr-bg-editorial:     var(--cr-surface-4);   /* the default editorial canvas */
+  --cr-bg-dark:          var(--cr-neutral-950); /* immersive — rationed, ≤2 per page */
+  --cr-bg-accent:        var(--cr-blue-500);    /* campaign / closing band — takes primary ink */
+  --cr-bg-intelligence:  var(--cr-purple-600);  /* premium capability — takes white */
+
+  /* ── Surface roles (the governance join) ───────────────────────────
+     COMPOSITION.md / COMPOSE.md name surfaces by ROLE, never by value.
+     Under editorial restraint the roles no longer describe a rotating
+     band cadence — the page is one surface, and a surface change is a
+     deliberate accent moment, not the default rhythm device.
+       base     → the default page surface (the cream)
+       rest     → the raised surface a card or panel sits on (white)
+       contrast → the accent surface of a deliberate emphasis band;
+                  defaults to blue, a section may substitute another
+                  accent — always with its paired foreground
+       figure   → DORMANT (was the decorated/gradient panel; the system
+                  no longer authors decorated figure surfaces)
+
+     DEPRECATED as of 2026-07-30 — prefer the canonical surface tier
+     (--cr-surface-1 … -5) or the governed section backgrounds above. These
+     four names are retained because they are consumed and because token
+     names are the stable contract; they are re-pointed, not deleted.
+     Two of them already held their canonical values exactly:
+       surface-base = surface-4   ·   surface-rest = surface-1
+     `contrast` is the odd one out — it is an ACCENT, not a neutral surface,
+     so it re-points to the governed accent background rather than into the
+     tonal tier it never belonged to. See DR-31.
+
+     STILL OPEN, and named rather than glossed: --cr-surface-image,
+     -focus, -photographic, -scrim and -fit share this prefix and are
+     MECHANISM, not colour — a URL, a position, an opacity, a blend. They
+     belong under a mechanism namespace. They are NOT moved here: they are
+     *written* by 46 component rules in this file and referenced by 13
+     files outside it, and a CSS custom-property alias cannot cover a
+     setter. Moving them is a 59-site edit to environmental-imagery
+     machinery, none of it a colour change — bundling it into a colour pass
+     would make a colour regression and an imagery regression
+     indistinguishable. Deferred to a pass that owns imagery (DR-31). */
+  --cr-surface-base:      var(--cr-surface-4);   /* DEPRECATED → --cr-surface-4 */
+  --cr-surface-rest:      var(--cr-surface-1);   /* DEPRECATED → --cr-surface-1 */
+  --cr-surface-contrast:  var(--cr-bg-accent);   /* DEPRECATED → --cr-bg-accent */
+  --cr-surface-figure:    var(--cr-surface-4);   /* DEPRECATED + DORMANT (0 uses) */
+
+  /* ── Surface treatment — the MATERIAL a branded surface is made of ──
+     Not decoration, and not depth. These three shared assets soften the
+     digital precision of a large branded surface and give it a tactile,
+     editorial character — the quality of printed matter rather than of a
+     screen. A reader should perceive the background as materially
+     considered and should never notice an individual texture.
+     (Rule: rulebooks/visual-language.md §1.)
+
+     CANONICAL ASSETS. These are Brand Pack assets, not page resources.
+     Do not replace, regenerate or substitute them without updating the
+     Brand Pack itself — every treated surface across the whole website
+     references these same three files, and that shared reference is what
+     makes the treatment read as one material rather than a per-page
+     effect. Provenance + the exact derivation live in ASSETS.md.
+
+     COMPOSITION ORDER (top → bottom) — fixed, and part of the language.
+     The FILM layer belongs to the BASE, not to the surface: it is analog
+     tonal variation, which only means something over a photograph. On a
+     flat colour field it has no tone to vary and reads as dirt on the
+     block rather than as material. Two forms, same order:
+
+       SOLID COLOUR BASE                  PHOTOGRAPHIC BASE
+
+       noise-texture   Overlay 100%       noise-texture   Overlay      100%
+            ↓                                  ↓
+                                          film-texture    Plus Lighter  50%
+                                               ↓
+       grunge-retro    Overlay   5%       grunge-retro    Overlay        5%
+            ↓                                  ↓
+       Brand Colour                       Photograph · Screenshot ·
+                                          Illustration · Creative        */
+  --cr-texture-noise:          url("./assets/imagery/textures/noise-texture.webp");
+  --cr-texture-film:           url("./assets/imagery/textures/film-texture.webp");
+  --cr-texture-grunge:         url("./assets/imagery/textures/grunge-retro-texture.webp");
+
+  --cr-texture-noise-blend:    overlay;
+  --cr-texture-noise-opacity:  1;
+  --cr-texture-noise-size:     auto;    /* NATIVE grain scale, tiled — the grain is
+                                           independent of surface size, so a tall
+                                           creative and a short banner get the SAME
+                                           grain, never the same texture stretched to
+                                           two different sizes. It is expressed in CSS
+                                           pixels: on a higher-DPR display the browser
+                                           resamples it smoothly, so the grain reads
+                                           FINER and softer, never coarser or blocky
+                                           (measured — see output/v3-specimens/
+                                           FINDINGS.md). No 2x variant is needed. */
+  --cr-texture-noise-repeat:   repeat;
+
+  --cr-texture-film-blend:     plus-lighter;
+  --cr-texture-film-opacity:   0.5;
+  --cr-texture-film-size:      cover;   /* one composition, mapped to the surface.
+                                           PHOTOGRAPHIC BASES ONLY — see the film
+                                           layer below; a solid colour never takes it. */
+
+  --cr-texture-grunge-blend:   overlay;
+  --cr-texture-grunge-opacity: 0.05;    /* RECORDED, not declared: the bottom layer
+                                           rides the background stack, which has no
+                                           per-layer opacity, so this value is
+                                           pre-applied in the asset's alpha (13/255).
+                                           Alpha compositing performs exactly the
+                                           arithmetic `opacity` would. */
+  --cr-texture-grunge-size:    cover;
+
+  /* Set per surface to put a creative UNDER the treatment (photography,
+     product screenshot, illustration). Defaults to none, i.e. the base is
+     the surface colour. The system never authors the creative itself. */
+  --cr-surface-image:          none;
+
+  /* Where a cover-crop lands. `cover` always crops — the only question is
+     which part of the creative survives, and centre is a guess. A focus
+     travels WITH its asset (see the environment selections below), so the
+     call site never types a percentage: an arbitrary background-position
+     is the same free handle the presence classes exist to remove. */
+  --cr-surface-focus:          center;
+
+  /* 1 when the base under the treatment is a photograph. Read by the film
+     layer, which belongs to the BASE and not to the surface — see the
+     composition-order diagram above. Not a style switch: it states what
+     the base IS, and the material follows from that. */
+  --cr-surface-photographic:   0;
+
+  /* ── Environmental imagery — the canonical library ──────────────────
+     Approved environmental creative, delivered by people and vendored into
+     the pack. These are BRAND PACK ASSETS, not page resources: a section
+     SELECTS one, exactly as it selects a ratio or a presence. It never
+     supplies a URL, and it never supplies a substitute from elsewhere.
+
+     Each selection binds the image to its measured focus, because the two
+     are one decision — the asset is 3:2 and every approved ratio therefore
+     crops it, so "which asset" is meaningless without "which part of it".
+
+     The creative itself is NEVER modified. Atmosphere is built above it,
+     in CSS, from the surface treatment and the scrim below. Provenance and
+     the exact derivation live in ASSETS.md. */
+  --cr-env-cliffside-muted:    url("./assets/imagery/environments/env-cliffside-muted.jpg");
+  --cr-env-dawn-haze:          url("./assets/imagery/environments/env-dawn-haze.jpg");
+  --cr-env-lake-mirror:        url("./assets/imagery/environments/env-lake-mirror.jpg");
+  --cr-env-massif-banded:      url("./assets/imagery/environments/env-massif-banded.jpg");
+  --cr-env-massif-clear:       url("./assets/imagery/environments/env-massif-clear.jpg");
+  --cr-env-ridges-distant:     url("./assets/imagery/environments/env-ridges-distant.jpg");
+  --cr-env-valley-deep:        url("./assets/imagery/environments/env-valley-deep.jpg");
+
+  /* ── COMPOSED CREATIVES — the second delivered library (2026-07-29) ──
+     A different KIND of asset from the environmental library above, and
+     the distinction is load-bearing rather than filing. An `environment`
+     is a place; the system supplies its own atmosphere over it. A
+     `creative` here arrives ALREADY COMPOSED — a product surface set into
+     an environment, with the brand's own edge rule and corner chip baked
+     into the raster by the people who made it.
+
+     Two consequences follow, and both are recorded rather than designed
+     around:
+       1. They carry TRANSPARENT MARGINS. The composition is the frame,
+          not just the photograph, so these are vendored as WebP WITH
+          ALPHA and never flattened to JPEG.
+       2. Their accents are IN THE PIXELS. Every accent rule in this
+          system reads computed style, so a baked chip or edge rule is
+          invisible to it — see the deliverable's FINDINGS.
+     Selected by NAME exactly like an environment: the class carries the
+     asset and its focus together, and no call site ever types a URL. */
+  --cr-cre-horizon-marked:     url("./assets/imagery/creatives/cre-horizon-marked.png");
+  --cr-cre-workplace:          url("./assets/imagery/creatives/cre-workplace.png");
+  --cr-cre-agent-insight:      url("./assets/imagery/creatives/cre-agent-insight.png");
+  --cr-cre-operating-view:     url("./assets/imagery/creatives/cre-operating-view.png");
+  --cr-cre-prompt-surface:     url("./assets/imagery/creatives/cre-prompt-surface.png");
+
+  /* ── The scrim — legibility as a MEASURED property of the surface ────
+     A closing banner carries DARK primary text, measured at 6.11:1 against
+     the solid contrast surface (see the accent-pairing block above).
+     Putting a photograph under that text destroys the measurement: across
+     this library the worst case measures 1.02:1 — text that is, in
+     practice, invisible. Nothing in governance would have caught it,
+     because contrast had only ever been measured against flat colour.
+
+     So an environment used AS A SURFACE carries a veil of the page cream,
+     and the veil is set by the library's darkest member rather than
+     chosen. MEASURED ON THE REAL RENDER — the composite, with film, noise
+     and grunge included, not a prediction from the source file — the worst
+     asset in the library reads 7.37:1 against the darkest 1% of the
+     editorial column, above the 6.11:1 the solid surface already had.
+     THE SURFACE KEEPS THE MEASUREMENT IT REPLACES, and then some. An
+     asset that cannot clear it does not join the library.
+
+     It FOLLOWS THE COMPOSITION, and that is not a flourish. A flat veil
+     legible enough for text turns the whole photograph into a tint. A
+     straight ramp across the band is worse than it looks: it is already
+     thinning out halfway through the editorial column, so it protects the
+     first word of a line better than the last — measured, the library's
+     darkest member fell to 4.45:1 that way, under AA. So the veil HOLDS
+     across the editorial column and releases only past it, at exactly the
+     share the composition grid uses. Legibility where content sits, an
+     untouched photograph where none does.
+
+     THE GATE IS IN THE VALUE, not in a selector. The veil scales by
+     --cr-surface-photographic, so a text surface can declare the scrim
+     unconditionally and it simply computes to fully transparent when the
+     base is a solid brand colour. That keeps two separate things separate:
+     the ASSET carries its image and focus, the SURFACE carries whether it
+     has text to protect — and neither has to know the other's source
+     order to come out right.
+
+     Only the two measured stops live here. The gradient itself is built
+     in the rule that uses it, and that is not a style choice: a var()
+     inside a custom property is substituted where the property is
+     DECLARED, so a gradient assembled at :root would resolve the gate
+     against :root's own value — permanently 0 — and inherit down already
+     transparent. Measured: it did exactly that on the first build.
+
+     ══ DEPRECATED IN FULL — 2026-07-29, DECISION-REGISTER DR-7 ══
+     No surface anywhere carries both a photograph and text, so there is
+     no longer a case for a veil. Every consumer of these stops has been
+     removed; the four values below are retained inert so a stylesheet
+     authored against the previous language resolves rather than breaks.
+     REFERENCING ONE IS A VIOLATION, NOT A FALLBACK — the same standing
+     the elevation and glass tokens have.
+
+     The reasoning is kept rather than deleted because it was right and
+     may be needed again: the measurement (1.02:1 unveiled, 7.37:1 veiled,
+     4.45:1 for a straight ramp), the standard it produced — A SURFACE
+     KEEPS THE CONTRAST MEASUREMENT IT REPLACES — and the finding that a
+     veil must follow the composition rather than the band. What changed
+     is that the direction removed the case, not that the case was
+     measured wrongly. */
+  --cr-scrim-near:             0.82;   /* DEPRECATED — at the alignment edge */
+  --cr-scrim-hold:             0.80;   /* DEPRECATED — still holding at the column's end */
+  --cr-scrim-far:              0.48;   /* DEPRECATED — where the environment breathes */
+  --cr-scrim-cream-rgb:        246 245 239;   /* DEPRECATED — = --cr-bg, the page cream */
+  --cr-surface-scrim:          none;
+
+  /* ── Functional semantics ──────────────────────────────────────────
+     Anchored on the palette's own green so status reads as brand, not as
+     a bolted-on system colour.
+
+     THE TINT STEPS ARE DERIVED OR RE-POINTED — 2026-07-29. Each status
+     family carried hand-picked -soft / -700 / -100 hexes; under "never
+     introduce additional colours" those are seven more colours nobody
+     declared. They now resolve to the accent, its derived deep step, or
+     the neutral tint surface.
+
+     ERROR IS THE ONE EXCEPTION AND IS FLAGGED, NOT ABSORBED. The direction
+     names six colours and none of them reads as failure — green is
+     success, orange is a highlight, and using either for an error would
+     make the palette say the opposite of what it means. So error keeps its
+     own red, deliberately outside the closed palette, on the argument that
+     a functional status colour is not a brand-expression choice. This
+     needs a direction decision rather than a token edit; it is recorded in
+     DEV-HANDOFF.md rather than resolved here. */
+  --cr-success:         var(--cr-accent-green);
+  --cr-success-soft:    var(--cr-accent-green);      /* was #4E9A63 */
+  --cr-success-700:     var(--cr-accent-green-800);  /* was #1B5A2D — now the authored 800 step */
+  --cr-success-100:     var(--cr-green-50);          /* was #DCEBE0, then the cream tint — now the
+                                                        canonical lightest green. A "success tint"
+                                                        that is not green said nothing. */
+  --cr-amber:           var(--cr-accent-orange);
+  --cr-amber-100:       var(--cr-orange-50);         /* was #FFE9DA, then the cream tint */
+  --cr-amber-700:       var(--cr-accent-orange-800); /* was #C2500B — now the authored 800 step */
+  --cr-warning:         var(--cr-accent-orange);
+
+  /* ── Interaction tier (DR-24) ───────────────────────────────────────
+     blue-500 is a SURFACE colour. It measures 2.07:1 on the page ground —
+     it is never text and never an indicator, whatever its hue makes it
+     look suited to. So the two roles the supplied foundation bound to
+     blue-500 both re-point to blue-700 (4.23:1). No hex changed; an alias
+     did.
+
+     THE FOCUS RING IS NOT DOWNGRADED. The shipped ring is the primary ink
+     at 13.14:1 and it stays the default — an accessibility floor is not
+     satisfied by moving from failing to merely adequate when a compliant
+     value is already in place. blue-700 serves only where a dark ring
+     would disappear: on an accent or dark surface. */
+  --cr-focus-ring:        var(--cr-text-primary);  /* DEFAULT ring — 13.14:1 on the page ground */
+  --cr-focus-ring-accent: var(--cr-blue-700);      /* on accent / dark surfaces — 4.23:1 */
+  --cr-selection:         var(--cr-blue-100);
+  --cr-primary:           var(--cr-orange-500);    /* the emphasis accent. NOT a component identity:
+                                                      the default primary action is the dark pill —
+                                                      COMPOSE.md §C.5. Where an emphasis fill IS used,
+                                                      its label is the paired foreground (dark,
+                                                      5.48:1), never white (2.62:1). */
+  --cr-primary-hover:     var(--cr-orange-600);
+  --cr-primary-active:    var(--cr-orange-700);
+  --cr-intelligence:      var(--cr-purple-600);
+  --cr-info:              var(--cr-blue-700);      /* NOT blue-500 — info reads as text (DR-24) */
+  --cr-info-surface:      var(--cr-accent-blue);   /* blue-500, for when info is a SURFACE */
+  --cr-error:           #D6321F;   /* OFF-PALETTE BY EXCEPTION — see above */
+  --cr-error-700:       #A6210F;   /* OFF-PALETTE BY EXCEPTION */
+  --cr-error-soft:      var(--cr-error);             /* was #E4695A */
+  --cr-error-100:       var(--cr-bg-tint);           /* was #FBE3DF */
+
+  /* ── Data-viz categorical ramp (chart-only) ────────────────────────
+     Saturated hues survive HERE ONLY — charts and metrics, never as page
+     surface colour. */
+  --cr-data-1:          var(--cr-accent-blue);
+  --cr-data-2:          var(--cr-accent-purple);
+  --cr-data-3:          var(--cr-accent-green);
+  --cr-data-4:          var(--cr-accent-orange);
+  --cr-data-5:          var(--cr-accent-blue-800);   /* was #8FDBFF — a derived step, not a
+                                                        seventh colour. Four accents cannot
+                                                        yield six freely distinguishable
+                                                        series; the derived deep steps are
+                                                        where the extra separation comes from. */
+  --cr-data-6:          var(--cr-fg-2);
+
+  --cr-chip-staffing:   var(--cr-accent-blue);
+
+  /* ── Radius ────────────────────────────────────────────────────────
+     The Example Brand website CURRENTLY STANDARDIZES ON two radii:
+       control (buttons, inputs, chips) ... 6px
+       large surface (cards, panels) ..... 12px
+     The wider vocabulary stays defined so a future component can reach
+     for it with an explicit justification — but nothing in the current
+     language may introduce a third value by drift. */
+  --cr-radius-control:  6px;
+  --cr-radius-card:     12px;
+  --cr-radius-xs:       6px;       /* = control */
+  --cr-radius-sm:       6px;
+  --cr-radius-md:       12px;      /* = card */
+  --cr-radius-lg:       12px;
+  --cr-radius-xl:       12px;
+  --cr-radius-2xl:      12px;
+  --cr-radius-pill:     9999px;    /* DEPRECATED for buttons — the direction replaces the
+                                      former signature pill with the control radius. Retained
+                                      for genuinely circular/lozenge affordances only. */
+
+  /* ── Effects — NOT USED BY THE CURRENT VISUAL LANGUAGE ─────────────
+     DEPRECATED, retained for backwards compatibility. Do not apply.
+     Shadows are used nowhere on the website; hierarchy is achieved with
+     spacing, typography, alignment and composition. Glass existed to give
+     a panel depth over imagery, and the system no longer authors imagery.
+     The prohibition is a RULE (see rulebooks/visual-language.md §12);
+     these tokens sit inert so nothing downstream breaks.
+
+     THEY ARE NOW INERT BY VALUE, NOT ONLY BY LABEL. Until 2026-07-29 they
+     carried real shadows and a real blur under a "do not apply" comment —
+     so a consumer that reached for one got exactly the depth the rule
+     forbids, and the comment stopped nothing. The three export files zero
+     out four DIFFERENTLY NAMED tokens (--shadow-rest/-hover/-dropdown/
+     -modal), which never covered these. A deprecation that still renders
+     is not a deprecation; it is a working feature with a warning label. */
+  --cr-shadow-sm:       none;                            /* DEPRECATED — was 0 1px 2px rgba(0,0,0,.04) */
+  --cr-shadow-lg:       none;                            /* DEPRECATED — was a two-layer drop shadow */
+  --cr-glass-bg:        transparent;                     /* DEPRECATED — was rgba(255,255,255,0.08) */
+  --cr-glass-bg-light:  transparent;                     /* DEPRECATED — was rgba(42,42,42,0.04) */
+  --cr-glass-blur:      0px;                             /* DEPRECATED — was 14px */
+  --cr-glass-border:    transparent;                     /* DEPRECATED — was rgba(255,255,255,0.20) */
+
+  /* ── Iconography ───────────────────────────────────────────────────
+     Outline style, minimal geometry, consistent stroke weight, editorial
+     appearance. One set only (Lucide). Stroke scales with size so optical
+     density stays even; never set stroke independently of size. */
+  --cr-icon-stroke-sm:  1.0;   /* at the 18px icon size */
+  --cr-icon-stroke-md:  1.5;   /* at the 24px icon size */
+
+  /* ── Spacing — a CLOSED set of six compositional steps ──────────────
+     The 2026-07-29 direction closes the compositional spacing scale:
+     "spacing should use only the following values… do not invent
+     additional spacing values." Six steps, each with a stated job, and
+     nothing between them. A gap that is not one of these six is not a
+     smaller decision — it is an unmade one.
+
+       12   micro relationships: label→value, icon→text, metadata
+       20   related content; text→divider
+       40   component spacing: heading→body, body→CTA, card title→copy
+       80   primary layout spacing; content block→photography
+      120   section padding
+      160   hero breathing space, where required
+
+     SCOPE: these govern COMPOSITIONAL spacing — the distance between
+     elements and between sections. Padding INSIDE a control that is not
+     a composition decision (a button's own inset) is a component
+     property, not a step on this scale, and is authored at the component.
+     Confusing the two is how a closed scale acquires exceptions. */
+  --cr-space-xs:  12px;   /* micro: label→value, icon→text, metadata */
+  --cr-space-s:   20px;   /* related content; text→divider */
+  --cr-space-m:   40px;   /* component spacing: heading→body, body→CTA */
+  --cr-space-xl:  80px;   /* major visual groups; content block→photography */
+  --cr-space-2xl: 120px;  /* section padding */
+  --cr-space-3xl: 160px;  /* hero breathing space */
+
+  /* The numeric grid, kept as the stable naming contract. The six steps
+     above are the scale; the aliases below resolve to them.
+     DEPRECATED — every step marked so is OFF the closed set. They are
+     retained inert so nothing downstream breaks, exactly as the elevation
+     and glass tokens are: referencing one is a violation of the closed
+     scale, not a permitted fallback. */
+  --cr-space-3:  12px;    /* = XS  */
+  --cr-space-5:  20px;    /* = S   */
+  --cr-space-10: 40px;    /* = M   */
+  --cr-space-20: 80px;    /* = XL  */
+  --cr-space-30: 120px;   /* = 2XL */
+  --cr-space-40: 160px;   /* = 3XL */
+
+  --cr-space-1:  12px;    /* DEPRECATED (was 4px)   — off the closed set */
+  --cr-space-2:  12px;    /* DEPRECATED (was 8px)   — off the closed set */
+  --cr-space-4:  20px;    /* DEPRECATED (was 16px)  — off the closed set */
+  --cr-space-6:  20px;    /* DEPRECATED (was 24px)  — off the closed set */
+  --cr-space-7:  20px;    /* DEPRECATED (was 28px)  — off the closed set */
+  --cr-space-8:  40px;    /* DEPRECATED (was 32px)  — off the closed set */
+  --cr-space-12: 40px;    /* DEPRECATED (was 48px)  — off the closed set */
+  --cr-space-14: 40px;    /* DEPRECATED (was 56px)  — off the closed set */
+  --cr-space-15: 40px;    /* DEPRECATED (was 60px)  — off the closed set */
+  --cr-space-16: 80px;    /* DEPRECATED (was 64px)  — off the closed set */
+  --cr-space-25: 120px;   /* DEPRECATED (was 100px) — off the closed set */
+  --cr-space-32: 120px;   /* DEPRECATED (was 128px) — off the closed set */
+  --cr-space-50: 160px;   /* DEPRECATED (was 200px) — off the closed set */
+
+  /* ── Section rhythm — the THREE NAMED ROLES of a section opening ────
+     The generic steps above say how far apart two things are. These say
+     WHAT THE GAP IS FOR, and that is the difference between a rhythm a
+     page can reproduce and one it re-improvises. Every generated page
+     that reached for `--cr-space-xs` to open a section was reaching for
+     the step this pack assigns to "label→value, icon→text" — correctly,
+     because nothing named the opening.
+
+       ■──────────────────────────────────────────────────■   Marker
+            ↓  OPENING   the section opens; the marker introduces it
+       Heading                                                (narrative begins)
+            ↓  CLUSTER   heading + supporting copy are ONE thought
+       Supporting copy
+            ↓  CONTENT   the argument hands off
+       Primary content
+
+     THE RULE IS THE ORDER, NOT THE NUMBERS: opening > content > cluster,
+     at every viewport. Equal gaps would satisfy any absolute check and
+     would still be the failure the direction names — spacing distributed
+     evenly because steps exist. The responsive block at the foot of this
+     file scales the magnitudes and preserves the ordering.
+
+     THE ORDERING IS WHAT SET THE OPENING. The direction fixes two of the
+     three roles directly — "headline → body 40px" is the cluster, and
+     "content block → photography 80px" is the content step. It does not
+     name the opening, and 80 was the first value reached for. But
+     opening = content = 80 breaks the ordering above, and the ordering is
+     the older rule and the load-bearing one. 120 is the smallest step on
+     the closed set that clears it. The opening is derived, not picked. */
+  --cr-rhythm-opening: var(--cr-space-2xl);  /* 120px — marker → heading */
+  --cr-rhythm-cluster: var(--cr-space-m);    /*  40px — heading → supporting copy */
+  --cr-rhythm-content: var(--cr-space-xl);   /*  80px — cluster → primary content */
+
+  /* ── Section padding ───────────────────────────────────────────────
+     Default section padding: 120 top / 120 bottom / 70 left / 70 right.
+     The inline value is the desktop CEILING of the one fluid source —
+     responsive behaviour is retained, not replaced. */
+  --cr-section-pad-block: 120px;
+
+  /* ── Layout — the single owner of horizontal layout ────────────────
+     Horizontal layout is a PAGE concern. These values are the ONE
+     authoritative source for content width + gutter + alignment edge;
+     they are realized by the .cr-well primitive below and inherited by
+     every standard section. Sections never redefine them (SECTION_LAYOUT
+     §16; COMPOSE §C rule 4). */
+  --cr-page-max:        1440px;  /* DEPRECATED — never consumed; .cr-well reads
+                                    --cr-content-max. Retained so any downstream
+                                    reference still resolves. Do not use. */
+  --cr-page-gutter:     clamp(20px, 6vw, 70px);  /* the single responsive horizontal-spacing
+                                                    source — steps fluidly 70→20 by viewport */
+  --cr-content-max:     1440px;  /* CANONICAL section content well — one alignment edge */
+  /* A WELL, NOT A TEXT MEASURE — and the distinction matters since DR-14
+     closed text to 750/950. This caps the CONTAINER of a narrow section
+     (editorial / FAQ), which also holds cards, media and grids; the text
+     inside it is capped independently at the title or body measure and never
+     reaches this value. Named "reading well" for its typical content, which
+     is why it is worth saying plainly that 1080 is not a third text width.
+     Whether a narrow well should exist at all, at this value, is a container
+     decision the direction has not taken — flagged in DEV-HANDOFF.md. */
+  --cr-content-narrow:  1080px;
+
+  /* ── The FOUR widths — and the narrowing between them IS hierarchy ──
+     Width is not one responsive constraint. It is a compositional
+     instrument, and the transition between two of these widths is what
+     creates hierarchy without changing a single type value.
+
+       CONTAINER  1440px  ├────────────────────────────────────────┤
+       EDITORIAL   950px  ├────────────────────────┤
+       READING     750px  ├──────────────────┤
+
+       CONTAINER  the page frame. Defines the composition; never
+                  affects readability. Owned by .cr-well.
+       LAYOUT     the LICENCE to occupy the full container — granted
+                  only to components that genuinely require it:
+                  comparison tables, dashboards, card grids, feature
+                  matrices. It is the container width; what makes it a
+                  separate idea is that editorial content never gets it.
+       EDITORIAL  h1 · h2 · h3 · large editorial statements · hero
+                  messaging · CTA headlines. Lets a headline breathe and
+                  keeps its cadence editorial rather than a narrow column.
+       READING    paragraphs · supporting copy · descriptions ·
+                  explanatory text · CTA descriptions.
+
+     TWO TEXT MEASURES EXIST, AND NOTHING ELSE — 2026-07-29, DR-14.
+     750 and 950. There is no third text width. The editorial measure that
+     used to be one (1100) is RE-POINTED below rather than deleted,
+     because ~a dozen call sites consume it by name and the ROLE it names
+     is still real — a title measure — even though it no longer has a
+     width of its own.
+
+     WHICH ROLE TAKES WHICH IS NOT FREE. The direction permits two values
+     for body and title; it does not make them interchangeable, because
+     the rule immediately below still governs and it is the older one:
+     headlines and supporting copy INTENTIONALLY occupy different
+     measures, and the transition between them establishes the section's
+     visual hierarchy. Title at 950 and body at 950 satisfies "never
+     anything except 950 or 750" and produces NO NARROWING AT ALL — a
+     heading and its lede at one width, which is the flat composition the
+     four-width model exists to prevent. So the assignment is fixed:
+     TITLE takes the wide value, BODY takes the narrow one.
+
+     The four-width model survives this, and it looks like it should not.
+     Its argument was never "three text widths"; it was that THE NARROWING
+     BETWEEN TWO WIDTHS CARRIES THE HIERARCHY. A title at 950 above body
+     at 750 is that narrowing, performed with the two permitted values.
+     The third value is retired; the mechanism is untouched. The CONTAINER
+     (1440) is not a text measure and does not move.
+
+     The roles are named directly below so no call site has to know which
+     end of a min/max pair its content belongs to — that ambiguity is what
+     let body and title land on the same value in the first place. */
+  --cr-measure-title:      750px;   /* TITLE — h1/h2/h3, editorial statements. The DEFAULT. */
+  --cr-measure-title-wide: 950px;   /* TITLE, RELEASED — only at a third line. See below. */
+  --cr-measure-body:       750px;   /* BODY  — paragraphs, supporting copy                 */
+
+  /* 750 IS THE MEASURE. 950 IS A RELEASE VALVE — 2026-07-29, DR-15.
+     A title takes 750 and is released to 950 because the type wrapped to a
+     THIRD LINE, and for no other reason. This is not a new mechanism: it is
+     the closing band's rule, generalized. That band already carried a
+     narrow/wide pair with exactly these semantics, and it is no longer an
+     exception — its pair IS the general pair.
+
+     THE TITLE→BODY NARROWING IS RETIRED AS A HIERARCHY MECHANISM, and that
+     is the substantive half of this change. Both roles now default to the
+     same width, so the transition that `rulebooks/visual-language.md` §5
+     made load-bearing does not happen. Hierarchy comes from SCALE, WEIGHT
+     and SPACE — 72px against 20px, and the rhythm roles between them —
+     which is what the governing posture says it comes from anyway. Measure
+     was the weakest of those mechanisms and the one that produced a third
+     width twice in two days.
+
+     CSS CANNOT COUNT LINES, so the release is an authored opt-in: a class,
+     exactly as the closing band's already is. That is not an honour system,
+     because THE HARNESS CAN count them — a title capped at the wide value
+     while rendering in two lines fails check 27. The valve is checkable
+     even though the trigger is not expressible. */
+
+  /* DEPRECATED as independent values, retained as ALIASES so every call
+     site authored against them keeps resolving. They are no longer a
+     "band" a composition selects within — each now points at one of the
+     two permitted values and cannot express a third. */
+  --cr-measure-min:       var(--cr-measure-body);
+  --cr-measure-max:       var(--cr-measure-title-wide);
+  --cr-measure-editorial: var(--cr-measure-title);
+
+  /* THE CLOSING BAND IS THE EXCEPTION, and it is a closed pair, not a
+     band. Everywhere else the editorial→reading narrowing carries the
+     hierarchy; a centred closing band has no such transition to make —
+     one ask, one column, headline and copy sharing it, or the centring
+     reads as two stacked blocks of different widths.
+
+     Two values and no third. The wide one is a RELEASE VALVE for a
+     headline that runs to a third line, reached for because the type
+     wrapped and for no other reason. A free width here is exactly how a
+     closing band drifts back to full-bleed centred copy.
+
+     The pair now COLLAPSES ONTO the page's reading band rather than
+     sitting outside it. The 2026-07-28 direction made the closing band a
+     deliberate exception with its own two widths; the 2026-07-29
+     direction states "do not generate inconsistent reading widths across
+     sections", which settles it — the band is still a closed pair and
+     still refuses a free width, but the two values it may take are the
+     page's own. One reading band, reached for differently here. */
+  --cr-measure-cta-narrow: var(--cr-measure-title);        /* 750px — the default; one or two lines */
+  --cr-measure-cta-wide:   var(--cr-measure-title-wide);   /* 950px — ONLY at a third line */
+
+  /* ── Creative vocabularies — proportion · presence · placement ──────
+     CREATIVE-FIRST COMPOSITION (rulebooks/creatives.md): creative assets
+     are first-class compositional elements. Their proportion, measure and
+     placement are determined BEFORE the surrounding layout. Layout adapts
+     to the creative; the creative never adapts to available space.
+
+     Three closed vocabularies, because a creative has three properties
+     and governing only one of them governs nothing: the same approved
+     ratio at 90% and at 35% of a composition are different decisions, and
+     the same ratio at the same size can still be assembled text-first,
+     media-first or interleaved at random.
+
+     PROPORTION — the four approved ratios, and only these four. */
+  --cr-ratio-square:    1 / 1;    /* product fragments · supporting visuals · icons-as-imagery */
+  --cr-ratio-portrait:  3 / 4;    /* portrait + editorial photography · human subjects · storytelling */
+  --cr-ratio-landscape: 4 / 3;    /* editorial illustration · product composition · medium emphasis */
+  --cr-ratio-wide:      16 / 9;   /* interfaces · dashboards · screenshots · hero demonstrations */
+
+  /* PRESENCE — how much compositional AUTHORITY the creative holds, as a
+     share of the composition. Not "scale": a creative at 70% is not
+     merely larger, it is dominant; at 25% it is supporting. Expressed as
+     a share so it stays responsive and comparable across sections, and
+     so it maps onto the existing focal-weight model instead of inventing
+     a second notion of importance. */
+  --cr-presence-xs: 25%;   /* incidental — a fragment beside the argument */
+  --cr-presence-s:  35%;   /* supporting — the copy leads */
+  --cr-presence-m:  50%;   /* co-equal — a true split */
+  --cr-presence-l:  65%;   /* leading — the creative carries the section */
+  --cr-presence-xl: 100%;  /* dominant — the creative IS the section */
+
+  /* ── Section Marker — part of the Example Brand visual identity ────────
+     Two hard-cornered squares spanning the section's content width; see
+     the .cr-marker primitive below. */
+  --cr-marker-size:     8px;
+  --cr-marker-radius:   0px;
+
+  /* ── Nav ───────────────────────────────────────────────────────────── */
+  --cr-nav-height:      72px;
+  --cr-nav-pad-x:       var(--cr-page-gutter);
+  --cr-nav-link-size:   16px;      /* the supporting-text step — on the scale, not off it */
+  --cr-nav-link-gap:    28px;
+
+  /* ── Typography — ONE family, all roles ────────────────────────────── */
+  --cr-font-display:    "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --cr-font-body:       var(--cr-font-display);
+  --cr-font-editorial:  var(--cr-font-display);
+  --cr-font-mono:       ui-monospace, "JetBrains Mono", Menlo, monospace;
+
+  /* ── Type scale — the ENUMERATED VALUES are the scale ───────────────
+     The direction describes this as a Major Third (1.25) rounded to the
+     nearest 4px. That description does not reproduce these values — 28/24
+     is 1.167, 36/28 is 1.286 — and the values are what was authored and
+     approved. The TABLE is normative; the ratio is descriptive.
+     Do not recompute it, and do not "correct" a step toward the ratio.
+
+       Supporting  16   H5  28
+       P           20   H4  36
+       H6          24   H3  44
+       H5          28   H2  56
+                        H1  72                                        */
+  --cr-text-h1:         72px;
+  --cr-text-h2:         56px;
+  --cr-text-h3:         44px;
+  --cr-text-h4:         36px;
+  --cr-text-h5:         28px;
+  --cr-text-h6:         24px;
+  --cr-text-body:       20px;
+  --cr-text-supporting: 16px;   /* eyebrows, captions, labels, metadata, supporting UI text */
+
+  --cr-leading-heading: 1.2;    /* 120% — every heading level */
+  --cr-leading-body:    1.45;   /* 145% — body and supporting text */
+  --cr-tracking-heading: -0.04em;  /* inherited by EVERY heading level; override only where a
+                                      component explicitly requires an exception */
+}
+
+/* ─── The page edge — no unauthored inset ──────────────────────────
+   The user-agent default is `body { margin: 8px }`, and 8px is not a value
+   on the closed six-step spacing scale. Left standing it insets the whole
+   page from every viewport edge and lets the page ground show as a border
+   around each band — on a dark or contrast band that reads as a cream frame
+   around something meant to run edge to edge.
+
+   DR-49 removed it from all 79 specimen files. That fix is specimen-local
+   and CANNOT survive composition: a section's `html, body { margin: 0 }`
+   lives in its own <head>, and retrieval scopes every selector under the
+   band root, so `body` maps to the root itself and the rule arrives as
+   `[data-crf="<slug>"] { margin: 0 }`. It then resets the band wrapper and
+   never touches the page. Every composed page therefore inherited the 8px
+   back — measured on four of five pages in output/ before this rule existed.
+
+   So the page edge is declared HERE, once, in the stylesheet every page
+   links and which already owns the page ground it was framing. A page shell
+   must not re-declare it, and a section cannot: it has no access to <body>.
+
+   Margin only. Any deliberate page inset is PADDING on the scale — a
+   different property, which is how the three atom previews keep their
+   authored `var(--cr-space-s)` without reintroducing this. */
+html,
+body { margin: 0; }
+
+/* ─── Horizontal-layout primitive — THE single owner ────────────────
+   Horizontal layout is a PAGE concern, owned here exactly once. Every
+   standard section aligns to one content edge by wrapping its content in
+   .cr-well; a section MUST NOT re-declare content width, page gutter, or
+   its own outer container (SECTION_LAYOUT.md §16 forbids it; COMPOSE §C
+   rule 4 mandates inheritance).
+
+     <section class="band ..."><div class="cr-well"> … </div></section>
+
+   The two — and only two — documented exceptions:
+     • .cr-well--narrow  → the narrow reading well (editorial / FAQ).
+     • full-bleed        → deliberately OMIT the well so content runs edge
+                           to edge. Mark it intentionally; never by drift.
+                           A full-bleed band still places its Section
+                           Marker on the well's edge (see .cr-marker).
+   The primitives below set their own `box-sizing` so the single owner is
+   genuinely self-sufficient: a page that forgets a global reset would
+   otherwise have the well overflow by twice the gutter, which is the
+   exact per-section drift this primitive exists to end. */
+.cr-well,
+.cr-marker,
+.cr-band,
+.cr-placeholder,
+.cr-creative,
+.cr-card,
+.cr-btn { box-sizing: border-box; }
+
+/* An action is a CONTROL, not a link in a sentence. The underline here was
+   never a decision — it is the anchor default leaking through a primitive
+   that never reset it, which is why every generated page patched it locally.
+   Fixed at the source: the button's shape, fill and label already say it is
+   pressable, and an underline on top of them says it twice. */
+.cr-btn, .cr-btn:hover, .cr-btn:focus { text-decoration: none; }
+
+.cr-well {
+  width: 100%;
+  max-width: var(--cr-content-max);
+  margin-inline: auto;
+  padding-inline: var(--cr-page-gutter);
+}
+.cr-well--narrow { max-width: var(--cr-content-narrow); }
+
+/* ─── Section band ─────────────────────────────────────────────────
+   Default section padding. Vertical is the section's own; horizontal is
+   inherited from the well and never re-declared here.
+
+   The surface is SET, never re-declared. A band variant assigns
+   --cr-band-surface; it must not paint `background` itself. The
+   shorthand resets background-image, which would silently wipe the
+   bottom layer of a treated surface — the failure would not be visible,
+   only wrong. One property, one owner. */
+.cr-band {
+  background-color: var(--cr-band-surface, var(--cr-surface-base));
+  padding-block: var(--cr-section-pad-block);
+}
+
+/* Surface variants — the `contrast` and `rest` roles made reachable.
+   These live in the brand pack, not in a page stylesheet, because which
+   colour fills a surface role is a brand value. */
+.cr-band--cta           { --cr-band-surface: var(--cr-surface-contrast);
+                          --cr-band-marker:  var(--cr-accent-blue-900); }
+.cr-band--raised        { --cr-band-surface: var(--cr-surface-rest); }
+.cr-band--accent-blue   { --cr-band-surface: var(--cr-accent-blue);
+                          --cr-band-marker:  var(--cr-accent-blue-900); }
+/* TWO bands take their paired foreground instead of their own 900 step,
+   and both for the same measured reason: a deeper shade of the accent no
+   longer separates from the accent. Purple has always been in this
+   position (2.48:1 authored, 2.24:1 derived — it never cleared 3:1).
+   GREEN JOINED IT when the canonical ramp replaced the derived steps:
+   green 900 measures 2.48:1 against green 600, where the derived step
+   measured 3.18:1 and passed. That is a regression the palette introduced,
+   resolved by role rather than by touching a value — accessibility is the
+   first tier of precedence (COLOUR.md §11), and white on green measures
+   5.61:1. See DR-34. */
+.cr-band--accent-purple { --cr-band-surface: var(--cr-accent-purple);
+                          --cr-band-marker:  var(--cr-on-accent-deep); }
+.cr-band--accent-green  { --cr-band-surface: var(--cr-accent-green);
+                          --cr-band-marker:  var(--cr-on-accent-deep); }
+/* No orange band: the marker/highlight accent is a spark, never a wash
+   (rulebooks/visual-language.md §15). */
+
+/* ─── Section opening rhythm — the ladder, REALIZED ─────────────────
+   §17 declared this rhythm and the pack realized one 12px margin of it.
+   Everything else was prose, so every generated page re-derived it in its
+   own stylesheet — and re-derivation under pressure produces ONE value
+   between every pair of elements, which expresses no hierarchy at all.
+
+   The cluster is the unit of authorship: the heading and its supporting
+   copy are one thought, so they bind tightly and the gap ABOVE them is
+   large. Do not insert intermediate spacing inside the cluster.
+
+   .cr-section-head wraps heading + supporting copy. Its own bottom margin
+   is the hand-off to primary content. */
+.cr-section-head { margin-block: 0 var(--cr-rhythm-content); }
+.cr-section-head > * { margin-block: 0; }
+.cr-section-head > * + * { margin-top: var(--cr-rhythm-cluster); }
+
+/* A section that opens WITHOUT a marker still opens. The marker is
+   scarce by rule, so the opening space cannot depend on it. */
+.cr-section-head--opened { margin-top: var(--cr-rhythm-opening); }
+
+/* Breathing space is preserved regardless of content length. A section
+   with little to say produces a calm, open composition — it never
+   collapses vertically to fit its content. */
+.cr-band > .cr-well > .cr-section-head:last-child { margin-bottom: 0; }
+
+/* ─── Section composition — CTA banner and hero ─────────────────────
+   Both are COMPOSED SECTIONS, not containers that happen to hold text.
+   Each had a fully specified material and no specified shape, and a
+   vacuum in a brand pack is filled by whatever a page improvises —
+   for the closing band, four lines of page-level centring in a stylesheet
+   that had no authority to decide it.
+
+   The band IS centred now, and that is not a reversal: the defect was
+   never the alignment, it was that nothing here decided the alignment.
+   A rule improvised per page produces a different closing band on every
+   page, and it produced a slack rectangle on this one.
+
+   The rules both obey:
+     • the section establishes its own spatial rhythm; content INHABITS
+       it rather than filling it
+     • the marker BRACKETS the section — one at the opening, one at
+       the close, both the same colour
+     • content occupies an editorial PORTION, not the full width
+     • the composition is intentional — a hero is asymmetric because it
+       points somewhere; a closing band is centred because there is
+       nowhere further to point
+     • the surface creates atmosphere, typography creates hierarchy,
+       components occupy the environment — never the reverse
+
+   THE TWO COMPOSE DIFFERENTLY, and the difference is the job.
+
+   A HERO is asymmetric. Content is anchored to the alignment edge and
+   held to the editorial measure, with the remaining space composed rather
+   than split — a hero has somewhere to take the reader, and the imbalance
+   is what points there.
+
+   A CLOSING BAND IS CENTRED, and that is a decision, not the absence of
+   one. The page is over; there is nowhere further to point. Everything
+   converges on one ask, and a centred, tightly-padded band is the shape
+   of convergence.
+
+   The failure the direction named was never centring per se — it was the
+   SLACK RECTANGLE: a tall box with equal padding, content adrift in the
+   middle of it, nobody owning the space. That failure is answered here by
+   the band's proportion (see the padding below), not by pushing the
+   content off-centre. Content still holds its measures, so a centred band
+   is a narrow column of type in a wide band — never a full-width block of
+   copy that merely happens to be centred. */
+/* ── PRESENCE SIZES THE TRACK, NOT THE ELEMENT ──────────────────────
+   `foundation/ILLUSTRATION.md` Artifact C carried this as the live
+   defect: *presence is a share of the composition | brand pack —
+   currently container-relative*. This is where it lived. The text column
+   took `--cr-composition-share` and the creative took `1fr`, so the
+   creative's share was WHATEVER WAS LEFT — 38% by default — no matter
+   what presence it declared. A creative declared `xl` (dominant, 100%)
+   rendered at 38% of the composition it was declared dominant of.
+   Nothing failed; the declaration was honoured arithmetically against the
+   wrong reference, which is the discipline's own words for it: *an intent
+   realized against the wrong reference is worse than no intent, because
+   it reports success.*
+
+   The creative's own `width: <presence>` could never have fixed it. A
+   percentage width resolves against the element's CONTAINING BLOCK — the
+   grid cell — so it was a share of a share, and `max-width: 100%` clamped
+   it straight back to the cell. Presence had to move up a level: the
+   declared presence now sets the COLUMN, and the copy takes the
+   remainder. The share is measured against the composition because it IS
+   the composition's geometry.
+
+   Read off the declared class with `:has()` so no authored markup
+   changes — the class stays on the creative, where the author puts it,
+   and the well derives the column from it. There is no gap between the
+   columns, so `100% − presence` is exact rather than approximate. */
+.cr-hero > .cr-well {
+  display: grid;
+  grid-template-columns: minmax(0, var(--cr-composition-share, 62%)) 1fr;
+  align-items: start;
+}
+.cr-hero > .cr-well:has(> .cr-composition-media.cr-presence-xs) { --cr-composition-share: calc(100% - var(--cr-presence-xs)); }
+.cr-hero > .cr-well:has(> .cr-composition-media.cr-presence-s)  { --cr-composition-share: calc(100% - var(--cr-presence-s)); }
+.cr-hero > .cr-well:has(> .cr-composition-media.cr-presence-m)  { --cr-composition-share: calc(100% - var(--cr-presence-m)); }
+.cr-hero > .cr-well:has(> .cr-composition-media.cr-presence-l)  { --cr-composition-share: calc(100% - var(--cr-presence-l)); }
+.cr-hero > .cr-well:has(> .cr-composition-media.cr-presence-xl) { --cr-composition-share: calc(100% - var(--cr-presence-xl)); }
+.cr-hero > .cr-well > * { grid-column: 1; }
+
+.cr-band--cta { text-align: center; }
+.cr-band--cta > .cr-well {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+/* Centring the BOX is not centring the CONTENT. The measures still cap
+   these, so without the auto margins a heading would sit in a centred box
+   and still read left-aligned inside it. */
+.cr-band--cta > .cr-well > *,
+.cr-band--cta .cr-section-head > * { margin-inline: auto; }
+
+/* ─── The closing band's measure — TWO values, and no third ──────────
+   Everywhere else on the page the editorial measure and the reading
+   measure differ, and the narrowing between them IS the hierarchy. A
+   centred closing band has no such transition to make: one ask, one
+   column, and headline and copy share the column or the centring reads
+   as two stacked blocks of different widths.
+
+   So the band takes a single measure, and it is one of exactly two:
+
+     750px  the default — a headline that lands in one or two lines
+     950px  ONLY when the headline runs to a third line
+
+   The wider value is a RELEASE VALVE for a long headline, not a size
+   choice. It is reached for because the type wrapped, and for no other
+   reason — and there is deliberately no third option, because a free
+   width here is how a closing band drifts back to full-bleed copy.
+
+   It overrides the title measure inside this band on purpose: a long line
+   of centred type is one nobody finishes at the moment they are being asked
+   to act. (This paragraph used to cite 1100px, the width the title measure
+   had before DR-14 closed the set to two. The argument is unchanged — the
+   band still caps tighter than the page — but the number it was arguing
+   against no longer exists.) */
+.cr-band--cta { --cr-cta-measure: var(--cr-measure-cta-narrow); }
+.cr-cta-measure-wide { --cr-cta-measure: var(--cr-measure-cta-wide); }
+
+.cr-band--cta :is(h1, h2, h3, p, .cr-p, .cr-p-lede, .cr-section-head) {
+  max-width: var(--cr-cta-measure);
+}
+
+/* The banner's own vertical rhythm — TIGHT AND EQUAL, and deliberately
+   so. It is the one composed section that does not take the section
+   padding: at 160/120 the band read as a room the content was lost in,
+   and a closing ask does not want to be entered, it wants to be answered.
+   80 top and bottom holds the content close enough to read as one move —
+   and it is the proportion, not an off-centre nudge, that stops the band
+   reading as a rectangle with something floating in it.
+
+   Horizontally it takes the page gutter like every other band — 70px at
+   desktop, the same alignment edge the whole page is built on. */
+.cr-band--cta {
+  padding-block: var(--cr-space-xl);
+}
+
+/* ─── The closing banner is a SOLID SURFACE. Full stop. ────────────────
+   No environment, no photograph, no gradient. The band's material is the
+   grain and the printed-imperfection layer over a flat brand colour, and
+   that is the whole of it — the closing argument is carried by typography
+   on an unambiguous surface, not by atmosphere.
+
+   THIS IS ENFORCED, NOT REQUESTED. The reset below means an environment
+   selection landing on a closing band does nothing at all: no image, no
+   analog-tonal layer, no veil. Stating the rule in prose and leaving the
+   handle open is how the rule gets broken by someone who never read it.
+
+   The doubled class is deliberate. An environment selection is a single
+   class, so equal specificity would make this depend on source order —
+   and a rule that holds only because of where it sits in a file is a rule
+   waiting to be reordered. */
+.cr-band--cta.cr-band--cta {
+  --cr-surface-image: none;
+  --cr-surface-scrim: none;
+  --cr-surface-photographic: 0;
+}
+.cr-hero {
+  /* 160 top / 120 bottom — the hero is the one section granted the
+     breathing step. "Never compress hero content vertically." */
+  padding-block: var(--cr-space-3xl) var(--cr-space-2xl);
+
+  /* THE HERO NO LONGER CARRIES A SCRIM — see DECISION-REGISTER DR-7.
+     A photograph is a subject, never a surface, so there is no
+     photographic surface here for a veil to make legible. The scrim ramp
+     that stood here was measured and correct; the direction removed the
+     case it measured, not the measurement. Held at `none` rather than
+     deleted so a hero authored against the previous language degrades to
+     no veil instead of to an unresolved custom property. */
+  --cr-surface-image: none;
+  --cr-surface-scrim: none;
+  --cr-surface-photographic: 0;
+}
+
+/* A creative position inside a composed section takes the second column
+   and its own presence share. Heroes only — a closing band is a solid
+   surface with no creative position at all. */
+.cr-hero > .cr-well > .cr-composition-media {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  align-self: center;
+}
+
+/* ─── Surface treatment — the material of a branded surface ──────────
+   See the token block above for the rationale, the canonical assets and
+   the fixed composition order.
+
+   THERE IS DELIBERATELY NO PUBLIC `.cr-textured` CLASS. A surface is
+   treated because of WHAT IT IS, never because someone remembered to
+   add a class — that is what stops the material from becoming a rhythm
+   device or a variety choice. The selector list below IS the enabled
+   set; extending it is a brand-pack edit, i.e. a direction decision.
+
+   Currently enabled:
+     .cr-band--cta        the closing call-to-action banner
+     .cr-creative         a surface whose base is a delivered creative
+     [class*="cr-env-"]   ANY surface carrying an environment — because
+                          selecting one makes that surface a creative
+                          surface, and a creative surface is treated by
+                          what it is. This is the same rule as the line
+                          above, not a new one: it is what lets a hero or
+                          an editorial band be treated WHEN it carries a
+                          photograph and stay untreated when it does not.
+                          Matched on the class prefix rather than listed
+                          asset by asset, deliberately — the alternative
+                          is the same seven names repeated across six
+                          selector lists, and a treatment that silently
+                          stops applying because one list was missed is
+                          the failure mode this whole block exists to
+                          prevent.
+   Declared by the direction but not yet enabled as a SOLID surface:
+   full-width accent section, editorial background panel, brand-colour
+   background. (Hero was on that list; carrying an environment is how it
+   became reachable — as a creative surface, not as a coloured one.)
+   Never treated: the page surface, cards, buttons, nav, inputs, small UI,
+   icons and typography. Placeholders used to be on that list, on the
+   grounds that a reservation is not a surface — every creative position
+   is photographic now, so a reservation IS one, and the label on top of
+   it is what still declares the absence (rulebooks/creatives.md).
+
+   HOW THE LAYERS SIT. The bottom texture rides the surface's own
+   background stack, blended against the base — which may be a colour or
+   a creative, both through the same mechanism. The upper layers ride
+   pseudo-elements at negative z-index, so they paint ABOVE the surface
+   and BELOW its content. Typography is therefore structurally outside
+   the composite rather than protected by convention. `isolation` keeps
+   the composite from reaching the page behind it.
+
+   The film layer cannot ride the background stack: `plus-lighter` is a
+   composite mode valid only on `mix-blend-mode`. On `background-blend-
+   mode` it computes to `normal` — silently. That single fact is why
+   this is built from pseudo-elements rather than one background list. */
+.cr-band--cta,
+.cr-creative,
+[class*="cr-env-"] {
+  position: relative;
+  isolation: isolate;
+  background-image: var(--cr-texture-grunge),
+                    var(--cr-surface-scrim, none),
+                    var(--cr-surface-image, none);
+  background-size: var(--cr-texture-grunge-size), cover, var(--cr-surface-fit, cover);
+  background-position: center, center, var(--cr-surface-focus, center);
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-blend-mode: var(--cr-texture-grunge-blend), normal, normal;
+}
+.cr-band--cta::before,
+.cr-band--cta::after,
+.cr-creative::before,
+.cr-creative::after,
+[class*="cr-env-"]::before,
+[class*="cr-env-"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Film — analog tonal variation. PHOTOGRAPHIC BASES ONLY.
+
+   This used to be a selector list, which was correct only while exactly
+   one kind of surface could hold a photograph. Once any surface can carry
+   an environment, "is there a photograph under this" stops being knowable
+   from the selector — so the base declares it, and the material follows.
+   That is the same rule as before, stated where it is actually true:
+   the film belongs to the base, not to the surface.
+
+   At `--cr-surface-photographic: 0` the layer computes to zero opacity, so
+   a solid brand colour still takes no film — it has no tone to vary, and
+   film there reads as dirt on the block rather than as material. */
+.cr-band--cta::before,
+.cr-creative::before,
+[class*="cr-env-"]::before {
+  z-index: -2;
+  background-image: var(--cr-texture-film);
+  background-size: var(--cr-texture-film-size);
+  background-position: center;
+  background-repeat: no-repeat;
+  mix-blend-mode: var(--cr-texture-film-blend);
+  opacity: calc(var(--cr-texture-film-opacity) * var(--cr-surface-photographic, 0));
+}
+
+/* Noise — the unifying grain. Every treated surface, both bases. */
+.cr-band--cta::after,
+.cr-creative::after,
+[class*="cr-env-"]::after {
+  z-index: -1;
+  background-image: var(--cr-texture-noise);
+  background-size: var(--cr-texture-noise-size);
+  background-repeat: var(--cr-texture-noise-repeat);
+  mix-blend-mode: var(--cr-texture-noise-blend);
+  opacity: var(--cr-texture-noise-opacity);
+}
+
+/* ─── Creative surface ──────────────────────────────────────────────
+   The position a delivered creative occupies once it exists — the thing
+   a placeholder was reserving. The creative arrives as a VALUE
+   (--cr-surface-image), never as authored markup: the system reserves
+   position and applies material; people make the asset. */
+.cr-creative {
+  aspect-ratio: var(--cr-creative-ratio, var(--cr-ratio-wide));
+  border-radius: var(--cr-radius-card);
+  overflow: hidden;
+  background-color: var(--cr-bg-warm-2);
+
+  /* A creative surface is photographic by definition — that is what it is
+     for — so it takes the film without having to be told. */
+  --cr-surface-photographic: 1;
+
+  /* And it is NEVER scrimmed, even when the creative it shows is an
+     environment. The scrim exists so content can be read ON a surface;
+     here the creative IS the subject, and veiling the subject to protect
+     text that is not there would be dimming the thing being shown. This
+     is the environment/subject line: the same asset, two different jobs. */
+  --cr-surface-scrim: none;
+}
+
+
+/* In print and in forced-colours mode the material is meaningless at
+   best and harmful at worst — the surface reverts to its base. That takes
+   the environment and its scrim with it, which is why the base colour is
+   never dropped when an environment is applied: the surface must still be
+   the one whose contrast was measured when nothing paints over it. */
+@media print {
+  .cr-band--cta, .cr-creative, [class*="cr-env-"] { background-image: none; }
+  .cr-band--cta::before,
+  .cr-band--cta::after,
+  .cr-creative::before,
+  .cr-creative::after,
+  [class*="cr-env-"]::before,
+  [class*="cr-env-"]::after { display: none; background-image: none; }
+}
+@media (forced-colors: active) {
+  .cr-band--cta, .cr-creative, [class*="cr-env-"] { background-image: none; }
+  .cr-band--cta::before,
+  .cr-band--cta::after,
+  .cr-creative::before,
+  .cr-creative::after,
+  [class*="cr-env-"]::before,
+  [class*="cr-env-"]::after { display: none; background-image: none; }
+}
+
+/* ─── Section Marker ───────────────────────────────────────────────
+   Part of the Example Brand visual identity. Introduces a major section and
+   establishes consistent horizontal alignment across the page: two 8×8
+   hard-cornered squares, one at each edge of the section's content width.
+
+     ■────────────────────────────────────────────────────────────■
+
+   Rules it realizes (governance: rulebooks/visual-language.md):
+     • THE MARKER BRACKETS ITS SECTION — one at the opening, one at the
+       close. It is a pair, not a single mark: the top marker says a
+       major section begins here, the bottom one says it ends here, and
+       the two together are what make the section read as a bounded
+       movement rather than as content that simply stopped.
+       A section either takes the bracket or takes no marker at all.
+       Half a bracket is the defect: it opens something it never closes.
+     • It aligns to the CONTENT WELL's inner edge — never the section's
+       outer edge. Its job is establishing the page's alignment, so it
+       must sit on the same edge every other section aligns to. A
+       deliberately-marked full-bleed band still places it there, which is
+       why the marker carries the well's padding itself.
+     • COLOUR PRIORITY: orange first, then blue, then the remaining
+       accents. Orange is the identity's own marker colour and the
+       default here; reach past it only when the section has a reason,
+       and reach past blue only when both are already spoken for on the
+       page. Both markers of a bracket are the SAME colour — they are one
+       mark in two places, not two decisions.
+     • It takes the accent assigned to the section. NEVER a text colour.
+     • On an accent surface it takes that surface's paired foreground, so
+       it stays visible without introducing a second accent. */
+.cr-marker {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: var(--cr-content-max);
+  margin-inline: auto;
+  padding-inline: var(--cr-page-gutter);
+  /* The OPENING role, not the tight step. The marker introduces the
+     section; the heading begins the narrative. Those are two moments,
+     and binding them together is what made every section opening read as
+     compressed. The heading must never appear attached to the marker. */
+  margin-bottom: var(--cr-rhythm-opening);
+}
+
+/* The closing half of the bracket. Its gap is the CONTENT step, not the
+   opening step — deliberately, and it is the same reasoning that weights
+   a composed section's padding: a bracket with identical gaps top and
+   bottom reads as a box drawn around the content, while an opening that
+   breathes wider than the close reads as authored. Symmetry here would
+   undo the asymmetry the section composition just established. */
+.cr-marker--close {
+  margin-top: var(--cr-rhythm-content);
+  margin-bottom: 0;
+}
+
+/* On a SOLID accent band the marker takes the 900 step of that band's own
+   colour — not the paired foreground. A marker is a brand element, not
+   text: it should read as part of the surface it marks, and a deeper
+   shade of the surface's own colour does that where a contrasting
+   foreground reads as a second colour arriving in the band.
+
+   The value comes from the band variant (--cr-band-marker), so the
+   closing band never has to name a colour, and a band whose 900 cannot
+   separate from itself falls back to its paired foreground in ONE place
+   rather than page by page. */
+.cr-band--cta .cr-marker,
+.cr-band--accent-blue .cr-marker,
+.cr-band--accent-purple .cr-marker,
+.cr-band--accent-green .cr-marker {
+  --cr-marker-color: var(--cr-band-marker, var(--cr-accent-orange));
+}
+.cr-marker::before,
+.cr-marker::after {
+  content: "";
+  width: var(--cr-marker-size);
+  height: var(--cr-marker-size);
+  border-radius: var(--cr-marker-radius);
+  background: var(--cr-marker-color, var(--cr-accent-orange));
+  flex: none;
+}
+.cr-marker--orange { --cr-marker-color: var(--cr-accent-orange); }
+.cr-marker--green  { --cr-marker-color: var(--cr-accent-green); }
+.cr-marker--blue   { --cr-marker-color: var(--cr-accent-blue); }
+.cr-marker--purple { --cr-marker-color: var(--cr-accent-purple); }
+/* Inside a .cr-well the marker is already at the content edge — drop the
+   duplicate gutter so it doesn't inset twice. */
+.cr-well > .cr-marker { padding-inline: 0; }
+
+/* ─── Placeholder system ───────────────────────────────────────────
+   The design system does NOT produce photography, screenshots,
+   illustration, artwork, image treatments or marketing graphics. Those
+   are created independently. Wherever a creative asset is required, the
+   system reserves its POSITION and nothing else — dimensions, spacing,
+   alignment and responsive behaviour, with a label naming what belongs
+   there.
+
+   This is the opposite of filler: it makes the absence explicit and
+   legible rather than faking presence with an invented artifact.
+
+   Set the aspect ratio per placement; the four named types differ only
+   in what they declare, never in how they are drawn.
+
+     <figure class="cr-placeholder cr-placeholder--screenshot"
+             style="--cr-placeholder-ratio: 16/9">
+       <span>Product Screenshot Placeholder</span>
+     </figure>                                                        */
+.cr-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 0;
+  aspect-ratio: var(--cr-placeholder-ratio, var(--cr-ratio-wide));
+  background-color: var(--cr-bg-warm-2);
+  border: var(--cr-stroke) solid var(--cr-line);
+  border-radius: var(--cr-radius-card);
+  overflow: hidden;
+  font-family: var(--cr-font-body);
+  font-size: var(--cr-text-supporting);
+  line-height: var(--cr-leading-body);
+  text-align: center;
+  padding: var(--cr-space-m);
+}
+
+/* EVERY CREATIVE POSITION IS PHOTOGRAPHIC — dashboard, product screenshot,
+   editorial visual, photography, all of them. A reserved position carries an
+   approved environment as its base and the label sits on top of it.
+
+   This changes what a placeholder LOOKS like, not what it MEANS. The old
+   empty outlined box read as a wireframe: a page full of them could not be
+   judged as a design, because the thing being judged was mostly absent. A
+   position reserved on a real photograph shows the composition at the weight
+   it will actually carry — the proportion, the presence and the anchor are
+   all legible, which is the whole reason the system reserves position in the
+   first place.
+
+   It still declares an absence rather than concealing one: the label names
+   what belongs there, and it is the label — not the background — that the
+   reader is being told about. The rule it must not break is the one about
+   fabricated substance: a reserved position must never be dressed up as the
+   real asset, which is why the label stays and stays legible.
+
+   A PLACEHOLDER NEVER CARRIES AN IMAGE — see DECISION-REGISTER DR-7. It
+   is a reserved position, and its label sits on the plain reserved
+   surface. The rule that used to stand here dressed a placeholder in an
+   environment and veiled it so the label stayed readable; under the
+   2026-07-29 direction there is no photographic surface to veil, and a
+   placeholder wearing a photograph was always the closest this pack came
+   to the fabricated-substance failure it exists to prevent — it looked
+   like a delivered creative. The label is the whole content. */
+.cr-placeholder { color: var(--cr-fg-2); }
+.cr-placeholder[class*="cr-env-"] {
+  /* DEPRECATED — an environment class on a placeholder is inert. Retained
+     so previously-authored markup degrades to a plain reserved position
+     rather than to an unresolved custom property. */
+  --cr-surface-image: none;
+  --cr-surface-scrim: none;
+  --cr-surface-photographic: 0;
+  color: var(--cr-fg-2);
+}
+
+/* ─── Media frame ──────────────────────────────────────────────────
+   The four-corner bracket that marks a section's primary content block.
+   This is COMPONENT STYLING for the media container — it dresses the
+   `media-frame` block role (image / screenshot / device mock / the
+   placeholder above), not a system-level element. If the treatment
+   changes, only this rule changes.
+
+     <div class="cr-media-frame"> …primary content block… </div>       */
+.cr-media-frame { position: relative; }
+.cr-media-frame::before,
+.cr-media-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--cr-frame-color, var(--cr-accent-orange)) 0 0),
+    linear-gradient(var(--cr-frame-color, var(--cr-accent-orange)) 0 0);
+  background-repeat: no-repeat;
+  background-size: var(--cr-marker-size) var(--cr-marker-size);
+}
+.cr-media-frame::before { background-position: left top, right top; }
+.cr-media-frame::after  { background-position: left bottom, right bottom; }
+.cr-media-frame--green  { --cr-frame-color: var(--cr-accent-green); }
+.cr-media-frame--blue   { --cr-frame-color: var(--cr-accent-blue); }
+.cr-media-frame--purple { --cr-frame-color: var(--cr-accent-purple); }
+
+/* ─── Creative vocabularies — proportion · presence · placement ──────
+   Selection is the ONLY affordance. These classes resolve to the four
+   ratios, five presence shares and seven anchors declared in the token
+   block; there is deliberately no handle that accepts an arbitrary value,
+   because an off-vocabulary ratio (4/5, shipped twice before this rule
+   existed) arrives through exactly such a handle.
+
+   Applies to a delivered creative AND to the placeholder reserving its
+   position — a reservation represents the FUTURE CREATIVE, never the
+   available space, so it carries the same proportion, presence and
+   anchor the real asset will. */
+.cr-ratio-square    { --cr-creative-ratio: var(--cr-ratio-square);    --cr-placeholder-ratio: var(--cr-ratio-square); }
+.cr-ratio-portrait  { --cr-creative-ratio: var(--cr-ratio-portrait);  --cr-placeholder-ratio: var(--cr-ratio-portrait); }
+.cr-ratio-landscape { --cr-creative-ratio: var(--cr-ratio-landscape); --cr-placeholder-ratio: var(--cr-ratio-landscape); }
+.cr-ratio-wide      { --cr-creative-ratio: var(--cr-ratio-wide);      --cr-placeholder-ratio: var(--cr-ratio-wide); }
+
+/* PRESENCE — compositional authority, as a share of the composition.
+   In a COMPOSED section the declared presence sizes the grid column (see
+   `.cr-hero > .cr-well:has(…)` above) and the creative simply fills it —
+   that is what makes the share a share of the composition rather than of
+   whatever box the creative landed in.
+   The width below is the UNCOMPOSED case only: a creative sitting
+   directly in the well, with no second column to take the remainder.
+   There the well IS the composition, so a percentage of the containing
+   block and a percentage of the composition are the same number. */
+.cr-presence-xs { --cr-presence: var(--cr-presence-xs); }
+.cr-presence-s  { --cr-presence: var(--cr-presence-s); }
+.cr-presence-m  { --cr-presence: var(--cr-presence-m); }
+.cr-presence-l  { --cr-presence: var(--cr-presence-l); }
+.cr-presence-xl { --cr-presence: var(--cr-presence-xl); }
+.cr-presence-xs, .cr-presence-s, .cr-presence-m,
+.cr-presence-l,  .cr-presence-xl { width: var(--cr-presence); max-width: 100%; }
+/* Inside a composed section the column already carries the share, so the
+   creative fills it. Without this the share would be applied twice —
+   65% of a 65% column is 42%, which is the same defect one level down. */
+.cr-composition-media.cr-presence-xs, .cr-composition-media.cr-presence-s,
+.cr-composition-media.cr-presence-m,  .cr-composition-media.cr-presence-l,
+.cr-composition-media.cr-presence-xl { width: 100%; }
+
+/* PLACEMENT — where the creative sits and how content relates to it.
+   Without this, a governed ratio at a governed presence can still be
+   assembled text-then-media, media-then-text or interleaved at random. */
+.cr-anchor-left     { margin-inline: 0 auto; }
+.cr-anchor-right    { margin-inline: auto 0; }
+.cr-anchor-inline   { margin-inline: 0; }
+.cr-anchor-bleed    { width: 100vw; max-width: 100vw; margin-inline: calc(50% - 50vw); border-radius: 0; }
+.cr-anchor-framed   { margin-inline: 0; }   /* dressed by .cr-media-frame */
+.cr-anchor-floating { margin-inline: auto; }
+.cr-anchor-inset    { margin-inline: auto; max-width: var(--cr-measure-editorial); }
+
+/* ─── Environmental imagery — SELECTION, the fourth vocabulary ───────
+   The three vocabularies above decide the SHAPE a creative occupies.
+   This one decides WHICH APPROVED CREATIVE occupies it — and it is a
+   vocabulary for the same reason they are: the affordance is selection,
+   and nothing else. There is no handle that takes a URL.
+
+   That is not a convenience. A path typed at a call site can point
+   anywhere — a stock library, a generated image, a file that is not in
+   the pack at all — and every one of those reads as a legitimate CSS
+   value. Naming the library makes "use an approved asset" a property of
+   the mechanism instead of a rule someone has to remember.
+
+   Each class carries the ASSET and its FOCUS together, because the focus
+   is not decoration on the choice, it is half of it: every one of these
+   is 3:2, so every approved ratio crops it, and a centre crop is simply
+   the crop nobody chose. The focus values are MEASURED — each was checked
+   against the crop it produces at all four ratios, not picked by eye from
+   the full frame. Recorded per asset in ASSETS.md.
+
+   Whether the surface then veils the image is the SURFACE's decision (see
+   the scrim), never the asset's. The same environment is veiled behind a
+   closing banner's text and untouched when it is the subject. */
+/* AN ENVIRONMENT CLASS BELONGS ON A SURFACE THAT CARRIES NO TYPE OF ITS
+   OWN — normally `.cr-creative`, the reserved creative position.
+   Since 2026-07-31 (DECISION-REGISTER DR-46, restated for this file by
+   DR-55) the rule is a test rather than a list of hosts: walk from a line
+   of type to its NEAREST OPAQUE PAINTED ANCESTOR. If that ancestor is the
+   element carrying the environment, the image is being used as a surface
+   under words and is refused. If it is a panel or a band that merely
+   overlays the environment, the type has its own ground and the placement
+   is legitimate — that is the composition DR-52 and DR-54 authored, and it
+   measures 8.54:1 to 14.38:1.
+
+   So `.cr-creative` remains the normal host and the only one that needs no
+   argument, because a creative-as-subject carries no type at all. What is
+   no longer true is that it is the ONLY host: a band whose type sits on an
+   opaque child is not a violation. What has not changed at all is
+   SELECTION — an environment is chosen from the seven below, never
+   sourced, and the class is what carries the image and its measured focus
+   together (rulebooks/creatives.md).
+
+   Previously (2026-07-29, DR-7) this read "an image is never a surface
+   behind text… on a band they are a violation, not a variant." DR-46
+   narrowed that to the property it was protecting; this file did not
+   receive the change until DR-55.
+
+   THE TEXT-TIER COLLAPSE IS RETIRED WITH THE CASE IT SERVED. It used to
+   recolour every text tier to the one measured light ink, because the
+   page's tonal hierarchy — primary, secondary, muted — was measured
+   against a flat surface and only the primary tier survived a photograph
+   (secondary copy over an environment measured 3.55:1, under AA, while
+   the headline above it passed). That finding stands and is worth
+   keeping; what has gone is any surface it could apply to. A rule that
+   recolours text on an environment now has no case, and leaving it live
+   would make an environment-on-a-band render as though it were governed.
+
+   The closing band exclusion goes with it. It existed because the collapse
+   keyed off the SELECTION rather than the base, so an environment class
+   landing on the CTA would recolour that band's text even though the band
+   refuses the image. With the collapse gone, so is the hole. */
+
+.cr-env-cliffside-muted { --cr-surface-image: var(--cr-env-cliffside-muted); --cr-surface-focus: 50% 42%; --cr-surface-photographic: 1; }
+.cr-env-dawn-haze       { --cr-surface-image: var(--cr-env-dawn-haze);       --cr-surface-focus: 55% 50%; --cr-surface-photographic: 1; }
+.cr-env-lake-mirror     { --cr-surface-image: var(--cr-env-lake-mirror);     --cr-surface-focus: 50% 50%; --cr-surface-photographic: 1; }
+.cr-env-massif-banded   { --cr-surface-image: var(--cr-env-massif-banded);   --cr-surface-focus: 40% 45%; --cr-surface-photographic: 1; }
+.cr-env-massif-clear    { --cr-surface-image: var(--cr-env-massif-clear);    --cr-surface-focus: 50% 42%; --cr-surface-photographic: 1; }
+.cr-env-ridges-distant  { --cr-surface-image: var(--cr-env-ridges-distant);  --cr-surface-focus: 50% 50%; --cr-surface-photographic: 1; }
+.cr-env-valley-deep     { --cr-surface-image: var(--cr-env-valley-deep);     --cr-surface-focus: 64% 45%; --cr-surface-photographic: 1; }
+
+/* ─── Composed creatives — SELECTION, same affordance, second library ──
+   Each class binds the asset and its FOCUS together, because the focus is
+   half the selection and not a refinement of it. These are 0.813–1.666 at
+   source and none of those is an approved ratio, so — exactly as with the
+   environmental library — EVERY PLACEMENT CROPS, and each focus below was
+   chosen against the crop its declared ratio actually produces, not from
+   the full frame.
+
+   Where a frame carries a corner chip or an edge rule, the focus is set to
+   keep it: a crop that removes the composed device has removed the reason
+   the frame was composed. `cre-horizon-marked` is the tightest case — 0.813
+   into a 4:3 box crops nearly 40% of its height, so the focus holds the top
+   edge where the chip sits and gives up the bottom rule. */
+/* EACH ASSET DECLARES ITS OWN PROPORTION. The four approved ratios exist to
+   stop the SYSTEM inventing a proportion for a position it is reserving. A
+   finished composition is not a reserved position — its proportion was
+   decided by the person who made it, and forcing it into one of the four
+   would either crop the frame or letterbox it inside a shape it was never
+   drawn for. The ratio still is not free and still is not typed at a call
+   site: it travels with the asset, exactly like a focus does. */
+.cr-cre-horizon-marked { --cr-surface-image: var(--cr-cre-horizon-marked); --cr-creative-ratio: 561 / 690; }
+.cr-cre-workplace      { --cr-surface-image: var(--cr-cre-workplace); --cr-creative-ratio: 680 / 653; }
+.cr-cre-agent-insight  { --cr-surface-image: var(--cr-cre-agent-insight); --cr-creative-ratio: 678 / 734; }
+.cr-cre-operating-view { --cr-surface-image: var(--cr-cre-operating-view); --cr-creative-ratio: 1396 / 838; }
+.cr-cre-prompt-surface { --cr-surface-image: var(--cr-cre-prompt-surface); --cr-creative-ratio: 1396 / 838; }
+
+/* ─── A FINISHED COMPOSITION IS PLACED, NOT TREATED ──────────────────
+   These arrive curated: the crop, the colour and the brand devices are
+   already in the file, decided by the people who made them. Everything
+   this pack would normally do to a creative surface would therefore be
+   done ON TOP of decisions already taken — which is the one thing
+   `rulebooks/creatives.md` forbids outright: *never modify the asset.*
+
+   So all four of the system's usual moves are withdrawn here:
+
+     FIT       `contain`, never `cover`. Cover crops, and a crop of a
+               finished composition removes part of what was delivered —
+               including, on two of these, the corner chip and the edge
+               rule that are the composition's own devices.
+     FOCUS     unset. A focus is half of a CROP decision; with nothing
+               cropped there is nothing to focus, and a value here would
+               be a decision pretending to have been made.
+     MATERIAL  none. The grain, the analog-tonal and printed-imperfection
+               layers give the SYSTEM's own surfaces a printed quality.
+               Over delivered creative they are a filter, and the asset
+               was curated without one.
+     CLIP      no card radius and no overflow clip. The frame's own edges
+               ARE the composition; rounding them is an edit.
+
+   The environmental library is unaffected and still takes all four — an
+   environment is raw material the system dresses, which is exactly the
+   distinction these two libraries exist to keep apart. */
+[class*="cr-cre-"] {
+  --cr-surface-fit: contain;
+  --cr-surface-focus: center;
+  --cr-surface-photographic: 0;
+  --cr-surface-scrim: none;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border-radius: 0;
+  overflow: visible;
+}
+/* The texture layers ride pseudo-elements, so withdrawing the material
+   means switching those off rather than zeroing a variable. */
+[class*="cr-cre-"]::before,
+[class*="cr-cre-"]::after { display: none; }
+/* The printed-imperfection layer rides the ELEMENT's own background stack
+   rather than a pseudo-element, so switching the pseudos off does not remove
+   it. The stack is replaced outright with the asset and nothing else — which
+   is the whole claim this block makes: what renders here is the delivered
+   file, not the delivered file plus the system's material. */
+[class*="cr-cre-"] {
+  background-image: var(--cr-surface-image);
+  background-blend-mode: normal;
+  background-size: contain;
+  background-position: center;
+}
+
+/* ─── Type ramp ────────────────────────────────────────────────────
+   Class names are the stable contract and are retained; the sizes they
+   resolve to are the new scale. Every heading inherits the tracking and
+   leading from ONE place — a component overrides it only where it
+   explicitly requires an exception.
+
+   COLOUR IS INHERITED, NOT PER-CLASS. All heading levels take the
+   primary text colour; all paragraphs take the secondary. A component
+   departs from either only by explicit override (an accent surface, via
+   the pairing classes below). This is what stops components quietly
+   re-deciding text colour. */
+.cr-h-hero, h1.cr,
+.cr-h-section, h2.cr,
+.cr-h-sub, h3.cr,
+.cr-h-group, h4.cr,
+.cr-h-card, h5.cr,
+.cr-h-6, h6.cr {
+  font-family: var(--cr-font-display);
+  font-weight: 500;
+  line-height: var(--cr-leading-heading);
+  letter-spacing: var(--cr-tracking-heading);
+  color: var(--cr-fg);
+}
+.cr-h-hero,    h1.cr { font-size: var(--cr-text-h1); }
+.cr-h-section, h2.cr { font-size: var(--cr-text-h2); }
+.cr-h-sub,     h3.cr { font-size: var(--cr-text-h3); }
+.cr-h-group,   h4.cr { font-size: var(--cr-text-h4); }
+.cr-h-card,    h5.cr { font-size: var(--cr-text-h5); }
+.cr-h-6,       h6.cr { font-size: var(--cr-text-h6); }
+
+/* Body — one size, one leading, one colour. */
+.cr-p, p.cr,
+.cr-p-lede,
+.cr-p-card,
+.cr-quote {
+  font-family: var(--cr-font-body);
+  font-weight: 400;
+  font-size: var(--cr-text-body);
+  line-height: var(--cr-leading-body);
+  color: var(--cr-fg-2);
+}
+
+/* Supporting text — the one step below body. Eyebrows, captions, labels,
+   metadata, supporting UI text. Editorial, not tracked-out uppercase. */
+.cr-h-eyebrow,
+.cr-caption,
+.cr-label,
+.cr-meta {
+  font-family: var(--cr-font-body);
+  font-weight: 400;
+  font-size: var(--cr-text-supporting);
+  line-height: var(--cr-leading-body);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--cr-fg-2);
+}
+
+/* Metrics — large numerical hierarchy, minimal decoration, emphasis from
+   typography alone. The figure takes the top of the scale; there is no
+   off-scale display size. */
+.cr-num-display {
+  font-family: var(--cr-font-display);
+  font-weight: 500;
+  font-size: var(--cr-text-h1);
+  line-height: var(--cr-leading-heading);
+  letter-spacing: var(--cr-tracking-heading);
+  color: var(--cr-fg);
+}
+
+/* ─── The four widths, attached BY ROLE ─────────────────────────────
+   Measure is not a class an author remembers to add. It was, and the
+   result was every section heading running the full 1300px content well
+   above a paragraph capped at 950 — the heading 1.37× wider than its own
+   lede, which is the one place an over-long line is most visible.
+
+   So the ramp carries its own measure:
+     • the three EDITORIAL steps (h1/h2/h3) take the editorial measure
+     • paragraphs and supporting text take the reading measure
+     • h4-h6 take NEITHER — a card title is bounded by its card, and a
+       measure on it would fight the component. Below h3, width comes
+       from the context the heading sits in.
+
+   Headlines and supporting copy INTENTIONALLY occupy different measures.
+   The transition between them IS the section's visual hierarchy. Do not
+   "fix" the narrowing by equalising them. */
+.cr-h-hero,    h1.cr,
+.cr-h-section, h2.cr,
+.cr-h-sub,     h3.cr { max-width: var(--cr-measure-title); }
+
+/* THE RELEASE VALVE. Applied to a title that has wrapped to a third line,
+   and to nothing else. Mirrors `.cr-cta-measure-wide`, which is now the same
+   rule reached through the same shape rather than a band-local exception. */
+.cr-title-measure-wide,
+.cr-title-measure-wide.cr,
+h1.cr-title-measure-wide, h2.cr-title-measure-wide, h3.cr-title-measure-wide {
+  max-width: var(--cr-measure-title-wide);
+}
+
+.cr-p, p.cr,
+.cr-p-lede,
+.cr-quote,
+.cr-caption,
+.cr-meta { max-width: var(--cr-measure-body); }
+
+/* Explicit handles, for the cases the ramp cannot infer. Both now name a
+   ROLE rather than an end of a pair: `--tight` no longer means "narrower
+   than body", because there is nothing narrower than body left — it means
+   body, and it is retained so existing markup keeps resolving. */
+.cr-measure           { max-width: var(--cr-measure-body); }
+.cr-measure--tight    { max-width: var(--cr-measure-body); }
+.cr-measure--editorial{ max-width: var(--cr-measure-title); }
+
+/* LAYOUT WIDTH — the licence to occupy the full container. Granted to
+   components that genuinely require it: comparison tables, dashboards,
+   card grids, feature matrices. Editorial content never takes this; that
+   is the entire point of the distinction. Applying it to a heading or a
+   paragraph is the failure this class exists to make visible. */
+.cr-layout-width { max-width: none; }
+
+/* Card copy is bounded by its card, never by a page measure. */
+.cr-p-card { max-width: none; }
+
+/* ─── Foreground pairing on non-default surfaces ───────────────────
+   The mechanism that flips text off the cream page. Put the class on the
+   BAND (or any wrapper) and everything inside takes the paired
+   foreground — otherwise the ramp's own colour renders illegibly.
+
+   Live: accent surfaces. Dormant: the dark tier.
+   These work by REDEFINING the two text roles on the wrapper rather than
+   by listing every ramp class. The ramp resolves its colour through
+   --cr-fg / --cr-fg-2, so redefining those two properties re-colours
+   every descendant — headings, paragraphs, supporting text, metric
+   figures, and anything authored later — with no selector to keep in
+   sync. Enumerating classes here is how this drifts. */
+.cr-on-accent-light {            /* on blue / orange */
+  --cr-fg:   var(--cr-on-accent-light);
+  --cr-fg-2: var(--cr-on-accent-light);
+  --cr-fg-3: var(--cr-on-accent-light);
+  --cr-fg-muted: var(--cr-on-accent-light);
+  color: var(--cr-on-accent-light);
+}
+.cr-on-accent-deep {             /* on purple / green */
+  --cr-fg:   var(--cr-on-accent-deep);
+  --cr-fg-2: var(--cr-on-accent-deep);
+  --cr-fg-3: var(--cr-on-accent-deep);
+  --cr-fg-muted: var(--cr-on-accent-deep);
+  color: var(--cr-on-accent-deep);
+}
+
+/* The dark-surface text pairing. NO LONGER DORMANT (DR-28): the dark tier
+   is now a governed editorial device — permitted for a hero, closing band,
+   footer, immersive or full-bleed media moment, product reveal or narrative
+   transition, AT MOST TWO PER PAGE. It is not a theme and there is nothing
+   to switch to; the system stays light-first and editorial.
+
+   Measured on --cr-bg-dark (neutral-950): text-inverse 14.38:1,
+   neutral-400 10.42:1 — both clear body text comfortably. The raw #E4E4E4
+   this carried is retired; it was off-canonical and measured 11.31:1, so
+   nothing legible is lost. */
+.cr-on-dark {
+  --cr-fg:   var(--cr-text-inverse);
+  --cr-fg-2: var(--cr-neutral-400);
+  --cr-fg-3: var(--cr-neutral-400);
+  --cr-fg-muted: var(--cr-neutral-400);
+  color: var(--cr-text-inverse);
+}
+
+/* ─── Buttons ──────────────────────────────────────────────────────
+   Minimal styling, the control radius, no shadow. The primary action is
+   the primary text colour as a fill — the eye lands on it because it is
+   the darkest thing on a light page, not because it is coloured. */
+.cr-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--cr-font-body); font-weight: 500;
+  font-size: var(--cr-text-supporting);
+  line-height: 1; letter-spacing: 0;
+  padding: 14px 24px;
+  border-radius: var(--cr-radius-control);
+  border: var(--cr-stroke) solid transparent;
+  cursor: pointer;
+  transition: background-color .15s ease, color .15s ease, opacity .15s ease;
+}
+.cr-btn-primary   { background: var(--cr-fg); color: var(--cr-bg); }
+.cr-btn-primary:hover   { background: var(--cr-neutral-1000); }
+
+/* ── The emphasis-fill variant (COMPOSE.md §C.5, DR-25) ───────────────
+   AT MOST ONE PER PAGE, and only where it IS the page's highest-priority
+   action. Anywhere else, the dark pill above. This is a variant of the
+   primary tier, not a tier of its own: it changes how loudly the primary
+   action speaks, never which action is primary.
+
+   THREE MEASUREMENTS SHAPE THIS RULE, and each closed off an option:
+
+   1. No single label colour is legal across the supplied 500→600→700
+      interaction ramp. Against a 16px/500 label needing 4.5:1:
+        fill        text-primary   white   neutral-1000
+        orange-500     5.48 ✓      2.62 ✗     6.85 ✓
+        orange-600     4.27 ✗      3.36 ✗     5.33 ✓
+        orange-700     2.96 ✗      4.85 ✓     3.70 ✗
+      neutral-1000 is the only label legal at BOTH rest and hover, so it is
+      the label. The pack implements rest and hover only — it has never had
+      an :active state on a button — so orange-700 is not used as a fill
+      behind a label here. --cr-primary-active remains available to
+      consumers, with the warning above attached.
+
+   2. THE BORDER IS NOT DECORATION. orange-500 measures only 2.40:1 against
+      the page ground, below the 3:1 WCAG 1.4.11 asks for a control's
+      boundary — the fill alone barely separates the button from the page.
+      orange-700 as a hairline measures 4.44:1 and carries the shape. The
+      dark pill has no such problem (13.14:1), which is one more reason it
+      is the default rather than this.
+
+      What the border is measured AGAINST matters: its job is separating the
+      control from the PAGE, not from its own fill. Against the fill it is
+      low by design (1.85:1 at rest, 1.44:1 on hover) — that is a hairline
+      sitting on its own colour, not a contrast failure. Against the page,
+      at rest the border does the work (4.44:1) because the fill does not
+      (2.40:1); on hover the fill itself clears the floor (orange-600 =
+      3.08:1) and the border is redundant reinforcement. Both states hold.
+
+   3. Its label is NOT white. White on orange-500 is 2.62:1 — the single
+      most likely mistake here, and the reason --cr-on-accent-light exists. */
+.cr-btn-primary--emphasis {
+  background: var(--cr-primary);
+  color: var(--cr-neutral-1000);
+  border-color: var(--cr-orange-700);
+}
+.cr-btn-primary--emphasis:hover { background: var(--cr-primary-hover); }
+.cr-btn-secondary { background: transparent; color: var(--cr-fg); border-color: var(--cr-line); }
+.cr-btn-secondary:hover { background: var(--cr-bg-warm-2); }
+.cr-btn-tertiary  { background: transparent; color: var(--cr-fg); padding-inline: 4px; }
+.cr-btn-tertiary:hover  { color: var(--cr-fg-2); }
+/* On an accent surface the action inverts to the raised surface so it
+   still reads as the one thing to press. Its label reads --cr-fg-base,
+   not --cr-fg: inside a deep-accent wrapper --cr-fg is white, which would
+   put a white label on a white button. */
+.cr-on-accent-light .cr-btn-primary,
+.cr-on-accent-deep  .cr-btn-primary {
+  background: var(--cr-bg-raised); color: var(--cr-fg-base);
+}
+.cr-on-accent-light .cr-btn-primary:hover,
+.cr-on-accent-deep  .cr-btn-primary:hover { background: var(--cr-bg-warm-2); }
+.cr-on-accent-light .cr-btn-secondary,
+.cr-on-accent-deep  .cr-btn-secondary { border-color: currentColor; }
+.cr-btn:active    { transform: scale(0.98); }
+.cr-btn:disabled  { opacity: 0.4; cursor: not-allowed; }
+
+/* ─── Cards ────────────────────────────────────────────────────────
+   Card radius, one hairline stroke, no shadow, generous internal
+   spacing. Depth is not available; separation comes from the stroke and
+   the space around it. */
+.cr-card {
+  background: var(--cr-bg-raised);
+  border: var(--cr-stroke) solid var(--cr-line);
+  border-radius: var(--cr-radius-card);
+  padding: var(--cr-space-m);
+}
+
+/* ─── Divider ──────────────────────────────────────────────────────
+   1px, the stroke colour, structural separation only. With the page held
+   on one surface, hairlines now carry the separation that surface
+   switching used to — still punctuation, still sparing. */
+.cr-divider {
+  border: 0;
+  border-top: var(--cr-stroke) solid var(--cr-line);
+  margin: 0;
+}
+
+/* ─── Responsive — the rhythm scales, the ORDERING does not ─────────
+   Until now the only responsive value in this pack was the page gutter,
+   so a 100px section opening would have stayed 100px next to a 36px
+   heading on a phone. The magnitudes step down; what must survive every
+   breakpoint is the RELATIONSHIP:
+
+       opening  >  content  >  cluster
+
+   That ordering is the rule. Equal gaps would pass any absolute check
+   and would still be the failure the direction names — spacing
+   distributed evenly because steps exist. The composed sections collapse
+   to a single column, which is a change of composition, not of rhythm.
+
+   EVERY STEP HERE IS ON THE CLOSED SET. The previous ladder ran through
+   64 / 48 / 32 / 16 / 100 — five values the 2026-07-29 direction removes.
+   Re-derived on the six that remain, the ordering still holds at every
+   breakpoint and each step is now a value the system can name:
+
+       desktop   opening 120  >  content  80  >  cluster 40
+       ≤1024      opening  80  >  content  40  >  cluster 20
+       ≤700       opening  40  >  content  20  >  cluster 12          */
+/* ─── Responsive type — STEPPED, and never off the scale ────────────
+   The direction fixes the type scale at desktop and says "do not generate
+   alternative heading sizes". It cannot mean "72px on a phone": a 72px
+   headline at -0.04em overflows a 390px viewport. It means no size is
+   INVENTED — so the ramp steps DOWN THE SCALE ITSELF rather than
+   interpolating through it.
+
+   THIS IS WHY IT IS STEPPED AND NOT A CLAMP. A clamp is the obvious
+   choice and the wrong one here: `clamp(44px, 5vw, 72px)` resolves to
+   63.7px at 1280px wide — a size nobody authored, on no scale, and
+   unnameable. Every rendered heading is a step of the closed scale at
+   every viewport, which is a property a fluid ramp cannot have. The page
+   GUTTER stays a clamp, because spacing is continuous and type is not.
+
+   The ramp only ever moves DOWN the existing ladder:
+
+       desktop   H1 72  H2 56  H3 44  H4 36  H5 28  H6 24
+       ≤1024     H1 56  H2 44  H3 36  H4 28  H5 24  H6 20
+       ≤700      H1 44  H2 36  H3 28  H4 24  H5 20  H6 20
+
+   Body and supporting never move. 20px body at 145% is the direction's
+   floor for reading comfort, and a phone is where that matters most. */
+@media (max-width: 1024px) {
+  :root {
+    --cr-rhythm-opening: var(--cr-space-xl);  /* 80px */
+    --cr-rhythm-cluster: var(--cr-space-s);   /* 20px */
+    --cr-rhythm-content: var(--cr-space-m);   /* 40px */
+    --cr-section-pad-block: var(--cr-space-xl);  /* 80px */
+    /* The editorial measure used to be released to 100% here, because 1100px
+       could not fit inside a 1024px viewport and would have overflowed. At
+       950px it never binds before the well does, so the release has nothing
+       left to release — and a percentage here made the measure report as a
+       percentage rather than a length, which the harness had to special-case.
+       A max-width that does not bind on a narrow screen is not a third
+       measure; it is the same measure, unreached. */
+
+    --cr-text-h1: 56px;
+    --cr-text-h2: 44px;
+    --cr-text-h3: 36px;
+    --cr-text-h4: 28px;
+    --cr-text-h5: 24px;
+    --cr-text-h6: 20px;
+  }
+  /* The hero's two columns collapse to one; the closing band was never a
+     grid, so there is nothing here to collapse.
+
+     The composition share collapses WITH them, and that is load-bearing:
+     the scrim holds across exactly this value, so a share left at 62%
+     while the content spans the full well would release the veil under
+     the last third of every line. Measured — it did. */
+  .cr-hero { --cr-composition-share: 100%; }
+  .cr-hero > .cr-well { grid-template-columns: minmax(0, 1fr); }
+  .cr-hero > .cr-well > .cr-composition-media { grid-column: 1; grid-row: auto; }
+  .cr-hero { padding-block: var(--cr-space-2xl) var(--cr-space-xl); }  /* 120 / 80 */
+}
+
+@media (max-width: 700px) {
+  :root {
+    --cr-rhythm-opening: var(--cr-space-m);   /* 40px */
+    --cr-rhythm-cluster: var(--cr-space-xs);  /* 12px */
+    --cr-rhythm-content: var(--cr-space-s);   /* 20px */
+    --cr-section-pad-block: var(--cr-space-m);  /* 40px */
+
+    --cr-text-h1: 44px;
+    --cr-text-h2: 36px;
+    --cr-text-h3: 28px;
+    --cr-text-h4: 24px;
+    --cr-text-h5: 20px;
+    --cr-text-h6: 20px;
+  }
+  /* The hero keeps MORE than a standard section at every viewport — its
+     breathing room is the one thing the direction protects by name
+     ("never compress hero content vertically"), so it steps down one
+     rung behind the page rather than with it. */
+  .cr-hero { padding-block: var(--cr-space-xl) var(--cr-space-m); }  /* 80 / 40 */
+  /* The closing band's 80/80 is a fixed proportion, not a step on the
+     section-padding ramp — it is already tight, and scaling it down
+     with everything else would collapse the one band that must not. */
+  .cr-presence-xs, .cr-presence-s, .cr-presence-m,
+  .cr-presence-l,  .cr-presence-xl { width: 100%; }
+}

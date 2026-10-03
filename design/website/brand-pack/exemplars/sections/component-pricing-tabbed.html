@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CR — Pricing · tabbed split</title>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css">
+<!--
+  COMPONENT: Pricing · tabbed split (value-prop variant)
+  COMPOSITION: 2-column split on pure white (~42/58 ratio). LEFT col = a
+    bracketed eyebrow "[ OUR PLANS ]" + a very large 3-line Urbanist ExtraBold
+    headline (~78px, tight −0.03em tracking) + a large whitespace gap + a
+    pull-quote (2–3 lines Inter body) + an OVERLAPPING AVATAR STACK (3 circular
+    portraits, 34px, −10px margin, white 2px border) + 5 inline amber star SVGs
+    + a trust caption. RIGHT col = TWO TAB PILLS at top-right (active = brand-
+    blue fill + white Lucide icon + text; inactive = grey fill) followed by a
+    single BORDERED CARD (1px --cr-line, 20px radius, 44px padding). The card
+    holds BOTH plans stacked via grid-area:1/1 — the inactive plan has opacity:0
+    so the card height is always defined; switching cross-fades them. Plan
+    content: plan title (Urbanist 700/26) + 2-line Inter description + very large
+    price (ExtraBold ~64px, −0.03em) + a CTA ROW (brand-blue pill button +
+    inline scarcity text on the same flex row) + a hairline DIVIDER + "What's
+    included" uppercase label + a 2-COLUMN FEATURE GRID (8 items, "+" prefix,
+    Inter 14px).
+  INSPIRATION: agency "Personalized plans and pricing" section (2-col split,
+    bracketed eyebrow, oversized ExtraBold headline, tab toggle above the card,
+    large price, "+" feature list, avatar trust row, pull-quote below headline).
+    Layout/composition only; re-skinned to CR — lime green → brand blue, fonts
+    → Urbanist/Inter, design-agency plans → CR APA Retainer + Enterprise plans in
+    CR voice (no hype, no exclamation marks).
+  MOTION: "reveal + tab-swap cross-fade" (user choice). On first viewport hit the
+    left col (eyebrow → headline → quote → trust, --d 0/80/160/240ms) and the
+    right col (tabs → card, --d 80/160ms) fade + rise in sequence
+    (IntersectionObserver, fires once). Tab switch cross-fades the plan content
+    via CSS opacity transition on the stacked grid-area:1/1 plans (.pts-plan
+    opacity:0→1 over .32s). .has-js default-VISIBLE pattern; visible without JS
+    (first plan shown, both tab buttons visible); prefers-reduced-motion snaps in.
+  RESPONSIVE: 2-col → 1-col at ≤900px (right col stacks below left; headline
+    scales clamp(44→64px)); feature grid 2-col → 1-col at ≤560px; CTA row
+    stacks; tab pills shrink.
+-->
+<style>
+  .cr-pts {
+    background: var(--cr-bg);
+    padding: clamp(80px, 9vw, 120px) clamp(24px, 5vw, 80px);
+    font-family: var(--cr-font-body);
+  }
+  .pts-well {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 42fr 58fr;
+    gap: 56px;
+    align-items: start;
+  }
+
+  /* ── Left column ────────────────────────────────────────── */
+  .pts-left { display: flex; flex-direction: column; min-width: 0; }
+
+  .pts-eyebrow {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    color: var(--cr-fg-3);
+  }
+  .pts-headline {
+    margin: 20px 0 0;
+    font-family: var(--cr-font-display);
+    font-weight: 800;
+    font-size: clamp(52px, 5.5vw, 78px);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--cr-fg);
+  }
+  .pts-quote {
+    margin: clamp(52px, 6vw, 88px) 0 0;
+    font-family: var(--cr-font-body);
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--cr-fg-2);
+  }
+  .pts-trust {
+    margin-top: 26px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .pts-avatars { display: flex; }
+  .pts-avatars img {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: 2px solid var(--cr-bg);
+    object-fit: cover;
+    margin-left: -10px;
+  }
+  .pts-avatars img:first-child { margin-left: 0; }
+  .pts-trust-meta { display: flex; flex-direction: column; gap: 3px; }
+  .pts-stars { display: flex; gap: 2px; }
+  .pts-stars svg { width: 14px; height: 14px; fill: var(--cr-amber); stroke: none; display: block; }
+  .pts-trust-cap { font-size: 13px; font-weight: 500; color: var(--cr-fg-3); }
+
+  /* ── Right column ───────────────────────────────────────── */
+  .pts-right { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+
+  /* Tab toggle */
+  .pts-tabs { display: flex; gap: 8px; align-self: flex-start; }
+  .pts-tab {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px;
+    border-radius: var(--cr-radius-pill);
+    font-family: var(--cr-font-display);
+    font-weight: 600;
+    font-size: 15px;
+    border: none; cursor: pointer;
+    background: var(--cr-bg-grey-100);
+    color: var(--cr-fg-2);
+    transition: background .2s ease, color .2s ease;
+  }
+  .pts-tab svg { width: 15px; height: 15px; flex: 0 0 auto; stroke-width: 2; }
+  .pts-tab.active { background: var(--cr-brand); color: #fff; }
+  .pts-tab:focus-visible { outline: 2px solid var(--cr-brand); outline-offset: 2px; }
+
+  /* Card */
+  .pts-card {
+    border: 1px solid var(--cr-line);
+    border-radius: var(--cr-radius-lg);
+    padding: clamp(28px, 3.5vw, 44px);
+  }
+
+  /* Both plans stack in the same grid cell for cross-fade */
+  .pts-plans { display: grid; }
+  .pts-plan {
+    grid-area: 1 / 1;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .32s ease;
+  }
+  .pts-plan.active { opacity: 1; pointer-events: auto; }
+
+  .pts-plan-title {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: -0.01em;
+    color: var(--cr-fg);
+  }
+  .pts-plan-desc {
+    margin: 10px 0 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--cr-fg-3);
+  }
+  .pts-price {
+    margin: 28px 0 0;
+    font-family: var(--cr-font-display);
+    font-weight: 800;
+    font-size: clamp(48px, 5vw, 64px);
+    letter-spacing: -0.03em;
+    color: var(--cr-fg);
+    line-height: 1;
+    display: flex; align-items: baseline; gap: 3px;
+  }
+  .pts-price-unit {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--cr-fg-3);
+    letter-spacing: 0;
+  }
+  .pts-cta-row {
+    margin-top: 24px;
+    display: flex; align-items: center;
+    gap: 18px; flex-wrap: wrap;
+  }
+  .pts-cta-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 26px;
+    background: var(--cr-brand); color: #fff;
+    border: none; border-radius: var(--cr-radius-pill);
+    font-family: var(--cr-font-display);
+    font-weight: 600; font-size: 15px;
+    cursor: pointer; text-decoration: none; white-space: nowrap;
+    transition: background .2s ease;
+  }
+  .pts-cta-btn:hover, .pts-cta-btn:focus-visible { background: var(--cr-brand-700); }
+  .pts-cta-btn:focus-visible { outline: 2px solid var(--cr-brand); outline-offset: 3px; border-radius: var(--cr-radius-pill); }
+  .pts-cta-btn svg { width: 15px; height: 15px; flex: 0 0 auto; stroke-width: 2.2; }
+  .pts-scarcity { font-size: 14px; color: var(--cr-fg-3); }
+  .pts-scarcity strong { color: var(--cr-fg); font-weight: 600; }
+
+  .pts-divider {
+    margin: 32px 0;
+    border: none;
+    border-top: 1px solid var(--cr-line);
+  }
+  .pts-incl-label {
+    margin: 0 0 14px;
+    font-size: 13px; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--cr-fg-3);
+  }
+  .pts-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 28px;
+  }
+  .pts-feat {
+    display: flex; gap: 9px;
+    font-size: 14px; line-height: 1.5;
+    color: var(--cr-fg-2);
+  }
+  .pts-feat::before {
+    content: '+';
+    color: var(--cr-fg-3);
+    font-weight: 700;
+    flex: 0 0 auto;
+  }
+
+  /* ── Scroll-reveal ──────────────────────────────────────── */
+  .cr-pts.has-js .reveal { opacity: 0; transform: translateY(16px); }
+  .cr-pts.has-js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cr-pts.has-js .reveal { opacity: 1; transform: none; transition: none; }
+    .pts-plan { transition: none; }
+  }
+
+  /* ── Responsive ─────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .pts-well { grid-template-columns: 1fr; gap: 48px; }
+    .pts-headline { font-size: clamp(44px, 8vw, 64px); }
+    .pts-quote { margin-top: 36px; }
+  }
+  @media (max-width: 560px) {
+    .pts-tab { font-size: 14px; padding: 9px 15px; gap: 6px; }
+    .pts-price { font-size: clamp(40px, 10vw, 54px); }
+    .pts-features { grid-template-columns: 1fr; }
+    .pts-cta-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="cr-pts" data-screen-label="Pricing · tabbed split">
+  <div class="pts-well">
+
+    <!-- ── Left column ──────────────────────────────────── -->
+    <div class="pts-left">
+      <p class="pts-eyebrow reveal" style="--d:0ms">[ OUR PLANS ]</p>
+      <h2 class="pts-headline reveal" style="--d:80ms">Plans built<br>around how<br>you work.</h2>
+
+      <p class="pts-quote reveal" style="--d:160ms">"We didn't want a vendor with a playbook. We wanted a team that understood our ops as well as we did. Example Brand became that team."</p>
+
+      <div class="pts-trust reveal" style="--d:240ms">
+        <div class="pts-avatars">
+          <img src="../assets/avatars/avatar-carol.jpg" alt="">
+          <img src="../assets/avatars/avatar-jason.jpg"  alt="">
+          <img src="../assets/avatars/avatar-david.jpg"  alt="">
+        </div>
+        <div class="pts-trust-meta">
+          <div class="pts-stars" aria-label="5 stars">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <span class="pts-trust-cap">Trusted by ops teams worldwide</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Right column ─────────────────────────────────── -->
+    <div class="pts-right">
+
+      <div class="pts-tabs reveal" style="--d:80ms" role="tablist">
+        <button class="pts-tab active" data-plan="retainer"
+                role="tab" aria-selected="true" aria-controls="plan-retainer">
+          <i data-lucide="refresh-cw"></i>APA Retainer
+        </button>
+        <button class="pts-tab" data-plan="enterprise"
+                role="tab" aria-selected="false" aria-controls="plan-enterprise">
+          <i data-lucide="zap"></i>Enterprise
+        </button>
+      </div>
+
+      <div class="pts-card reveal" style="--d:160ms">
+        <div class="pts-plans">
+
+          <!-- Plan ①: APA Retainer -->
+          <div class="pts-plan active" id="plan-retainer" role="tabpanel">
+            <p class="pts-plan-title">APA Monthly Retainer</p>
+            <p class="pts-plan-desc">Ongoing automation deployment and support. Dedicated agent hours every month, priority access, and work that compounds into your operations.</p>
+            <div class="pts-price">$8,000<span class="pts-price-unit">/m</span></div>
+            <div class="pts-cta-row">
+              <a class="pts-cta-btn" href="#">Reserve your spot <i data-lucide="arrow-up-right"></i></a>
+              <span class="pts-scarcity"><strong>3 spots open</strong> for Q3 '26</span>
+            </div>
+            <hr class="pts-divider">
+            <p class="pts-incl-label">What's included</p>
+            <div class="pts-features">
+              <span class="pts-feat">40 automation hours / month</span>
+              <span class="pts-feat">APA, DocXter + Jennie access</span>
+              <span class="pts-feat">Priority deployment queue</span>
+              <span class="pts-feat">Flexible scope per sprint</span>
+              <span class="pts-feat">Dedicated Slack channel</span>
+              <span class="pts-feat">Weekly progress syncs</span>
+              <span class="pts-feat">Roll-over hours (1 month)</span>
+              <span class="pts-feat">Pause or scale anytime</span>
+            </div>
+          </div>
+
+          <!-- Plan ②: Enterprise -->
+          <div class="pts-plan" id="plan-enterprise" role="tabpanel">
+            <p class="pts-plan-title">Enterprise Deployment</p>
+            <p class="pts-plan-desc">Full-scale APA rollout across your org. Scoped to your systems, timelines, and change-management requirements — no off-the-shelf playbook.</p>
+            <div class="pts-price">Custom</div>
+            <div class="pts-cta-row">
+              <a class="pts-cta-btn" href="#">Talk to our team <i data-lucide="arrow-up-right"></i></a>
+              <span class="pts-scarcity">Avg. engagement: <strong>6–12 weeks</strong></span>
+            </div>
+            <hr class="pts-divider">
+            <p class="pts-incl-label">What's included</p>
+            <div class="pts-features">
+              <span class="pts-feat">Unlimited automation scope</span>
+              <span class="pts-feat">SAP / Salesforce / ERP connectors</span>
+              <span class="pts-feat">Dedicated solutions engineer</span>
+              <span class="pts-feat">White-glove onboarding</span>
+              <span class="pts-feat">Custom SLA + uptime commitments</span>
+              <span class="pts-feat">Executive reporting dashboard</span>
+              <span class="pts-feat">Change management support</span>
+              <span class="pts-feat">Annual contract + renewal options</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<script>
+  (function () {
+    if (window.lucide) lucide.createIcons();
+
+    var sec = document.querySelector('.cr-pts');
+    if (!sec) return;
+
+    // ── Tab switching with cross-fade ──
+    var tabs  = sec.querySelectorAll('.pts-tab');
+    var plans = sec.querySelectorAll('.pts-plan');
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var target = tab.dataset.plan;
+        tabs.forEach(function (t) {
+          var on = t.dataset.plan === target;
+          t.classList.toggle('active', on);
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        plans.forEach(function (p) {
+          p.classList.toggle('active', p.id === 'plan-' + target);
+        });
+      });
+    });
+
+    // ── Scroll-reveal ──
+    if (!('IntersectionObserver' in window)) return;
+    sec.classList.add('has-js');
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          sec.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+          io.disconnect();
+        }
+      });
+    }, { threshold: 0.08 });
+    io.observe(sec);
+  })();
+</script>
+</body>
+</html>

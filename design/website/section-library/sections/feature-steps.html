@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Steps · panel-right — feature steps</title>
+  <link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+  <!--
+    ════════════════════════════════════════════════════════════════════════
+    v3 SPECIMEN — Steps · panel-right          from component-feature-steps.html
+    ════════════════════════════════════════════════════════════════════════
+    THE CLAIM   **The rail is the section.** Four names stacked at heading scale,
+                one of them lit, the rest recessed — position IS the meaning here,
+                which is what separates a sequence from a set. Everything on the
+                right corroborates the step the reader is standing on.
+
+    STRUCTURE   Unchanged. Centred header (eyebrow → two-tone headline → lede) ·
+                two-column switcher (rail left, preview right). DOM, scripts, ids,
+                `data-*`, `src` and every behavioural hook are byte-compatible with
+                the frozen original (DR-22). The v2 file is beside this one in `_v2/`.
+
+    THE CREATIVE  v2 painted the preview through four identical abstract blur
+                plates (`blur-7.png`, one per step). The direction retires abstract
+                atmospherics for approved environment photography, but `src` is
+                frozen — so the four `<img>` elements stay in the document, inert,
+                and `.fs-media` itself carries the environment: `massif-banded`
+                under the grunge and grain, as ONE background stack. It has to be
+                one stack — a blend mode composites against what is beneath it in
+                the SAME background, so a texture on a pseudo-element resolves
+                `overlay` against transparency and renders as grey static.
+
+    THE RATIO   16/11 was never an approved proportion; it existed because nobody
+                measured it. A landscape environment is `4/3` — the vocabulary's
+                own entry for editorial composition at medium emphasis. `min-height`
+                is deliberately absent: a floor beats a declared ratio, and then the
+                frame renders a proportion nobody authored.
+
+    NO TYPE ON THE PHOTOGRAPH  The panel's title and description sit BELOW the frame
+                on the page ground, where they already sat. Remove the photograph
+                and not one word changes legibility — no scrim, none needed.
+
+    ACCENT      One moment: "Book a free call". v2 spent colour on a link hover and
+                nothing else was marked; the accent now belongs to the only thing
+                on the page that asks the reader to act. The rail is neutral ink —
+                active is *darker*, not *coloured*.
+
+    RESPONSIVE  The original's breakpoints (1040 / 860 / 560), unchanged. Type steps
+                on the pack's ramp; `clamp()` is gone — it resolves to sizes nobody
+                authored.
+    ════════════════════════════════════════════════════════════════════════
+  -->
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--cr-page-ground);
+      font-family: var(--cr-font-body);
+      color: var(--cr-text-secondary);
+      font-size: var(--cr-text-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Entrance: transform-only rise (always visible, no opacity gate) ──
+       Motion logic is frozen — kind, trigger and guard are the original's. */
+    @keyframes fs-rise {
+      from { transform: translateY(14px); }
+      to   { transform: none; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .cr-rise {
+        animation: fs-rise .6s cubic-bezier(.16,1,.3,1) both;
+        animation-delay: var(--d, 0s);
+      }
+    }
+
+    /* ── Section ────────────────────────────────────────────────── */
+    .fs {
+      padding: var(--cr-space-2xl) var(--cr-page-gutter);
+      background: var(--cr-page-ground);
+    }
+    .fs-well { max-width: var(--cr-content-max); margin: 0 auto; }
+
+    /* ── Header ─────────────────────────────────────────────────── */
+    .fs-head { text-align: center; margin-bottom: var(--cr-rhythm-content); }
+    /* The eyebrow is a LABEL, not a badge: supporting size, sentence case, never
+       tracked. Its shape comes from the control radius — the pill is retired. */
+    .fs-eyebrow {
+      display: inline-block;
+      padding: var(--cr-space-xs) var(--cr-space-s);
+      margin-bottom: var(--cr-space-s);
+      border-radius: var(--cr-radius-control);
+      background: var(--cr-bg-raised);
+      border: var(--cr-stroke) solid var(--cr-border-default);
+      font-size: var(--cr-text-supporting);
+      font-weight: 400;
+      color: var(--cr-text-secondary);
+    }
+    .fs-title {
+      font-family: var(--cr-font-display);
+      font-weight: 400;
+      font-size: var(--cr-text-h2);
+      line-height: var(--cr-leading-heading);
+      letter-spacing: var(--cr-tracking-heading);
+      color: var(--cr-text-primary);
+      max-width: var(--cr-measure-title);
+      margin: 0 auto var(--cr-rhythm-cluster);
+    }
+    /* The two-tone headline survives, but as a step in the ink hierarchy rather
+       than a second colour. */
+    .fs-title .muted { color: var(--cr-text-secondary); }
+    .fs-sub {
+      font-size: var(--cr-text-body);
+      line-height: var(--cr-leading-body);
+      color: var(--cr-text-secondary);
+      max-width: var(--cr-measure-body);
+      margin: 0 auto;
+    }
+
+    /* ── 2-column switcher ──────────────────────────────────────── */
+    .fs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--cr-space-xl);
+      align-items: start;
+    }
+
+    /* Left — the rail. Its whole job is to keep the SEQUENCE visible while one
+       member is shown, so the inactive steps must stay legible, not vanish. */
+    .fs-steps { display: flex; flex-direction: column; gap: var(--cr-space-xs); }
+    .fs-step {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--cr-space-xs);
+      width: 100%;
+      padding: var(--cr-space-s);
+      border: none;
+      background: transparent;
+      border-radius: var(--cr-radius-card);
+      text-align: left;
+      cursor: pointer;
+      /* a <button> inherits no family — it has to be said out loud */
+      font-family: var(--cr-font-display);
+      color: var(--cr-text-secondary);
+      transition: background .25s ease, color .2s ease;
+    }
+    .fs-step:hover { color: var(--cr-text-secondary); }
+    .fs-step.is-active {
+      background: var(--cr-bg-raised);
+      color: var(--cr-text-primary);
+    }
+    .fs-step-name {
+      font-weight: 400;
+      font-size: var(--cr-text-h4);
+      line-height: var(--cr-leading-heading);
+      letter-spacing: var(--cr-tracking-heading);
+    }
+    /* The ordinal is metadata riding at the top of the name's line box — the
+       superscript comes from alignment now, not from a nudge nobody could name. */
+    .fs-step-num {
+      font-family: var(--cr-font-body);
+      font-size: var(--cr-text-supporting);
+      font-weight: 400;
+      color: var(--cr-text-secondary);
+    }
+    .fs-step.is-active .fs-step-num { color: var(--cr-text-secondary); }
+
+    /* Right — preview panel.
+       THE STANDARD CREATIVE TREATMENT: one stack, three layers, in this order —
+       grain on top, grunge under it, the environment underneath both. The URLs
+       are written out rather than reached through `--cr-env-*`, because a `url()`
+       inside a custom property resolves against the CONSUMING document and fails
+       silently. The last position is the asset's measured focus, not a guess. */
+    .fs-media {
+      position: relative;
+      width: 100%;
+      aspect-ratio: var(--cr-ratio-landscape);
+      border-radius: var(--cr-radius-card);
+      overflow: hidden;
+      background-color: var(--cr-bg-dark);
+      background-image:
+        url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+        url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+        url("../../brand-pack/assets/imagery/environments/env-massif-banded.jpg");
+      background-size: var(--cr-texture-noise-size, auto), cover, cover;
+      background-position: 0 0, center, 40% 45%;
+      background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+      background-repeat: repeat, no-repeat, no-repeat;
+    }
+    /* The four blur plates stay in the document — `src` is frozen and the step
+       switcher still toggles `is-active` on them — but they no longer paint. */
+    .fs-img { display: none; }
+    .fs-img.is-active { display: none; }
+
+    .fs-panel-text {
+      margin-top: var(--cr-space-s);
+      transition: opacity .25s ease;
+    }
+    .fs-panel-title {
+      font-family: var(--cr-font-display);
+      font-weight: 400;
+      font-size: var(--cr-text-h5);
+      line-height: var(--cr-leading-heading);
+      letter-spacing: var(--cr-tracking-heading);
+      color: var(--cr-text-primary);
+      margin-bottom: var(--cr-space-xs);
+    }
+    .fs-panel-desc {
+      font-size: var(--cr-text-body);
+      line-height: var(--cr-leading-body);
+      color: var(--cr-text-secondary);
+      max-width: var(--cr-measure-body);
+    }
+
+    /* ── The one accent moment ──────────────────────────────────── */
+    .fs-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--cr-space-xs);
+      margin-top: var(--cr-space-m);
+      padding: var(--cr-space-xs) var(--cr-space-s);
+      border-radius: var(--cr-radius-control);
+    /* THE DARK PILL IS THE DEFAULT PRIMARY (COMPOSE.md §C.5). The emphasis fill
+       was baked in here, and four sections doing the same thing put any page
+       composing two of them over a bound that permits ONE — with no section
+       individually at fault and no author able to fix it, because a class and a
+       declaration are both outside the editable boundary. That is the drift the
+       rule predicted: "an emphasis fill becomes the default primary by drift".
+       The variant now belongs to the section whose declared role IS the page's
+       close, which composition already limits to one. (LIBRARY-AUDIT.md C-5.) */
+      background: var(--cr-fg); color: var(--cr-bg);
+      font-family: var(--cr-font-body);
+      font-weight: 500;
+      font-size: var(--cr-text-supporting);
+      text-decoration: none;
+      transition: background .2s ease;
+    }
+    .fs-cta svg {
+      width: 18px; height: 18px;
+      stroke-width: var(--cr-icon-stroke-sm);
+      transition: transform .2s ease;
+    }
+    .fs-cta:hover { background: var(--cr-neutral-1000); color: var(--cr-bg); }
+    .fs-cta:hover svg { transform: translate(2px, 2px); }
+
+    /* ── Responsive — the ORIGINAL's breakpoints; type steps on the ramp ── */
+    @media (max-width: 1040px) {
+      .fs { padding: var(--cr-space-xl) var(--cr-page-gutter); }
+      .fs-grid { gap: var(--cr-space-m); }
+      .fs-step-name { font-size: var(--cr-text-h5); }
+    }
+
+    @media (max-width: 860px) {
+      .fs-grid { grid-template-columns: 1fr; gap: var(--cr-space-m); }
+      .fs-title { font-size: var(--cr-text-h3); }
+      .fs-step { padding: var(--cr-space-xs); }
+    }
+
+    @media (max-width: 560px) {
+      .fs { padding: var(--cr-space-m) var(--cr-page-gutter); }
+      .fs-head { margin-bottom: var(--cr-rhythm-content); }
+      .fs-step-name { font-size: var(--cr-text-h6); }
+    }
+  </style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. Everything below realizes a scale the pack already
+     holds — there is no `directed` line, because the Pilot Constraint was
+     not asked to yield anywhere in this section.
+  .fs-cta         | border-radius          | radius-pair
+  .fs-cta         | column-gap             | spacing-scale
+  .fs-cta         | font-size              | type-ramp
+  .fs-cta         | margin-top             | spacing-scale
+  .fs-cta         | padding-bottom         | spacing-scale
+  .fs-cta         | padding-left           | spacing-scale
+  .fs-cta         | padding-right          | spacing-scale
+  .fs-cta         | padding-top            | spacing-scale
+  .fs-cta         | row-gap                | spacing-scale
+  .fs-eyebrow     | border-bottom-width    | stroke
+  .fs-eyebrow     | border-left-width      | stroke
+  .fs-eyebrow     | border-radius          | radius-pair
+  .fs-eyebrow     | border-right-width     | stroke
+  .fs-eyebrow     | border-top-width       | stroke
+  .fs-eyebrow     | font-size              | type-ramp
+  .fs-eyebrow     | margin-bottom          | spacing-scale
+  .fs-eyebrow     | padding-bottom         | spacing-scale
+  .fs-eyebrow     | padding-left           | spacing-scale
+  .fs-eyebrow     | padding-right          | spacing-scale
+  .fs-eyebrow     | padding-top            | spacing-scale
+  .fs-grid        | column-gap             | spacing-scale
+  .fs-grid        | font-size              | type-ramp
+  .fs-grid        | row-gap                | spacing-scale
+  .fs-head        | font-size              | type-ramp
+  .fs-head        | margin-bottom          | spacing-scale
+  .fs-img         | font-size              | type-ramp
+  .fs-media       | aspect-ratio           | ratio-vocabulary
+  .fs-media       | border-radius          | radius-pair
+  .fs-media       | font-size              | type-ramp
+  .fs-panel       | font-size              | type-ramp
+  .fs-panel-desc  | font-size              | type-ramp
+  .fs-panel-desc  | line-height            | type-ramp
+  .fs-panel-desc  | max-width              | measure
+  .fs-panel-text  | font-size              | type-ramp
+  .fs-panel-text  | margin-top             | spacing-scale
+  .fs-panel-title | font-size              | type-ramp
+  .fs-panel-title | line-height            | type-ramp
+  .fs-panel-title | margin-bottom          | spacing-scale
+  .fs-step        | border-radius          | radius-pair
+  .fs-step        | column-gap             | spacing-scale
+  .fs-step        | padding-bottom         | spacing-scale
+  .fs-step        | padding-left           | spacing-scale
+  .fs-step        | padding-right          | spacing-scale
+  .fs-step        | padding-top            | spacing-scale
+  .fs-step        | row-gap                | spacing-scale
+  .fs-step-name   | font-size              | type-ramp
+  .fs-step-name   | line-height            | type-ramp
+  .fs-step-num    | font-size              | type-ramp
+  .fs-step-num    | margin-top             | spacing-scale
+  .fs-steps       | column-gap             | spacing-scale
+  .fs-steps       | font-size              | type-ramp
+  .fs-steps       | row-gap                | spacing-scale
+  .fs-sub         | font-size              | type-ramp
+  .fs-sub         | line-height            | type-ramp
+  .fs-sub         | margin-left            | spacing-scale
+  .fs-sub         | margin-right           | spacing-scale
+  .fs-sub         | max-width              | measure
+  .fs-title       | font-size              | type-ramp
+  .fs-title       | line-height            | type-ramp
+  .fs-title       | margin-bottom          | spacing-scale
+  .fs-title       | margin-left            | spacing-scale
+  .fs-title       | margin-right           | spacing-scale
+  .fs-title       | max-width              | measure
+  .fs-well        | font-size              | type-ramp
+  .lucide         | font-size              | type-ramp
+  .lucide         | stroke-width           | stroke
+  .muted          | font-size              | type-ramp
+  .muted          | line-height            | type-ramp
+  path            | font-size              | type-ramp
+  path            | stroke-width           | stroke
+  -->
+
+  <section class="fs" data-screen-label="Service Steps"
+           data-archetype="narrative-flow" data-hierarchy="secondary" data-intent="explain"
+           data-register="instructional" data-signature="editorial-photography" data-density="medium">
+    <div class="fs-well">
+
+      <!-- Header -->
+      <div class="fs-head">
+        <span class="fs-eyebrow cr-rise">Services</span>
+        <h2 class="fs-title cr-rise" style="--d:.05s">We handle <span class="muted">everything</span> so you don't have to.</h2>
+        <p class="fs-sub cr-rise" style="--d:.1s">From identifying opportunities to building systems and training your team &mdash; we manage the entire process while you focus on running your business.</p>
+      </div>
+
+      <!-- Switcher -->
+      <div class="fs-grid">
+
+        <!-- Left: steps -->
+        <div class="fs-steps cr-rise" style="--d:.14s" role="tablist" aria-label="Our process">
+          <button class="fs-step is-active" type="button" role="tab" aria-selected="true">
+            <span class="fs-step-name">Discover</span><span class="fs-step-num">01</span>
+          </button>
+          <button class="fs-step" type="button" role="tab" aria-selected="false">
+            <span class="fs-step-name">Build</span><span class="fs-step-num">02</span>
+          </button>
+          <button class="fs-step" type="button" role="tab" aria-selected="false">
+            <span class="fs-step-name">Deploy</span><span class="fs-step-num">03</span>
+          </button>
+          <button class="fs-step" type="button" role="tab" aria-selected="false">
+            <span class="fs-step-name">Optimize</span><span class="fs-step-num">04</span>
+          </button>
+        </div>
+
+        <!-- Right: preview -->
+        <div class="fs-panel cr-rise" style="--d:.18s">
+          <div class="fs-media">
+            <img class="fs-img is-active" data-step="0" src="../../brand-pack/assets/imagery/backgrounds/blur-7.png" alt="Discover">
+            <img class="fs-img" data-step="1" src="../../brand-pack/assets/imagery/backgrounds/blur-7.png" alt="Build">
+            <img class="fs-img" data-step="2" src="../../brand-pack/assets/imagery/backgrounds/blur-7.png" alt="Deploy">
+            <img class="fs-img" data-step="3" src="../../brand-pack/assets/imagery/backgrounds/blur-7.png" alt="Optimize">
+          </div>
+          <div class="fs-panel-text">
+            <h3 class="fs-panel-title">Discover</h3>
+            <p class="fs-panel-desc">We analyze your workflows and identify where automation creates the most value for your business.</p>
+          </div>
+          <a class="fs-cta" href="#"><i data-lucide="corner-down-right"></i>Book a free call</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+  <script>
+    lucide.createIcons();
+
+    const STEPS = [
+      { t: 'Discover', d: 'We analyze your workflows and identify where automation creates the most value for your business.' },
+      { t: 'Build',    d: 'We design and engineer the agents, integrations, and data flows your processes need — validated against real cases.' },
+      { t: 'Deploy',   d: 'We roll the agents into your existing stack with monitoring in place — live in weeks, not quarters.' },
+      { t: 'Optimize', d: 'We track outcomes, tune performance, and expand coverage as the system proves its value.' },
+    ];
+
+    const btns  = Array.from(document.querySelectorAll('.fs-step'));
+    const imgs  = Array.from(document.querySelectorAll('.fs-img'));
+    const wrap  = document.querySelector('.fs-panel-text');
+    const titleEl = document.querySelector('.fs-panel-title');
+    const descEl  = document.querySelector('.fs-panel-desc');
+
+    function activate(i) {
+      btns.forEach((b, j) => {
+        const on = j === i;
+        b.classList.toggle('is-active', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      imgs.forEach(im => im.classList.toggle('is-active', +im.dataset.step === i));
+      wrap.style.opacity = '0';
+      setTimeout(() => {
+        titleEl.textContent = STEPS[i].t;
+        descEl.textContent  = STEPS[i].d;
+        wrap.style.opacity  = '1';
+      }, 160);
+    }
+
+    btns.forEach((b, i) => b.addEventListener('click', () => activate(i)));
+  </script>
+</body>
+</html>

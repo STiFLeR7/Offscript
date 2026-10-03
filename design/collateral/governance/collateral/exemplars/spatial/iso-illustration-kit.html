@@ -1,0 +1,284 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../_card.css">
+<link rel="stylesheet" href="../../../../brand-pack/accent-palette.css">
+<style>
+  /* ── SHARED .spatial-* CORE — byte-identical in every specimen (copy verbatim) ──
+     The primitives every spatial visual reuses: the three isometric faces (top +
+     two depth faces), the focal highlight (flat accent + a white-fade sheen — the
+     one sanctioned same-hue gradient, §11), embedded objects, leader lines, and
+     annotation type. Identical everywhere, so two spatial visuals pasted into one
+     document stay consistent and never collide. Family-specific classes
+     (.spatial-<family>-*) layer on top and are namespaced. SVG polygons whose
+     points already encode the fixed iso angle; no JavaScript, no preserve-3d;
+     inherits the system tokens. Depth faces darken the surface/accent toward
+     black via color-mix — quiet, not a render. ── */
+  .spatial-svg        { display: block; width: 100%; height: auto; overflow: visible; }
+  .spatial-face       { stroke: var(--cr-keyline); stroke-width: 1; stroke-linejoin: round; }
+  .spatial-face-top   { fill: var(--surface, var(--cr-tone-sky)); }
+  .spatial-face-left  { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 86%, #000); }
+  .spatial-face-right { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 76%, #000); }
+  /* the ONE selective highlight — flat accent + a quiet white-fade sheen (same-hue, §11) */
+  .spatial-focal .spatial-face-top   { fill: var(--accent, var(--cr-tone-sky-accent)); }
+  .spatial-focal .spatial-face-left  { fill: color-mix(in srgb, var(--accent, var(--cr-tone-sky-accent)) 82%, #000); }
+  .spatial-focal .spatial-face-right { fill: color-mix(in srgb, var(--accent, var(--cr-tone-sky-accent)) 70%, #000); }
+  .spatial-sheen      { fill: url(#spatialSheen); stroke: none; }
+  .spatial-embed      { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 68%, #000); stroke: none; }
+  .spatial-focal .spatial-embed { fill: color-mix(in srgb, #fff 36%, transparent); }
+  .spatial-leader     { stroke: var(--cr-keyline); stroke-width: 1; fill: none; }
+  .spatial-leader--dash { stroke-dasharray: 2 3; }
+  .spatial-dot        { fill: var(--accent, var(--cr-tone-sky-accent)); }
+  .spatial-label      { font: 500 var(--fs-h4)/1.2 var(--font-display); fill: var(--cr-charcoal); letter-spacing: var(--tracking-display); }
+  .spatial-sub        { font: 400 12px/1.4 var(--font-body); fill: var(--cr-graphite); }
+  .spatial-eyebrow    { font: 600 var(--fs-eyebrow)/1 var(--font-body); fill: var(--accent, var(--cr-tone-sky-accent)); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; }
+  /* scoped DARK inversion (navy .cr-band--dark / .cr-page--dark) — strokes & type lift to stay legible */
+  .cr-band--dark .spatial-face,   .cr-page--dark .spatial-face,
+  .cr-band--dark .spatial-leader, .cr-page--dark .spatial-leader { stroke: var(--cr-keyline-dark); }
+  .cr-band--dark .spatial-label,  .cr-page--dark .spatial-label  { fill: var(--fg-inverse); }
+  .cr-band--dark .spatial-sub,    .cr-page--dark .spatial-sub    { fill: var(--cr-stone); }
+  .cr-band--dark .spatial-eyebrow,.cr-page--dark .spatial-eyebrow{ fill: var(--cr-stone); }
+  .spatial-demo    { max-width: 178mm; display: flex; flex-direction: column; gap: 40px; }
+  .spatial-caption { font: 400 13px/1.55 var(--font-body); color: var(--cr-graphite); max-width: 178mm; margin-top: 26px; }
+
+
+  /* ── DETAIL VOCABULARY (Tier-2 — namespaced; copy the parts a doc uses) ──
+     Richer primitives that ENCODE REAL SUB-STRUCTURE (a datastore, a network, a
+     console), never decoration (Rulebook §14). Volumes (cube = the core faces at
+     full height; cylinder = ellipse lid + wall), surface textures (grid-mesh &
+     node-graph = repeated <line> polylines, NOT an SVG <pattern> — patterns flake
+     in PDF), embedded chips, screen UI, ground grid, droplines, curved connector.
+     All hold the fixed 2:1 iso angle; no JS, no preserve-3d. ── */
+  .spatial-cyl-top   { fill: var(--surface, var(--cr-tone-sky)); stroke: var(--cr-keyline); stroke-width: 1; }
+  .spatial-cyl-body  { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 80%, #000); stroke: var(--cr-keyline); stroke-width: 1; }
+  .spatial-focal .spatial-cyl-top  { fill: var(--accent, var(--cr-tone-sky-accent)); }
+  .spatial-focal .spatial-cyl-body { fill: color-mix(in srgb, var(--accent, var(--cr-tone-sky-accent)) 74%, #000); }
+  .spatial-mesh-line { stroke: var(--cr-keyline); stroke-width: 0.75; fill: none; }
+  .spatial-node-link { stroke: var(--cr-keyline); stroke-width: 1; fill: none; }
+  .spatial-chip      { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 64%, #000); stroke: none; }
+  .spatial-focal .spatial-chip { fill: color-mix(in srgb, #fff 42%, transparent); }
+  .spatial-screen-ui { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 60%, #000); stroke: none; }
+  .spatial-grid-line { stroke: var(--cr-keyline); stroke-width: 1; stroke-dasharray: 2 3; fill: none; }
+  .spatial-drop      { stroke: var(--cr-keyline); stroke-width: 1; stroke-dasharray: 2 3; fill: none; }
+  .spatial-link--curve { stroke: var(--cr-graphite); stroke-width: 1.5; fill: none; }
+  .spatial-link-arrow  { fill: var(--cr-graphite); stroke: none; }
+  .cr-band--dark .spatial-cyl-top,  .cr-page--dark .spatial-cyl-top,
+  .cr-band--dark .spatial-cyl-body, .cr-page--dark .spatial-cyl-body,
+  .cr-band--dark .spatial-mesh-line,.cr-page--dark .spatial-mesh-line,
+  .cr-band--dark .spatial-node-link,.cr-page--dark .spatial-node-link,
+  .cr-band--dark .spatial-grid-line,.cr-page--dark .spatial-grid-line,
+  .cr-band--dark .spatial-drop,     .cr-page--dark .spatial-drop { stroke: var(--cr-keyline-dark); }
+  .cr-band--dark .spatial-link--curve, .cr-page--dark .spatial-link--curve { stroke: var(--cr-stone); }
+  .cr-band--dark .spatial-link-arrow,  .cr-page--dark .spatial-link-arrow  { fill: var(--cr-stone); }
+
+  /* ── METAPHOR-OBJECT layer (concept vocabulary; shared across illustration specimens) ── */
+  .spatial-glyph   { fill: none; stroke: var(--accent, var(--cr-tone-sky-accent)); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+  .spatial-glyph--f{ fill: var(--accent, var(--cr-tone-sky-accent)); stroke: none; }
+  .spatial-ink     { fill: none; stroke: var(--cr-charcoal); stroke-width: 1.3; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+  .spatial-hole    { fill: var(--surface, var(--cr-tone-sky)); stroke: var(--cr-keyline); stroke-width: 1; }
+  .cr-band--dark .spatial-ink, .cr-page--dark .spatial-ink { stroke: var(--cr-keyline-dark); }
+  .cr-band--dark .spatial-hole, .cr-page--dark .spatial-hole { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 50%, #000); }
+
+  .spatial-card-label { font: 700 0.5px/1 var(--font-display); fill: #fff; letter-spacing: 0.01px; }
+
+</style>
+</head>
+<body style="background:#FFFFFF">
+<div class="spatial-demo">
+
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:10px">1 · Entity / format cards — colour encodes identity (.tone-*)</div>
+    <div style="max-width:160mm"><svg class="spatial-svg" viewBox="0 0 420 150"><defs><linearGradient id="spatialSheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.34"/></linearGradient></defs><g class="tone-blue"><g class="tone-blue"><g class="spatial-slab spatial-focal">
+<polygon class="spatial-face spatial-face-left" points="32.00,80.00 70.00,99.00 70.00,119.00 32.00,100.00"/>
+<polygon class="spatial-face spatial-face-right" points="70.00,99.00 108.00,80.00 108.00,100.00 70.00,119.00"/>
+<polygon class="spatial-face spatial-face-top" points="70.00,61.00 108.00,80.00 70.00,99.00 32.00,80.00"/>
+</g>
+<g transform="matrix(29.6400,14.8200,-29.6400,14.8200,70.000,80.000)"><text x="0" y="0.16" text-anchor="middle" class="spatial-card-label">API</text></g></g><g class="tone-orange"><g class="spatial-slab spatial-focal">
+<polygon class="spatial-face spatial-face-left" points="110.00,80.00 148.00,99.00 148.00,119.00 110.00,100.00"/>
+<polygon class="spatial-face spatial-face-right" points="148.00,99.00 186.00,80.00 186.00,100.00 148.00,119.00"/>
+<polygon class="spatial-face spatial-face-top" points="148.00,61.00 186.00,80.00 148.00,99.00 110.00,80.00"/>
+</g>
+<g transform="matrix(29.6400,14.8200,-29.6400,14.8200,148.000,80.000)"><text x="0" y="0.16" text-anchor="middle" class="spatial-card-label">JSON</text></g></g><g class="tone-green"><g class="spatial-slab spatial-focal">
+<polygon class="spatial-face spatial-face-left" points="188.00,80.00 226.00,99.00 226.00,119.00 188.00,100.00"/>
+<polygon class="spatial-face spatial-face-right" points="226.00,99.00 264.00,80.00 264.00,100.00 226.00,119.00"/>
+<polygon class="spatial-face spatial-face-top" points="226.00,61.00 264.00,80.00 226.00,99.00 188.00,80.00"/>
+</g>
+<g transform="matrix(29.6400,14.8200,-29.6400,14.8200,226.000,80.000)"><text x="0" y="0.16" text-anchor="middle" class="spatial-card-label">CSV</text></g></g><g class="tone-purple"><g class="spatial-slab spatial-focal">
+<polygon class="spatial-face spatial-face-left" points="266.00,80.00 304.00,99.00 304.00,119.00 266.00,100.00"/>
+<polygon class="spatial-face spatial-face-right" points="304.00,99.00 342.00,80.00 342.00,100.00 304.00,119.00"/>
+<polygon class="spatial-face spatial-face-top" points="304.00,61.00 342.00,80.00 304.00,99.00 266.00,80.00"/>
+</g>
+<g transform="matrix(29.6400,14.8200,-29.6400,14.8200,304.000,80.000)"><text x="0" y="0.16" text-anchor="middle" class="spatial-card-label">SQL</text></g></g></g></svg></div>
+    <div style="font:400 12px/1.5 var(--font-body); color:var(--cr-graphite); max-width:150mm; margin-top:8px">Each entity carries its OWN accent family — multi-colour encoding, not one global accent. The colour pairs with the connector/label downstream.</div>
+  </div>
+
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:10px">2 · Icon service tiles — a glyph names the capability</div>
+    <div style="max-width:175mm"><svg class="spatial-svg" viewBox="0 0 540 130"><defs><linearGradient id="spatialSheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.34"/></linearGradient></defs><g class="tone-sky"><g class="tone-teal"><g class="spatial-slab">
+<polygon class="spatial-face spatial-face-left" points="35.00,70.00 56.00,80.50 56.00,90.50 35.00,80.00"/>
+<polygon class="spatial-face spatial-face-right" points="56.00,80.50 77.00,70.00 77.00,80.00 56.00,90.50"/>
+<polygon class="spatial-face spatial-face-top" points="56.00,59.50 77.00,70.00 56.00,80.50 35.00,70.00"/>
+</g>
+<g transform="matrix(10.9200,5.4600,-10.9200,5.4600,56.000,70.000)"><circle r="0.90" class="spatial-glyph"/><circle r="0.36" class="spatial-glyph"/><line x1="0.90" y1="0.00" x2="1.19" y2="0.00" class="spatial-glyph"/><line x1="0.64" y1="0.64" x2="0.84" y2="0.84" class="spatial-glyph"/><line x1="0.00" y1="0.90" x2="0.00" y2="1.19" class="spatial-glyph"/><line x1="-0.64" y1="0.64" x2="-0.84" y2="0.84" class="spatial-glyph"/><line x1="-0.90" y1="0.00" x2="-1.19" y2="0.00" class="spatial-glyph"/><line x1="-0.64" y1="-0.64" x2="-0.84" y2="-0.84" class="spatial-glyph"/><line x1="-0.00" y1="-0.90" x2="-0.00" y2="-1.19" class="spatial-glyph"/><line x1="0.64" y1="-0.64" x2="0.84" y2="-0.84" class="spatial-glyph"/></g></g><g class="tone-indigo"><g class="spatial-slab">
+<polygon class="spatial-face spatial-face-left" points="87.00,70.00 108.00,80.50 108.00,90.50 87.00,80.00"/>
+<polygon class="spatial-face spatial-face-right" points="108.00,80.50 129.00,70.00 129.00,80.00 108.00,90.50"/>
+<polygon class="spatial-face spatial-face-top" points="108.00,59.50 129.00,70.00 108.00,80.50 87.00,70.00"/>
+</g>
+<g transform="matrix(10.9200,5.4600,-10.9200,5.4600,108.000,70.000)"><path class="spatial-glyph" d="M -1.05 0 Q 0 -0.85 1.05 0 Q 0 0.85 -1.05 0 Z"/><circle r="0.34" class="spatial-glyph--f"/></g></g><g class="tone-deep-orange"><g class="spatial-slab">
+<polygon class="spatial-face spatial-face-left" points="139.00,70.00 160.00,80.50 160.00,90.50 139.00,80.00"/>
+<polygon class="spatial-face spatial-face-right" points="160.00,80.50 181.00,70.00 181.00,80.00 160.00,90.50"/>
+<polygon class="spatial-face spatial-face-top" points="160.00,59.50 181.00,70.00 160.00,80.50 139.00,70.00"/>
+</g>
+<g transform="matrix(10.9200,5.4600,-10.9200,5.4600,160.000,70.000)"><polyline class="spatial-glyph" points="-0.35,-0.7 -1,0 -0.35,0.7"/><polyline class="spatial-glyph" points="0.35,-0.7 1,0 0.35,0.7"/></g></g><g class="tone-cyan"><g class="spatial-slab">
+<polygon class="spatial-face spatial-face-left" points="191.00,70.00 212.00,80.50 212.00,90.50 191.00,80.00"/>
+<polygon class="spatial-face spatial-face-right" points="212.00,80.50 233.00,70.00 233.00,80.00 212.00,90.50"/>
+<polygon class="spatial-face spatial-face-top" points="212.00,59.50 233.00,70.00 212.00,80.50 191.00,70.00"/>
+</g>
+<g transform="matrix(10.9200,5.4600,-10.9200,5.4600,212.000,70.000)"><path class="spatial-glyph" d="M 0.85 -0.3 A 0.85 0.85 0 1 0 0.95 0.4"/><polyline class="spatial-glyph" points="0.55,-0.55 0.95,-0.3 0.6,0.05"/></g></g><g class="tone-pink"><g class="spatial-slab">
+<polygon class="spatial-face spatial-face-left" points="243.00,70.00 264.00,80.50 264.00,90.50 243.00,80.00"/>
+<polygon class="spatial-face spatial-face-right" points="264.00,80.50 285.00,70.00 285.00,80.00 264.00,90.50"/>
+<polygon class="spatial-face spatial-face-top" points="264.00,59.50 285.00,70.00 264.00,80.50 243.00,70.00"/>
+</g>
+<g transform="matrix(10.9200,5.4600,-10.9200,5.4600,264.000,70.000)"><line x1="0" y1="0" x2="0.00" y2="-0.95" class="spatial-glyph"/><line x1="0" y1="0" x2="0.90" y2="-0.30" class="spatial-glyph"/><line x1="0" y1="0" x2="0.55" y2="0.85" class="spatial-glyph"/><line x1="0" y1="0" x2="-0.55" y2="0.85" class="spatial-glyph"/><line x1="0" y1="0" x2="-0.90" y2="-0.30" class="spatial-glyph"/><circle cx="0.00" cy="-0.95" r="0.16" class="spatial-glyph--f"/><circle cx="0.90" cy="-0.30" r="0.16" class="spatial-glyph--f"/><circle cx="0.55" cy="0.85" r="0.16" class="spatial-glyph--f"/><circle cx="-0.55" cy="0.85" r="0.16" class="spatial-glyph--f"/><circle cx="-0.90" cy="-0.30" r="0.16" class="spatial-glyph--f"/><circle r="0.18" class="spatial-glyph--f"/></g></g><g class="tone-blue"><g class="spatial-slab">
+<polygon class="spatial-face spatial-face-left" points="295.00,70.00 316.00,80.50 316.00,90.50 295.00,80.00"/>
+<polygon class="spatial-face spatial-face-right" points="316.00,80.50 337.00,70.00 337.00,80.00 316.00,90.50"/>
+<polygon class="spatial-face spatial-face-top" points="316.00,59.50 337.00,70.00 316.00,80.50 295.00,70.00"/>
+</g>
+<g transform="matrix(10.9200,5.4600,-10.9200,5.4600,316.000,70.000)"><ellipse cx="0" cy="-0.55" rx="0.8" ry="0.3" class="spatial-glyph"/><path class="spatial-glyph" d="M -0.8 -0.55 L -0.8 0.55 A 0.8 0.3 0 0 0 0.8 0.55 L 0.8 -0.55"/><path class="spatial-glyph" d="M -0.8 0 A 0.8 0.3 0 0 0 0.8 0"/></g></g><g class="tone-green"><g class="spatial-slab">
+<polygon class="spatial-face spatial-face-left" points="347.00,70.00 368.00,80.50 368.00,90.50 347.00,80.00"/>
+<polygon class="spatial-face spatial-face-right" points="368.00,80.50 389.00,70.00 389.00,80.00 368.00,90.50"/>
+<polygon class="spatial-face spatial-face-top" points="368.00,59.50 389.00,70.00 368.00,80.50 347.00,70.00"/>
+</g>
+<g transform="matrix(10.9200,5.4600,-10.9200,5.4600,368.000,70.000)"><path class="spatial-glyph" d="M 0 -0.95 L 0.8 -0.6 L 0.8 0.2 Q 0.8 0.8 0 1 Q -0.8 0.8 -0.8 0.2 L -0.8 -0.6 Z"/><polyline class="spatial-glyph" points="-0.35,0 -0.05,0.35 0.45,-0.35"/></g></g><g class="tone-red"><g class="spatial-slab">
+<polygon class="spatial-face spatial-face-left" points="399.00,70.00 420.00,80.50 420.00,90.50 399.00,80.00"/>
+<polygon class="spatial-face spatial-face-right" points="420.00,80.50 441.00,70.00 441.00,80.00 420.00,90.50"/>
+<polygon class="spatial-face spatial-face-top" points="420.00,59.50 441.00,70.00 420.00,80.50 399.00,70.00"/>
+</g>
+<g transform="matrix(10.9200,5.4600,-10.9200,5.4600,420.000,70.000)"><path class="spatial-glyph" d="M -0.45 -0.1 L -0.45 -0.5 A 0.45 0.45 0 0 1 0.45 -0.5 L 0.45 -0.1"/><rect x="-0.7" y="-0.1" width="1.4" height="0.95" rx="0.12" class="spatial-glyph"/><circle cx="0" cy="0.32" r="0.16" class="spatial-glyph--f"/></g></g><g class="tone-purple"><g class="spatial-slab">
+<polygon class="spatial-face spatial-face-left" points="451.00,70.00 472.00,80.50 472.00,90.50 451.00,80.00"/>
+<polygon class="spatial-face spatial-face-right" points="472.00,80.50 493.00,70.00 493.00,80.00 472.00,90.50"/>
+<polygon class="spatial-face spatial-face-top" points="472.00,59.50 493.00,70.00 472.00,80.50 451.00,70.00"/>
+</g>
+<g transform="matrix(10.9200,5.4600,-10.9200,5.4600,472.000,70.000)"><circle cx="-0.6" cy="0" r="0.28" class="spatial-glyph"/><circle cx="0.55" cy="-0.6" r="0.28" class="spatial-glyph"/><circle cx="0.55" cy="0.6" r="0.28" class="spatial-glyph"/><line x1="-0.35" y1="-0.12" x2="0.3" y2="-0.5" class="spatial-glyph"/><line x1="-0.35" y1="0.12" x2="0.3" y2="0.5" class="spatial-glyph"/></g></g></g></svg></div>
+    <div style="font:400 12px/1.5 var(--font-body); color:var(--cr-graphite); max-width:150mm; margin-top:8px">A rounded iso tile + a recognizable glyph: gear=config, eye=monitoring, code=build, sync=pipeline, model=ML, db=store, shield=security, lock=encryption, share=integration.</div>
+  </div>
+
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:10px">3 · Server stack / repository — stacked racks + status LEDs + platter</div>
+    <div style="max-width:120mm"><svg class="spatial-svg" viewBox="0 0 220 200"><defs><linearGradient id="spatialSheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.34"/></linearGradient></defs><g class="tone-sky"><g class="tone-blue"><g class="spatial-slab">
+<polygon class="spatial-face spatial-face-left" points="70.00,150.00 110.00,170.00 110.00,184.00 70.00,164.00"/>
+<polygon class="spatial-face spatial-face-right" points="110.00,170.00 150.00,150.00 150.00,164.00 110.00,184.00"/>
+<polygon class="spatial-face spatial-face-top" points="110.00,130.00 150.00,150.00 110.00,170.00 70.00,150.00"/>
+</g>
+<circle cx="82.8" cy="157.8" r="2.0" class="spatial-dot"/>
+<circle cx="90.8" cy="157.8" r="2.0" class="spatial-embed"/>
+<g class="spatial-slab">
+<polygon class="spatial-face spatial-face-left" points="70.00,134.00 110.00,154.00 110.00,168.00 70.00,148.00"/>
+<polygon class="spatial-face spatial-face-right" points="110.00,154.00 150.00,134.00 150.00,148.00 110.00,168.00"/>
+<polygon class="spatial-face spatial-face-top" points="110.00,114.00 150.00,134.00 110.00,154.00 70.00,134.00"/>
+</g>
+<circle cx="82.8" cy="141.8" r="2.0" class="spatial-embed"/>
+<circle cx="90.8" cy="141.8" r="2.0" class="spatial-dot"/>
+<g class="spatial-slab">
+<polygon class="spatial-face spatial-face-left" points="70.00,118.00 110.00,138.00 110.00,152.00 70.00,132.00"/>
+<polygon class="spatial-face spatial-face-right" points="110.00,138.00 150.00,118.00 150.00,132.00 110.00,152.00"/>
+<polygon class="spatial-face spatial-face-top" points="110.00,98.00 150.00,118.00 110.00,138.00 70.00,118.00"/>
+</g>
+<circle cx="82.8" cy="125.8" r="2.0" class="spatial-dot"/>
+<circle cx="90.8" cy="125.8" r="2.0" class="spatial-embed"/>
+<ellipse cx="110.0" cy="118.0" rx="13.6" ry="6.8" class="spatial-mesh-line"/>
+<ellipse cx="110.0" cy="118.0" rx="8.0" ry="4.0" class="spatial-mesh-line"/></g></g></svg></div>
+    <div style="font:400 12px/1.5 var(--font-body); color:var(--cr-graphite); max-width:150mm; margin-top:8px">Reads as infrastructure/storage: stacked rack slabs with status lights and a disk platter on top — not a bare cylinder.</div>
+  </div>
+
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:10px">4 · Padlock — security / encryption</div>
+    <div style="max-width:130mm"><svg class="spatial-svg" viewBox="0 0 260 190"><defs><linearGradient id="spatialSheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.34"/></linearGradient></defs><g class="tone-sky"><g class="tone-grey"><g class="spatial-cube">
+<polygon class="spatial-face spatial-face-left" points="41.44,120.00 70.00,134.28 70.00,166.58 41.44,152.30"/>
+<polygon class="spatial-face spatial-face-right" points="70.00,134.28 98.56,120.00 98.56,152.30 70.00,166.58"/>
+<polygon class="spatial-face spatial-face-top" points="70.00,105.72 98.56,120.00 70.00,134.28 41.44,120.00"/>
+</g>
+<polygon class="spatial-glyph--f" points="41.44,129.69 70.00,143.97 70.00,150.43 41.44,136.15"/>
+<polygon class="spatial-glyph--f" points="70.00,143.97 98.56,129.69 98.56,136.15 70.00,150.43" opacity="0.82"/>
+<path class="spatial-ink" fill="none" stroke-width="7" d="M 57.8,120.0 L 57.8,105.5 A 12.2,12.2 0 0 1 82.2,105.5 L 82.2,120.0"/>
+<circle cx="76.1" cy="139.2" r="3.2" class="spatial-hole"/></g><g class="tone-green"><g class="spatial-cube spatial-focal">
+<polygon class="spatial-face spatial-face-left" points="141.44,120.00 170.00,134.28 170.00,166.58 141.44,152.30"/>
+<polygon class="spatial-face spatial-face-right" points="170.00,134.28 198.56,120.00 198.56,152.30 170.00,166.58"/>
+<polygon class="spatial-face spatial-face-top" points="170.00,105.72 198.56,120.00 170.00,134.28 141.44,120.00"/>
+</g>
+<polygon class="spatial-glyph--f" points="141.44,129.69 170.00,143.97 170.00,150.43 141.44,136.15"/>
+<polygon class="spatial-glyph--f" points="170.00,143.97 198.56,129.69 198.56,136.15 170.00,150.43" opacity="0.82"/>
+<path class="spatial-ink" fill="none" stroke-width="7" d="M 157.8,120.0 L 157.8,105.5 A 12.2,12.2 0 0 1 182.2,105.5 L 182.2,120.0"/>
+<circle cx="176.1" cy="139.2" r="3.2" class="spatial-hole"/></g></g></svg></div>
+    <div style="font:400 12px/1.5 var(--font-body); color:var(--cr-graphite); max-width:150mm; margin-top:8px">Body cube + U-shackle + keyhole + accent band. The focal one takes the accent. Reads as 'locked', not as a cube.</div>
+  </div>
+
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:10px">5 · Shield — protection / trust</div>
+    <div style="max-width:130mm"><svg class="spatial-svg" viewBox="0 0 280 200"><defs><linearGradient id="spatialSheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.34"/></linearGradient></defs><g class="tone-sky"><g class="tone-green"><path class="spatial-face spatial-face-top" d="M 80.0,48.0 L 114.4,64.0 L 114.4,98.4 Q 114.4,132.0 80.0,142.5 Q 45.6,132.0 45.6,98.4 L 45.6,64.0 Z"/>
+<circle cx="80.0" cy="87.9" r="6.7" class="spatial-glyph--f"/>
+<polygon class="spatial-glyph--f" points="77.1,87.9 82.9,87.9 81.7,108.9 78.3,108.9"/></g><g class="tone-teal"><path class="spatial-glyph--f" d="M 190.0,48.0 L 224.4,64.0 L 224.4,98.4 Q 224.4,132.0 190.0,142.5 Q 155.6,132.0 155.6,98.4 L 155.6,64.0 Z"/>
+<circle cx="190.0" cy="87.9" r="6.7" class="spatial-hole" style="fill:#fff;stroke:none"/>
+<polygon class="spatial-hole" style="fill:#fff;stroke:none" points="187.1,87.9 192.9,87.9 191.7,108.9 188.3,108.9"/></g></g></svg></div>
+    <div style="font:400 12px/1.5 var(--font-body); color:var(--cr-graphite); max-width:150mm; margin-top:8px">Upright shield emblem with a keyhole. The protection metaphor — recognizable label-off.</div>
+  </div>
+
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:10px">6 · Orchestration tower / hub — the system core</div>
+    <div style="max-width:115mm"><svg class="spatial-svg" viewBox="0 0 220 240"><defs><linearGradient id="spatialSheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.34"/></linearGradient></defs><g class="tone-sky"><g class="tone-green"><g class="spatial-cube spatial-focal">
+<polygon class="spatial-face spatial-face-left" points="73.20,90.00 110.00,108.40 110.00,204.40 73.20,186.00"/>
+<polygon class="spatial-face spatial-face-right" points="110.00,108.40 146.80,90.00 146.80,186.00 110.00,204.40"/>
+<polygon class="spatial-face spatial-face-top" points="110.00,71.60 146.80,90.00 110.00,108.40 73.20,90.00"/>
+</g>
+<line x1="73.2" y1="109.2" x2="110.0" y2="127.6" class="spatial-mesh-line" style="stroke:rgba(255,255,255,.55)"/>
+<line x1="110.0" y1="127.6" x2="146.8" y2="109.2" class="spatial-mesh-line" style="stroke:rgba(255,255,255,.4)"/>
+<line x1="73.2" y1="128.4" x2="110.0" y2="146.8" class="spatial-mesh-line" style="stroke:rgba(255,255,255,.55)"/>
+<line x1="110.0" y1="146.8" x2="146.8" y2="128.4" class="spatial-mesh-line" style="stroke:rgba(255,255,255,.4)"/>
+<line x1="73.2" y1="147.6" x2="110.0" y2="166.0" class="spatial-mesh-line" style="stroke:rgba(255,255,255,.55)"/>
+<line x1="110.0" y1="166.0" x2="146.8" y2="147.6" class="spatial-mesh-line" style="stroke:rgba(255,255,255,.4)"/>
+<line x1="73.2" y1="166.8" x2="110.0" y2="185.2" class="spatial-mesh-line" style="stroke:rgba(255,255,255,.55)"/>
+<line x1="110.0" y1="185.2" x2="146.8" y2="166.8" class="spatial-mesh-line" style="stroke:rgba(255,255,255,.4)"/>
+<line x1="110.0" y1="84.0" x2="110.0" y2="90.0" class="spatial-glyph" stroke-width="3"/>
+<rect x="103.0" y="62.0" width="14" height="22" rx="3" class="spatial-glyph--f"/></g></g></svg></div>
+    <div style="font:400 12px/1.5 var(--font-body); color:var(--cr-graphite); max-width:150mm; margin-top:8px">Tall louvred tower + connector plug = a data/orchestration core. The focal centrepiece of a platform scene.</div>
+  </div>
+
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:10px">7 · Knowledge graph — semantic / relationship network</div>
+    <div style="max-width:150mm"><svg class="spatial-svg" viewBox="0 0 300 180"><defs><linearGradient id="spatialSheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.34"/></linearGradient></defs><g class="tone-sky"><g class="tone-indigo"><g class="spatial-slab">
+<polygon class="spatial-face spatial-face-left" points="40.00,90.00 120.00,130.00 120.00,142.00 40.00,102.00"/>
+<polygon class="spatial-face spatial-face-right" points="120.00,130.00 200.00,90.00 200.00,102.00 120.00,142.00"/>
+<polygon class="spatial-face spatial-face-top" points="120.00,50.00 200.00,90.00 120.00,130.00 40.00,90.00"/>
+</g>
+<line x1="117.6" y1="87.2" x2="166.4" y2="90.8" class="spatial-node-link"/>
+<line x1="117.6" y1="87.2" x2="131.2" y2="111.6" class="spatial-node-link"/>
+<line x1="117.6" y1="87.2" x2="75.2" y2="88.4" class="spatial-node-link"/>
+<line x1="117.6" y1="87.2" x2="110.4" y2="67.6" class="spatial-node-link"/>
+<line x1="166.4" y1="90.8" x2="155.2" y2="106.0" class="spatial-node-link"/>
+<line x1="131.2" y1="111.6" x2="100.8" y2="109.2" class="spatial-node-link"/>
+<line x1="75.2" y1="88.4" x2="100.8" y2="109.2" class="spatial-node-link"/>
+<line x1="110.4" y1="67.6" x2="139.2" y2="70.8" class="spatial-node-link"/>
+<line x1="117.6" y1="87.2" x2="100.8" y2="109.2" class="spatial-node-link"/>
+<line x1="117.6" y1="87.2" x2="139.2" y2="70.8" class="spatial-node-link"/>
+<circle cx="117.6" cy="87.2" r="7.0" class="spatial-dot"/>
+<circle cx="117.6" cy="87.2" r="9.5" class="spatial-node-link" fill="none"/>
+<text x="128.6" y="78.2" class="spatial-sub">Core</text>
+<circle cx="166.4" cy="90.8" r="5.0" class="spatial-dot"/>
+<circle cx="166.4" cy="90.8" r="7.5" class="spatial-node-link" fill="none"/>
+<text x="175.4" y="83.8" class="spatial-sub">Entity</text>
+<circle cx="131.2" cy="111.6" r="4.0" class="spatial-dot"/>
+<circle cx="131.2" cy="111.6" r="6.5" class="spatial-node-link" fill="none"/>
+<text x="139.2" y="105.6" class="spatial-sub">Policy</text>
+<circle cx="75.2" cy="88.4" r="5.0" class="spatial-dot"/>
+<circle cx="75.2" cy="88.4" r="7.5" class="spatial-node-link" fill="none"/>
+<text x="84.2" y="81.4" class="spatial-sub">Source</text>
+<circle cx="110.4" cy="67.6" r="4.0" class="spatial-dot"/>
+<circle cx="110.4" cy="67.6" r="6.5" class="spatial-node-link" fill="none"/>
+<circle cx="100.8" cy="109.2" r="3.0" class="spatial-dot"/>
+<circle cx="100.8" cy="109.2" r="5.5" class="spatial-node-link" fill="none"/>
+<circle cx="139.2" cy="70.8" r="3.0" class="spatial-dot"/>
+<circle cx="139.2" cy="70.8" r="5.5" class="spatial-node-link" fill="none"/>
+<circle cx="155.2" cy="106.0" r="3.0" class="spatial-dot"/>
+<circle cx="155.2" cy="106.0" r="5.5" class="spatial-node-link" fill="none"/></g></g></svg></div>
+    <div style="font:400 12px/1.5 var(--font-body); color:var(--cr-graphite); max-width:150mm; margin-top:8px">Irregular <b>labelled</b> entities + typed edges + a hub — reads as a knowledge/ontology network, not scattered dots. (In a dense stacked layer the labels drop to keep it compact; the network shape still reads.)</div>
+  </div>
+
+</div>
+</body></html>

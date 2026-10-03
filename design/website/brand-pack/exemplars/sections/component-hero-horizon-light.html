@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Soft-gradient CTA (light, standalone)</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — Soft-gradient CTA (light)   component-hero-horizon-light.html
+  ════════════════════════════════════════════════════════════════════════
+  A STANDALONE light CTA SECTION (no footer attached — it's a separate section;
+  the footer is its own component). On a near-white band with a SOFT, SUBTLE
+  pale-blue gradient (gentle cool-blue blooms, strongest lower-left, centre kept
+  clear so text reads) — re-skinned from a grabui reference. Centred dark headline
+  + the CANONICAL CR action pair: a brand-blue primary pill ("Get started for free
+  →") + a ghost/outline secondary ("Talk to sales →"), matching the other CTA
+  sections (cta-band / get-started). Charter-clean: borders not shadows, blue pill
+  pops on the light surface, → glyph nudges 4px on hover, press scales to .97.
+  Content is ALWAYS visible (pure-CSS transform-only entrance — no opacity/JS gate,
+  so a preview snapshot at load shows everything).
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../_frozen-v2-tokens.css" />
+<style>
+  body { margin: 0; }
+  .ch, .ch * { box-sizing: border-box; }
+  .ch { font-family: var(--cr-font-body); }
+
+  /* ─── the CTA section (standalone) ───────────────────────────── */
+  .ch-cta {
+    position: relative; overflow: hidden;
+    min-height: clamp(420px, 54vh, 580px);
+    background: #fbfcff;                  /* soft near-white base under the gradient blooms */
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: clamp(72px, 10vh, 120px) 24px;
+  }
+  /* soft, SUBTLE pale-blue gradient (like the reference) — gentle cool-blue blooms,
+     strongest in the lower-left, softer in the corners; the CENTRE stays near-white
+     so the dark headline + buttons read cleanly. No planet/arc, no hard edge. */
+  .ch-glow {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(58% 56% at 8% 92%,  rgba(104,136,246,0.34), transparent 60%),
+      radial-gradient(54% 52% at 96% 88%, rgba(136,158,248,0.22), transparent 58%),
+      radial-gradient(50% 50% at 99% 2%,  rgba(178,196,250,0.18), transparent 55%),
+      radial-gradient(44% 48% at 1% 3%,   rgba(190,205,250,0.13), transparent 55%);
+  }
+  .ch-grain {
+    position: absolute; inset: 0; z-index: 0;
+    background-image: url("../assets/texture-grain.png"); background-repeat: repeat;
+    opacity: 0.02; pointer-events: none;   /* barely-there tooth; the reference is smooth */
+  }
+  .ch-content { position: relative; z-index: 1; max-width: 760px; }
+  .ch-h {
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(27px, 3.3vw, 44px); line-height: 1.15; letter-spacing: -0.02em;
+    text-wrap: balance;
+    color: var(--cr-fg); margin: 0 0 34px;
+  }
+  .ch-btns { display: flex; gap: 14px; justify-content: center; align-items: center; flex-wrap: wrap; }
+
+  /* PRIMARY — canonical CR brand-blue pill (matches cta-band / get-started) */
+  .ch-btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--cr-brand); color: #fff;
+    font-family: var(--cr-font-body); font-weight: 600; font-size: 16px;
+    padding: 15px 28px; border-radius: var(--cr-radius-pill); border: 0;
+    cursor: pointer; text-decoration: none;
+    transition: background-color .2s ease, transform .15s ease;
+  }
+  .ch-btn-primary:hover { background: var(--cr-brand-700); }
+  .ch-btn-primary:active { transform: scale(.97); }
+
+  /* SECONDARY — ghost/outline pill (border, not shadow) */
+  .ch-btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: none; color: var(--cr-fg);
+    font-family: var(--cr-font-body); font-weight: 600; font-size: 16px;
+    padding: 15px 26px; border-radius: var(--cr-radius-pill); border: 1px solid var(--cr-line);
+    cursor: pointer; text-decoration: none;
+    transition: border-color .2s ease, transform .15s ease;
+  }
+  .ch-btn-ghost:hover { border-color: var(--cr-fg-3); }
+  .ch-btn-ghost:active { transform: scale(.97); }
+
+  .ch-btns .ar { transition: transform .16s ease; }
+  .ch-btns a:hover .ar { transform: translateX(4px); }
+
+  /* ─── MOTION — pure-CSS, transform-only (opacity stays 1; always visible) ── */
+  .ch-h, .ch-btns { animation: chRise .7s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--d, 0s); }
+  .ch-glow        { animation: chGlow 1.1s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes chRise { from { transform: translateY(14px); } to { transform: none; } }
+  @keyframes chGlow { from { transform: scale(1.04);     } to { transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .ch-h, .ch-btns, .ch-glow { animation: none; } }
+</style>
+</head>
+<body>
+
+<div class="ch">
+
+  <!-- ─── standalone light CTA section (no footer) ─── -->
+  <section class="ch-cta" data-screen-label="CTA · Soft-gradient (light)">
+    <span class="ch-glow" aria-hidden="true"></span>
+    <span class="ch-grain" aria-hidden="true"></span>
+    <div class="ch-content">
+      <h2 class="ch-h" style="--d:.15s">Turn your processes into the space where people and AI collaborate</h2>
+      <div class="ch-btns" style="--d:.28s">
+        <a class="ch-btn-primary" href="#">Get started for free <span class="ar" aria-hidden="true">→</span></a>
+        <a class="ch-btn-ghost" href="#">Talk to sales <span class="ar" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>

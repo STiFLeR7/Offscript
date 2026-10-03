@@ -1,0 +1,55 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css"></head>
+<body style="background:#FFFFFF">
+<div style="display:flex; flex-direction:column; gap:18px; max-width:680px">
+
+  <!-- V1 — split: lede beside proof-point checklist -->
+  <div class="cr-band cr-band--dark" style="padding:10mm">
+    <div class="cr-grid cr-cols-2" style="align-items:center; gap:10mm">
+      <div style="display:flex; flex-direction:column; align-items:flex-start; gap:5mm">
+        <h2 class="cr-h1" style="color:var(--fg-inverse)">Ready to Get Started?</h2>
+        <p class="cr-body">Join the teams running operations on Example Brand. Still weighing it up?
+          <a class="cr-link" href="#" style="text-decoration:underline">Read the case studies.</a></p>
+        <a class="cr-btn" href="#">Book a Demo →</a>
+      </div>
+      <div class="cr-checklist">
+        <div class="cr-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Live in 4 weeks, no migration</div>
+        <div class="cr-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Plugs into your existing stack</div>
+        <div class="cr-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>No new headcount required</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- V2 — centred, pointers flow horizontally in a 3-column grid -->
+  <div class="cr-band cr-band--dark cr-align-center" style="padding:12mm">
+    <div style="display:flex; flex-direction:column; align-items:center; gap:6mm; max-width:155mm; margin-inline:auto">
+      <h2 class="cr-h1" style="color:var(--fg-inverse)">Ready to Get Started?</h2>
+      <p class="cr-body">Join the teams running operations on Example Brand. Still weighing it up?
+        <a class="cr-link" href="#" style="text-decoration:underline">Read the case studies.</a></p>
+      <div class="cr-checklist cr-checklist--cols-3">
+        <div class="cr-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Live in 4 weeks, no migration</div>
+        <div class="cr-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Plugs into your existing stack and tools without a rip-and-replace</div>
+        <div class="cr-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>No new headcount required</div>
+      </div>
+      <a class="cr-btn" href="#">Book a Demo →</a>
+    </div>
+  </div>
+
+  <!-- V2 — centred, pointers flow horizontally in a 2-column grid -->
+  <div class="cr-band cr-band--dark cr-align-center" style="padding:12mm">
+    <div style="display:flex; flex-direction:column; align-items:center; gap:6mm; max-width:155mm; margin-inline:auto">
+      <h2 class="cr-h1" style="color:var(--fg-inverse)">Ready to Get Started?</h2>
+      <p class="cr-body">Join the teams running operations on Example Brand.
+        <a class="cr-link" href="#" style="text-decoration:underline">Read the case studies.</a></p>
+      <div class="cr-checklist cr-checklist--cols-2">
+        <div class="cr-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Live in 4 weeks, no migration</div>
+        <div class="cr-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Plugs into your existing stack</div>
+        <div class="cr-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>No new headcount required</div>
+        <div class="cr-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Cancel anytime</div>
+      </div>
+      <a class="cr-btn" href="#">Book a Demo →</a>
+    </div>
+  </div>
+
+</div>
+<div style="font:400 11px/1.5 Inter; color:#616161; margin-top:14px">CTA banner · navy <code>.cr-band cr-band--dark</code> card (margin-following, or full-width via <code>.cr-band--bleed</code>) · a lede (headline · body · button) + the new <code>.cr-checklist</code> proof-points · V1 split; V2 centred with pointers flowing in a centred 2- or 3-column grid (<code>.cr-checklist--cols-2/3</code>, each column width-capped, a long pointer wraps within its column) · the richer sibling of <code>.cr-cta-strip</code> (simple end-of-doc CTA). Copy is placeholder.</div>
+</body></html>

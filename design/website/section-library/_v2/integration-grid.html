@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Integration grid</title>
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+<!--
+  COMPOSITION  — Integration section on a dark navy surface. A centred
+                 display headline up top (white punch line + brand-blue
+                 accent) with a muted Inter LEDE sub on the body type ramp
+                 (20px — supporting text is not inflated display type), a
+                 large gap, then a 4-up row of
+                 left-aligned integration columns. Each column =
+                 logo lockup → dotted hairline divider → 2-line description
+                 → "See integration →" text link. Generous, even spacing.
+  INSPIRATION  — Routable "Perfectly synced, every time." integrations grid
+                 (centred serif two-tone headline + 4 logo columns with a
+                 dotted rule and a See-integration link). Layout/spacing only;
+                 the source's SERIF + ITALIC and partner logos are ignored —
+                 reskinned in CR: Urbanist (no serif/italic), the italic
+                 emphasis becomes a brand-blue accent word, and the logos
+                 become CR's integration partners as PLACEHOLDER wordmark
+                 lockups (swap for real SVGs — see .logo notes below).
+  MOTION       — Stagger reveal: the headline + sub fade up first, then the
+                 four columns fade-up in sequence (left→right) when the
+                 section scrolls into view; static afterward. The only hover
+                 is the real link (→ nudges). Honors prefers-reduced-motion;
+                 content is visible without JS.
+  NOTE         — columns are left-aligned text; the catalog does not hardcode
+                 a left/right split — composition is varied per section.
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: var(--cr-font-body); color: #fff;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .section {
+    /* Dark surface — subtle cool navy, never flat black or violet */
+    background: linear-gradient(170deg, var(--cr-ink-cool) 0%, var(--cr-ink-blue-deep) 100%);
+    padding: 120px 64px;            /* full-bleed band; modest edge gutter */
+  }
+  /* Content runs edge-to-edge (no 1240 cap) — the grid fills the full width */
+  .inner { max-width: none; margin: 0 auto; }
+
+  /* ── Centred two-tone display statement ─────────────────────── */
+  .head { text-align: center; max-width: 880px; margin: 0 auto 110px; }
+  .headline {
+    font-family: var(--cr-font-display);
+    font-weight: 700; font-size: 46px; line-height: 1.16;
+    letter-spacing: -0.02em; color: #fff; margin: 0 0 16px;
+  }
+  .accent { color: var(--cr-brand); }          /* brand-blue editorial accent (replaces the source's italic) */
+  /* Supporting line stays on the BODY type ramp (Inter lede, 20px) —
+     NOT inflated display type (per the typography charter). */
+  .sub {
+    font-family: var(--cr-font-body);
+    font-weight: 400; font-size: 20px; line-height: 1.5;
+    color: var(--cr-fg-muted);
+    margin: 0 auto; max-width: 600px;
+  }
+
+  /* ── 4-up integration columns ───────────────────────────────── */
+  .grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 48px;
+  }
+  .col { min-width: 0; }
+
+  /* Logo lockups — PLACEHOLDER text wordmarks (mono on dark), styled to
+     evoke each real mark via case/weight/spacing. Swap for real SVGs in
+     ../assets/ when available. Fixed height so every dotted rule aligns. */
+  .logo {
+    height: 34px; display: flex; align-items: center;
+    font-family: var(--cr-font-display);
+    color: rgba(233,238,247,0.90); white-space: nowrap;
+  }
+  .lg-sap { font-weight: 800; font-size: 26px; letter-spacing: 0.02em; }
+  .lg-sf  { font-weight: 700; font-size: 23px; letter-spacing: -0.01em; text-transform: lowercase; }
+  .lg-or  { font-weight: 600; font-size: 20px; letter-spacing: 0.16em; text-transform: uppercase; }
+  .lg-zo  { font-weight: 700; font-size: 24px; letter-spacing: 0.01em; }
+
+  .rule {
+    border-top: 1px dotted rgba(255,255,255,0.22);
+    margin: 26px 0 24px;
+  }
+
+  .desc {
+    font-family: var(--cr-font-body);
+    font-weight: 400; font-size: 16px; line-height: 1.6;
+    color: rgba(255,255,255,0.62);
+    margin: 0 0 24px; max-width: 250px;
+  }
+
+  .link {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--cr-font-body);
+    font-weight: 500; font-size: 15px; color: rgba(255,255,255,0.88);
+    text-decoration: none;
+    transition: color .16s ease;
+  }
+  .link .arr { transition: transform .16s ease; }
+  .link:hover { color: #fff; }
+  .link:hover .arr { transform: translateX(4px); }
+
+  /* ── Stagger reveal ─────────────────────────────────────────── */
+  .has-js .anim {
+    opacity: 0; transform: translateY(22px);
+    transition: opacity .65s cubic-bezier(.2,.7,.2,1) var(--d, 0ms),
+                transform .65s cubic-bezier(.2,.7,.2,1) var(--d, 0ms);
+  }
+  .section.reveal .anim { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .anim { opacity: 1 !important; transform: none !important; transition: none; }
+  }
+
+  /* ── Responsive ─────────────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .section { padding: 88px 44px; }
+    .head { margin-bottom: 72px; max-width: 680px; }
+    .headline { font-size: 36px; }
+    .sub { font-size: 18px; max-width: 520px; }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 56px 44px; }
+    .desc { max-width: none; }
+  }
+  @media (max-width: 640px) {
+    .section { padding: 56px 22px; }
+    .head { margin-bottom: 48px; }
+    .headline { font-size: 27px; }
+    .sub { font-size: 16px; }
+    .grid { grid-template-columns: 1fr; gap: 40px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="section" data-screen-label="Integration grid">
+  <div class="inner">
+    <div class="head">
+      <h2 class="headline anim" style="--d:0ms">We Work Inside <span class="accent">Your Stack.</span></h2>
+      <p class="sub anim" style="--d:90ms">No rip-and-replace — our agents plug into the systems you already run and start removing routine work in weeks.</p>
+    </div>
+
+    <div class="grid">
+      <!-- Logos are placeholder wordmarks — swap for real SVG lockups -->
+      <article class="col anim" style="--d:230ms">
+        <div class="logo lg-sap">SAP</div>
+        <div class="rule"></div>
+        <p class="desc">Drop agents into your SAP workflows — no rip-and-replace, no new license tier.</p>
+        <a class="link" href="#">See integration <span class="arr">&rarr;</span></a>
+      </article>
+
+      <article class="col anim" style="--d:330ms">
+        <div class="logo lg-sf">Salesforce</div>
+        <div class="rule"></div>
+        <p class="desc">Keep Salesforce accurate and current, hands-free — every record, every day.</p>
+        <a class="link" href="#">See integration <span class="arr">&rarr;</span></a>
+      </article>
+
+      <article class="col anim" style="--d:430ms">
+        <div class="logo lg-or">Oracle</div>
+        <div class="rule"></div>
+        <p class="desc">Scale Oracle operations without adding a single seat of headcount.</p>
+        <a class="link" href="#">See integration <span class="arr">&rarr;</span></a>
+      </article>
+
+      <article class="col anim" style="--d:530ms">
+        <div class="logo lg-zo">Zoho</div>
+        <div class="rule"></div>
+        <p class="desc">Automate the busywork across your Zoho stack, end to end.</p>
+        <a class="link" href="#">See integration <span class="arr">&rarr;</span></a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var section = document.querySelector(".section");
+    if (!section) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { section.classList.add("reveal"); io.disconnect(); }
+      });
+    }, { threshold: 0.2 });
+    io.observe(section);
+  })();
+</script>
+</body>
+</html>

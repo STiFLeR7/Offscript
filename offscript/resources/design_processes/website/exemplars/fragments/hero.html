@@ -1,0 +1,133 @@
+<!-- CURATED EXEMPLAR — archetype: hero. Match the rhythm/density + the discipline; do NOT clone.
+     Rewritten to COMPOSE the example token system in colors_and_type.css rather than bespoke per-fragment
+     classes: surface = .cr-band-night + .cr-on-dark; nav = .cr-nav/.cr-logo/.cr-nav__links + a
+     .cr-btn pill; rhythm = .cr-section + .cr-container; headline = .cr-h-hero with ONE .cr-accent
+     word; lede = .cr-p-lede; CTA = .cr-btn.cr-btn-primary ending in → (.cr-arrow); visual =
+     .cr-creative + .cr-orbit. Icons are INLINE SVG (.cr-ico convention, no Lucide CDN). Entrance
+     motion is the house data-reveal hook (transform-only, resting opacity 1, reduced-motion no-op).
+     The doc-scoped <style> below carries ONLY section-unique layout — the hero two-column grid, the
+     generated light-theme UI mock inside the creative, and the trust bar — never re-styling the
+     headings / buttons / surfaces / eyebrows the house already owns. Separation by border + scale,
+     NEVER shadow; brand gradient navy → ink-violet, NEVER indigo. -->
+<section id="hero" class="cr-band-night cr-on-dark" aria-label="Hero">
+  <style>
+    /* section-UNIQUE layout only — house owns type/buttons/surfaces/creative */
+    #hero .hero-grid { display: grid; grid-template-columns: 1fr 1.05fr; gap: var(--cr-space-15);
+      align-items: center; }
+    #hero .hero-copy { max-width: 560px; }
+    #hero .hero-lede { margin: var(--cr-space-6) 0 0; max-width: 440px; }
+    #hero .hero-cta-row { display: flex; align-items: center; gap: var(--cr-space-6);
+      margin-top: var(--cr-space-10); flex-wrap: wrap; }
+    #hero .hero-logo-word { font-family: var(--cr-font-display); font-weight: 800; font-size: 22px;
+      letter-spacing: -0.02em; margin-left: var(--cr-space-2); }
+
+    /* creative — the generated light-theme UI mock living inside the .cr-creative panel */
+    #hero .hero-creative { min-height: 560px; padding: var(--cr-space-12) var(--cr-space-10); display: flex; }
+    #hero .hp { position: relative; width: 100%; align-self: flex-start; background: var(--cr-bg);
+      border: 1px solid var(--cr-line-dark); border-radius: var(--cr-radius-lg); padding: var(--cr-space-6); }
+    #hero .hp-title { margin: 0 0 var(--cr-space-5); font-family: var(--cr-font-display); font-weight: 700;
+      font-size: 20px; color: var(--cr-ink); }
+    #hero .hp-action { border: 1px solid var(--cr-line); border-radius: var(--cr-radius-md); padding: var(--cr-space-5); }
+    #hero .hp-action + .hp-action { margin-top: var(--cr-space-4); }
+    #hero .hp-head { display: flex; align-items: center; justify-content: space-between; }
+    #hero .hp-icon { width: 42px; height: 42px; border-radius: 13px; display: flex; align-items: center;
+      justify-content: center; background: var(--cr-ink); color: var(--cr-bg); }
+    #hero .hp-icon--blue { background: var(--cr-brand); border-radius: 50%; }
+    #hero .hp-icon svg { width: 21px; height: 21px; }
+    #hero .hp-toggle { width: 46px; height: 26px; border-radius: var(--cr-radius-pill);
+      background: var(--cr-success); position: relative; }
+    #hero .hp-knob { position: absolute; top: 3px; left: 23px; width: 20px; height: 20px;
+      border-radius: 50%; background: var(--cr-bg); }
+    #hero .hp-label { margin: var(--cr-space-4) 0 var(--cr-space-3); font-family: var(--cr-font-display);
+      font-weight: 600; font-size: 16px; color: var(--cr-ink); }
+    #hero .hp-skel { height: 10px; border-radius: var(--cr-radius-pill); background: var(--cr-bg-grey-100); }
+    #hero .hp-skel + .hp-skel { margin-top: 9px; }
+    #hero .hp-skel--w1 { width: 86%; } #hero .hp-skel--w2 { width: 54%; }
+
+    /* trust bar — separated by a hairline on dark, not a shadow */
+    #hero .hero-trust { display: flex; align-items: center; justify-content: space-between;
+      gap: var(--cr-space-8); margin-top: var(--cr-space-20); padding-top: var(--cr-space-8);
+      border-top: 1px solid var(--cr-line-dark); flex-wrap: wrap; }
+    #hero .hero-trust-label strong { font-family: var(--cr-font-display); font-weight: 700; color: var(--cr-bg); }
+    #hero .hero-logos { display: flex; align-items: center; gap: var(--cr-space-8); flex-wrap: wrap; }
+    #hero .hero-wm { font-family: var(--cr-font-display); font-weight: 700; font-size: 18px;
+      color: rgba(255,255,255,0.5); }
+
+    @media (max-width: 900px) {
+      #hero .hero-grid { grid-template-columns: 1fr; gap: var(--cr-space-12); }
+    }
+  </style>
+
+  <nav class="cr-nav" aria-label="Primary">
+    <div class="cr-nav__inner">
+      <a class="cr-nav__brand cr-logo" href="#" aria-label="Acme home">
+        <svg class="cr-ico" viewBox="0 0 24 24" aria-hidden="true" style="stroke:var(--cr-brand)"><path d="M4 14a6 6 0 0 1 4-10 7 7 0 0 1 13 3 4.5 4.5 0 0 1-1 9H7a4 4 0 0 1-3-2z"/></svg>
+        <span class="hero-logo-word">Acme</span>
+      </a>
+      <div class="cr-nav__links">
+        <a href="#">AI</a>
+        <a href="#">Industry</a>
+        <a href="#">About us</a>
+        <a href="#">Resources</a>
+      </div>
+      <div class="cr-nav__cta">
+        <a class="cr-btn cr-btn-primary" href="#">Let's talk</a>
+      </div>
+      <button class="cr-nav__toggle" aria-label="Open menu" aria-expanded="false">
+        <svg class="cr-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="cr-nav__drawer" hidden>
+      <a href="#">AI</a>
+      <a href="#">Industry</a>
+      <a href="#">About us</a>
+      <a href="#">Resources</a>
+      <a class="cr-btn cr-btn-primary" href="#">Let's talk</a>
+    </div>
+  </nav>
+
+  <div class="cr-section">
+    <div class="cr-container">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <h1 class="cr-h-hero" data-reveal style="--d:.05s">Turn Manual Ops Into <span class="cr-accent">Autonomous Profit Engines</span>, In Weeks.</h1>
+          <p class="cr-p-lede hero-lede" data-reveal style="--d:.16s">We deploy production AI agents into your existing stack to absorb routine operational work. Every workflow running. Every exception caught.</p>
+          <div class="hero-cta-row" data-reveal style="--d:.26s">
+            <a class="cr-btn cr-btn-primary" href="#">Book a Demo Call <span class="cr-arrow" aria-hidden="true">&rarr;</span></a>
+            <span class="cr-caption">30 minutes &middot; No commitment &middot; We show you the numbers first</span>
+          </div>
+        </div>
+
+        <div class="cr-creative cr-orbit hero-creative" data-reveal style="--d:.2s">
+          <div class="hp">
+            <h2 class="hp-title">AI Actions</h2>
+            <div class="hp-action">
+              <div class="hp-head">
+                <span class="hp-icon"><svg class="cr-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2h11l5 5v15H4z"/><path d="M15 2v5h5"/><path d="M8 13h8M8 17h5"/></svg></span>
+                <span class="hp-toggle"><span class="hp-knob"></span></span>
+              </div>
+              <div class="hp-label">Reconcile invoices</div>
+              <div class="hp-skel hp-skel--w1"></div><div class="hp-skel hp-skel--w2"></div>
+            </div>
+            <div class="hp-action">
+              <div class="hp-head">
+                <span class="hp-icon hp-icon--blue"><svg class="cr-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h6l3-7 3 14 3-7h3"/></svg></span>
+                <span class="hp-toggle"><span class="hp-knob"></span></span>
+              </div>
+              <div class="hp-label">Route exceptions</div>
+              <div class="hp-skel hp-skel--w1"></div><div class="hp-skel hp-skel--w2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-trust" data-reveal style="--d:.34s" aria-label="Trusted in production">
+        <div class="cr-p hero-trust-label"><strong>Trusted in production</strong> &middot; 4M+ tasks automated</div>
+        <div class="hero-logos">
+          <span class="hero-wm">SAP</span><span class="hero-wm">Salesforce</span><span class="hero-wm">Zoho</span>
+          <span class="hero-wm">Oracle</span><span class="hero-wm">Epic</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

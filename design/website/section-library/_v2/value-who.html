@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Value prop — Who we are</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — Value prop · Who we are              component-value-who.html
+  ════════════════════════════════════════════════════════════════════════
+  COMPOSITION  A "who we are" value-prop on a WARM band (`--cr-bg-warm-2`).
+               • HEADER (2-col): LEFT an eyebrow PILL ("Who we are") over a big
+                 two-tone headline; RIGHT a grey supporting paragraph, top-aligned.
+               • STATS BAND: a large rounded card whose background is a BLURRED
+                 ATMOSPHERIC IMAGE (saved local) + grain + a subtle dark overlay;
+                 over it sit THREE translucent stat cards (big number + caption).
+               • RECRUIT BAND: a light rounded card — a title + a "roles open"
+                 pill + a grey line on the left, an "Apply now" button on the right.
+
+  INSPIRATION  An AI-agency "Who we are" section (eyebrow + two-tone headline +
+               supporting copy, a blurred-image stats band with glass stat cards,
+               a recruiting band). Layout reproduced; fonts / colours / the glass
+               treatment / copy re-skinned to CR.
+
+  RE-SKIN      The source's SERIF headline + serif stat numbers → URBANIST (the kit
+               is serif-free). The source's FROSTED-GLASS stat cards (backdrop-blur)
+               → real glass via `--cr-glass-*` (the v2 charter permits
+               `backdrop-filter`; the bg image is already blurred, so the panels
+               read as layered glass). Background image = a blurred atmospheric
+               Unsplash photo (teal + warm glow, leans CR-blue) PRE-BLURRED and
+               saved to `assets/value-bg.jpg` (per the brief: "use an unsplash
+               image like the source, blur it"). Copy → CR voice (ops automation,
+               no hype); the dark-warm "Apply now" button → CR ink.
+
+  NO SHADOW    No shadows; the glass cards lift by translucency + a 1px white
+               border over the image. Hover only on the real controls (Apply now,
+               links). Warm band stays flat; the image lives ONLY inside the stats
+               card (an intentional creative surface, not a section-wide gradient).
+
+  MOTION       "Staggered reveal + count-up" — on first viewport entry the header,
+               stats band, the three glass cards and the recruit band fade up in
+               sequence, AND each big stat COUNTS from 0 to its value (1,500+ / 80%
+               / 4 weeks, easeOutCubic ~1.2s, lands exactly on target).
+               IntersectionObserver fires once. NO-JS SAFE: final numbers are in
+               the HTML + the reveal hidden-state is `.has-js`-scoped (everything +
+               finals show without JS); `prefers-reduced-motion` / no-IO → finals,
+               no count. No Lucide loaded (no icons).
+
+  RESPONSIVE   Header 2-col → 1-col ≤860. Stats 3-col → 1-col ≤860 (the band keeps
+               its image). Recruit band row → stacks ≤640. Type + padding step
+               down; grid children carry `min-width:0`.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<style>
+  .wv-section, .wv-section * { box-sizing: border-box; }
+  .wv-section {
+    background: var(--cr-bg-warm-2);
+    padding: 96px 100px;
+    font-family: var(--cr-font-body);
+    color: var(--cr-fg);
+  }
+  .wv-wrap { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ─── header ──────────────────────────────────────────────────── */
+  .wv-head {
+    display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    column-gap: 56px; align-items: start;
+  }
+  .wv-eyebrow {
+    display: inline-block;
+    background: rgba(14,14,14,0.05);
+    border: 1px solid rgba(14,14,14,0.06);
+    border-radius: var(--cr-radius-pill); padding: 7px 16px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 14px;
+    color: var(--cr-fg);
+  }
+  .wv-title {
+    margin: 24px 0 0; max-width: 13ch;
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(34px, 4.4vw, 56px); line-height: 1.06; letter-spacing: -0.02em;
+    color: var(--cr-fg);
+  }
+  .wv-title .wv-soft { color: var(--cr-fg-3); }       /* the two-tone tail */
+  .wv-lede {
+    margin: 8px 0 0;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 16px; line-height: 1.6;
+    color: var(--cr-fg-2); max-width: 38ch;
+  }
+
+  /* ─── stats band ──────────────────────────────────────────────── */
+  .wv-stats {
+    position: relative; overflow: hidden;
+    border-radius: var(--cr-radius-xl);
+    margin-top: 40px; padding: 46px;
+  }
+  .wv-stats-bg { position: absolute; inset: 0; }
+  .wv-stats-bg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .wv-stats-bg::after {                                  /* dark wash for white-text contrast */
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(160deg, rgba(0,0,0,0.10), rgba(0,0,0,0.24));
+  }
+  .wv-grain {
+    position: absolute; inset: 0;
+    background-image: url("../assets/../../brand-pack/assets/imagery/textures/texture-grain.png");   /* native tile — no background-size */
+    opacity: .10; mix-blend-mode: overlay; pointer-events: none;
+  }
+  .wv-stats-grid {
+    position: relative;
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px;
+  }
+  .wv-stat {
+    display: flex; flex-direction: column; justify-content: center;
+    min-height: 208px; min-width: 0;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: var(--cr-radius-lg);
+    padding: 32px 30px;
+  }
+  .wv-stat-num {
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(38px, 4.2vw, 54px); line-height: 1; letter-spacing: -0.02em;
+    color: #fff;
+  }
+  .wv-stat-cap {
+    margin: 16px 0 0;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 15px; line-height: 1.4;
+    color: rgba(255,255,255,0.86);
+  }
+
+  /* ─── recruit band ────────────────────────────────────────────── */
+  .wv-recruit {
+    display: flex; align-items: center; justify-content: space-between; gap: 32px;
+    margin-top: 24px; padding: 30px 40px;
+    background: var(--cr-bg-warm);
+    border-radius: var(--cr-radius-lg);
+  }
+  .wv-recruit-l { min-width: 0; }
+  .wv-recruit-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .wv-recruit-title {
+    margin: 0; font-family: var(--cr-font-display); font-weight: 700; font-size: 20px;
+    color: var(--cr-fg);
+  }
+  .wv-pill-sm {
+    background: rgba(14,14,14,0.06); border-radius: var(--cr-radius-pill);
+    padding: 5px 12px; font-family: var(--cr-font-body); font-weight: 500; font-size: 13px;
+    color: var(--cr-fg-2);
+  }
+  .wv-recruit-sub {
+    margin: 10px 0 0;
+    font-family: var(--cr-font-body); font-weight: 400; font-size: 15px; line-height: 1.5;
+    color: var(--cr-fg-3); max-width: 62ch;
+  }
+  .wv-apply {
+    flex: none;
+    display: inline-flex; align-items: center;
+    background: var(--cr-ink); color: #fff; text-decoration: none;
+    border-radius: var(--cr-radius-pill); padding: 13px 26px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 15px;
+    transition: background .2s ease, transform .12s ease;
+  }
+  .wv-apply:hover { background: #000; }
+  .wv-apply:active { transform: scale(.97); }
+
+  /* ─── reveal (anti-race, fires once; no-JS shows all) ─────────── */
+  .has-js .wv-section [data-reveal] { opacity: 0; transform: translateY(20px); }
+  .has-js .wv-section [data-reveal].in-view {
+    animation: wvRise .7s cubic-bezier(.16,1,.3,1) forwards; animation-delay: var(--d, 0s);
+  }
+  @keyframes wvRise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .wv-section [data-reveal],
+    .has-js .wv-section [data-reveal].in-view { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* ─── responsive ──────────────────────────────────────────────── */
+  @media (max-width: 860px) {
+    .wv-section { padding: 72px 56px; }
+    .wv-head { grid-template-columns: minmax(0, 1fr); row-gap: 22px; }
+    .wv-title { max-width: none; }
+    .wv-lede { max-width: none; }
+  }
+  @media (max-width: 860px) {
+    .wv-stats { padding: 24px; }
+    .wv-stats-grid { grid-template-columns: 1fr; gap: 14px; }
+    .wv-stat { min-height: 150px; padding: 28px 26px; }
+  }
+  @media (max-width: 640px) {
+    .wv-section { padding: 56px 24px; }
+    .wv-recruit { flex-direction: column; align-items: flex-start; gap: 20px; padding: 26px 24px; }
+    .wv-apply { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<section class="wv-section" data-screen-label="Value prop · Who we are">
+  <div class="wv-wrap">
+
+    <!-- ── header ─────────────────────────────────────────────── -->
+    <div class="wv-head">
+      <div data-reveal style="--d:0s">
+        <span class="wv-eyebrow">Who we are</span>
+        <h2 class="wv-title">The automation partner built for <span class="wv-soft">you.</span></h2>
+      </div>
+      <p class="wv-lede" data-reveal style="--d:.08s">We built Example Brand to take routine operations off your team &mdash; not to sell you another platform. We map where agents pay off, ship what works, and skip the hype.</p>
+    </div>
+
+    <!-- ── stats band ─────────────────────────────────────────── -->
+    <div class="wv-stats" data-reveal style="--d:.14s">
+      <div class="wv-stats-bg"><img src="../assets/../../brand-pack/assets/imagery/value-bg.jpg" alt="" decoding="async" /></div>
+      <div class="wv-grain"></div>
+      <div class="wv-stats-grid">
+        <div class="wv-stat" data-reveal style="--d:.2s">
+          <div class="wv-stat-num" data-to="1500" data-suffix="+">1,500+</div>
+          <p class="wv-stat-cap">Hours of manual work removed monthly</p>
+        </div>
+        <div class="wv-stat" data-reveal style="--d:.28s">
+          <div class="wv-stat-num" data-to="80" data-suffix="%">80%</div>
+          <p class="wv-stat-cap">Average reduction in routine work</p>
+        </div>
+        <div class="wv-stat" data-reveal style="--d:.36s">
+          <div class="wv-stat-num" data-to="4" data-suffix=" weeks">4 weeks</div>
+          <p class="wv-stat-cap">Average time to a live pilot</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── recruit band ───────────────────────────────────────── -->
+    <div class="wv-recruit" data-reveal style="--d:.2s">
+      <div class="wv-recruit-l">
+        <div class="wv-recruit-head">
+          <h3 class="wv-recruit-title">Want to build agents that ship?</h3>
+          <span class="wv-pill-sm">3 roles open</span>
+        </div>
+        <p class="wv-recruit-sub">We're hiring engineers and forward-deployed folks who'd rather remove busywork than talk about it.</p>
+      </div>
+      <a class="wv-apply" href="#">Apply now</a>
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.wv-section');
+  if (!sec) return;
+  var nums = Array.prototype.slice.call(sec.querySelectorAll('.wv-stat-num'));
+
+  function fmt(v, suf) { return Math.round(v).toLocaleString('en-US') + suf; }
+  function countUp(el) {
+    var to = parseFloat(el.getAttribute('data-to'));
+    var suf = el.getAttribute('data-suffix') || '';
+    var dur = 1200, t0 = null;
+    function step(ts) {
+      if (t0 === null) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      el.textContent = fmt(to * (1 - Math.pow(1 - p, 3)), suf);   // easeOutCubic
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = fmt(to, suf);
+    }
+    requestAnimationFrame(step);
+  }
+  function revealOnly() { sec.querySelectorAll('[data-reveal]').forEach(function (el) { el.classList.add('in-view'); }); }
+
+  if (reduce || !('IntersectionObserver' in window)) { revealOnly(); return; }
+
+  nums.forEach(function (el) { el.textContent = fmt(0, el.getAttribute('data-suffix') || ''); });
+  var io = new IntersectionObserver(function (ents) {
+    ents.forEach(function (en) {
+      if (en.isIntersecting) { revealOnly(); nums.forEach(countUp); io.disconnect(); }
+    });
+  }, { threshold: 0.18 });
+  io.observe(sec);
+})();
+</script>
+
+</body>
+</html>

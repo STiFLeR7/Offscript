@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Footer · CTA panel               from component-footer-cta.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **The ask and the handoff in one band.** The profile is explicit
+              about what separates this from the other three footers: it IS the
+              closing band as well as the footer, so a page using it needs no
+              separate CTA. Everything below serves that — one ask, one
+              capture, five columns of wayfinding, one rule, one line of
+              copyright, and nothing else asking to be looked at.
+
+  STRUCTURE   Unchanged. Full-bleed band · centred CTA (headline, lede, two
+              actions) · footer top (identity + newsletter on the left, five
+              link columns on the right) · hairline · centred copyright. DOM,
+              element types, depth, `aria-*`, `href`, the form's inputs and
+              submit behaviour, and the three `--d` entrance delays are
+              byte-compatible with the frozen original (DR-22). The v2 file is
+              beside this one in `_v2/`.
+
+  THE THREE GRADIENTS, and what replaces them
+              v2 painted the band with three stacked gradients — two radial
+              tints bleeding in from opposite corners over a vertical wash.
+              That is abstract creative background and the blanket rule retires
+              it. It is NOT replaced by an environment, and that is the
+              considered answer rather than a skipped step: **a footer is type
+              end to end.** Fourteen destinations, five heads, a headline, a
+              lede, a label, a field, fine print and a copyright line occupy
+              every part of this band; there is no plate here carrying no type,
+              so there is nowhere a photograph could go that would not put type
+              on it. Removing the gradients therefore leaves a SURFACE
+              decision, not a creative one.
+
+              The band takes the RAISED surface. That preserves exactly the
+              relationship the pale wash had — a band that separates from the
+              page by tone and a hairline rather than by elevation, which is
+              what the original comment said it was doing — while spending zero
+              accent and consuming none of the page's dark ration. A footer
+              that is merely the page ground would fade rather than conclude,
+              which is the neighbouring footer's job, not this one's.
+
+  THE CORNER MOTIF is the abstract decoration this pass removes: concentric
+              orbit rings, a rotated diamond and an orbit node, all drawn in
+              the v2 brand hue at low opacity. It is frozen DOM, so it is made
+              INERT rather than deleted — `display: none`, with its box left
+              declared so the frozen node keeps the dimensions it always had.
+              Precedent: `tabs-panel-below`.
+
+  ACCENT      **ONE moment, and it is the newsletter submit.** A footer spends
+              zero or one, and the emphasis accent is a spark at the scale of a
+              chip or a small control — which is exactly this one. The closing
+              ask loses nothing by not being orange: the emphasis fill is not a
+              component identity, and the DEFAULT primary action in this system
+              is the dark control, which is what `Start Now` takes at 14.4:1.
+              Its companion is the hairline ghost. v2 also spent the brand hue
+              on every link hover and on the field's focus border; those are
+              ink now, because a footer where fourteen links can each light up
+              marks nothing.
+
+              The submit measures 5.48:1 at rest with the PAIRED LIGHT
+              foreground, and on hover the fill darkens to the accent's
+              authored deep step and the label INVERTS to 7.4:1. Dark ink on
+              that darker step measures 1.9:1 and fails AA; the pairing here is
+              the one `buttons` demonstrates and every specimen inherits.
+
+  THE ONE IMAGE stays. It is the identity mark — a logo is not an abstract
+              background, and nothing in this pass touches it beyond repointing
+              its path to the pack with the basename unchanged.
+
+  RESPONSIVE  The original's three breakpoints (1080 / 820 / 560), unchanged in
+              kind. Their spacing moves onto the closed scale. Their TYPE
+              overrides are DELETED rather than re-tokened: the pack already
+              steps the ramp at its own breakpoints, and a per-section type
+              breakpoint stacked on top of it resolves to sizes nobody
+              authored. The two gutter overrides go for the same reason — the
+              page gutter is a single fluid source that already steps.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CR — CTA &amp; Footer</title>
+  <link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--cr-page-ground);
+      font-family: var(--cr-font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Entrance: transform-only rise (always visible, no opacity gate) ── */
+    @keyframes fc-rise {
+      from { transform: translateY(12px); }
+      to   { transform: none; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .cr-rise {
+        animation: fc-rise .6s cubic-bezier(.16,1,.3,1) both;
+        animation-delay: var(--d, 0s);
+      }
+    }
+
+    /* ── Full-bleed band ────────────────────────────────────────────────
+       Three gradients out, one governed surface in. The raised surface on the
+       cream page is the same relationship the pale wash carried — separation
+       by tone, not by elevation — and it costs no accent. */
+    .fc {
+      position: relative;
+      overflow: hidden;
+      background: var(--cr-bg-raised);
+    }
+
+    /* ── Corner motif — RETIRED, kept inert ─────────────────────────────
+       Orbit rings, diamond and node: abstract decoration. The node is frozen
+       DOM so it is hidden rather than removed, and its box stays declared so
+       the frozen element keeps the dimensions it always had. */
+    .fc-deco {
+      display: none;
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 480px;
+      height: 400px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .fc-deco svg { width: 100%; height: 100%; display: block; }
+
+    /* ── Content well (background stays full-bleed; content is constrained) ── */
+    .fc-panel {
+      position: relative;
+      z-index: 1;
+      max-width: var(--cr-content-max);
+      margin: 0 auto;
+      padding: 0 var(--cr-page-gutter);
+    }
+
+    /* ── ① CTA ──────────────────────────────────────────────────── */
+    .fc-cta {
+      text-align: center;
+      padding: var(--cr-space-xl) 0;
+    }
+    .fc-cta-title {
+      font-family: var(--cr-font-display);
+      font-weight: 400;
+      font-size: var(--cr-text-h3);
+      line-height: var(--cr-leading-heading);
+      letter-spacing: var(--cr-tracking-heading);
+      color: var(--cr-text-primary);
+      margin-bottom: var(--cr-space-s);
+    }
+    .fc-cta-sub {
+      font-family: var(--cr-font-body);
+      font-weight: 400;
+      font-size: var(--cr-text-body);
+      line-height: var(--cr-leading-body);
+      color: var(--cr-text-secondary);
+      max-width: var(--cr-measure-cta-narrow);
+      margin: 0 auto var(--cr-space-m);
+    }
+    .fc-cta-btns {
+      display: inline-flex;
+      gap: var(--cr-space-xs);
+    }
+    /* A control never inherits `font-family` — it is stated. Weight is one of
+       the system's two; the label sits on the supporting step; the pill is
+       retired to the control radius. */
+    .fc-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--cr-space-xs) var(--cr-space-s);
+      border-radius: var(--cr-radius-control);
+      font-family: var(--cr-font-body);
+      font-weight: 500;
+      font-size: var(--cr-text-supporting);
+      line-height: var(--cr-leading-body);
+      letter-spacing: 0;
+      text-decoration: none;
+      cursor: pointer;
+      border: var(--cr-stroke) solid transparent;
+      transition: background .2s ease, border-color .2s ease, color .2s ease;
+    }
+    /* THE DEFAULT PRIMARY — dark ink, 14.4:1 on the raised band. */
+    .fc-btn-primary {
+      background: var(--cr-text-primary);
+      color: var(--cr-text-inverse);
+    }
+    .fc-btn-primary:hover { background: var(--cr-neutral-1000); }   /* 17.9:1 */
+    /* The secondary is a hairline ghost. The border tokens all measure under
+       3:1, so a border-only control needs a boundary that carries: the
+       secondary ink measures 6.1:1 against the raised surface and is what the
+       hairline takes. */
+    .fc-btn-ghost {
+      background: transparent;
+      color: var(--cr-text-primary);
+      border-color: var(--cr-text-secondary);
+    }
+    .fc-btn-ghost:hover {
+      border-color: var(--cr-text-primary);
+      background: var(--cr-surface-5);
+    }
+    /* The ring is primary ink at 13.1:1, never a hue. */
+    .fc-btn:focus-visible {
+      outline: 2px solid var(--cr-focus-ring);
+      outline-offset: 3px;
+    }
+
+    /* ── ② Footer ───────────────────────────────────────────────── */
+    .fc-foot {
+      padding: var(--cr-space-m) 0;
+      border-top: var(--cr-stroke) solid var(--cr-border-default);
+    }
+    .fc-foot-top {
+      display: grid;
+      grid-template-columns: minmax(280px, 1fr) 2.05fr;
+      gap: var(--cr-space-xl);
+    }
+
+    /* Left — identity + capture */
+    .fc-brand-logo { height: 26px; width: auto; display: block; margin-bottom: var(--cr-space-s); }
+    .fc-news-lbl {
+      font-family: var(--cr-font-body);
+      font-size: var(--cr-text-supporting);
+      line-height: var(--cr-leading-body);
+      font-weight: 500;
+      color: var(--cr-text-primary);
+      margin-bottom: var(--cr-space-xs);
+    }
+    /* The field sits on the page cream inside the raised band — the surface
+       change is the second cue the pack asks for where a border alone would be
+       the only indicator of a control's boundary. */
+    .fc-news {
+      display: flex;
+      align-items: center;
+      gap: var(--cr-space-xs);
+      max-width: 340px;
+      padding: var(--cr-space-xs);
+      background: var(--cr-page-ground);
+      border: var(--cr-stroke) solid var(--cr-border-default);
+      border-radius: var(--cr-radius-control);
+    }
+    .fc-news:focus-within { border-color: var(--cr-text-primary); }
+    .fc-news-input {
+      flex: 1;
+      min-width: 0;
+      border: none;
+      background: transparent;
+      font-family: var(--cr-font-body);
+      font-weight: 400;
+      font-size: var(--cr-text-supporting);
+      line-height: var(--cr-leading-body);
+      color: var(--cr-text-primary);
+    }
+    .fc-news-input::placeholder { color: var(--cr-text-secondary); }
+    .fc-news-input:focus-visible {
+      outline: 2px solid var(--cr-focus-ring);
+      outline-offset: 2px;
+    }
+    /* ── THE SECTION'S ONE ACCENT MOMENT ─────────────────────────────
+       Rest carries the PAIRED LIGHT foreground on the accent, 5.48:1. Hover
+       darkens the fill to the accent's authored deep step and the label
+       INVERTS, 7.4:1 — dark ink on that step measures 1.9:1 and fails AA. */
+    .fc-news-btn {
+      flex-shrink: 0;
+      background: var(--cr-accent-orange);
+      color: var(--cr-on-accent-light);
+      border: none;
+      border-radius: var(--cr-radius-control);
+      padding: var(--cr-space-xs);
+      font-family: var(--cr-font-body);
+      font-weight: 500;
+      font-size: var(--cr-text-supporting);
+      line-height: var(--cr-leading-body);
+      letter-spacing: 0;
+      cursor: pointer;
+      transition: background .2s ease, color .2s ease;
+    }
+    .fc-news-btn:hover {
+      background: var(--cr-accent-orange-800);
+      color: var(--cr-text-inverse);                                /* 7.4:1 */
+    }
+    .fc-news-btn:active {
+      background: var(--cr-accent-orange-900);
+      color: var(--cr-text-inverse);                                /* 11.8:1 */
+    }
+    .fc-news-btn:focus-visible {
+      outline: 2px solid var(--cr-focus-ring);
+      outline-offset: 2px;
+    }
+    .fc-fine {
+      margin-top: var(--cr-space-xs);
+      max-width: 320px;
+      font-size: var(--cr-text-supporting);
+      line-height: var(--cr-leading-body);
+      color: var(--cr-text-secondary);
+    }
+
+    /* Right — 5 link columns */
+    .fc-cols {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: var(--cr-space-m) var(--cr-space-s);
+    }
+    /* One rhythm down every column, at the micro step. In v2 the rhythm came
+       from padding on each anchor; it moves to the column's own gap so the
+       anchor is the word and nothing else. */
+    .fc-col { display: flex; flex-direction: column; gap: var(--cr-space-xs); }
+    .fc-col-h {
+      font-family: var(--cr-font-display);
+      font-size: var(--cr-text-supporting);
+      line-height: var(--cr-leading-heading);
+      letter-spacing: var(--cr-tracking-heading);
+      font-weight: 500;
+      color: var(--cr-text-primary);
+      margin-bottom: var(--cr-space-xs);
+    }
+    .fc-col a {
+      font-family: var(--cr-font-body);
+      font-weight: 400;
+      font-size: var(--cr-text-supporting);
+      line-height: var(--cr-leading-body);
+      color: var(--cr-text-secondary);
+      text-decoration: none;
+      padding: 0;
+      transition: color .15s ease;
+    }
+    .fc-col a:hover { color: var(--cr-text-primary); }
+    .fc-col a:focus-visible {
+      outline: 2px solid var(--cr-focus-ring);
+      outline-offset: 2px;
+    }
+
+    /* Divider + copyright */
+    .fc-rule {
+      height: var(--cr-stroke);
+      background: var(--cr-border-default);
+      margin: var(--cr-space-m) 0 var(--cr-space-s);
+    }
+    .fc-copy {
+      text-align: center;
+      font-size: var(--cr-text-supporting);
+      line-height: var(--cr-leading-body);
+      color: var(--cr-text-secondary);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .fc-btn, .fc-news-btn, .fc-col a { transition: none; }
+    }
+
+    /* ── Responsive ─────────────────────────────────────────────────
+       Layout breakpoints only. The gutter and the type ramp both step on the
+       pack's own breakpoints, so the overrides that used to restate them here
+       are gone rather than re-tokened. */
+    @media (max-width: 1080px) {
+      .fc-foot-top { grid-template-columns: 1fr; gap: var(--cr-space-m); }
+    }
+
+    @media (max-width: 820px) {
+      .fc-cta { padding: var(--cr-space-m) 0; }
+      .fc-cols { grid-template-columns: repeat(3, 1fr); gap: var(--cr-space-s) var(--cr-space-xs); }
+    }
+
+    @media (max-width: 560px) {
+      .fc-cta-btns { display: flex; flex-direction: column; width: 100%; gap: var(--cr-space-xs); }
+      .fc-btn { width: 100%; }
+      .fc-foot { padding: var(--cr-space-s) 0; }
+      .fc-cols { grid-template-columns: repeat(2, 1fr); }
+      .fc-news { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing.
+
+     NO `directed` line, and that is the report. Every dimension in this band
+     moved because a scale absorbed it: the section's spacing onto the closed
+     six, the whole type set onto the ramp, both radii onto the pair, the lede
+     onto one of the two permitted text measures. The composition itself is
+     untouched — the identity-to-columns split, the five-column grid, the
+     stacked breakpoint order and the logo's own height are all carried at their
+     original values, and none of them appears below.
+
+     Two entries name a tag rather than a class because the elements carry none:
+     `a` is the fourteen column destinations, whose per-anchor padding gives up
+     the column rhythm to the column's own gap, and `br` is the one line break
+     inside the headline, which inherits the heading's new step.
+
+     `.fc-panel` moves its side padding at the narrow viewports only: the two
+     gutter overrides are deleted rather than re-tokened, so the pack's single
+     fluid gutter governs at every width instead of being restated here.
+  .fc-brand-logo | margin-bottom          | spacing-scale
+  .fc-btn        | border-radius          | radius-pair
+  .fc-btn        | font-size              | type-ramp
+  .fc-btn        | line-height            | type-ramp
+  .fc-btn        | padding-bottom         | spacing-scale
+  .fc-btn        | padding-left           | spacing-scale
+  .fc-btn        | padding-right          | spacing-scale
+  .fc-btn        | padding-top            | spacing-scale
+  .fc-col        | column-gap             | spacing-scale
+  .fc-col        | row-gap                | spacing-scale
+  .fc-col-h      | font-size              | type-ramp
+  .fc-col-h      | line-height            | type-ramp
+  .fc-col-h      | margin-bottom          | spacing-scale
+  .fc-cols       | column-gap             | spacing-scale
+  .fc-cols       | row-gap                | spacing-scale
+  .fc-copy       | font-size              | type-ramp
+  .fc-copy       | line-height            | type-ramp
+  .fc-cta        | padding-bottom         | spacing-scale
+  .fc-cta        | padding-top            | spacing-scale
+  .fc-cta-btns   | column-gap             | spacing-scale
+  .fc-cta-btns   | row-gap                | spacing-scale
+  .fc-cta-sub    | font-size              | type-ramp
+  .fc-cta-sub    | line-height            | type-ramp
+  .fc-cta-sub    | margin-bottom          | spacing-scale
+  .fc-cta-sub    | margin-left            | spacing-scale
+  .fc-cta-sub    | margin-right           | spacing-scale
+  .fc-cta-sub    | max-width              | measure
+  .fc-cta-title  | font-size              | type-ramp
+  .fc-cta-title  | line-height            | type-ramp
+  .fc-fine       | font-size              | type-ramp
+  .fc-fine       | line-height            | type-ramp
+  .fc-fine       | margin-top             | spacing-scale
+  .fc-foot       | padding-bottom         | spacing-scale
+  .fc-foot       | padding-top            | spacing-scale
+  .fc-foot-top   | column-gap             | spacing-scale
+  .fc-foot-top   | row-gap                | spacing-scale
+  .fc-news       | border-radius          | radius-pair
+  .fc-news       | column-gap             | spacing-scale
+  .fc-news       | padding-bottom         | spacing-scale
+  .fc-news       | padding-left           | spacing-scale
+  .fc-news       | padding-right          | spacing-scale
+  .fc-news       | padding-top            | spacing-scale
+  .fc-news       | row-gap                | spacing-scale
+  .fc-news-btn   | border-radius          | radius-pair
+  .fc-news-btn   | font-size              | type-ramp
+  .fc-news-btn   | line-height            | type-ramp
+  .fc-news-btn   | padding-bottom         | spacing-scale
+  .fc-news-btn   | padding-left           | spacing-scale
+  .fc-news-btn   | padding-right          | spacing-scale
+  .fc-news-btn   | padding-top            | spacing-scale
+  .fc-news-input | font-size              | type-ramp
+  .fc-news-input | line-height            | type-ramp
+  .fc-news-lbl   | font-size              | type-ramp
+  .fc-news-lbl   | line-height            | type-ramp
+  .fc-news-lbl   | margin-bottom          | spacing-scale
+  .fc-panel      | padding-left           | spacing-scale
+  .fc-panel      | padding-right          | spacing-scale
+  a              | font-size              | type-ramp
+  a              | line-height            | type-ramp
+  a              | padding-bottom         | spacing-scale
+  a              | padding-top            | spacing-scale
+  br             | font-size              | type-ramp
+  br             | line-height            | type-ramp
+-->
+  <section class="fc" data-screen-label="CTA &amp; Footer"
+           data-archetype="editorial-stack" data-hierarchy="closing" data-intent="close"
+           data-register="closing" data-signature="architectural-whitespace" data-density="high">
+
+    <!-- Corner motif — CR orbit rings + diamond (subtle, top-right, behind content) -->
+    <div class="fc-deco" aria-hidden="true">
+      <svg viewBox="0 0 480 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- concentric orbit rings, centred off the top-right corner -->
+        <circle cx="372" cy="64" r="58"  stroke="var(--cr-brand)" stroke-opacity="0.20" stroke-width="1.25"/>
+        <circle cx="372" cy="64" r="116" stroke="var(--cr-brand)" stroke-opacity="0.13" stroke-width="1.25"/>
+        <circle cx="372" cy="64" r="182" stroke="var(--cr-brand)" stroke-opacity="0.09" stroke-width="1.25" stroke-dasharray="2 7"/>
+        <!-- rounded diamond nested in the orbit (geometric accent) -->
+        <rect x="328" y="20" width="88" height="88" rx="20" transform="rotate(45 372 64)"
+              stroke="var(--cr-brand)" stroke-opacity="0.15" stroke-width="1.25"/>
+        <!-- small orbit node -->
+        <circle cx="372" cy="6" r="3.5" fill="var(--cr-brand)" fill-opacity="0.35"/>
+      </svg>
+    </div>
+
+    <div class="fc-panel">
+
+      <!-- ① CTA -->
+      <div class="fc-cta">
+        <h2 class="fc-cta-title cr-rise">Ready to Automate<br>Your Operations?</h2>
+        <p class="fc-cta-sub cr-rise" style="--d:.06s">Get production AI agents for finance, support, and operations &mdash; deployed into your existing stack, live in four weeks.</p>
+        <div class="fc-cta-btns cr-rise" style="--d:.12s">
+          <a class="fc-btn fc-btn-primary" href="#">Start Now</a>
+          <a class="fc-btn fc-btn-ghost" href="#">Contact Us</a>
+        </div>
+      </div>
+
+      <!-- ② Footer -->
+      <div class="fc-foot cr-rise" style="--d:.16s">
+        <div class="fc-foot-top">
+
+          <!-- Left — brand + newsletter -->
+          <div class="fc-brand">
+            <img class="fc-brand-logo" src="../../brand-pack/assets/logo/logo-color.svg" alt="Example Brand">
+            <p class="fc-news-lbl">Sign up for product updates.</p>
+            <form class="fc-news" onsubmit="return false">
+              <input class="fc-news-input" type="email" placeholder="Enter your email" aria-label="Email address">
+              <button class="fc-news-btn" type="submit">Submit</button>
+            </form>
+            <p class="fc-fine">By subscribing you agree to our Privacy Policy and consent to receive updates from Example Brand.</p>
+          </div>
+
+          <!-- Right — 5 link columns -->
+          <nav class="fc-cols" aria-label="Footer">
+            <div class="fc-col">
+              <span class="fc-col-h">Products</span>
+              <a href="#">Example Brand APA</a>
+              <a href="#">CR DocXter</a>
+              <a href="#">CR Jennie</a>
+              <a href="#">Dr.Scribe</a>
+            </div>
+            <div class="fc-col">
+              <span class="fc-col-h">Solutions</span>
+              <a href="#">Automate Workflows</a>
+              <a href="#">Scale SME Ops</a>
+              <a href="#">Knowledge &amp; Insights</a>
+              <a href="#">AI Strategy</a>
+            </div>
+            <div class="fc-col">
+              <span class="fc-col-h">Company</span>
+              <a href="#">About Us</a>
+              <a href="#">Customers</a>
+              <a href="#">Careers</a>
+              <a href="#">Contact Us</a>
+            </div>
+            <div class="fc-col">
+              <span class="fc-col-h">Resources</span>
+              <a href="#">Blog</a>
+              <a href="#">Case Studies</a>
+              <a href="#">Documentation</a>
+            </div>
+            <div class="fc-col">
+              <span class="fc-col-h">Legal</span>
+              <a href="#">Terms &amp; Conditions</a>
+              <a href="#">Privacy Policy</a>
+              <a href="#">Security</a>
+              <a href="#">DPA</a>
+            </div>
+          </nav>
+
+        </div>
+
+        <div class="fc-rule"></div>
+        <p class="fc-copy">&copy; 2026 Example Brand. All rights reserved.</p>
+      </div>
+
+    </div>
+  </section>
+</body>
+</html>

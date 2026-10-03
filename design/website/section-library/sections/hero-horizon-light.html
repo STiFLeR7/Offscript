@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Centered Stack · single-column — soft CTA</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Centered Stack     from component-hero-horizon-light.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **An invitation at low volume.** The profile is blunt about what
+              this is — *"the filename says hero; its own markup labels it a CTA.
+              The structure is a CTA."* It asks without concluding, which is what
+              lets a long page offer a way to act partway through. One sentence,
+              two controls, nothing else.
+
+  STRUCTURE   Unchanged. A centred stack: headline, then a primary and a
+              secondary action. DOM, ids, `data-*`, `aria-*` and `href` are
+              byte-compatible with the frozen original (DR-22). The section has
+              no script at all. The v2 file is beside this one in `_v2/`.
+
+  THE CREATIVE — FOUR GRADIENTS, AND ALL FOUR ARE GONE.
+              `.ch-glow` was four radial washes with hand-mixed cool-blue alphas,
+              and `.ch-grain` laid a texture PNG at 2% over the top. That is an
+              abstract creative background standing in for a subject, and it is
+              replaced by an approved environment carrying the texture stack.
+              `ridges-distant` is the catalogue's largest quiet sky and its most
+              versatile member across ratios — the safest reach when a section
+              needs atmosphere and has no subject of its own, which is exactly
+              this section's situation.
+
+              ONE STACK, three layers, on `.ch-glow` itself: grain on top, grunge
+              under it, the environment underneath both. It has to be one stack —
+              a blend mode composites against what is beneath it in the SAME
+              background, so leaving the grain on `.ch-grain` would resolve
+              `overlay` against transparency and render at full strength as grey
+              static. `.ch-grain` therefore stops carrying its own texture and
+              keeps its place carrying nothing. The URLs are written out rather
+              than reached through `--cr-env-*`, because a `url()` inside a
+              custom property resolves against the CONSUMING document and fails
+              silently.
+
+  THE ONE REAL DESIGN DECISION — and it is DR-46's, not taste.
+              v2 put a dark headline and two controls directly ON the gradient
+              field. Swap a photograph in underneath and that becomes type on a
+              picture, which DR-46 refuses outright: *if the type was readable
+              only because of what sat behind it, the picture was a surface.*
+              The DOM is frozen, so the words cannot move to another element —
+              but they can move off the image. `.ch-content` becomes an OPAQUE
+              panel, and the environment takes the whole region around it, which
+              carries no type at all.
+
+              Remove the photograph now and not one word changes legibility.
+              That is the test, and it passes by construction rather than by
+              measurement — so no scrim, veil or overlay was needed to win the
+              contrast back, and DR-7's scrim retirement stands untouched.
+
+              The panel takes the RELEASED title measure (950), not the default
+              750: this headline wraps to a third line, which is the one and only
+              condition under which the release valve opens.
+
+  ACCENT      One moment. The primary action. The secondary stays an outlined
+              ghost in ink, which is what makes the pair visibly unequal.
+
+  MOTION      The original's pure-CSS transform-only entrance, unchanged in kind
+              — opacity is never gated, so a snapshot at load shows everything.
+              The reduce guard names all three animated selectors at their own
+              specificity, so every one of them snaps.
+
+  TYPE        `clamp()` is gone throughout — from the headline, the section
+              padding and the min-height. It resolves to sizes and steps nobody
+              authored; the pack already walks h2 down its own ladder.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css" />
+<style>
+  body { margin: 0; }
+  .ch, .ch * { box-sizing: border-box; }
+  .ch { font-family: var(--cr-font-body); }
+
+  /* ─── the CTA section (standalone) ───────────────────────────── */
+  .ch-cta {
+    position: relative; overflow: hidden;
+    min-height: calc(var(--cr-space-3xl) * 3);
+    background: var(--cr-page-ground);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+    padding: var(--cr-rhythm-opening) var(--cr-page-gutter);
+  }
+
+  /* ─── THE ENVIRONMENT — one stack, on the element that carried the
+     gradients. The last background-position is the asset's measured focus
+     from ASSETS.md (`50% 50%`), not a guess. Never a `background:`
+     shorthand here — the shorthand resets `background-image`. */
+  .ch-glow {
+    position: absolute; inset: 0; z-index: 0;
+    background-color: var(--cr-bg-dark);
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-ridges-distant.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 50% 50%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+  }
+  /* The grain moved into `.ch-glow`'s stack, where a blend mode has a base to
+     composite against. This layer stays in place and carries nothing. */
+  .ch-grain {
+    position: absolute; inset: 0; z-index: 0;
+    background-image: none;
+    pointer-events: none;
+  }
+
+  /* THE OPAQUE PANEL. This is the DR-46 move: the words get their own surface
+     and the photograph gets the region that carries none. */
+  .ch-content {
+    position: relative; z-index: 1;
+    max-width: var(--cr-measure-title-wide);   /* RELEASED — this headline runs to a third line */
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-m);
+  }
+  .ch-h {
+    font-family: var(--cr-font-display); font-weight: 400;
+    font-size: var(--cr-text-h2);
+    line-height: var(--cr-leading-heading); letter-spacing: var(--cr-tracking-heading);
+    text-wrap: balance;
+    color: var(--cr-text-primary); margin: 0 0 var(--cr-space-m);
+  }
+  .ch-btns { display: flex; gap: var(--cr-space-xs); justify-content: center; align-items: center; flex-wrap: wrap; }
+
+  /* PRIMARY — the section's ONE accent moment */
+  .ch-btn-primary {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    background: var(--cr-accent-orange); color: var(--cr-on-accent-light);
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+    letter-spacing: 0;
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    border-radius: var(--cr-radius-control);   /* the pill is retired for controls */
+    border: 0;
+    cursor: pointer; text-decoration: none;
+    transition: background-color .2s ease, transform .15s ease;
+  }
+  .ch-btn-primary:hover { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+  .ch-btn-primary:active { transform: scale(.97); }
+
+  /* SECONDARY — outlined ghost in ink; the pair must read as unequal */
+  .ch-btn-ghost {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    background: none; color: var(--cr-text-primary);
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+    letter-spacing: 0;
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    border-radius: var(--cr-radius-control);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    cursor: pointer; text-decoration: none;
+    transition: border-color .2s ease, transform .15s ease;
+  }
+  .ch-btn-ghost:hover { border-color: var(--cr-text-secondary); }
+  .ch-btn-ghost:active { transform: scale(.97); }
+
+  .ch-btns a:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 3px; }
+
+  .ch-btns .ar { transition: transform .16s ease; }
+  .ch-btns a:hover .ar { transform: translateX(4px); }
+
+  /* ─── MOTION — pure-CSS, transform-only (opacity stays 1; always visible) ── */
+  .ch-h, .ch-btns { animation: chRise .7s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--d, 0s); }
+  .ch-glow        { animation: chGlow 1.1s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes chRise { from { transform: translateY(14px); } to { transform: none; } }
+  @keyframes chGlow { from { transform: scale(1.04);     } to { transform: none; } }
+  /* Each guarded selector is named at the trigger's own specificity, so all
+     three snap rather than transition into a state they were forced into. */
+  @media (prefers-reduced-motion: reduce) {
+    .ch-h, .ch-btns, .ch-glow { animation: none; transform: none; }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing.
+  .ch-btn-ghost   | border-radius          | radius-pair
+  .ch-btn-ghost   | column-gap             | spacing-scale
+  .ch-btn-ghost   | padding-bottom         | spacing-scale
+  .ch-btn-ghost   | padding-left           | spacing-scale
+  .ch-btn-ghost   | padding-right          | spacing-scale
+  .ch-btn-ghost   | padding-top            | spacing-scale
+  .ch-btn-ghost   | row-gap                | spacing-scale
+  .ch-btn-primary | border-radius          | radius-pair
+  .ch-btn-primary | column-gap             | spacing-scale
+  .ch-btn-primary | padding-bottom         | spacing-scale
+  .ch-btn-primary | padding-left           | spacing-scale
+  .ch-btn-primary | padding-right          | spacing-scale
+  .ch-btn-primary | padding-top            | spacing-scale
+  .ch-btn-primary | row-gap                | spacing-scale
+  .ch-btns        | column-gap             | spacing-scale
+  .ch-btns        | row-gap                | spacing-scale
+  .ch-content     | border-bottom-width    | stroke
+  .ch-content     | border-left-width      | stroke
+  .ch-content     | border-radius          | radius-pair
+  .ch-content     | border-right-width     | stroke
+  .ch-content     | border-top-width       | stroke
+  .ch-content     | max-width              | measure
+  .ch-content     | padding-bottom         | spacing-scale
+  .ch-content     | padding-left           | spacing-scale
+  .ch-content     | padding-right          | spacing-scale
+  .ch-content     | padding-top            | spacing-scale
+  .ch-cta         | min-height             | directed
+  .ch-cta         | padding-bottom         | spacing-scale
+  .ch-cta         | padding-left           | spacing-scale
+  .ch-cta         | padding-right          | spacing-scale
+  .ch-cta         | padding-top            | spacing-scale
+  .ch-h           | font-size              | type-ramp
+  .ch-h           | line-height            | type-ramp
+  .ch-h           | margin-bottom          | spacing-scale
+-->
+
+
+<div class="ch">
+
+  <!-- ─── standalone light CTA section (no footer) ─── -->
+  <section class="ch-cta" data-screen-label="CTA · Soft-gradient (light)"
+           data-archetype="editorial-stack" data-hierarchy="closing" data-intent="convert"
+           data-register="quiet" data-signature="editorial-photography" data-density="low">
+    <span class="ch-glow" aria-hidden="true"></span>
+    <span class="ch-grain" aria-hidden="true"></span>
+    <div class="ch-content">
+      <h2 class="ch-h" style="--d:.15s">Turn your processes into the space where people and AI collaborate</h2>
+      <div class="ch-btns" style="--d:.28s">
+        <a class="ch-btn-primary" href="#">Get started for free <span class="ar" aria-hidden="true">→</span></a>
+        <a class="ch-btn-ghost" href="#">Talk to sales <span class="ar" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+{
+  "_comment": "Declarative source of truth for offscript/scripts/check-package-isolation.ts. Data only, never executed. Lists which directories under offscript/ are independently-owned packages and which of their subdirectories the guard scans. The ALLOWED-IMPORT graph itself is NOT declared here \u2014 it is derived at guard-run time from each listed package's own package.json `dependencies`/`devDependencies` `file:` entries, which are already this repo's real, existing source of truth for sibling-package coupling (see CLAUDE.md's Creative Generation boundary rules and each standalone package's own package.json description field). Adding a package here is Step 1 of 'declare boundary' in the future-package workflow documented in PACKAGE-ISOLATION-GUARD-REPORT.md.",
+  "packages": [
+    {
+      "name": "offscript",
+      "root": ".",
+      "scanDirs": [
+        "src",
+        "test"
+      ],
+      "note": "The engine. scripts/ is deliberately excluded from this package's scan scope: CLAUDE.md's stated boundary rule ('offscript/src/ must not import creative-generation or creative-artifact-contract') is scoped to offscript/src/ only, and offscript/scripts/_sprint*.ts are throwaway, sprint-labeled experiment runners that legitimately import creative-generation/creative-intent-exporter directly to drive standalone Creative Generation runs outside the production generate pipeline (verified: zero non-underscore-prefixed production script imports any standalone package directly). See PACKAGE-ISOLATION-GUARD-REPORT.md Phase 4/7 for the evidence behind this scope decision."
+    },
+    {
+      "name": "creative-intent-exporter",
+      "root": "creative-intent-exporter",
+      "scanDirs": [
+        "src",
+        "test"
+      ]
+    },
+    {
+      "name": "creative-artifact-contract",
+      "root": "creative-artifact-contract",
+      "scanDirs": [
+        "src",
+        "test"
+      ]
+    },
+    {
+      "name": "creative-generation",
+      "root": "creative-generation",
+      "scanDirs": [
+        "src",
+        "test"
+      ]
+    },
+    {
+      "name": "website-governance-sync",
+      "root": "website-governance-sync",
+      "scanDirs": [
+        "src",
+        "test"
+      ]
+    }
+  ]
+}

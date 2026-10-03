@@ -1,0 +1,20 @@
+schema_version: "1.0"
+kind: component
+identity:
+  id: "brand:acme::cta"
+  title: "Acme CTA"
+ownership:
+  owner: "acme-brand-authority"
+scope:
+  class: brand
+  identity: "acme"
+governance:
+  authority: adapted-local
+  lineage:
+    derives_from: "canonical::button"
+dependencies:
+  prerequisite:
+    - "brand:acme::tokens"
+semantics:
+  consumes:
+    - "concept:interactive-affordance"

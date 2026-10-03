@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Value proposition — stat progression</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — Value proposition (stat progression)        grid-four-column-equal.html
+  ════════════════════════════════════════════════════════════════════════
+  COMPOSITION  A FULL-WIDTH PURE-WHITE website section (no frame, no footer).
+               A 1240px content well, left-aligned, holds:
+               • a 3-line headline pinned TOP-LEFT (~60% of the well width);
+               • a big vertical void, then a 4-COLUMN stat row. Each column =
+                 a VERTICAL HAIRLINE on its LEFT edge + a small description
+                 paragraph TOP-aligned + a huge number BOTTOM-aligned (numbers
+                 share one baseline). Description line-counts per column match
+                 the source exactly: 3 / 2 / 3 / 4.
+
+  INSPIRATION  Swiss/editorial presentation slide (stephenkelman.co.uk, slide
+               19) — "Documents are most persuasive…" headline over four
+               description→giant-number columns divided by left hairlines.
+               Layout/proportions reproduced; colours/fonts/copy re-skinned.
+
+  RE-SKIN      Source is strictly MONOCHROME B&W → CR ink on the page surface.
+               NO accent anywhere: this is a static value-prop with no action,
+               and an accent that marks nothing is decoration.
+
+  v3 PASS      Presentation authored under the editorial-restraint direction;
+               structure, script and every behavioural hook are byte-compatible
+               with the v2 file in `_v2/` (DR-22, the Pilot Constraint).
+               · The single family at its two weights. The v2 "Display Bold 700"
+                 ramp is retired — emphasis comes from SCALE, not from weight.
+               · Headline at the section step and the title measure; the v2 rule
+                 capped it at 14em to force three lines, which is a line count
+                 standing in for a measure the direction already owns.
+               · The desc→number void, which IS this section's composition, is
+                 now composed from two steps of the closed spacing scale rather
+                 than from a viewport clamp — a decision with a size.
+               · Horizontal layout and section padding handed to the pack.
+
+  MOTION       (none specified → catalog-consistent choice) staggered entrance
+               reveal (headline first, then the four columns at 80ms stagger)
+               + count-up on the numbers on first viewport entry. CSS
+               `animation` gated on `.in-view` (the anti-race pattern), fires
+               once. No-JS safe: numbers render their FINAL value in markup and
+               the hidden reveal-state is scoped to `.has-js`, so without JS
+               everything shows. `prefers-reduced-motion` snaps in / skips the
+               count. No Lucide (the source has no icons). Static content — the
+               ONLY thing that moves is the entrance; no hover (no controls).
+
+  RESPONSIVE   4-col → 2×2 grid (≤960px) → single column (≤560px, the per-row
+               void collapses so each stat reads desc-over-number tightly).
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<script>document.documentElement.classList.add('has-js');</script>
+<style>
+  /* ─── scope reset ─────────────────────────────────────────────── */
+  html, body {
+    margin: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+  }
+  .vp-section, .vp-section * { box-sizing: border-box; }
+  .vp-section { --vp-rule: var(--cr-border-default); font-family: var(--cr-font-body); }
+
+  /* Surface, section padding and the content well are all the pack's, not
+     this section's — SECTION_LAYOUT §16. `.cr-band` + `.cr-well` on the
+     existing elements; the three local declarations they replace are gone. */
+
+  /* ─── headline (top-left) ─────────────────────────────────────
+     On the ramp at its section step, at the title measure. The v2 rule
+     capped it at `14em` "to force ~3 lines" — a line count is a symptom of a
+     measure, and the direction already owns the measure. */
+  .vp-headline { margin: 0; max-width: var(--cr-measure-title); }
+
+  /* ─── stat row ────────────────────────────────────────────────
+     The gap below the headline is the CONTENT role of the rhythm: the point
+     where the section stops making its claim and hands off to the evidence. */
+  .vp-stats {
+    margin-top: var(--cr-rhythm-content);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 0;                          /* rules sit flush at each col edge */
+  }
+  .vp-col {
+    border-left: var(--cr-stroke) solid var(--vp-rule);  /* hairline per column */
+    padding-inline: var(--cr-space-s);                   /* indent off the rule */
+    /* THE VOID IS THE COMPOSITION, not slack. The description sits at the top
+       of the column and the measure at the bottom, and the emptiness between
+       them is what makes the number arrive rather than merely appear. It is
+       composed from two steps of the closed scale, so the void is a decision
+       with a size rather than a number someone typed. */
+    min-height: calc(var(--cr-space-3xl) + var(--cr-space-xl));
+    display: flex;
+    flex-direction: column;
+  }
+  .vp-desc { margin: 0; }
+  .vp-num {
+    margin-top: auto;                 /* bottom-aligns the number */
+    font-variant-numeric: tabular-nums;   /* digits don't wobble while counting */
+    white-space: nowrap;
+  }
+  .vp-suf--word {                       /* word unit (weeks) — one step down */
+    font-size: var(--cr-text-supporting);
+    color: var(--cr-text-secondary);
+    margin-left: var(--cr-space-xs);
+    letter-spacing: 0;
+  }
+
+  /* ─── motion: entrance reveal (anti-race, fires once) ─────────── */
+  .has-js .vp-section [data-reveal] { opacity: 0; transform: translateY(18px); }
+  .has-js .vp-section [data-reveal].in-view {
+    animation: vpRise 0.7s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes vpRise { to { opacity: 1; transform: none; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .vp-section [data-reveal],
+    .has-js .vp-section [data-reveal].in-view {
+      opacity: 1; transform: none; animation: none;
+    }
+  }
+
+  /* ─── responsive ────────────────────────────────────────────────
+     The breakpoints are the original's — responsive behaviour is frozen. Type
+     is NOT re-declared here: the ramp steps itself at the pack's own two
+     breakpoints, and a section that restated the steps is how three pages
+     ended up with three ramps. Section padding steps with `.cr-band`. */
+  @media (max-width: 960px) {
+    .vp-stats { grid-template-columns: repeat(2, 1fr); row-gap: var(--cr-space-m); }
+    .vp-col   { min-height: var(--cr-space-3xl); }
+  }
+  @media (max-width: 560px) {
+    .vp-headline { max-width: none; }
+    .vp-stats { grid-template-columns: 1fr; row-gap: var(--cr-space-m); margin-top: var(--cr-rhythm-content); }
+    .vp-col   { min-height: 0; }
+    .vp-num   { margin-top: var(--cr-space-s); }   /* collapse the void on mobile */
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line
+     here that moved nothing. Retrofitted from measurement for the pilot
+     ten; declared before authoring from Phase 1 onward.
+  .vp-col      | min-height             | spacing-scale
+  .vp-col      | padding-left           | spacing-scale
+  .vp-col      | padding-right          | spacing-scale
+  .vp-col      | padding-top            | spacing-scale
+  .vp-desc     | font-size              | type-ramp
+  .vp-desc     | line-height            | type-ramp
+  .vp-desc     | max-width              | measure
+  .vp-headline | font-size              | type-ramp
+  .vp-headline | line-height            | type-ramp
+  .vp-headline | max-width              | measure
+  .vp-num      | font-size              | type-ramp
+  .vp-num      | line-height            | type-ramp
+  .vp-num      | margin-top             | spacing-scale
+  .vp-num-val  | font-size              | type-ramp
+  .vp-num-val  | line-height            | type-ramp
+  .vp-panel    | padding-left           | spacing-scale
+  .vp-panel    | padding-right          | spacing-scale
+  .vp-stats    | margin-top             | spacing-scale
+  .vp-stats    | row-gap                | spacing-scale
+  .vp-suf      | font-size              | type-ramp
+  .vp-suf      | line-height            | type-ramp
+  .vp-suf      | margin-left            | spacing-scale
+-->
+
+
+<!-- composition follows the source: headline TOP-LEFT, stats BOTTOM —
+     the left-headline placement is the reference's, not a hardcoded house rule. -->
+<section class="vp-section cr-band" data-screen-label="Value proposition · Stat progression"
+         data-archetype="feature-comparison" data-hierarchy="proof" data-intent="prove"
+         data-register="quiet" data-signature="large-statistic" data-density="low">
+  <div class="vp-panel cr-well">
+
+    <h2 class="vp-headline cr-h-section" data-reveal style="--d:0s">The Routine Work Runs Itself When Agents Live Inside The Systems You Already Use.</h2>
+
+    <div class="vp-stats">
+
+      <div class="vp-col" data-reveal style="--d:.10s">
+        <p class="vp-desc cr-meta">Of routine, judgment-free work runs autonomously inside the systems your team already uses every day.</p>
+        <div class="vp-num cr-num-display"><span class="vp-num-val" data-target="80">80</span><span class="vp-suf">%</span></div>
+      </div>
+
+      <div class="vp-col" data-reveal style="--d:.18s">
+        <p class="vp-desc cr-meta">Operating cost taken out of the workflows we automate, not relocated.</p>
+        <div class="vp-num cr-num-display"><span class="vp-num-val" data-target="92">92</span><span class="vp-suf">%</span></div>
+      </div>
+
+      <div class="vp-col" data-reveal style="--d:.26s">
+        <p class="vp-desc cr-meta">Average return on the work our agents absorb, measured against fully-loaded headcount.</p>
+        <div class="vp-num cr-num-display"><span class="vp-num-val" data-target="11.3" data-decimals="1">11.3</span><span class="vp-suf">×</span></div>
+      </div>
+
+      <div class="vp-col" data-reveal style="--d:.34s">
+        <p class="vp-desc cr-meta">From first kickoff to a live pilot in production, deployed parallel to your current workflow and billed on the outcome.</p>
+        <div class="vp-num cr-num-display"><span class="vp-num-val" data-target="4">4</span><span class="vp-suf vp-suf--word">weeks</span></div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.vp-section');
+  if (!sec) return;
+
+  function fmt(n, dec) { return n.toFixed(dec); }
+
+  function countUp(el) {
+    var target = parseFloat(el.getAttribute('data-target'));
+    var dec = parseInt(el.getAttribute('data-decimals') || '0', 10);
+    var dur = 1400, t0 = null;
+    el.textContent = fmt(0, dec);
+    function step(ts) {
+      if (t0 === null) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      var e = 1 - Math.pow(1 - p, 3);            // ease-out cubic
+      el.textContent = fmt(target * e, dec);
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = fmt(target, dec);    // exact final value
+    }
+    requestAnimationFrame(step);
+  }
+
+  function reveal() {
+    sec.querySelectorAll('[data-reveal]').forEach(function (n) { n.classList.add('in-view'); });
+    if (!reduce) sec.querySelectorAll('.vp-num-val').forEach(countUp);
+  }
+
+  if (reduce) { reveal(); return; }              // CSS snaps in; numbers stay at markup final
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) {
+        if (en.isIntersecting) { reveal(); io.disconnect(); }
+      });
+    }, { threshold: 0.25 });
+    io.observe(sec);
+  } else {
+    reveal();
+  }
+})();
+</script>
+
+</body>
+</html>

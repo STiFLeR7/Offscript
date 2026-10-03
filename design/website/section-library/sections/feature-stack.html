@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Feature stack · scroll-pinned card deck</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Centered stack · sticky-scroll  from component-feature-stack.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **Each panel is a destination, not a step.** The profile calls
+              this the most expensive structure in the library in attention —
+              one per page, and the reason is that holding a panel still while
+              the reader arrives gives a claim the time a scrolling band never
+              gets. So each half of each card must be able to hold the eye on
+              its own: a full type surface beside a full creative one.
+
+  STRUCTURE   Unchanged. Centred header (headline + one CTA) scrolling above a
+              deck of three sticky cards, each a two-column body whose text and
+              creative halves alternate. DOM, all three scripts, every id /
+              `data-*` / `aria-*` / `src`, the `--i` sticky offsets and the
+              reveal contract are byte-compatible with the frozen original
+              (DR-22).
+
+  ENVIRONMENT `env-ridges-distant`, and this is the section's largest change.
+              v2 built its creative half from THREE stacked abstractions — a
+              pale tint base, an atmospheric blur image, a grain pseudo-element
+              and a two-stop veil ramping over the top — and the blur image it
+              named does not exist in the pack, so the whole construction was
+              resolving to a flat tint. All four are replaced by one approved
+              environment carrying the texture stack, as a single background.
+              The veil goes with them: a veil exists to win contrast back, and
+              nothing here needs contrast won.
+
+  THE TYPE NEVER TOUCHES THE PHOTOGRAPH, and it never had to move to arrange
+              that. The card is already two SEPARATE surfaces sitting flush —
+              an opaque text card and an opaque creative card — so every word in
+              the section lives on its own solid ground. Remove the photograph
+              and not one word changes legibility. The white artifact centred in
+              the creative half is opaque too, which is the permitted case: an
+              opaque panel over an image is what makes it read as the product.
+
+  ACCENT      One moment, and it is the header's CTA — the section's single ask.
+              v2 spent brand colour eight further times inside the miniature
+              interfaces: a chip, a progress fill, a deploy button, a link, a
+              nav rail, a nav icon set and a nav highlight. Those are neutral
+              ink now. A page where everything is marked marks nothing.
+
+  TYPE        The mock interfaces are marked `cr-graphic` and are exempt from
+              the ramp, because a form label at the supporting size does not fit
+              the artifact it sits inside. The exemption is claimed IN THE
+              SELECTOR so it is bounded and greppable. Colour is never exempt.
+
+  MOTION      The stack IS the motion, and it is layout rather than animation,
+              so it stays under reduced motion exactly as v2 decided. No
+              ancestor of `.feature` may clip, or sticky dies.
+
+  RESPONSIVE  The original's breakpoints (1200 / 1024 / 720), unchanged. Type
+              steps on the pack's own ramp, so the per-breakpoint `clamp()`
+              re-declarations are gone rather than re-authored.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<noscript><style>.head .anim { opacity:1 !important; transform:none !important; }</style></noscript>
+<style>
+  * { box-sizing: border-box; }
+  /* EVERY SECTION DECLARES ITS OWN BACKGROUND (COMPOSE.md §C.5). This root was
+     transparent, so it rendered correctly only because the specimen chrome sets a
+     ground on <body> — which retrieval strips. Composed onto a page it took
+     whatever surface happened to be underneath: "a section with no declaration is
+     a section nobody decided." Declaring the page ground changes nothing that is
+     rendered and makes the decision the section's own. (LIBRARY-AUDIT.md C-4.) */
+  .section { background: var(--cr-page-ground); }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body); color: var(--cr-text-primary);
+    font-size: var(--cr-text-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* IMPORTANT: no overflow / isolation / clip on .section or .stack — an
+     overflow-other-than-visible ancestor silently kills position:sticky. */
+  .section {
+    padding: var(--cr-rhythm-opening) var(--cr-page-gutter) var(--cr-space-3xl);
+    max-width: var(--cr-content-max); margin: 0 auto;
+  }
+
+  /* ── Header (scrolls normally above the deck) ──────────────────────── */
+  .head { max-width: var(--cr-measure-title-wide); margin: 0 auto var(--cr-rhythm-content); text-align: center; }
+  .title {
+    font-family: var(--cr-font-display); font-weight: 400;
+    font-size: var(--cr-text-h2); line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary); margin: 0;
+  }
+  /* THE SECTION'S ONE ACCENT MOMENT. The pill radius is retired; a control
+     takes the control radius. */
+  .cta {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    margin-top: var(--cr-space-m); padding: var(--cr-space-xs) var(--cr-space-s);
+    /* THE DARK PILL IS THE DEFAULT PRIMARY (COMPOSE.md §C.5). The emphasis fill
+       was baked in here, and four sections doing the same thing put any page
+       composing two of them over a bound that permits ONE — with no section
+       individually at fault and no author able to fix it, because a class and a
+       declaration are both outside the editable boundary. That is the drift the
+       rule predicted: "an emphasis fill becomes the default primary by drift".
+       The variant now belongs to the section whose declared role IS the page's
+       close, which composition already limits to one. (LIBRARY-AUDIT.md C-5.) */
+    background: var(--cr-fg); color: var(--cr-bg);
+    border: none; border-radius: var(--cr-radius-control);
+    text-decoration: none; cursor: pointer;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+    letter-spacing: 0; line-height: var(--cr-leading-body);
+    transition: background .2s ease, transform .12s ease;
+  }
+  .cta:hover { background: var(--cr-neutral-1000); color: var(--cr-bg); }
+  .cta:active { transform: scale(.975); }
+  .cta .arrow { display: inline-block; transition: transform .2s ease; }
+  .cta:hover .arrow { transform: translateX(4px); }
+
+  /* ── The deck ──────────────────────────────────────────────────────── */
+  .stack {
+    --top: 80px;          /* where the first card pins */
+    --peek: 16px;         /* sliver of each earlier card's top rounded edge */
+    --tail: 56vh;         /* trailing runway so the fully-fanned deck HOLDS at the end */
+    display: block;       /* plain block flow — most reliable host for sticky */
+  }
+  .feature + .feature { margin-top: var(--cr-space-xs); }
+  .stack-tail { height: var(--tail); }
+
+  .feature {
+    position: sticky;
+    top: calc(var(--top) + var(--i, 0) * var(--peek));
+  }
+
+  /* Two SEPARATE equal rounded cards sitting flush — each has its own full
+     border-radius on all 4 corners. gap:0 so they touch; no shared clip. This
+     is also WHY no type in this section sits on a photograph: the words are on
+     one opaque card, the environment is on the other. */
+  .feat-body {
+    display: flex; gap: 0;
+    min-height: 520px;
+  }
+  .feature.rev .feat-body { flex-direction: row-reverse; }
+  .text    { flex: 0 0 50%; min-width: 0; border-radius: var(--cr-radius-card); }
+  .creative { flex: 0 0 50%; min-width: 0; border-radius: var(--cr-radius-card); overflow: hidden; }
+
+  /* ── Text half — its own opaque card ────────────────────────────────── */
+  .text {
+    background: var(--cr-surface-1);
+    padding: var(--cr-space-m);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .text h3 {
+    font-family: var(--cr-font-display); font-weight: 400;
+    font-size: var(--cr-text-h3); line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary); margin: 0 0 var(--cr-rhythm-cluster);
+  }
+  .text p {
+    font-family: var(--cr-font-body); font-weight: 400; font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body); color: var(--cr-text-secondary);
+    margin: 0; max-width: var(--cr-measure-body);
+  }
+  .more {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    margin-top: var(--cr-space-m);
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+    color: var(--cr-text-primary); text-decoration: none; width: fit-content;
+  }
+  .more .arrow { display: inline-block; transition: transform .2s ease; }
+  .more:hover .arrow { transform: translateX(4px); }
+
+  /* ── Creative half — THE STANDARD CREATIVE TREATMENT ─────────────────
+     One background stack, three layers, in this order: grain on top, grunge
+     under it, the environment underneath both. It has to be ONE stack — a
+     blend mode composites against what is beneath it in the SAME background,
+     so putting the grain on a pseudo-element resolves `overlay` against
+     transparency and renders the texture at full strength as grey static.
+     That is exactly what v2's grain pseudo-element was doing, and its veil
+     pseudo-element was there to recover from it; both are gone.
+
+     The URLs are written out rather than reached through `--cr-env-*`, because
+     a `url()` inside a custom property resolves against the CONSUMING document,
+     not the sheet that declared it, and fails silently — which is also how v2's
+     `--img` pointer stayed dead without anyone seeing it. The last position is
+     the asset's measured focus, not a guess. ───────────────────────────── */
+  .creative {
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    padding: var(--cr-space-m);
+    background-color: var(--cr-bg-dark);
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-ridges-distant.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 50% 50%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+  }
+
+  /* ── The artifact — an OPAQUE panel, which is the one permitted case for
+     something sitting over an image, and the reason it reads as the product
+     rather than as decoration. ─────────────────────────────────────────── */
+  .mock {
+    position: relative; z-index: 1;
+    width: calc(100% - 80px); max-width: 420px;
+    background: var(--cr-surface-1); border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card); padding: var(--cr-space-s);
+  }
+
+  /* MINIATURE INTERFACE — exempt from the type ramp, and the exemption is
+     claimed in every selector that uses it so it is bounded and greppable.
+     COLOUR IS NOT EXEMPT: every mark below is neutral ink, because the section
+     already spent its one accent on the CTA. */
+  .cr-graphic .m-lab {
+    display: block; font-family: var(--cr-font-body); font-weight: 500;
+    font-size: 11px; letter-spacing: 0; text-transform: none;
+    color: var(--cr-text-secondary); margin: 0 0 8px;
+  }
+  /* mock 1 — agent "thought" reply */
+  .cr-graphic .m-top { display: flex; align-items: center; gap: 9px; margin-bottom: 16px; }
+  .cr-graphic .m-mark { width: 20px; height: 20px; border-radius: var(--cr-radius-control);
+            background: var(--cr-text-primary); flex: 0 0 auto; }
+  .cr-graphic .m-app { font-family: var(--cr-font-display); font-weight: 500; font-size: 14px; color: var(--cr-text-primary); }
+  .cr-graphic .m-time { margin-left: auto; font-family: var(--cr-font-body); font-size: 12px; color: var(--cr-text-secondary); }
+  .cr-graphic .m-think { display: flex; align-items: center; gap: 6px;
+             font-family: var(--cr-font-body); font-weight: 500; font-size: 12px;
+             color: var(--cr-text-secondary); margin-bottom: 10px; }
+  .cr-graphic .m-think svg { width: 14px; height: 14px; stroke-width: var(--cr-icon-stroke-md); }
+  .cr-graphic .m-say { font-family: var(--cr-font-body); font-size: 14px; line-height: 1.5;
+           color: var(--cr-text-primary); margin: 0 0 16px; }
+  .cr-graphic .m-track { height: 6px; border-radius: var(--cr-radius-control); background: var(--cr-surface-5); overflow: hidden; }
+  .cr-graphic .m-track > span { display: block; width: 72%; height: 100%; border-radius: var(--cr-radius-control); background: var(--cr-text-primary); }
+
+  /* mock 2 — deploy panel */
+  .cr-graphic .m-title { font-family: var(--cr-font-display); font-weight: 500; font-size: 15px;
+             color: var(--cr-text-primary); margin: 0 0 16px; }
+  .cr-graphic .m-field { display: flex; align-items: center; gap: 9px;
+             padding: 11px 13px; margin-bottom: 14px;
+             border: var(--cr-stroke) solid var(--cr-border-default); border-radius: var(--cr-radius-control);
+             background: var(--cr-surface-2);
+             font-family: var(--cr-font-body); font-size: 13px; color: var(--cr-text-primary); }
+  .cr-graphic .m-field svg { width: 15px; height: 15px; stroke-width: var(--cr-icon-stroke-sm); color: var(--cr-text-secondary); flex: 0 0 auto; }
+  .cr-graphic .m-field .m-caret { margin-left: auto; color: var(--cr-text-secondary); }
+  .cr-graphic .m-field .m-sys { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cr-graphic .m-field .m-more { margin-left: auto; font-weight: 500; color: var(--cr-text-primary); }
+  .cr-graphic .m-btn { width: 100%; margin-top: 4px; padding: 11px;
+           background: var(--cr-text-primary); color: var(--cr-text-inverse); border: none;
+           border-radius: var(--cr-radius-control);
+           font-family: var(--cr-font-display); font-weight: 500; font-size: 14px; }
+
+  /* mock 3 — platform sidebar (static illustration → no hover) */
+  .cr-graphic.m3 { padding: 14px; }
+  .cr-graphic .m-nav { display: flex; align-items: center; gap: 11px;
+           padding: 9px 12px; border-radius: var(--cr-radius-control);
+           border-left: 2px solid transparent;          /* all rows reserve the rail width */
+           font-family: var(--cr-font-body); font-weight: 500; font-size: 13px;
+           color: var(--cr-text-secondary); }
+  .cr-graphic .m-nav svg { width: 16px; height: 16px; stroke-width: var(--cr-icon-stroke-sm); color: var(--cr-text-secondary); flex: 0 0 auto; }
+  .cr-graphic .m-nav.active { background: var(--cr-surface-5); color: var(--cr-text-primary); font-weight: 500;
+                  border-left-color: var(--cr-text-primary); }   /* the rail is a border, never depth */
+
+  /* ── Header entrance (visible without JS via .has-js scope) ────────── */
+  .has-js .head .anim {
+    opacity: 0; transform: translateY(16px);
+    transition: opacity .6s ease var(--d,0ms), transform .6s ease var(--d,0ms);
+  }
+  .revealed .head .anim { opacity: 1; transform: none; }
+
+  /* ── Responsive ────────────────────────────────────────────────────── */
+  @media (max-width: 1200px) {
+    .section { padding: var(--cr-rhythm-opening) var(--cr-page-gutter) var(--cr-space-2xl); }
+    .text { padding: var(--cr-space-m); }
+  }
+  @media (max-width: 1024px) {
+    .section { padding: var(--cr-rhythm-opening) var(--cr-page-gutter) var(--cr-space-2xl); }
+    .stack { --top: 64px; --peek: 22px; }
+    .head { margin-bottom: var(--cr-rhythm-content); }
+    .text { padding: var(--cr-space-m); }
+  }
+  @media (max-width: 720px) {
+    .stack { --top: 56px; --peek: 16px; --tail: 32vh; }
+    .feat-body, .feature.rev .feat-body { flex-direction: column; min-height: 0; }
+    .text, .creative { flex: none; width: 100%; }
+    .text { padding: var(--cr-space-s); }
+    .text p { max-width: none; }
+    .creative { padding: var(--cr-space-s); min-height: 280px; }
+    .feat-bar { padding: var(--cr-space-xs) 0; }
+    .mock { width: calc(100% - 48px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .head .anim { opacity: 1 !important; transform: none !important; transition: none; }
+    .cta, .cta .arrow, .more .arrow { transition: none; }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. Nothing is marked `directed`: the deck is still a 50/50
+     alternating split, the sticky offsets are untouched, and the card that
+     holds the type is the same card it always was — the environment replaced a
+     background, not a layout.
+  .arrow     | font-size              | type-ramp
+  .arrow     | line-height            | type-ramp
+  .cta       | border-radius          | radius-pair
+  .cta       | column-gap             | spacing-scale
+  .cta       | line-height            | type-ramp
+  .cta       | margin-top             | spacing-scale
+  .cta       | padding-bottom         | spacing-scale
+  .cta       | padding-left           | spacing-scale
+  .cta       | padding-right          | spacing-scale
+  .cta       | padding-top            | spacing-scale
+  .cta       | row-gap                | spacing-scale
+  .feat-body | font-size              | type-ramp
+  .head      | font-size              | type-ramp
+  .head      | margin-bottom          | spacing-scale
+  .head      | margin-left            | spacing-scale
+  .head      | margin-right           | spacing-scale
+  .head      | max-width              | measure
+  .lucide    | margin-left            | spacing-scale
+  .lucide    | stroke-width           | stroke
+  .m-btn     | border-radius          | radius-pair
+  .m-field   | border-radius          | radius-pair
+  .m-more    | margin-left            | spacing-scale
+  .m-nav     | border-radius          | radius-pair
+  .m-time    | margin-left            | spacing-scale
+  .m-top     | font-size              | type-ramp
+  .mock      | border-radius          | radius-pair
+  .mock      | font-size              | type-ramp
+  .mock      | padding-bottom         | spacing-scale
+  .mock      | padding-left           | spacing-scale
+  .mock      | padding-right          | spacing-scale
+  .mock      | padding-top            | spacing-scale
+  .more      | column-gap             | spacing-scale
+  .more      | font-size              | type-ramp
+  .more      | margin-top             | spacing-scale
+  .more      | row-gap                | spacing-scale
+  .section   | font-size              | type-ramp
+  .section   | padding-bottom         | spacing-scale
+  .section   | padding-left           | spacing-scale
+  .section   | padding-right          | spacing-scale
+  .section   | padding-top            | spacing-scale
+  .stack     | font-size              | type-ramp
+  .text      | border-radius          | radius-pair
+  .text      | font-size              | type-ramp
+  .text      | padding-bottom         | spacing-scale
+  .text      | padding-left           | spacing-scale
+  .text      | padding-right          | spacing-scale
+  .text      | padding-top            | spacing-scale
+  .title     | font-size              | type-ramp
+  .title     | line-height            | type-ramp
+  br         | font-size              | type-ramp
+  br         | line-height            | type-ramp
+  circle     | stroke-width           | stroke
+  h3         | font-size              | type-ramp
+  h3         | line-height            | type-ramp
+  h3         | margin-bottom          | spacing-scale
+  p          | font-size              | type-ramp
+  p          | line-height            | type-ramp
+  p          | max-width              | measure
+  path       | stroke-width           | stroke
+  rect       | stroke-width           | stroke
+-->
+
+<section class="section" data-screen-label="Feature stack · scroll-pinned card deck"
+         data-archetype="storytelling-composition" data-hierarchy="primary" data-intent="persuade"
+         data-register="narrative" data-signature="editorial-photography" data-density="low">
+
+  <header class="head" id="head">
+    <h2 class="title anim" style="--d:0ms">From first prompt to<br>live agent, all in Example Brand.</h2>
+    <a class="cta anim" style="--d:110ms" href="#">
+      Get Started <span class="arrow" aria-hidden="true">&rarr;</span>
+    </a>
+  </header>
+
+  <!-- The deck. Each card carries --i so its sticky `top` steps down by --peek;
+       cards are opaque, so a later one covers the body of the one before while
+       its top bar peeks above. -->
+  <div class="stack">
+
+    <!-- 01 — text left / creative right -->
+    <article class="feature" style="--i:0">
+      <div class="feat-body">
+        <div class="text">
+          <h3>Describe the workflow. Watch it build.</h3>
+          <p>Write what the process should do in plain language. Example Brand turns it into a working agent — steps, branches and guardrails wired up for you.</p>
+          <a class="more" href="#">Learn more <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        </div>
+        <div class="creative">
+          <div class="mock m1 cr-graphic">
+            <div class="m-top"><span class="m-mark"></span><span class="m-app">Example Brand</span><span class="m-time">now</span></div>
+            <div class="m-think"><i data-lucide="sparkles"></i> Thought for 8s</div>
+            <p class="m-say">Of course — mapping your claims-triage process into six actions and one approval gate.</p>
+            <div class="m-track"><span></span></div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 02 — creative left / text right -->
+    <article class="feature rev" style="--i:1">
+      <div class="feat-body">
+        <div class="text">
+          <h3>Live the moment it&rsquo;s built.</h3>
+          <p>Your agent is hosted and ready the instant it&rsquo;s done. Ship it to production in one click, or connect the systems it should run inside.</p>
+          <a class="more" href="#">Learn more <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        </div>
+        <div class="creative">
+          <div class="mock m2 cr-graphic">
+            <p class="m-title">Deploy agent</p>
+            <span class="m-lab">Environment</span>
+            <div class="m-field"><i data-lucide="globe"></i><span>Production</span><i class="m-caret" data-lucide="chevron-down"></i></div>
+            <span class="m-lab">Connected systems</span>
+            <div class="m-field"><span class="m-sys">SAP &middot; Salesforce &middot; NetSuite</span><span class="m-more">+3</span></div>
+            <button class="m-btn" type="button" tabindex="-1" aria-hidden="true">Deploy</button>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 03 — text left / creative right -->
+    <article class="feature" style="--i:2">
+      <div class="feat-body">
+        <div class="text">
+          <h3>Backend, already handled.</h3>
+          <p>Auth, databases, storage and an audit trail come built in. Your agents don&rsquo;t just run &mdash; they run with the power to scale your operations.</p>
+          <a class="more" href="#">Learn more <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        </div>
+        <div class="creative">
+          <div class="mock m3 cr-graphic">
+            <div class="m-nav"><i data-lucide="layout-grid"></i> Overview</div>
+            <div class="m-nav active"><i data-lucide="activity"></i> Runs</div>
+            <div class="m-nav"><i data-lucide="database"></i> Data</div>
+            <div class="m-nav"><i data-lucide="bar-chart-3"></i> Analytics</div>
+            <div class="m-nav"><i data-lucide="plug"></i> Connections</div>
+            <div class="m-nav"><i data-lucide="shield"></i> Security</div>
+            <div class="m-nav"><i data-lucide="file-text"></i> Audit log</div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <div class="stack-tail" aria-hidden="true"></div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    // Reveal FIRST (so a blocked Lucide CDN can never stop the header showing),
+    // then draw icons behind a guard.
+    var section = document.querySelector('.section');
+    function reveal() { if (section) section.classList.add('revealed'); }
+
+    if (!('IntersectionObserver' in window)) {
+      reveal();
+    } else {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { reveal(); io.disconnect(); } });
+      }, { threshold: 0.15 });
+      io.observe(section);
+    }
+
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+      window.lucide.createIcons();
+    }
+  })();
+</script>
+</body>
+</html>

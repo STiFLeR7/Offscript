@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tabbed product showcase</title>
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fff; font-family: var(--cr-font-body); color: var(--cr-fg); -webkit-font-smoothing: antialiased; }
+  .section { padding: 100px 100px 80px; max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ── Header ──────────────────────────────────────────────────── */
+  .eyebrow {
+    font-family: "Inter", sans-serif; font-weight: 600; font-size: 13px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--cr-fg-muted);
+    margin-bottom: 24px;
+  }
+  .headline {
+    font-family: "Urbanist", sans-serif; font-weight: 700; font-size: 56px;
+    line-height: 1.1; letter-spacing: -0.02em; color: var(--cr-ink-flat);
+    margin: 0 0 80px; max-width: 880px;
+  }
+
+  /* ── Tab strip ───────────────────────────────────────────────── */
+  .tabs {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--cr-line);
+    border-bottom: 1px solid var(--cr-line);
+  }
+  .tab {
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+    padding: 28px 24px; cursor: pointer; position: relative;
+    font-family: "Urbanist", sans-serif; font-weight: 600; font-size: 18px;
+    letter-spacing: -0.01em; color: var(--cr-fg-3);
+    border-right: 1px solid var(--cr-line);
+    transition: background .2s ease, color .2s ease;
+    background: #fff;
+  }
+  .tab:last-child { border-right: 0; }
+  .tab:hover { color: var(--cr-ink-flat); }
+  .tab.active { background: #F7F8FA; color: var(--cr-ink-flat); }
+  .tab.active::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -1px;
+    height: 2px; background: var(--accent, var(--cr-brand));
+  }
+  .tab .ico {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: var(--ico-bg); color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .tab .ico svg { width: 16px; height: 16px; stroke-width: 1.5; }
+
+  /* ── Card ────────────────────────────────────────────────────── */
+  .card {
+    margin-top: 40px;
+    border: 1px solid var(--cr-line); border-radius: 20px;
+    background: #fff; overflow: hidden;
+    display: grid; grid-template-columns: 1fr 1fr; min-height: 560px;
+  }
+  .card-left {
+    padding: 48px 48px 32px;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .marker {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: "Urbanist", sans-serif; font-weight: 600; font-size: 14px;
+    color: var(--accent); margin-bottom: 32px;
+  }
+  .marker .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  .card-title {
+    font-family: "Urbanist", sans-serif; font-weight: 700; font-size: 40px;
+    line-height: 1.15; letter-spacing: -0.02em; color: var(--cr-ink-flat);
+    margin: 0 0 24px; max-width: 480px;
+  }
+  .card-body {
+    font-family: "Inter", sans-serif; font-weight: 400; font-size: 16px;
+    line-height: 1.6; color: var(--cr-fg-2); margin: 0 0 32px; max-width: 480px;
+  }
+  .learn-more {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: "Urbanist", sans-serif; font-weight: 600; font-size: 15px;
+    color: var(--cr-ink-flat); text-decoration: none; cursor: pointer;
+    transition: color .15s ease;
+  }
+  .learn-more:hover { color: var(--accent); }
+  .learn-more svg { width: 16px; height: 16px; stroke-width: 1.5; }
+
+  /* sub-feature list — clickable, drives the creative */
+  .sub-features {
+    margin-top: auto; padding-top: 48px;
+    display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    font-family: "Inter", sans-serif; font-size: 14px;
+  }
+  .sub-features .pin {
+    width: 20px; height: 1px; background: var(--cr-fg-muted);
+  }
+  .sub-features button {
+    background: none; border: 0; padding: 6px 0; cursor: pointer;
+    font: inherit; color: var(--cr-fg-muted);
+    border-bottom: 2px solid transparent;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .sub-features button:hover { color: var(--cr-ink-flat); }
+  .sub-features button.is-current { color: var(--cr-ink-flat); font-weight: 600; border-bottom-color: var(--accent); }
+
+  /* card right — creative panel */
+  .card-right {
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(120% 100% at 100% 0%, var(--right-1) 0%, var(--right-2) 70%, var(--right-3) 100%);
+    min-height: 560px;
+  }
+  .card-right::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: url("../../brand-pack/assets/imagery/textures/texture-grain.png");
+    background-size: cover; mix-blend-mode: overlay; opacity: 0.35;
+    pointer-events: none;
+  }
+  .orbit {
+    position: absolute; border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 50%; pointer-events: none;
+  }
+  .orbit.o1 { left: -200px; top: -200px; width: 900px; height: 900px; }
+  .orbit.o2 { left: -100px; top: -100px; width: 700px; height: 700px; opacity: .6; }
+
+  .mock {
+    position: absolute; left: 60px; top: 60px; right: -40px; bottom: -40px;
+    background: #fff; border-radius: 14px;
+    border: 1px solid var(--cr-line);
+    padding: 28px; overflow: hidden;
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .mock.is-changing { opacity: 0; transform: translateY(8px); }
+
+  .mock-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 18px; border-bottom: 1px solid var(--cr-bg-grey-100);
+  }
+  .mock-title { font-family: Urbanist; font-weight: 700; font-size: 17px; color: var(--cr-ink-flat); }
+  .mock-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: Inter; font-size: 12px; color: var(--cr-success);
+    padding: 4px 10px; background: #ECFDF3; border-radius: 500px;
+  }
+  .mock-status .live { width: 6px; height: 6px; border-radius: 50%; background: var(--cr-success); }
+
+  .field { margin-top: 16px; }
+  .field-label { font-family: Inter; font-size: 11px; font-weight: 500; color: var(--cr-fg-3); margin-bottom: 6px; }
+  .field-input {
+    border: 1px solid var(--cr-line); border-radius: 8px;
+    padding: 10px 12px; font-family: Inter; font-size: 13px; color: var(--cr-ink-flat);
+    background: #fff;
+  }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 500px;
+    font-family: Inter; font-size: 11px; font-weight: 500;
+    margin-right: 6px; margin-bottom: 6px;
+  }
+
+  .mock-btn {
+    margin-top: 18px;
+    background: var(--accent); color: #fff;
+    font-family: Urbanist; font-weight: 600; font-size: 13px;
+    padding: 10px 18px; border-radius: 500px; border: 0;
+    display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+  }
+  .mock-btn-row { display: flex; justify-content: flex-end; }
+
+  .mock-bars { display: flex; gap: 2px; margin-top: 10px; align-items: flex-end; height: 36px; }
+  .mock-bars span { display: inline-block; width: 3px; border-radius: 1px; }
+
+  .mock-step {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border: 1px solid var(--cr-bg-grey-100); border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .mock-step .n {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-family: Urbanist; font-weight: 700; font-size: 11px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .mock-step .body {
+    flex: 1;
+    font-family: Inter; font-size: 13px; color: var(--cr-ink-flat);
+  }
+  .mock-step .body small { display: block; color: var(--cr-fg-muted); font-size: 11px; margin-top: 2px; }
+
+  .mock-stat { display: flex; align-items: baseline; gap: 12px; margin-top: 10px; }
+  .mock-stat .n { font-family: Urbanist; font-weight: 700; font-size: 32px; letter-spacing: -0.02em; color: var(--cr-ink-flat); }
+  .mock-stat .l { font-family: Inter; font-size: 12px; color: var(--cr-fg-3); }
+
+  /* ── Customer story strip ──────────────────────────────────── */
+  .story {
+    margin-top: 48px;
+    display: flex; align-items: center; gap: 40px;
+    padding-top: 24px; border-top: 1px solid var(--cr-line);
+    flex-wrap: wrap;
+  }
+  .story .ey {
+    font-family: Inter; font-weight: 600; font-size: 12px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--cr-fg-muted);
+  }
+  .story .lk {
+    font-family: Urbanist; font-weight: 600; font-size: 18px;
+    color: var(--cr-ink-flat); text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    cursor: pointer;
+  }
+  .story .lk svg { width: 18px; height: 18px; stroke-width: 1.5; }
+  .story .lk:hover { color: var(--accent); }
+
+  /* ── Responsive ──────────────────────────────────────────────── */
+  @media (max-width: 1100px) {
+    .section { padding: 72px 60px 60px; }
+    .headline { font-size: 44px; margin-bottom: 56px; }
+    .card { grid-template-columns: 1fr; }
+    .card-right { min-height: 460px; }
+    .mock { left: 40px; top: 40px; right: 40px; bottom: -40px; }
+  }
+  @media (max-width: 720px) {
+    .section { padding: 56px 24px 40px; }
+    .eyebrow { margin-bottom: 16px; }
+    .headline { font-size: 32px; line-height: 1.15; margin-bottom: 32px; }
+    .tabs { grid-template-columns: 1fr; }
+    .tab { border-right: 0; border-bottom: 1px solid var(--cr-line); padding: 18px 20px; justify-content: flex-start; font-size: 16px; }
+    .tab:last-child { border-bottom: 0; }
+    .tab.active::after { top: 0; bottom: auto; left: 0; right: auto; width: 3px; height: 100%; }
+    .card-left { padding: 32px 24px 24px; }
+    .card-title { font-size: 28px; }
+    .card-body { font-size: 15px; }
+    .sub-features { gap: 18px; padding-top: 28px; }
+    .card-right { min-height: 360px; }
+    .mock { left: 20px; top: 20px; right: 20px; bottom: -20px; padding: 20px; }
+    .mock-title { font-size: 15px; }
+    .story { gap: 16px; }
+    .story .lk { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="section" data-screen-label="Tabbed product showcase">
+  <div class="eyebrow">Products</div>
+  <h2 class="headline">One platform for every<br/>operational workflow.</h2>
+
+  <!-- TAB STRIP -->
+  <div class="tabs" id="tabs"></div>
+
+  <!-- CARD -->
+  <div class="card">
+    <div class="card-left">
+      <div class="marker"><span class="dot"></span><span id="marker-label"></span></div>
+      <h3 class="card-title" id="card-title"></h3>
+      <p class="card-body" id="card-body"></p>
+      <a class="learn-more">Learn more <i data-lucide="arrow-up-right"></i></a>
+      <div class="sub-features" id="sub-features"></div>
+    </div>
+
+    <div class="card-right" id="card-right">
+      <div class="orbit o1"></div>
+      <div class="orbit o2"></div>
+      <div class="mock" id="mock"></div>
+    </div>
+  </div>
+
+  <!-- CUSTOMER STORY -->
+  <div class="story">
+    <div class="ey">Customer story</div>
+    <a class="lk" id="story-link"></a>
+  </div>
+</section>
+
+<script>
+  // ── Helpers for building mock content ──────────────────────────
+  const accentBars = (accent) => {
+    const heights = [10, 16, 22, 14, 28, 24, 32, 20, 30, 26, 18, 22, 28, 30, 24, 20, 26, 32, 28, 22, 30, 24, 28, 32, 26, 24, 20, 16, 14, 22, 28, 26, 24, 20, 26, 28, 22, 18, 14, 20, 18, 16, 12, 18, 16, 14, 10, 12];
+    return `<div class="mock-bars">${heights.map((h, i) =>
+      `<span style="height:${h}px;background:${i < 38 ? accent : 'var(--cr-amber)'}"></span>`).join('')}</div>`;
+  };
+  const pills = (items, color) => items.map(t =>
+    `<span class="field-pill" style="background:${color}1A;color:${color}">${t}</span>`).join('');
+
+  // ── Tab + sub-feature content ──────────────────────────────────
+  const CONTENT = {
+    apa: {
+      label: "APA",
+      tabIcon: "bot",
+      tabName: "Autonomous Process Automation",
+      accent: "var(--cr-brand)",
+      icoBg: "var(--cr-brand-100)",
+      right: ["var(--cr-brand-700)", "color-mix(in srgb, var(--cr-teal-900) 70%, black)", "var(--cr-ink-cool)"],
+      title: "Run your operations on autonomous agents.",
+      body: "Deploy production AI agents that execute work continuously across your stack — handling exceptions, flagging risk, and escalating only what genuinely needs a human call.",
+      story: "How a Tier-1 BFSI insurer automated 80% of claims triage with Example Brand",
+      subs: {
+        workflows: { name: "Workflows", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Active Workflow</div><div class="mock-status"><span class="live"></span>Live</div></div>
+          <div class="field"><div class="field-label">Pipeline</div><div class="field-input">Claims triage — Tier 1 retail</div></div>
+          <div class="field-row" style="margin-top:14px">
+            <div class="field"><div class="field-label">Processed today</div><div class="field-input" style="font-family:Urbanist;font-weight:700;font-size:18px">3,412</div></div>
+            <div class="field"><div class="field-label">In queue</div><div class="field-input" style="font-family:Urbanist;font-weight:700;font-size:18px">128</div></div>
+          </div>
+          <div class="field"><div class="field-label">Confidence distribution</div>${accentBars(c)}</div>
+          <div class="mock-btn-row"><button class="mock-btn">View report <i data-lucide="arrow-right"></i></button></div>`
+        },
+        decisions: { name: "Decisions", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Decision policy</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Evaluating</div></div>
+          <div class="field"><div class="field-label">Input</div><div class="field-input">Claim #4827 · $24,500 · Vendor tier 1</div></div>
+          <div class="field"><div class="field-label">Reasoning</div>
+            <div>${pills(["Apply tier-1 rules", "Check SLA window", "Compare vs. policy"], c)}</div>
+          </div>
+          <div class="field"><div class="field-label">Chosen action</div><div class="field-input" style="font-weight:600">Auto-approve · log to audit</div></div>
+          <div class="mock-stat"><span class="n">94%</span><span class="l">Confidence above threshold</span></div>
+          <div class="mock-btn-row"><button class="mock-btn">Open trace <i data-lucide="arrow-right"></i></button></div>`
+        },
+        integrations: { name: "Integrations", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Connected systems</div><div class="mock-status"><span class="live"></span>Healthy</div></div>
+          <div class="field"><div class="field-label">Source systems</div>
+            <div>${pills(["SAP", "Salesforce", "Oracle", "Zoho"], c)}</div>
+          </div>
+          <div class="field"><div class="field-label">Destinations</div>
+            <div>${pills(["Snowflake", "Slack", "Jira", "Email"], "var(--cr-success)")}</div>
+          </div>
+          <div class="field"><div class="field-label">Sync method</div><div class="field-input">API · 2-way · 15s polling</div></div>
+          <div class="mock-btn-row"><button class="mock-btn">Manage connectors <i data-lucide="arrow-right"></i></button></div>`
+        },
+        audit: { name: "Audit & logs", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Action log</div><div class="mock-status"><span class="live"></span>Streaming</div></div>
+          ${[
+            ["1", "Approved claim #4827", "0.94 conf · 2s ago"],
+            ["2", "Escalated claim #4826", "below threshold · 14s ago"],
+            ["3", "Rejected duplicate #4825", "policy match · 32s ago"],
+          ].map(([n, t, s]) => `
+            <div class="mock-step"><div class="n" style="background:${c}">${n}</div><div class="body">${t}<small>${s}</small></div></div>`).join('')}
+          <div class="mock-btn-row"><button class="mock-btn">Export CSV <i data-lucide="arrow-right"></i></button></div>`
+        },
+        reporting: { name: "Reporting", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">This week</div><div class="mock-status"><span class="live"></span>+12% vs LW</div></div>
+          <div class="mock-stat"><span class="n">11.3×</span><span class="l">Return on agent</span></div>
+          <div class="mock-stat"><span class="n" style="color:${c}">92%</span><span class="l">Auto-resolution rate</span></div>
+          <div class="mock-stat"><span class="n">3 days</span><span class="l">Avg payback period</span></div>
+          <div class="field"><div class="field-label">Trend</div>${accentBars(c)}</div>
+          <div class="mock-btn-row"><button class="mock-btn">Full dashboard <i data-lucide="arrow-right"></i></button></div>`
+        },
+      },
+    },
+
+    docxter: {
+      label: "DocXter",
+      tabIcon: "file-text",
+      tabName: "Document Intelligence",
+      accent: "var(--cr-success)",
+      icoBg: "var(--cr-success-100)",
+      right: ["var(--cr-success-700)", "color-mix(in srgb, var(--cr-success-700) 70%, black)", "color-mix(in srgb, var(--cr-success-700) 35%, black)"],
+      title: "Turn unstructured documents into a queryable answer layer.",
+      body: "Ingest contracts, PDFs, scanned forms and images. DocXter extracts intent, structure and entities — then answers questions against them with cited evidence.",
+      story: "How a global law firm cut contract review cycle time by 64%",
+      subs: {
+        ingest: { name: "Ingest", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Inbox</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Reading</div></div>
+          ${[["1","NDA_2026_Acme.pdf","12 pages · OCR complete"],
+             ["2","Vendor-MSA.docx","8 pages · parsed"],
+             ["3","SOW_amendment.pdf","4 pages · indexing"]].map(([n,t,s])=>`
+            <div class="mock-step"><div class="n" style="background:${c}">${n}</div><div class="body">${t}<small>${s}</small></div></div>`).join('')}
+          <div class="mock-btn-row"><button class="mock-btn">Upload more <i data-lucide="arrow-right"></i></button></div>`
+        },
+        extract: { name: "Extract", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Finalize your offer</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Extracted</div></div>
+          <div class="field"><div class="field-label">Job title</div><div class="field-input">Journeyman Electrician</div></div>
+          <div class="field"><div class="field-label">Department</div><div class="field-input">Construction</div></div>
+          <div class="field-row" style="margin-top:14px">
+            <div class="field"><div class="field-label">Start date</div><div class="field-input">Tue, Apr 1</div></div>
+            <div class="field"><div class="field-label">Hourly rate</div><div class="field-input">$48.50</div></div>
+          </div>
+          <div class="mock-btn-row"><button class="mock-btn">Continue <i data-lucide="arrow-right"></i></button></div>`
+        },
+        query: { name: "Query", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Ask a question</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Answering</div></div>
+          <div class="field"><div class="field-label">Question</div><div class="field-input">What's our liability cap with Acme?</div></div>
+          <div class="field"><div class="field-label">Answer</div><div class="field-input" style="background:var(--cr-bg-grey-50)">Capped at $250,000 per incident, $2M aggregate per the 2026 MSA, §8.2.</div></div>
+          <div class="field"><div class="field-label">Cited from</div>
+            <div>${pills(["MSA-2026.pdf p.12", "NDA-rider.docx"], c)}</div>
+          </div>
+          <div class="mock-btn-row"><button class="mock-btn">Ask another <i data-lucide="arrow-right"></i></button></div>`
+        },
+        cite: { name: "Cite", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Evidence chain</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>3 sources</div></div>
+          ${[["§ 8.2","Liability cap clause","MSA-2026.pdf · page 12"],
+             ["§ 3.1","Indemnification scope","MSA-2026.pdf · page 5"],
+             ["Sched. A","Exclusions","NDA-rider.docx"]].map(([n,t,s])=>`
+            <div class="mock-step"><div class="n" style="background:${c};font-size:10px;width:36px;border-radius:6px">${n}</div><div class="body">${t}<small>${s}</small></div></div>`).join('')}
+          <div class="mock-btn-row"><button class="mock-btn">Copy citations <i data-lucide="arrow-right"></i></button></div>`
+        },
+        export: { name: "Export", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Export</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Ready</div></div>
+          <div class="field"><div class="field-label">Format</div>
+            <div>${pills(["CSV", "JSON", "PDF brief", "API webhook"], c)}</div>
+          </div>
+          <div class="field"><div class="field-label">Destination</div><div class="field-input">Snowflake · finance.contracts</div></div>
+          <div class="field"><div class="field-label">Records</div><div class="field-input" style="font-family:Urbanist;font-weight:700;font-size:18px">1,284</div></div>
+          <div class="mock-btn-row"><button class="mock-btn">Export now <i data-lucide="arrow-right"></i></button></div>`
+        },
+      },
+    },
+
+    jennie: {
+      label: "Jennie",
+      tabIcon: "send",
+      tabName: "Sales Outreach",
+      accent: "var(--cr-amber)",
+      icoBg: "var(--cr-amber-100)",
+      right: ["var(--cr-amber)", "var(--cr-fg-2)", "var(--cr-fg)"],
+      title: "Send outreach your prospects actually want to read.",
+      body: "Jennie researches each account, drafts personalised sequences, books meetings on your calendar, and hands off the warm thread to a human only when the buyer is ready.",
+      story: "How a SaaS team replaced 5 SDR seats with one Example Brand agent",
+      subs: {
+        research: { name: "Research", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Account brief</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Ready</div></div>
+          <div class="field"><div class="field-label">Account</div><div class="field-input">Northwind Logistics · 1,200 FTE · Series D</div></div>
+          <div class="field"><div class="field-label">Signals</div>
+            <div>${pills(["Hiring 12 ops engineers", "Series D · 6 weeks ago", "Switched warehouse software"], c)}</div>
+          </div>
+          <div class="field"><div class="field-label">Suggested wedge</div><div class="field-input">Procurement-cycle reduction post-funding</div></div>
+          <div class="mock-btn-row"><button class="mock-btn">Draft email <i data-lucide="arrow-right"></i></button></div>`
+        },
+        draft: { name: "Draft", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Email draft</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Ready to send</div></div>
+          <div class="field"><div class="field-label">To</div><div class="field-input">jordan@northwind.co</div></div>
+          <div class="field"><div class="field-label">Subject</div><div class="field-input" style="font-weight:600">12 new ops hires — quick thought</div></div>
+          <div class="field"><div class="field-label">Body</div><div class="field-input" style="background:var(--cr-bg-grey-50);font-size:12px;line-height:1.5">Saw you posted 12 ops eng roles right after the D. We helped Acme cut their procurement cycle 47% post-funding without growing the team. 15 min next Tue?</div></div>
+          <div class="mock-btn-row"><button class="mock-btn">Schedule <i data-lucide="arrow-right"></i></button></div>`
+        },
+        send: { name: "Send", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Sequence — Q2 Enterprise</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Sending</div></div>
+          ${[["1","Personalised intro","412 sent"],
+             ["2","Case-study link","318 queued"],
+             ["3","Calendar nudge","204 scheduled"]].map(([n,t,s])=>`
+            <div class="mock-step"><div class="n" style="background:${c}">${n}</div><div class="body">${t}<small>${s}</small></div></div>`).join('')}
+          <div class="mock-btn-row"><button class="mock-btn">View pipeline <i data-lucide="arrow-right"></i></button></div>`
+        },
+        reply: { name: "Reply", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Inbound reply</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Drafting</div></div>
+          <div class="field"><div class="field-label">From</div><div class="field-input">Jordan Kim · VP Ops, Northwind</div></div>
+          <div class="field"><div class="field-label">Their reply</div><div class="field-input" style="background:var(--cr-bg-grey-50);font-size:12px;line-height:1.5">"Interesting — what does a 30-day pilot look like for a team our size?"</div></div>
+          <div class="field"><div class="field-label">Suggested reply</div><div class="field-input" style="background:${c}10;font-size:12px;line-height:1.5">Hi Jordan — for ~1,200 FTE, we'd scope 1 workflow in week 1, blueprint in week 2, shadow-run weeks 3–4. Tue 2pm or Thu 11am?</div></div>
+          <div class="mock-btn-row"><button class="mock-btn">Send reply <i data-lucide="arrow-right"></i></button></div>`
+        },
+        handoff: { name: "Hand-off", mock: (c) => `
+          <div class="mock-head"><div class="mock-title">Hand-off to AE</div><div class="mock-status" style="color:${c};background:${c}1A"><span class="live" style="background:${c}"></span>Ready</div></div>
+          <div class="field"><div class="field-label">Prospect</div><div class="field-input">Jordan Kim · Northwind Logistics</div></div>
+          <div class="field"><div class="field-label">Meeting booked</div><div class="field-input">Thu Apr 17 · 11:00 IST</div></div>
+          <div class="field"><div class="field-label">Owner</div><div class="field-input">Aanya Mehta · Enterprise AE</div></div>
+          <div class="field"><div class="field-label">Brief</div>
+            <div>${pills(["Account brief", "Conversation log", "Suggested deck"], c)}</div>
+          </div>
+          <div class="mock-btn-row"><button class="mock-btn">Open in CRM <i data-lucide="arrow-right"></i></button></div>`
+        },
+      },
+    },
+  };
+
+  // ── State + render ─────────────────────────────────────────────
+  const state = { tab: 'apa', sub: 'workflows' };
+
+  const tabsEl = document.getElementById('tabs');
+  const titleEl = document.getElementById('card-title');
+  const bodyEl = document.getElementById('card-body');
+  const markerEl = document.getElementById('marker-label');
+  const subsEl = document.getElementById('sub-features');
+  const mockEl = document.getElementById('mock');
+  const cardRightEl = document.getElementById('card-right');
+  const storyEl = document.getElementById('story-link');
+  const root = document.documentElement;
+
+  function renderTabs() {
+    tabsEl.innerHTML = Object.entries(CONTENT).map(([k, t]) => `
+      <div class="tab ${k === state.tab ? 'active' : ''}" data-key="${k}"
+           style="--accent:${t.accent}; --ico-bg:${t.icoBg}">
+        <span class="ico"><i data-lucide="${t.tabIcon}"></i></span>
+        <span>${t.tabName}</span>
+      </div>`).join('');
+  }
+
+  function renderCard() {
+    const t = CONTENT[state.tab];
+    const sub = t.subs[state.sub] || t.subs[Object.keys(t.subs)[0]];
+
+    // Apply per-tab accent + creative palette via CSS vars
+    root.style.setProperty('--accent', t.accent);
+    cardRightEl.style.setProperty('--right-1', t.right[0]);
+    cardRightEl.style.setProperty('--right-2', t.right[1]);
+    cardRightEl.style.setProperty('--right-3', t.right[2]);
+
+    titleEl.textContent = t.title;
+    bodyEl.textContent = t.body;
+    markerEl.textContent = t.label + ' · ' + sub.name;
+
+    subsEl.innerHTML = '<span class="pin"></span>' + Object.entries(t.subs).map(([k, s]) =>
+      `<button data-sub="${k}" class="${k === state.sub ? 'is-current' : ''}">${s.name}</button>`).join('');
+
+    storyEl.innerHTML = t.story + ' <i data-lucide="arrow-up-right"></i>';
+
+    // Animate the mock swap
+    mockEl.classList.add('is-changing');
+    setTimeout(() => {
+      mockEl.innerHTML = sub.mock(t.accent);
+      mockEl.classList.remove('is-changing');
+      lucide.createIcons();
+    }, 180);
+  }
+
+  function setTab(k) {
+    state.tab = k;
+    state.sub = Object.keys(CONTENT[k].subs)[0];
+    renderTabs();
+    renderCard();
+    lucide.createIcons();
+  }
+  function setSub(k) {
+    state.sub = k;
+    renderCard();
+  }
+
+  tabsEl.addEventListener('click', e => {
+    const t = e.target.closest('.tab');
+    if (t) setTab(t.dataset.key);
+  });
+  subsEl.addEventListener('click', e => {
+    const b = e.target.closest('button[data-sub]');
+    if (b) setSub(b.dataset.sub);
+  });
+
+  renderTabs();
+  renderCard();
+  lucide.createIcons();
+</script>
+</body>
+</html>

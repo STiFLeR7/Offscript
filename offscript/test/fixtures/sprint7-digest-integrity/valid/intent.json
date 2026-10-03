@@ -1,0 +1,8 @@
+{
+  "id": "sprint7-valid-intent",
+  "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "belief": "digest integrity keeps consumption trustworthy",
+  "feature": "automation",
+  "mustInclude": ["integrity", "trust boundary"],
+  "section": "feature"
+}

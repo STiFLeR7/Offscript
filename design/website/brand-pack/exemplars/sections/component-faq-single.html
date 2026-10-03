@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FAQ — single column</title>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<!--
+  COMPOSITION  — Single full-width, centred-column FAQ led by an OVERSIZED
+                 editorial headline (Urbanist ExtraBold 800, magazine-cover
+                 scale) top-left. Below it a one-column accordion: each row =
+                 a dark question (left) + a BARE chevron (right), divided by
+                 full-width hairlines (bottom-border per item, none above the
+                 first). The first item is open, showing a multi-paragraph
+                 answer with an inline text link. Generous whitespace, content
+                 sits in a centred ~1040px well. Distinct from `faq-split`
+                 (which has a left intro column, a +/× circle toggle, and greys
+                 inactive questions) — here it's one column, a plain chevron,
+                 and every question reads equally dark.
+  INSPIRATION  — Vectara "Frequently-asked questions" support page (huge bold
+                 headline + single-column chevron accordion, first item open).
+                 Layout / composition / spacing ONLY; its font + near-black +
+                 light-grey page surface are dropped and reskinned in the CR
+                 kit (Urbanist/Inter, white surface, brand-blue link, ink text).
+  MOTION       — Accordion (exactly one open at a time; smooth height via the
+                 grid-template-rows 0fr→1fr trick; chevron rotates 180°) PLUS a
+                 scroll-reveal: the headline fades up first, then each row
+                 stagger-fades up on first viewport entry (--d / Intersection
+                 Observer, fires once). Hover lives only on real controls — the
+                 question button (chevron + text crisp to ink) and the inline
+                 link (underline + → ). Honours prefers-reduced-motion.
+  NO-JS SAFE   — Items are static HTML, fully readable without JS: the collapsed
+                 state + reveal hidden-state are scoped to `.has-js`, so without
+                 JS every answer shows expanded and all chevrons point up.
+-->
+<script>document.documentElement.classList.add("has-js");</script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-bg);                 /* clean white page — distinct from faq-split's warm band */
+    font-family: var(--cr-font-body); color: var(--cr-ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .section { padding: 120px 100px; }
+  .inner   { max-width: var(--cr-content-narrow); margin: 0 auto; }   /* centred editorial well */
+
+  /* ── Oversized editorial headline ───────────────────────────── */
+  .headline {
+    font-family: var(--cr-font-editorial);    /* Urbanist */
+    font-weight: 800;                         /* ExtraBold — magazine-cover moment */
+    font-size: clamp(34px, 5.4vw, 60px);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    color: var(--cr-ink);                     /* darkest allowed — never pure black */
+    margin: 0 0 56px;
+    /* One line on desktop like the reference (~840px at 60px in the 1040 well);
+       wraps only when the viewport genuinely forces it. No max-width cap. */
+  }
+
+  /* ── Accordion list ─────────────────────────────────────────── */
+  .qa { border-bottom: 1px solid var(--cr-line); }   /* hairline between items; none above the first */
+
+  /* Question row (the only interactive control besides the inline link) */
+  .q {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    gap: 32px; padding: 28px 0;
+    background: transparent; border: 0; cursor: pointer;
+    font: inherit; color: inherit; text-align: left;
+  }
+  .qt {
+    font-family: var(--cr-font-display);      /* Urbanist */
+    font-weight: 600; font-size: 24px;
+    letter-spacing: -0.01em; line-height: 1.35;
+    color: var(--cr-fg);                      /* var(--cr-fg) default … */
+    transition: color .18s ease;
+  }
+  .q:hover .qt,
+  .qa.open .qt { color: var(--cr-ink); }      /* … crisps to ink on hover / open */
+
+  /* Bare chevron — no circle, no fill (the reference uses a plain glyph) */
+  .qi {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--cr-fg-muted);                /* muted grey at rest */
+    transition: transform .3s ease, color .18s ease;
+  }
+  .qi svg { width: 24px; height: 24px; stroke-width: 1.5; }
+  .q:hover .qi { color: var(--cr-fg-3); }
+  .qa.open .qi { color: var(--cr-ink); transform: rotate(180deg); }   /* down → up */
+  /* Without JS every answer is open, so point every chevron up to match */
+  html:not(.has-js) .qi { transform: rotate(180deg); }
+
+  /* Answer — smooth height via the grid 0fr→1fr trick */
+  .a {
+    display: grid;
+    grid-template-rows: 1fr;                  /* default (no-JS): open & visible */
+    transition: grid-template-rows .35s ease;
+  }
+  .a-inner { overflow: hidden; min-height: 0; }
+  .has-js .a          { grid-template-rows: 0fr; }   /* collapsed once JS is present … */
+  .has-js .qa.open .a { grid-template-rows: 1fr; }   /* … except the open one */
+
+  .a-body {
+    padding: 0 56px 34px 0;                   /* right inset keeps the measure off the chevron column */
+    font-family: var(--cr-font-body);
+    font-weight: 400; font-size: 17px; line-height: 1.7;
+    color: var(--cr-fg-2);
+    /* gentle content fade once the row opens */
+    opacity: 0; transform: translateY(-4px);
+    transition: opacity .35s ease .05s, transform .35s ease .05s;
+  }
+  html:not(.has-js) .a-body,
+  .qa.open .a-body { opacity: 1; transform: none; }
+  .a-body p { margin: 0 0 16px; }
+  .a-body p:last-child { margin-bottom: 0; }
+
+  /* Inline link — brand-700 for AA-safe link text on white; underline on hover */
+  .lnk {
+    color: var(--cr-brand-700); text-decoration: none; font-weight: 500;
+    transition: color .16s ease;
+  }
+  .lnk .arr { display: inline-block; transition: transform .16s ease; }
+  .lnk:hover { color: var(--cr-brand); text-decoration: underline; text-underline-offset: 3px; }
+  .lnk:hover .arr { transform: translateX(3px); }
+
+  /* ── Scroll-reveal stagger (scoped to .has-js so no-JS shows content) ── */
+  .has-js .anim {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity .6s cubic-bezier(.2,.7,.2,1) var(--d, 0ms),
+                transform .6s cubic-bezier(.2,.7,.2,1) var(--d, 0ms);
+  }
+  .section.reveal .anim { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .anim { opacity: 1 !important; transform: none !important; transition: none; }
+    .a, .a-body, .qi { transition: none; }
+  }
+
+  /* ── Responsive ─────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .section  { padding: 88px 56px; }
+    .headline { margin-bottom: 44px; }
+    .qt { font-size: 21px; }
+    .q  { gap: 24px; }
+    .a-body { font-size: 16px; padding-right: 32px; }
+  }
+  @media (max-width: 600px) {
+    .section  { padding: 56px 22px; }
+    .headline { margin-bottom: 32px; }
+    .q  { padding: 22px 0; gap: 18px; }
+    .qt { font-size: 18px; }
+    .qi svg { width: 22px; height: 22px; }
+    .a-body { padding-right: 0; }
+  }
+</style>
+</head>
+<body>
+
+<section class="section" data-screen-label="FAQ — single column">
+  <div class="inner">
+    <h2 class="headline anim" style="--d:0ms">Frequently asked questions</h2>
+
+    <div class="list" id="list">
+
+      <!-- Item 1 — open by default, multi-paragraph + inline link -->
+      <div class="qa open anim" style="--d:90ms">
+        <button class="q" aria-expanded="true">
+          <span class="qt">What does a 4-week pilot actually include?</span>
+          <span class="qi"><i data-lucide="chevron-down"></i></span>
+        </button>
+        <div class="a"><div class="a-inner"><div class="a-body">
+          <p>Every pilot follows the same four-week arc. Week 1 is a no-cost process audit — we map one high-volume workflow end to end and quantify the hours it is costing you today. Week 2, we hand back a signed blueprint: the exact agent design, the systems it touches, and the outcome we will bill against. Weeks 3 and 4, the agent runs in shadow mode beside your existing team — same inputs, same queue — so you compare its output against your people before a single process is cut over.</p>
+          <p>You see the numbers before you commit. Most pilots reach payback inside the first 30 days.</p>
+          <p>For the full week-by-week breakdown, see our <a class="lnk" href="#">process methodology <span class="arr">&rarr;</span></a></p>
+        </div></div></div>
+      </div>
+
+      <!-- Item 2 -->
+      <div class="qa anim" style="--d:160ms">
+        <button class="q" aria-expanded="false">
+          <span class="qt">Will this require us to replace our existing systems?</span>
+          <span class="qi"><i data-lucide="chevron-down"></i></span>
+        </button>
+        <div class="a"><div class="a-inner"><div class="a-body">
+          <p>No. Our agents connect to the tools you already run — SAP, Salesforce, Zoho, Oracle, Epic, Cerner, or your own spreadsheets — over API or browser automation. We deploy parallel to your current workflow, so there is no rip-and-replace and no new platform for your team to learn.</p>
+        </div></div></div>
+      </div>
+
+      <!-- Item 3 -->
+      <div class="qa anim" style="--d:230ms">
+        <button class="q" aria-expanded="false">
+          <span class="qt">How is this different from the RPA tools we have already tried?</span>
+          <span class="qi"><i data-lucide="chevron-down"></i></span>
+        </button>
+        <div class="a"><div class="a-inner"><div class="a-body">
+          <p>RPA breaks the moment a screen layout or form field changes. Our agents reason about the task, not the pixels — they handle exceptions, draft the response, and escalate only the cases that genuinely need a human. The result is automation that holds up when your processes shift.</p>
+        </div></div></div>
+      </div>
+
+      <!-- Item 4 -->
+      <div class="qa anim" style="--d:300ms">
+        <button class="q" aria-expanded="false">
+          <span class="qt">What happens when the agent gets something wrong?</span>
+          <span class="qi"><i data-lucide="chevron-down"></i></span>
+        </button>
+        <div class="a"><div class="a-inner"><div class="a-body">
+          <p>Every action carries a confidence score. Below your threshold, the agent escalates to a person instead of guessing. Above it, the agent acts but flags a sample for review. Nothing happens off the record — every decision is logged, attributable, and reversible.</p>
+        </div></div></div>
+      </div>
+
+      <!-- Item 5 -->
+      <div class="qa anim" style="--d:370ms">
+        <button class="q" aria-expanded="false">
+          <span class="qt">Is our data safe? What is the security model?</span>
+          <span class="qi"><i data-lucide="chevron-down"></i></span>
+        </button>
+        <div class="a"><div class="a-inner"><div class="a-body">
+          <p>Your data stays in your environment. We deploy inside your VPC or on-prem, we never train on your data, and access is scoped to the single workflow the agent runs. SOC 2 Type II and HIPAA documentation are available on request.</p>
+        </div></div></div>
+      </div>
+
+      <!-- Item 6 -->
+      <div class="qa anim" style="--d:440ms">
+        <button class="q" aria-expanded="false">
+          <span class="qt">How are we billed — by seats or by outcomes?</span>
+          <span class="qi"><i data-lucide="chevron-down"></i></span>
+        </button>
+        <div class="a"><div class="a-inner"><div class="a-body">
+          <p>Outcomes. You are billed against the result we agreed on in the blueprint — work completed, hours removed, cycle time cut — not per seat or per user. If the agent is not moving the number, you are not paying for shelfware.</p>
+        </div></div></div>
+      </div>
+
+      <!-- Item 7 -->
+      <div class="qa anim" style="--d:510ms">
+        <button class="q" aria-expanded="false">
+          <span class="qt">How do we keep track of what the agents are doing?</span>
+          <span class="qi"><i data-lucide="chevron-down"></i></span>
+        </button>
+        <div class="a"><div class="a-inner"><div class="a-body">
+          <p>You get a live operations view: every workflow running, every exception caught, throughput against your baseline, and the running ROI. Your team sees the same dashboard we do — no black box.</p>
+        </div></div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  // Icons — guarded so a blocked CDN can't break the page (content stays readable).
+  if (window.lucide) lucide.createIcons();
+
+  // Accordion — exactly one open at a time.
+  var list = document.getElementById("list");
+  list.addEventListener("click", function (e) {
+    var btn = e.target.closest(".q");
+    if (!btn) return;
+    var item = btn.parentElement;
+    var wasOpen = item.classList.contains("open");
+    list.querySelectorAll(".qa").forEach(function (el) {
+      el.classList.remove("open");
+      el.querySelector(".q").setAttribute("aria-expanded", "false");
+    });
+    if (!wasOpen) {
+      item.classList.add("open");
+      btn.setAttribute("aria-expanded", "true");
+    }
+  });
+
+  // Scroll-reveal — fires once on first viewport entry.
+  (function () {
+    var section = document.querySelector(".section");
+    if (!section) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { section.classList.add("reveal"); io.disconnect(); }
+      });
+    }, { threshold: 0.15 });
+    io.observe(section);
+  })();
+</script>
+</body>
+</html>

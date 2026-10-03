@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<!--
+  Example Brand — Feature trio (intro + 3-up info grid)
+  ───────────────────────────────────────────────────────────────────────────
+  COMPOSITION (fidelity copy of the shared inspiration):
+    • Top hairline rule spanning the well.
+    • Top-LEFT intro: large 2-line headline + a 2-line sub-paragraph (~580px wide).
+      (left-aligned per source — alignment is not hardcoded as a rule.)
+    • A large block of vertical air, then THREE equal-width filled cards, tight gap.
+    • Each card: warm light-grey fill, large radius, NO border / NO shadow (the fill
+      is the separation). Title pinned TOP, a small grey supporting line pinned
+      BOTTOM via justify-content:space-between — this is why card 2's single line
+      still bottom-aligns with the 2-line cards (1, 3). Content volume matched to
+      source: 2-line / 1-line / 2-line notes; one-line titles.
+  RE-SKIN (brand wins on hue + voice + fonts only):
+    • Source serif headline → Urbanist Bold. Source sentence-case → CR locked
+      Title Case + period. Source "Handhold agents" → "CR Jennie" (CR's sales agent).
+    • Card fill → --cr-bg-warm-2 #F2F2F2 (warm source → warm token, never cool).
+  RATIO DECISION (per audit): held the source's wide-short card silhouette (~2.75:1)
+    via min-height at the design width; got the title→note air by cutting card
+    padding (~26px) rather than heightening the card (would over-abstract). Ratio
+    relaxes gracefully toward square as the 3-col shrinks, then restacks to 1-col
+    at ≤980px.
+  MOTION: staggered entrance reveal (headline → sub → cards fade-up). Cards are
+    informational, so NO hover reaction (charter). Reveal defaults to VISIBLE; an
+    inline script opts in via html.js-reveal, so stripping <script> for screenshots
+    leaves a clean static still. Honors prefers-reduced-motion.
+  Inspiration: user-shared "Scale personalised sales…" 3-grid features section.
+  ───────────────────────────────────────────────────────────────────────────
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Example Brand — Feature trio</title>
+<link rel="stylesheet" href="../_frozen-v2-tokens.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--cr-bg);
+    font-family: var(--cr-font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .ft-section {
+    background: var(--cr-bg);
+    padding: 4px 40px 124px;
+  }
+  .ft-well {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+  }
+
+  /* Top hairline rule — spans the well, flush near the top edge */
+  .ft-rule {
+    height: 1px;
+    background: var(--cr-line);
+    margin: 0 0 92px;
+  }
+
+  /* ── Intro (top-left) ───────────────────────────────────────────── */
+  .ft-intro { margin-bottom: 132px; }
+  .ft-title {
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(30px, 3.6vw, 44px);
+    line-height: 1.16;
+    letter-spacing: -0.02em;
+    color: var(--cr-fg);
+    max-width: 720px;
+    margin: 0;
+  }
+  .ft-sub {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--cr-fg-2);
+    max-width: 580px;
+    margin: 22px 0 0;
+  }
+
+  /* ── 3-up grid ──────────────────────────────────────────────────── */
+  .ft-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .ft-card {
+    min-width: 0;                       /* let grid cells size equally */
+    min-height: 162px;                  /* holds ~2.75:1 silhouette at design width */
+    background: var(--cr-bg-warm-2);
+    border-radius: var(--cr-radius-xl);
+    padding: 26px 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;     /* title top / note bottom */
+  }
+  .ft-card-title {
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--cr-fg);
+    margin: 0;
+  }
+  .ft-card-note {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--cr-fg-3);
+    margin: 0;
+    max-width: 185px;                   /* holds the source's 2 / 1 / 2 note-line rhythm */
+  }
+
+  /* ── Entrance reveal (opt-in; defaults visible for clean stills) ──── */
+  html.js-reveal .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+                transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  html.js-reveal .reveal.in { opacity: 1; transform: none; }
+  html.js-reveal .ft-sub { transition-delay: 0.06s; }
+  html.js-reveal .ft-grid .ft-card:nth-child(1) { transition-delay: 0.10s; }
+  html.js-reveal .ft-grid .ft-card:nth-child(2) { transition-delay: 0.18s; }
+  html.js-reveal .ft-grid .ft-card:nth-child(3) { transition-delay: 0.26s; }
+  @media (prefers-reduced-motion: reduce) {
+    html.js-reveal .reveal {
+      opacity: 1 !important; transform: none !important; transition: none !important;
+    }
+  }
+
+  /* ── Responsive ─────────────────────────────────────────────────── */
+  @media (max-width: 980px) {
+    .ft-rule { margin-bottom: 64px; }
+    .ft-intro { margin-bottom: 72px; }
+    .ft-grid { grid-template-columns: 1fr; gap: 16px; }
+    /* stacked: hug content with a fixed title→note gap (space-between would
+       leave an uneven trailing band when content ≈ the card's min-height) */
+    .ft-card { min-height: auto; justify-content: flex-start; gap: 14px; }
+    .ft-card-note { max-width: none; }
+  }
+  @media (max-width: 560px) {
+    .ft-section { padding: 4px 24px 88px; }
+    .ft-rule { margin-bottom: 48px; }
+    .ft-intro { margin-bottom: 56px; }
+    .ft-card { padding: 24px 24px; }
+  }
+</style>
+</head>
+<body>
+  <!-- Feature trio: intro block over a 3-up informational grid. -->
+  <section class="ft-section" data-screen-label="Feature trio — intro + 3-up grid">
+    <div class="ft-well">
+      <div class="ft-rule" aria-hidden="true"></div>
+
+      <header class="ft-intro">
+        <h2 class="ft-title reveal">Scale Personalised Sales Without Growing Your Team.</h2>
+        <p class="ft-sub reveal">Give a dedicated guide to every buyer &mdash; CR Jennie agents are always available. If a human touch is needed, you&rsquo;ll know.</p>
+      </header>
+
+      <div class="ft-grid">
+        <article class="ft-card reveal">
+          <h3 class="ft-card-title">Live 24/7</h3>
+          <p class="ft-card-note">Always available to interact with visitors.</p>
+        </article>
+        <article class="ft-card reveal">
+          <h3 class="ft-card-title">Multilingual</h3>
+          <p class="ft-card-note">Supports 50+ languages.</p>
+        </article>
+        <article class="ft-card reveal">
+          <h3 class="ft-card-title">Tailored for each prospect</h3>
+          <p class="ft-card-note">Adapts every session to the buyer.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    /* Opt in to the reveal only when JS runs — stripping this <script>
+       (screenshot pass) leaves every .reveal at its visible default. */
+    document.documentElement.classList.add('js-reveal');
+    (function () {
+      var well = document.querySelector('.ft-well');
+      if (!well) return;
+      var targets = well.querySelectorAll('.reveal');
+      var io = new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          targets.forEach(function (t) { t.classList.add('in'); });
+          obs.disconnect();
+        });
+      }, { threshold: 0.15 });
+      io.observe(well);
+    })();
+  </script>
+</body>
+</html>

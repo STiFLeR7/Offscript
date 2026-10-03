@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stat cards</title>
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+<!-- No-JS fallback: cards visible, numbers already show the formatted final
+     value from the SSR markup (`3x`, `70%`, `1K+`, etc.). -->
+<noscript><style>.card { opacity: 1 !important; transform: none !important; }</style></noscript>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    /* Section sits on the brand black canvas — `--cr-ink` `var(--cr-ink-flat)` is
+       the brand's "Hero background / dense surfaces" token from
+       `colors_and_type.css`. Body bg matches so previews don't reveal a
+       light gutter at the section edges. */
+    background: var(--cr-ink);
+    font-family: var(--cr-font-body); color: #FFFFFF;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Section ──────────────────────────────────────────────────
+     Brand black canvas; cream cards floating on it deliver the
+     editorial high-contrast pairing. */
+  .section {
+    --accent: var(--cr-brand);    /* dot indicator colour — swap per instance, never indigo */
+    padding: 120px 100px;
+    max-width: var(--cr-content-max); margin: 0 auto;
+    background: var(--cr-ink);
+  }
+  .wrap {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+  }
+
+  /* ── Centred headline ───────────────────────────────────────── */
+  .headline {
+    font-family: "Urbanist", sans-serif; font-weight: 700;
+    font-size: 44px; line-height: 1.15; letter-spacing: -0.02em;
+    color: #FFFFFF;
+    text-align: center;
+    max-width: 720px; margin: 0 auto 64px;
+  }
+
+  /* ── Row of cards ───────────────────────────────────────────── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  /* Each card: dark neutral-gray surface — `--cr-fg` `var(--cr-fg)` is one
+     step up the brand's neutral ramp from `--cr-ink` `var(--cr-ink-flat)` (same
+     tonal family — zero warm/cool bias on both), so card-on-section
+     reads as a single tonally-coherent neutral pairing separated only
+     by lightness. Flat panel: no border / no highlight gradient —
+     the subtle neutral lift against the deeper brand-black canvas
+     alone defines the card edge. */
+  .card {
+    position: relative;
+    aspect-ratio: 1 / 1.05;
+    padding: 28px;
+    border-radius: var(--cr-radius-lg, 20px);
+    background: var(--cr-fg);
+
+    /* The number + caption sit at the bottom of the card; the dot floats
+       in the top-left corner (absolutely positioned). */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    /* Hidden until the section enters the viewport. CSS animation (NOT a
+       transition) is triggered by `.section.in-view`, so the IO callback
+       can't cancel the starting frame. <noscript> fallback above keeps
+       cards visible if JS is off. */
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  /* Dot indicator — top-left, configurable accent. */
+  .dot {
+    position: absolute;
+    top: 22px; left: 22px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* Number — huge display, suffix is rendered inline as part of the
+     same text node (the formatter outputs the full string each frame,
+     so the suffix lock holds across the count-up). White on dark gray. */
+  .num {
+    font-family: "Urbanist", sans-serif; font-weight: 700;
+    font-size: clamp(48px, 6vw, 72px);
+    line-height: 1; letter-spacing: -0.02em;
+    color: #FFFFFF;
+    /* Tabular figures keep digit width stable so the number doesn't
+       wobble as digits change during the count-up. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Caption — small, muted-white on dark gray, sentence-case. */
+  .cap {
+    font-family: "Inter", sans-serif; font-weight: 400;
+    font-size: 13px; line-height: 1.5; letter-spacing: 0.01em;
+    color: rgba(255,255,255,0.6);
+    margin-top: 12px;
+  }
+
+  /* ── Entrance animation (CSS animation, not transition) ──────── */
+  .section.in-view .card {
+    animation: card-in .55s ease forwards;
+    animation-delay: var(--delay, 0ms);
+  }
+  @keyframes card-in { to { opacity: 1; transform: none; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* ── Responsive ─────────────────────────────────────────────── */
+
+  /* Tablet: 2-col grid (2×2), tighter padding, headline steps down. */
+  @media (max-width: 1024px) {
+    .section { padding: 80px 60px; }
+    .headline { font-size: clamp(36px, 4.4vw, 44px); margin-bottom: 48px; }
+    .cards { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .card { padding: 24px; }
+    .dot { top: 20px; left: 20px; }
+  }
+
+  /* Mobile: single-column stack; aspect-ratio relaxed so cards size
+     to content instead of forcing a near-square tile. */
+  @media (max-width: 640px) {
+    .section { padding: 56px 20px; }
+    .headline { font-size: 28px; line-height: 1.2; margin-bottom: 36px; }
+    .cards { grid-template-columns: 1fr; gap: 16px; }
+    .card { aspect-ratio: auto; min-height: 200px; padding: 22px; }
+    .dot { top: 18px; left: 18px; }
+    .num { font-size: 56px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="section" data-screen-label="Stat cards">
+  <div class="wrap">
+    <h2 class="headline">High-growth teams trust Example Brand to deliver outcomes, fast.</h2>
+
+    <!-- 4 cards by default (matches reference). Each `.num` carries:
+         data-target = the raw end value (integer)
+         data-suffix = the inline unit (%, x, +, etc.) — optional
+         The rendered text content IS the already-formatted final value, so
+         the section reads correctly without JS (noscript fallback). -->
+    <div class="cards">
+      <article class="card">
+        <span class="dot" aria-hidden="true"></span>
+        <div class="num" data-target="3" data-suffix="x">3x</div>
+        <div class="cap">Faster to hire</div>
+      </article>
+      <article class="card">
+        <span class="dot" aria-hidden="true"></span>
+        <div class="num" data-target="70" data-suffix="%">70%</div>
+        <div class="cap">Interview rate</div>
+      </article>
+      <article class="card">
+        <span class="dot" aria-hidden="true"></span>
+        <div class="num" data-target="98" data-suffix="%">98%</div>
+        <div class="cap">Satisfaction rate</div>
+      </article>
+      <!-- Million-scale demo — `data-target="2000000"` exercises the K/M
+           formatter end-to-end: the count ticks 1 → … → 1K → … → 1M → 2M
+           and lands on "2M+". Drop the suffix or change the target to see
+           other compaction tiers (e.g. 1500000 → "1.5M"). -->
+      <article class="card">
+        <span class="dot" aria-hidden="true"></span>
+        <div class="num" data-target="2000000" data-suffix="+">2M+</div>
+        <div class="cap">Candidates matched</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<script>
+  const section = document.querySelector('.section');
+  const cards   = section.querySelectorAll('.card');
+  const nums    = section.querySelectorAll('.num');
+
+  // K / M compaction — applied EVERY frame of the count-up, not just at
+  // the end. So a count to 1,000,000 ticks "1 → … → 1K → … → 1M" instead
+  // of a chaotic 6-digit ticker.
+  function formatStat(n) {
+    if (n >= 1e6) {
+      return (n / 1e6).toFixed(n < 1e7 ? 1 : 0).replace(/\.0$/, '') + 'M';
+    }
+    if (n >= 1e3) {
+      return Math.floor(n / 1e3) + 'K';
+    }
+    return Math.floor(n).toString();
+  }
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function countUp(el) {
+    const target = parseFloat(el.dataset.target);
+    const suffix = el.dataset.suffix || '';
+    // Reduced motion: snap straight to the final formatted value.
+    if (reduced || !isFinite(target)) {
+      el.textContent = formatStat(target) + suffix;
+      return;
+    }
+    const duration = 1500;
+    const start = performance.now();
+    const ease = t => 1 - Math.pow(1 - t, 3);    // ease-out cubic
+    function tick(now) {
+      const t = Math.min(1, (now - start) / duration);
+      el.textContent = formatStat(Math.max(1, target * ease(t))) + suffix;
+      if (t < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        el.textContent = formatStat(target) + suffix;
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // Stagger card entrance by 80ms per card via a --delay CSS var.
+  cards.forEach((c, i) => c.style.setProperty('--delay', (i * 80) + 'ms'));
+
+  // Viewport entrance — once per page load, then unobserve. Same pattern
+  // as `component-compare-table.html` so the section's first paint matches
+  // the rest of the system.
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in-view');
+          // Fire count-up for every .num inside the section.
+          e.target.querySelectorAll('.num').forEach(countUp);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    io.observe(section);
+  } else {
+    section.classList.add('in-view');
+    nums.forEach(n => {
+      n.textContent =
+        formatStat(parseFloat(n.dataset.target)) + (n.dataset.suffix || '');
+    });
+  }
+</script>
+
+</body>
+</html>

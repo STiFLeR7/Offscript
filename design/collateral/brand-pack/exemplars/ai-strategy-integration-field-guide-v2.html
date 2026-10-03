@@ -1,0 +1,1168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Example Brand — The AI Integration Field Guide · Evidence Edition (A4)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Design system tokens + A4 collateral layout. No frameworks, no network JS.
+     ════════════════════════════════════════════════════════════════════════════════════════════
+     FIELD GUIDE v2 — "Evidence Edition". A NEW SIBLING of ai-strategy-integration-field-guide.html,
+     deliberately ANTI-CLONE: 18pp (not 20), a different spine (Evidence → System → Proof → Trust →
+     Partnership, not Part I–VI), phases compressed 5→2, a citation/sources device the original lacks,
+     a different cover image (dark-tech-3, not -6) and composition, and varied headline placement.
+
+     TWO NEW CAPABILITIES the original had none of:
+       1) TWO ISOMETRIC / SPATIAL HERO illustrations + TWO FLAT 2D DIAGRAMS.
+          · Isometric (doc-scoped .spatial-*, copied byte-identical from preview/spatial/ specimens —
+            Tier-1 core identical; RULES in README-SPATIAL.md): the Integration Stack (p5) and the
+            Engagement Sequence (p7). Spatial colour stance = navy darks OK + exactly ONE focal accent +
+            a quiet same-hue white-fade sheen; NO holographic/iridescent, no preserve-3d, no <canvas>,
+            no JS, no SVG <pattern> (textures are repeated <line> polylines). Each encodes REAL structure (§14).
+          · Flat 2D diagrams (doc-scoped .diag-*, copied byte-identical from preview/diagrams/ specimens —
+            RULES in README-DIAGRAMS.md): the Systems Hub & spoke (p10) and the Approval Flow (p17).
+            Diagram colour stance is the OPPOSITE of charts AND of the isometrics' gradient: flat tonal
+            fills + hairline connectors, navy OK, NO gradients. (p10/p17 were isometric in the first cut;
+            swapped to flat 2D at user request.)
+       2) WELL-RESEARCHED, CITED external evidence on the Gap pages (pp 03–04). Every cited figure is
+          verified against the publisher's own source and carries a .cited-src footnote + a Sources
+          note. A CITATION NEVER SITS BESIDE A PROJECTION: the cited industry stats (RAND, McKinsey,
+          MIT NANDA, S&P Global, Gartner) live only on pp 03–04; every Example Brand value/throughput/
+          cost/payback chart (pp 08–18) stays a doc-scoped .viz-* figure, visibly FLAGGED illustrative.
+
+     CHART + SPATIAL CSS is doc-scoped here, never added to colors_and_type.css and never a preview file.
+     ════════════════════════════════════════════════════════════════════════════════════════════ -->
+<link rel="stylesheet" href="../colors_and_type.css" />
+<style>
+  /* ════════ Document-only editorial helpers (system classes live in colors_and_type.css) ════════ */
+  .feat-title { font:500 var(--fs-h4)/1.3 var(--font-display); letter-spacing:var(--tracking-display); color:var(--cr-charcoal); }
+  .fill       { height:100%; display:flex; flex-direction:column; }
+
+  /* Cover — scope rail (inline, electric-dot separated, on navy) */
+  .scope-rail   { display:flex; align-items:center; gap:6mm; flex-wrap:wrap; padding-top:5mm; border-top:1px solid rgba(255,255,255,.16); }
+  .scope-rail span { display:inline-flex; align-items:center; gap:8px; color:rgba(255,255,255,.88); font:500 var(--fs-body)/1.4 var(--font-body); }
+  .scope-rail i { width:5px; height:5px; border-radius:var(--radius-pill); background:var(--cr-electric); flex-shrink:0; }
+
+  /* Engagement Plan/Build numerals + outcomes rail */
+  .out-col   { border-top:1.5px solid var(--cr-ink); padding-top:5mm; }
+
+  /* Data-viz flag — discreet "representative / illustrative" note */
+  .viz-flag  { font:400 13px/1.5 var(--font-body); color:var(--cr-graphite); }
+
+  /* ════════ CITATION device (NEW — not in the original; the "data-driven / well-researched" treatment) ════════
+     A .cited-src footnote sits under each CITED external figure; the consolidated .sources-note closes the
+     evidence section. Used ONLY on pp 03–04 (external industry data) — never beside a Example Brand projection. */
+  .cited-src   { font:400 12px/1.5 var(--font-body); color:var(--cr-stone); }
+  .cited-src strong { color:var(--cr-graphite); font-weight:600; }
+  .sources-note { font:400 11.5px/1.65 var(--font-body); color:var(--cr-stone); border-top:1px solid var(--cr-keyline); padding-top:4mm; }
+  .sources-note b { color:var(--cr-graphite); font-weight:600; }
+
+  /* ════════════════════════ INLINE CHART LIBRARY (doc-scoped .viz-*) ════════════════════════
+     Pure HTML/CSS + inline SVG. No JS, no library. Numerals reuse .cr-stat-value (dark, never accent).
+     RULES live in README-DATA-VIZ.md; the notes below are MECHANICS only. §4 colour: data MARKS use
+     tonal/accent/gradient (never navy); TYPE/axes stay dark/legible. */
+
+  /* (delta) before → after metric viz (typographic). FROM = muted graphite; TO = subject (ink). */
+  .viz-delta       { display:flex; align-items:center; gap:7mm; flex-wrap:wrap; }
+  .viz-delta-cell  { display:flex; flex-direction:column; gap:1.5mm; }
+  .viz-delta-cell .cr-stat-value { font-size:42px; }
+  .viz-delta-from .cr-stat-value { color:var(--cr-graphite); }
+  .viz-delta-k     { font:600 var(--fs-eyebrow)/1.4 var(--font-body); letter-spacing:var(--tracking-eyebrow); text-transform:uppercase; color:var(--cr-graphite); }
+  .viz-delta-arrow { display:flex; align-items:center; color:var(--cr-stone); }
+  .viz-delta-arrow svg { width:30px; height:30px; stroke:currentColor; fill:none; stroke-width:1.75; stroke-linecap:round; stroke-linejoin:round; }
+  .viz-delta-chg   { font:500 var(--fs-h4)/1 var(--font-display); letter-spacing:var(--tracking-display); color:var(--cr-ink); }
+
+  /* (cluster) grouped vertical bars, zero baseline. tonal = reference; accent gradient = subject. */
+  .viz-cluster      { display:flex; align-items:flex-end; gap:8mm; height:62mm; border-bottom:1px solid var(--cr-keyline); padding-top:7mm; }
+  .viz-cluster-grp  { flex:1; display:flex; flex-direction:column; align-items:center; height:100%; }
+  .viz-cbars        { flex:1; width:100%; display:flex; align-items:flex-end; justify-content:center; gap:3mm; }
+  .viz-cbar         { width:13mm; border-radius:3px 3px 0 0; position:relative; min-height:3px; }
+  .viz-cbar--ref    { background:var(--surface, var(--cr-tone-periwinkle)); }
+  .viz-cbar--sub    { background:var(--accent);
+                      background:linear-gradient(0deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 55%, #fff) 100%); }
+  .viz-cbar-val     { position:absolute; top:-6mm; left:50%; transform:translateX(-50%); font:600 13px/1 var(--font-display); color:var(--cr-charcoal); }
+  .viz-cbar--sub .viz-cbar-val { color:var(--accent); }
+  .viz-cluster-cat  { margin-top:3.5mm; font:400 13px/1.3 var(--font-body); color:var(--cr-graphite); text-align:center; }
+
+  /* (rank) ranked horizontal bars, zero baseline, accent gradient, direct labels right. */
+  .viz-rank       { display:flex; flex-direction:column; }
+  .viz-rank-row   { display:grid; grid-template-columns:52mm 1fr 14mm; align-items:center; gap:5mm; padding:4mm 0; border-top:1px solid var(--cr-keyline); }
+  .viz-rank-row:first-child { border-top:0; }
+  .viz-rank-label { font:500 var(--fs-body)/1.3 var(--font-body); color:var(--cr-charcoal); }
+  .viz-rank-track { height:12px; background:var(--surface, var(--cr-tone-sky)); border-radius:var(--radius-pill); }
+  .viz-rank-bar   { height:12px; border-radius:var(--radius-pill); min-width:6px;
+                    background:var(--accent);
+                    background:linear-gradient(90deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 55%, #fff) 100%); }
+  .viz-rank-val   { text-align:right; font:600 22px/1 var(--font-display); letter-spacing:var(--tracking-display); color:var(--cr-ink); }
+
+  /* (trend) line + soft area over ordered phases, intelligent domain. accent line/dots; tonal fill. */
+  .viz-trend       { width:100%; }
+  .viz-trend svg   { width:100%; height:auto; display:block; aspect-ratio:320 / 158; }
+  .viz-trend-area  { fill:var(--surface, var(--cr-tone-sky)); opacity:.55; stroke:none; }
+  .viz-trend-line  { fill:none; stroke:var(--accent); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .viz-trend-dot   { fill:var(--accent); }
+  .viz-trend-base  { stroke:var(--cr-keyline); stroke-width:1; }
+  .viz-trend-ax    { font:400 6.5px/1 var(--font-body); fill:var(--cr-graphite); }
+  .viz-trend-pt    { font:600 6.5px/1 var(--font-display); fill:var(--cr-charcoal); }
+
+  /* (donut) composition ring (sums to 100%), single-hue graduated, bold-% legend. */
+  .viz-donut        { width:54mm; height:54mm; flex-shrink:0; position:relative; }
+  .viz-donut--hero  { width:88mm; height:88mm; }
+  .viz-donut svg    { width:100%; height:100%; display:block; }
+  .viz-donut-seg    { fill:none; stroke-width:17; }
+  .viz-donut-label  { position:absolute; inset:0; display:grid; place-items:center; text-align:center; }
+  .viz-donut-cap    { font:600 var(--fs-eyebrow)/1.3 var(--font-body); letter-spacing:var(--tracking-eyebrow); text-transform:uppercase; color:var(--cr-graphite); }
+  .viz-legend2      { display:flex; flex-direction:column; gap:4mm; }
+  .viz-legend2-row  { display:grid; grid-template-columns:7mm auto 1fr; align-items:baseline; gap:4mm; padding-bottom:3mm; border-bottom:1px solid var(--cr-keyline); }
+  .viz-legend2-sw   { width:11px; height:11px; border-radius:var(--radius-sm); align-self:center; }
+  .viz-legend2-pct  { font:600 20px/1 var(--font-display); letter-spacing:var(--tracking-display); color:var(--cr-ink); }
+  .viz-legend2-lab  { font:400 var(--fs-body)/1.35 var(--font-body); color:var(--cr-charcoal); }
+
+  /* (table) grid-aligned comparison. Example Brand column = subject (ink header, quiet sky surface). */
+  .viz-table       { display:grid; grid-template-columns:1.5fr 1fr 1fr 1.1fr; }
+  .viz-table > div { padding:4.5mm 5mm; border-top:1px solid var(--cr-keyline); }
+  .viz-table-head  { border-top:0 !important; font:600 var(--fs-eyebrow)/1.35 var(--font-body); letter-spacing:var(--tracking-eyebrow); text-transform:uppercase; color:var(--cr-graphite); align-self:end; }
+  .viz-table-rowh  { font:500 var(--fs-body)/1.4 var(--font-body); color:var(--cr-charcoal); }
+  .viz-table-cell  { font:400 var(--fs-body)/1.45 var(--font-body); color:var(--cr-graphite); }
+  .viz-table-subjh { color:var(--cr-ink); border-top:0 !important; font:600 var(--fs-h4)/1.2 var(--font-display); letter-spacing:var(--tracking-display); text-transform:none; align-self:end; }
+  .viz-table-subj  { color:var(--cr-charcoal); font-weight:500; background:var(--cr-tone-sky); }
+
+  /* (pair) before/after SVG bar pairs, shared zero baseline. tonal = before; accent = after. */
+  .viz-legend       { display:flex; flex-wrap:wrap; gap:9mm; align-items:center; }
+  .viz-legend span  { display:inline-flex; align-items:center; gap:7px; font:600 var(--fs-eyebrow)/1.4 var(--font-body); letter-spacing:var(--tracking-eyebrow); text-transform:uppercase; color:var(--cr-graphite); }
+  .viz-legend i     { width:12px; height:12px; border-radius:var(--radius-sm); flex-shrink:0; }
+  .sw-ref           { background:var(--surface, var(--cr-tone-periwinkle)); }
+  .sw-sub           { background:var(--accent); }
+  .viz-pair         { display:flex; flex-direction:column; gap:4mm; }
+  .viz-pair .cr-stat-value { color:var(--accent); }
+  .viz-chart        { width:100%; height:42mm; display:block; }
+
+  /* (benchmark / --metric) horizontal subject-vs-reference bars. lead = accent gradient; ref = tonal. */
+  .viz-benchmark         { display:grid; grid-template-columns:1fr; column-gap:12mm; row-gap:0; align-items:start; }
+  .viz-benchmark--metric { grid-template-columns:1fr 40mm; }
+  .viz-benchmark + .viz-benchmark { margin-top:12mm; }
+  .viz-title { grid-column:1 / -1; grid-row:1; font:600 var(--fs-h4)/1.3 var(--font-display); letter-spacing:var(--tracking-display);
+               color:inherit; padding-bottom:3mm; margin-bottom:6mm; border-bottom:1px solid var(--cr-keyline); }
+  .viz-bars   { grid-column:1; grid-row:2; }
+  .viz-bar-row{ display:flex; flex-direction:column; gap:2.5mm; }
+  .viz-bar-row + .viz-bar-row { margin-top:6mm; }
+  .viz-bar    { height:10px; border-radius:var(--radius-pill); min-width:6px; }
+  .viz-bar--ink   { background:var(--accent, var(--cr-tone-periwinkle-accent));
+                    background:linear-gradient(90deg, var(--accent, var(--cr-tone-periwinkle-accent)) 0%,
+                              color-mix(in srgb, var(--accent, var(--cr-tone-periwinkle-accent)) 55%, #fff) 100%); }
+  .viz-bar--track { background:var(--surface, var(--cr-tone-periwinkle)); }
+  .viz-metric { grid-column:2; grid-row:2; min-width:0; align-self:start; }
+  .viz-metric .cr-stat-value { font-size:46px; line-height:1; }
+  .viz-metric .cr-stat-sub   { margin-top:3mm; }
+  .cr-band--dark .viz-title,      .cr-page--dark .viz-title      { border-color:var(--cr-keyline-dark); }
+  .cr-band--dark .viz-bar--track, .cr-page--dark .viz-bar--track { background:rgba(255,255,255,0.22); }
+  .cr-band--dark .viz-benchmark .cr-stat-value, .cr-page--dark .viz-benchmark .cr-stat-value { color:var(--fg-inverse); }
+  .cr-band--dark .viz-benchmark .cr-stat-sub,   .cr-page--dark .viz-benchmark .cr-stat-sub   { color:var(--cr-stone); }
+
+  /* ════════════════════════ SPATIAL / ISOMETRIC (doc-scoped .spatial-*) ════════════════════════
+     RULES live in README-SPATIAL.md; the notes are MECHANICS only. Tier-1 core below is BYTE-IDENTICAL
+     to every preview/spatial/ specimen (copy verbatim) — so the four iso figures in this doc stay
+     consistent and never collide. Baked SVG at the fixed 2:1 iso angle; no JS, no preserve-3d, no
+     <pattern>. Colour stance (opposite of charts): navy darks OK + ONE focal accent + a quiet same-hue
+     white-fade sheen. */
+
+  /* ── SHARED .spatial-* CORE — byte-identical in every specimen ── */
+  .spatial-svg        { display: block; width: 100%; height: auto; overflow: visible; }
+  .spatial-face       { stroke: var(--cr-keyline); stroke-width: 1; stroke-linejoin: round; }
+  .spatial-face-top   { fill: var(--surface, var(--cr-tone-sky)); }
+  .spatial-face-left  { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 86%, #000); }
+  .spatial-face-right { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 76%, #000); }
+  .spatial-focal .spatial-face-top   { fill: var(--accent, var(--cr-tone-sky-accent)); }
+  .spatial-focal .spatial-face-left  { fill: color-mix(in srgb, var(--accent, var(--cr-tone-sky-accent)) 82%, #000); }
+  .spatial-focal .spatial-face-right { fill: color-mix(in srgb, var(--accent, var(--cr-tone-sky-accent)) 70%, #000); }
+  .spatial-sheen      { fill: url(#spatialSheen); stroke: none; }
+  .spatial-embed      { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 68%, #000); stroke: none; }
+  .spatial-focal .spatial-embed { fill: color-mix(in srgb, #fff 36%, transparent); }
+  .spatial-leader     { stroke: var(--cr-keyline); stroke-width: 1; fill: none; }
+  .spatial-leader--dash { stroke-dasharray: 2 3; }
+  .spatial-dot        { fill: var(--accent, var(--cr-tone-sky-accent)); }
+  .spatial-label      { font: 500 var(--fs-h4)/1.2 var(--font-display); fill: var(--cr-charcoal); letter-spacing: var(--tracking-display); }
+  .spatial-sub        { font: 400 12px/1.4 var(--font-body); fill: var(--cr-graphite); }
+  .spatial-eyebrow    { font: 600 var(--fs-eyebrow)/1 var(--font-body); fill: var(--accent, var(--cr-tone-sky-accent)); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; }
+  .cr-band--dark .spatial-face,   .cr-page--dark .spatial-face,
+  .cr-band--dark .spatial-leader, .cr-page--dark .spatial-leader { stroke: var(--cr-keyline-dark); }
+  .cr-band--dark .spatial-label,  .cr-page--dark .spatial-label  { fill: var(--fg-inverse); }
+  .cr-band--dark .spatial-sub,    .cr-page--dark .spatial-sub    { fill: var(--cr-stone); }
+  .cr-band--dark .spatial-eyebrow,.cr-page--dark .spatial-eyebrow{ fill: var(--cr-stone); }
+
+  /* ── DETAIL VOCABULARY (Tier-2 — namespaced) ── */
+  .spatial-cyl-top   { fill: var(--surface, var(--cr-tone-sky)); stroke: var(--cr-keyline); stroke-width: 1; }
+  .spatial-cyl-body  { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 80%, #000); stroke: var(--cr-keyline); stroke-width: 1; }
+  .spatial-focal .spatial-cyl-top  { fill: var(--accent, var(--cr-tone-sky-accent)); }
+  .spatial-focal .spatial-cyl-body { fill: color-mix(in srgb, var(--accent, var(--cr-tone-sky-accent)) 74%, #000); }
+  .spatial-mesh-line { stroke: var(--cr-keyline); stroke-width: 0.75; fill: none; }
+  .spatial-node-link { stroke: var(--cr-keyline); stroke-width: 1; fill: none; }
+  .spatial-chip      { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 64%, #000); stroke: none; }
+  .spatial-focal .spatial-chip { fill: color-mix(in srgb, #fff 42%, transparent); }
+  .spatial-screen-ui { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 60%, #000); stroke: none; }
+  .spatial-grid-line { stroke: var(--cr-keyline); stroke-width: 1; stroke-dasharray: 2 3; fill: none; }
+  .spatial-drop      { stroke: var(--cr-keyline); stroke-width: 1; stroke-dasharray: 2 3; fill: none; }
+  .spatial-link--curve { stroke: var(--cr-graphite); stroke-width: 1.5; fill: none; }
+  .spatial-link-arrow  { fill: var(--cr-graphite); stroke: none; }
+  .spatial-proc-link   { stroke: var(--cr-graphite); stroke-width: 1.5; fill: none; }
+  .spatial-proc-arrow  { fill: var(--cr-graphite); stroke: none; }
+  .cr-band--dark .spatial-cyl-top,  .cr-page--dark .spatial-cyl-top,
+  .cr-band--dark .spatial-cyl-body, .cr-page--dark .spatial-cyl-body,
+  .cr-band--dark .spatial-mesh-line,.cr-page--dark .spatial-mesh-line,
+  .cr-band--dark .spatial-node-link,.cr-page--dark .spatial-node-link,
+  .cr-band--dark .spatial-grid-line,.cr-page--dark .spatial-grid-line,
+  .cr-band--dark .spatial-drop,     .cr-page--dark .spatial-drop { stroke: var(--cr-keyline-dark); }
+  .cr-band--dark .spatial-link--curve, .cr-page--dark .spatial-link--curve,
+  .cr-band--dark .spatial-proc-link,   .cr-page--dark .spatial-proc-link { stroke: var(--cr-stone); }
+  .cr-band--dark .spatial-link-arrow,  .cr-page--dark .spatial-link-arrow,
+  .cr-band--dark .spatial-proc-arrow,  .cr-page--dark .spatial-proc-arrow { fill: var(--cr-stone); }
+
+  .spatial-cap { font:400 13px/1.55 var(--font-body); color:var(--cr-graphite); }
+
+  /* ════════════════════════ DIAGRAMS (doc-scoped .diag-*) ════════════════════════
+     Flat relationship/structure diagrams (the 2D hub on p10, the approval flow on p17).
+     RULES live in README-DIAGRAMS.md. Tier-1 .diag-* core is byte-identical to the
+     preview/diagrams/ specimens. NOTE the diagram colour stance is the OPPOSITE of charts:
+     navy darks OK, NO gradients (flat tonal fills + hairline connectors only). Doc-scoped. */
+  .diag-node        { background: var(--surface, var(--cr-tone-sky)); border-radius: var(--radius-lg); padding: 5mm 6mm; min-width: 0; }
+  .diag-node--line  { background: transparent; border: 1px solid var(--cr-keyline); }
+  .diag-node-label  { font: 500 var(--fs-h4)/1.25 var(--font-display); letter-spacing: var(--tracking-display); color: var(--cr-charcoal); }
+  .diag-node-text   { font: 400 var(--fs-body)/1.45 var(--font-body); color: var(--cr-graphite); margin-top: 2mm; }
+  .diag-eyebrow     { font: 600 var(--fs-eyebrow)/1.4 var(--font-body); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; color: var(--cr-graphite); }
+  .diag-connector   { background: var(--cr-keyline); }
+  .diag-connector--h{ flex: 1 1 auto; height: 1px; min-width: 5mm; }
+  .diag-connector--v{ width: 1px; min-height: 5mm; margin: 0 auto; }
+  .diag-arrow       { flex: 0 0 auto; width: 0; height: 0; }
+  .diag-arrow--r    { border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 6px solid var(--cr-graphite); }
+  .diag-arrow--d    { border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 6px solid var(--cr-graphite); }
+  .cr-band--dark .diag-node--line .diag-node-label, .cr-page--dark .diag-node--line .diag-node-label { color: var(--fg-inverse); }
+  .cr-band--dark .diag-node--line .diag-node-text,  .cr-page--dark .diag-node--line .diag-node-text  { color: var(--cr-stone); }
+  .cr-band--dark .diag-connector,  .cr-page--dark .diag-connector  { background: var(--cr-keyline-dark); }
+  .cr-band--dark .diag-arrow--r,   .cr-page--dark .diag-arrow--r   { border-left-color: var(--cr-stone); }
+  /* hub & spoke (namespaced) */
+  .diag-hub      { width: 100%; max-width: 122mm; margin: 0 auto; }
+  .diag-hub svg  { width: 100%; height: auto; display: block; }
+  .diag-hub-line { stroke: var(--cr-keyline); stroke-width: 1.5; }
+  .diag-hub-node { fill: var(--cr-tone-periwinkle); }
+  .diag-hub-core { fill: var(--cr-tone-periwinkle-accent); }
+  .diag-hub-lab  { font: 500 12px/1 var(--font-display); letter-spacing: var(--tracking-display); fill: var(--cr-charcoal); text-anchor: middle; dominant-baseline: central; }
+  .diag-hub-core-lab { font: 600 14px/1 var(--font-display); letter-spacing: var(--tracking-display); fill: var(--fg-inverse); text-anchor: middle; dominant-baseline: central; }
+  /* process flow (namespaced) */
+  .diag-process-row  { display: flex; align-items: stretch; }
+  .diag-process-row > .diag-node { flex: 1 1 0; }
+  .diag-process-link { flex: 0 0 9mm; display: flex; align-items: center; gap: 2mm; padding: 0 1mm; }
+  .diag-process-no   { font: 600 var(--fs-eyebrow)/1 var(--font-body); letter-spacing: var(--tracking-eyebrow); color: var(--accent, var(--cr-tone-sky-accent)); margin-bottom: 2.5mm; }
+</style>
+</head>
+<body>
+<div class="cr-doc">
+
+  <!-- ═════════════════════ PAGE 1 · COVER ═════════════════════
+       Full-bleed PORTRAIT dark-tech-3 under a navy scrim. DISTINCT composition from the original cover
+       (which anchors its hero to the lower third over dark-tech-6): here the hero sits at the VERTICAL
+       MIDDLE with a left accent rule, the edition line up top, the scope rail at the floor. -->
+  <section class="cr-page cr-page--bleed cr-page--dark">
+    <div style="position:absolute; inset:0; background:url('../assets/imagery/dark-tech-3.jpg') center/cover no-repeat"></div>
+    <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(2,11,27,.90) 0%, rgba(2,11,27,.55) 40%, rgba(2,11,27,.62) 70%, rgba(2,11,27,.96) 100%)"></div>
+    <div style="position:absolute; inset:0; padding:18mm 16mm; display:flex; flex-direction:column">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-white.svg" alt="Example Brand" />
+        <div class="cr-eyebrow" style="color:rgba(255,255,255,.7)">Evidence Edition · 2026</div>
+      </div>
+      <div style="flex:1"></div>
+      <div style="display:flex; flex-direction:column; gap:7mm; max-width:166mm">
+        <div class="cr-eyebrow" style="color:var(--cr-electric)">The AI Integration Field Guide</div>
+        <h1 class="cr-display-xl" style="color:#fff; font-size:46px; line-height:1.12">The Gap Isn't Ambition. It's Integration.</h1>
+        <p class="cr-body-lg" style="color:rgba(255,255,255,.84); max-width:158mm">What the evidence now shows about why enterprise AI stalls — and the system Example Brand uses to close the distance between a working pilot and a production capability your teams actually run.</p>
+      </div>
+      <div style="flex:1"></div>
+      <div style="display:flex; flex-direction:column; gap:6mm">
+        <div class="scope-rail">
+          <span><i></i>The Evidence</span>
+          <span><i></i>The System</span>
+          <span><i></i>The Proof</span>
+          <span><i></i>The Partnership</span>
+        </div>
+        <div class="cr-page-foot" style="color:rgba(255,255,255,.82); border:0">
+          <span style="font-weight:600; letter-spacing:.06em; text-transform:uppercase; font-size:12px">example-brand.com</span>
+          <span>A strategic AI advisory &amp; integration partner</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ PAGE 2 · THE THESIS ═════════════════════
+       Anti-clone device: NO contents page (the original opens with one). A single editorial argument
+       with the headline BOTTOM-ANCHORED (varied placement) and one cited anchor stat. -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">The Argument</div>
+      </div>
+      <div style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:8mm; max-width:164mm">
+        <h2 class="cr-display-lg" style="max-width:160mm">Most AI Never Crosses From Pilot to the Work It Was Bought to Do.</h2>
+        <p class="cr-body-lg" style="color:var(--cr-graphite); max-width:150mm">Adoption is no longer the problem. Almost every enterprise is already using AI somewhere. The problem is the distance between <em>using</em> it and <em>banking</em> it — between a convincing demo and a system that has changed a number the board watches.</p>
+        <p class="cr-body" style="max-width:150mm">This guide lays out the evidence for that gap, the system we use to close it, the proof of where it pays, and how we hand you a capability you keep. It begins with what the research actually says.</p>
+      </div>
+      <div class="cr-page-foot" style="margin-top:auto">
+        <span style="font-weight:600">example-brand.com</span>
+        <span>AI Integration Field Guide · 02</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ PAGE 3 · EVIDENCE I — ADOPTION vs. VALUE (Part 01) ═════════════════════
+       CITED external data. A two-bar benchmark of the adoption-vs-value gap, McKinsey State of AI 2025.
+       .cited-src footnote attached. NO Example Brand projection on this page. -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">01 · The Evidence</div>
+      </div>
+      <div class="cr-headline-block" style="margin-top:13mm; max-width:165mm">
+        <h2 class="cr-display-lg">Adoption Has Outrun Value — by a Wide Margin.</h2>
+        <p class="cr-body" style="max-width:156mm">Nearly four in five organizations now use AI in at least one function. Yet most report no tangible impact on enterprise-level profit. The tooling arrived; the integration into how the business actually runs did not.</p>
+      </div>
+      <div class="viz-benchmark tone-sky" style="margin-top:13mm">
+        <div class="viz-title">Share of organizations — AI adopted vs. material EBIT impact realized</div>
+        <div class="viz-bars">
+          <div class="viz-bar-row">
+            <div class="viz-bar viz-bar--ink" style="width:78%"></div>
+            <div class="cr-stat-sub"><strong style="color:var(--cr-ink)">78%</strong> — use AI in at least one business function</div>
+          </div>
+          <div class="viz-bar-row">
+            <div class="viz-bar viz-bar--track" style="width:19%"></div>
+            <div class="cr-stat-sub"><strong style="color:var(--cr-ink)">&lt;20%</strong> — see a material impact on enterprise-level EBIT</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:11mm; display:flex; flex-direction:column; gap:3mm">
+        <div class="cr-divider"></div>
+        <div class="cited-src"><strong>Source:</strong> McKinsey &amp; Company, <em>The State of AI 2025</em> (survey of 1,993 respondents). 78% of organizations report using AI in at least one function; more than 80% report no tangible enterprise-level EBIT impact from generative AI. Bars show share of organizations.</div>
+      </div>
+      <p class="cr-body-strong" style="max-width:152mm; margin-top:10mm; color:var(--cr-charcoal)">The organizations that do see impact have one thing in common: they redesigned the workflow around the AI — they did not bolt it on beside it.</p>
+      <div class="cr-page-foot" style="margin-top:auto">
+        <span style="font-weight:600">example-brand.com</span>
+        <span>AI Integration Field Guide · 03</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ PAGE 4 · EVIDENCE II — WHERE IT BREAKS (Part 01) ═════════════════════
+       CITED external data wall (RAND · S&P Global · Gartner · MIT NANDA), each big stat with attribution,
+       closed by a consolidated Sources note. Still NO Example Brand projection here. -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">01 · The Evidence</div>
+      </div>
+      <div class="cr-headline-block" style="margin-top:13mm; max-width:165mm">
+        <h2 class="cr-display-lg">And It Breaks in a Predictable Place: Before Production.</h2>
+        <p class="cr-body" style="max-width:156mm">Independent research from 2024–2025 converges on the same picture. The model is rarely the failure point. The path from pilot into the daily system is.</p>
+      </div>
+      <div class="cr-stat-wall" style="margin-top:12mm">
+        <div class="cr-stat-row cr-grid cr-cols-3" style="border-top:0; padding-top:0">
+          <div class="cr-stat"><div class="cr-stat-value">&gt;80<span class="unit">%</span></div><div class="cr-stat-sub">of AI projects fail to reach meaningful production — about twice the rate of IT projects without AI</div></div>
+          <div class="cr-stat"><div class="cr-stat-value">95<span class="unit">%</span></div><div class="cr-stat-sub">of enterprise generative-AI pilots show no measurable profit-and-loss impact</div></div>
+          <div class="cr-stat"><div class="cr-stat-value">&gt;40<span class="unit">%</span></div><div class="cr-stat-sub">of agentic-AI projects are forecast to be cancelled by the end of 2027</div></div>
+        </div>
+      </div>
+      <div class="cr-band tone-blush" style="margin-top:11mm">
+        <div style="display:flex; align-items:baseline; gap:6mm; flex-wrap:wrap">
+          <div class="cr-stat-value" style="font-size:40px">17% → 42%</div>
+          <p class="cr-list-body" style="margin:0; color:var(--cr-charcoal); max-width:128mm">The share of companies abandoning <em>most</em> of their AI initiatives more than doubled in a single year — from 17% in 2024 to 42% in 2025.</p>
+        </div>
+      </div>
+      <div class="sources-note" style="margin-top:11mm">
+        <b>Sources.</b> RAND Corporation, <em>The Root Causes of Failure for AI Projects</em> (RRA2680-1, 2024) — &gt;80% failure, ~2× non-AI IT. MIT Project NANDA, <em>State of AI in Business 2025</em> — 95% of GenAI pilots without measurable P&amp;L impact. Gartner press release, 25 Jun 2025 — &gt;40% of agentic-AI projects cancelled by end of 2027. S&amp;P Global Market Intelligence (451 Research), <em>Voice of the Enterprise: AI &amp; Machine Learning 2025</em> (1,006 respondents) — abandonment of most initiatives rose 17%→42% year over year. Figures describe the broad market, not any one organization.
+      </div>
+      <div class="cr-page-foot" style="margin-top:auto">
+        <span style="font-weight:600">example-brand.com</span>
+        <span>AI Integration Field Guide · 04</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ PAGE 5 · ISOMETRIC HERO #1 · THE INTEGRATION STACK (Part 02) ═════════════════════
+       The problem→solution pivot. A NEW spatial creative the original lacks: an exploded isometric stack
+       (doc-scoped .spatial-*, copied from preview/spatial/layer-stack.html — Tier-1 core byte-identical),
+       rendered on a NAVY band (dark-mode spatial, fully supported). The AI integration layer is the ONE
+       focal highlight (accent + sheen). Each layer carries REAL sub-structure (§14): chip-row workflows,
+       a node-graph, datastore cylinders, a woven grid-mesh platform. No JS, no preserve-3d, no <pattern>. -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">02 · The System</div>
+      </div>
+      <div class="cr-headline-block" style="margin-top:13mm; max-width:165mm">
+        <h2 class="cr-display-lg">We Build Into the Stack You Already Run.</h2>
+        <p class="cr-body" style="max-width:156mm">Not a parallel tool beside the business — an integration layer threaded through your applications, workflow, data, and infrastructure, so AI does the work where the work already happens.</p>
+      </div>
+      <div class="cr-band cr-band--dark" style="margin-top:9mm; padding:10mm 9mm">
+        <div style="max-width:150mm; margin:0 auto">
+          <svg class="spatial-svg" viewBox="0 0 590 548" role="img" aria-label="Exploded isometric integration stack: AI integration layer at the top, then your applications, orchestration and workflow, your data, and infrastructure">
+            <defs><linearGradient id="spatialSheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="0.30"/></linearGradient>
+            <clipPath id="meshL1"><polygon points="235,386 367,452 235,518 103,452"/></clipPath></defs>
+            <!-- Layer 05 · Infrastructure — woven grid-mesh platform -->
+            <g class="tone-sky">
+              <polygon class="spatial-face spatial-face-left" points="103,452 235,518 235,531 103,465"/>
+              <polygon class="spatial-face spatial-face-right" points="235,518 367,452 367,465 235,531"/>
+              <polygon class="spatial-face spatial-face-top" points="235,386 367,452 235,518 103,452"/>
+              <g clip-path="url(#meshL1)">
+                <line class="spatial-mesh-line" x1="235" y1="386" x2="103" y2="452"/>
+                <line class="spatial-mesh-line" x1="235" y1="386" x2="367" y2="452"/>
+                <line class="spatial-mesh-line" x1="246" y1="391.5" x2="114" y2="457.5"/>
+                <line class="spatial-mesh-line" x1="224" y1="391.5" x2="356" y2="457.5"/>
+                <line class="spatial-mesh-line" x1="257" y1="397" x2="125" y2="463"/>
+                <line class="spatial-mesh-line" x1="213" y1="397" x2="345" y2="463"/>
+                <line class="spatial-mesh-line" x1="268" y1="402.5" x2="136" y2="468.5"/>
+                <line class="spatial-mesh-line" x1="202" y1="402.5" x2="334" y2="468.5"/>
+                <line class="spatial-mesh-line" x1="279" y1="408" x2="147" y2="474"/>
+                <line class="spatial-mesh-line" x1="191" y1="408" x2="323" y2="474"/>
+                <line class="spatial-mesh-line" x1="290" y1="413.5" x2="158" y2="479.5"/>
+                <line class="spatial-mesh-line" x1="180" y1="413.5" x2="312" y2="479.5"/>
+                <line class="spatial-mesh-line" x1="301" y1="419" x2="169" y2="485"/>
+                <line class="spatial-mesh-line" x1="169" y1="419" x2="301" y2="485"/>
+                <line class="spatial-mesh-line" x1="312" y1="424.5" x2="180" y2="490.5"/>
+                <line class="spatial-mesh-line" x1="158" y1="424.5" x2="290" y2="490.5"/>
+                <line class="spatial-mesh-line" x1="323" y1="430" x2="191" y2="496"/>
+                <line class="spatial-mesh-line" x1="147" y1="430" x2="279" y2="496"/>
+                <line class="spatial-mesh-line" x1="334" y1="435.5" x2="202" y2="501.5"/>
+                <line class="spatial-mesh-line" x1="136" y1="435.5" x2="268" y2="501.5"/>
+                <line class="spatial-mesh-line" x1="345" y1="441" x2="213" y2="507"/>
+                <line class="spatial-mesh-line" x1="125" y1="441" x2="257" y2="507"/>
+                <line class="spatial-mesh-line" x1="356" y1="446.5" x2="224" y2="512.5"/>
+                <line class="spatial-mesh-line" x1="114" y1="446.5" x2="246" y2="512.5"/>
+                <line class="spatial-mesh-line" x1="367" y1="452" x2="235" y2="518"/>
+                <line class="spatial-mesh-line" x1="103" y1="452" x2="235" y2="518"/>
+              </g>
+            </g>
+            <!-- Layer 04 · Your data — datastore cylinders -->
+            <g class="tone-sky">
+              <polygon class="spatial-face spatial-face-left" points="103,360 235,426 235,439 103,373"/>
+              <polygon class="spatial-face spatial-face-right" points="235,426 367,360 367,373 235,439"/>
+              <polygon class="spatial-face spatial-face-top" points="235,294 367,360 235,426 103,360"/>
+              <path class="spatial-cyl-body" d="M 185,352 L 185,370 A 16,8 0 0 0 217,370 L 217,352 A 16,8 0 0 1 185,352 Z"/>
+              <ellipse class="spatial-cyl-top" cx="201" cy="352" rx="16" ry="8"/>
+              <path class="spatial-cyl-body" d="M 248,356 L 248,371 A 13,6.5 0 0 0 274,371 L 274,356 A 13,6.5 0 0 1 248,356 Z"/>
+              <ellipse class="spatial-cyl-top" cx="261" cy="356" rx="13" ry="6.5"/>
+            </g>
+            <!-- Layer 03 · Orchestration & workflow — node-graph -->
+            <g class="tone-sky">
+              <polygon class="spatial-face spatial-face-left" points="103,268 235,334 235,347 103,281"/>
+              <polygon class="spatial-face spatial-face-right" points="235,334 367,268 367,281 235,347"/>
+              <polygon class="spatial-face spatial-face-top" points="235,202 367,268 235,334 103,268"/>
+              <line class="spatial-node-link" x1="235" y1="228.4" x2="261.4" y2="241.6"/>
+              <line class="spatial-node-link" x1="235" y1="228.4" x2="208.6" y2="241.6"/>
+              <line class="spatial-node-link" x1="208.6" y1="241.6" x2="235" y2="254.8"/>
+              <line class="spatial-node-link" x1="208.6" y1="241.6" x2="182.2" y2="254.8"/>
+              <line class="spatial-node-link" x1="182.2" y1="254.8" x2="208.6" y2="268"/>
+              <line class="spatial-node-link" x1="182.2" y1="254.8" x2="155.8" y2="268"/>
+              <line class="spatial-node-link" x1="155.8" y1="268" x2="182.2" y2="281.2"/>
+              <line class="spatial-node-link" x1="261.4" y1="241.6" x2="287.8" y2="254.8"/>
+              <line class="spatial-node-link" x1="261.4" y1="241.6" x2="235" y2="254.8"/>
+              <line class="spatial-node-link" x1="235" y1="254.8" x2="261.4" y2="268"/>
+              <line class="spatial-node-link" x1="235" y1="254.8" x2="208.6" y2="268"/>
+              <line class="spatial-node-link" x1="208.6" y1="268" x2="235" y2="281.2"/>
+              <line class="spatial-node-link" x1="208.6" y1="268" x2="182.2" y2="281.2"/>
+              <line class="spatial-node-link" x1="182.2" y1="281.2" x2="208.6" y2="294.4"/>
+              <line class="spatial-node-link" x1="287.8" y1="254.8" x2="314.2" y2="268"/>
+              <line class="spatial-node-link" x1="287.8" y1="254.8" x2="261.4" y2="268"/>
+              <line class="spatial-node-link" x1="261.4" y1="268" x2="287.8" y2="281.2"/>
+              <line class="spatial-node-link" x1="261.4" y1="268" x2="235" y2="281.2"/>
+              <line class="spatial-node-link" x1="235" y1="281.2" x2="261.4" y2="294.4"/>
+              <line class="spatial-node-link" x1="235" y1="281.2" x2="208.6" y2="294.4"/>
+              <line class="spatial-node-link" x1="208.6" y1="294.4" x2="235" y2="307.6"/>
+              <line class="spatial-node-link" x1="314.2" y1="268" x2="287.8" y2="281.2"/>
+              <line class="spatial-node-link" x1="287.8" y1="281.2" x2="261.4" y2="294.4"/>
+              <line class="spatial-node-link" x1="261.4" y1="294.4" x2="235" y2="307.6"/>
+              <circle class="spatial-dot" cx="235" cy="228.4" r="2.3"/>
+              <circle class="spatial-dot" cx="208.6" cy="241.6" r="2.3"/>
+              <circle class="spatial-dot" cx="182.2" cy="254.8" r="2.3"/>
+              <circle class="spatial-dot" cx="155.8" cy="268" r="2.3"/>
+              <circle class="spatial-dot" cx="261.4" cy="241.6" r="2.3"/>
+              <circle class="spatial-dot" cx="235" cy="254.8" r="2.3"/>
+              <circle class="spatial-dot" cx="208.6" cy="268" r="2.3"/>
+              <circle class="spatial-dot" cx="182.2" cy="281.2" r="2.3"/>
+              <circle class="spatial-dot" cx="287.8" cy="254.8" r="2.3"/>
+              <circle class="spatial-dot" cx="261.4" cy="268" r="2.3"/>
+              <circle class="spatial-dot" cx="235" cy="281.2" r="2.3"/>
+              <circle class="spatial-dot" cx="208.6" cy="294.4" r="2.3"/>
+              <circle class="spatial-dot" cx="314.2" cy="268" r="2.3"/>
+              <circle class="spatial-dot" cx="287.8" cy="281.2" r="2.3"/>
+              <circle class="spatial-dot" cx="261.4" cy="294.4" r="2.3"/>
+              <circle class="spatial-dot" cx="235" cy="307.6" r="2.3"/>
+            </g>
+            <!-- Layer 02 · Your applications — chip-row board -->
+            <g class="tone-sky">
+              <polygon class="spatial-face spatial-face-left" points="103,176 235,242 235,255 103,189"/>
+              <polygon class="spatial-face spatial-face-right" points="235,242 367,176 367,189 235,255"/>
+              <polygon class="spatial-face spatial-face-top" points="235,110 367,176 235,242 103,176"/>
+              <polygon class="spatial-chip" points="240.28,129.26 249.28,133.76 240.28,138.26 231.28,133.76"/>
+              <polygon class="spatial-chip" points="217.84,140.48 226.84,144.98 217.84,149.48 208.84,144.98"/>
+              <polygon class="spatial-chip" points="195.4,151.7 204.4,156.2 195.4,160.7 186.4,156.2"/>
+              <polygon class="spatial-chip" points="172.96,162.92 181.96,167.42 172.96,171.92 163.96,167.42"/>
+              <polygon class="spatial-chip" points="150.52,174.14 159.52,178.64 150.52,183.14 141.52,178.64"/>
+              <polygon class="spatial-chip" points="279.88,149.06 288.88,153.56 279.88,158.06 270.88,153.56"/>
+              <polygon class="spatial-chip" points="257.44,160.28 266.44,164.78 257.44,169.28 248.44,164.78"/>
+              <polygon class="spatial-chip" points="235,171.5 244,176 235,180.5 226,176"/>
+              <polygon class="spatial-chip" points="212.56,182.72 221.56,187.22 212.56,191.72 203.56,187.22"/>
+              <polygon class="spatial-chip" points="190.12,193.94 199.12,198.44 190.12,202.94 181.12,198.44"/>
+              <polygon class="spatial-chip" points="319.48,168.86 328.48,173.36 319.48,177.86 310.48,173.36"/>
+              <polygon class="spatial-chip" points="297.04,180.08 306.04,184.58 297.04,189.08 288.04,184.58"/>
+              <polygon class="spatial-chip" points="274.6,191.3 283.6,195.8 274.6,200.3 265.6,195.8"/>
+              <polygon class="spatial-chip" points="252.16,202.52 261.16,207.02 252.16,211.52 243.16,207.02"/>
+              <polygon class="spatial-chip" points="229.72,213.74 238.72,218.24 229.72,222.74 220.72,218.24"/>
+            </g>
+            <!-- Layer 01 · AI integration layer — FOCAL (accent + sheen) -->
+            <g class="tone-sky spatial-focal">
+              <polygon class="spatial-face spatial-face-left" points="103,84 235,150 235,163 103,97"/>
+              <polygon class="spatial-face spatial-face-right" points="235,150 367,84 367,97 235,163"/>
+              <polygon class="spatial-face spatial-face-top" points="235,18 367,84 235,150 103,84"/>
+              <polygon class="spatial-sheen" points="235,18 367,84 235,150 103,84"/>
+              <polygon class="spatial-chip" points="240.28,37.26 249.28,41.76 240.28,46.26 231.28,41.76"/>
+              <polygon class="spatial-chip" points="195.4,59.7 204.4,64.2 195.4,68.7 186.4,64.2"/>
+              <polygon class="spatial-chip" points="150.52,82.14 159.52,86.64 150.52,91.14 141.52,86.64"/>
+              <polygon class="spatial-chip" points="319.48,76.86 328.48,81.36 319.48,85.86 310.48,81.36"/>
+              <polygon class="spatial-chip" points="274.6,99.3 283.6,103.8 274.6,108.3 265.6,103.8"/>
+              <polygon class="spatial-chip" points="229.72,121.74 238.72,126.24 229.72,130.74 220.72,126.24"/>
+            </g>
+            <!-- Leaders -->
+            <line class="spatial-leader" x1="367" y1="84" x2="430" y2="84"/>
+            <circle class="spatial-dot" cx="367" cy="84" r="3"/>
+            <text class="spatial-eyebrow" x="438" y="80">Layer 01</text>
+            <text class="spatial-label" x="438" y="98">AI integration</text>
+            <line class="spatial-leader" x1="367" y1="176" x2="430" y2="176"/>
+            <circle class="spatial-dot" cx="367" cy="176" r="3"/>
+            <text class="spatial-eyebrow" x="438" y="172">Layer 02</text>
+            <text class="spatial-label" x="438" y="190">Your applications</text>
+            <line class="spatial-leader" x1="367" y1="268" x2="430" y2="268"/>
+            <circle class="spatial-dot" cx="367" cy="268" r="3"/>
+            <text class="spatial-eyebrow" x="438" y="264">Layer 03</text>
+            <text class="spatial-label" x="438" y="282">Orchestration</text>
+            <line class="spatial-leader" x1="367" y1="360" x2="430" y2="360"/>
+            <circle class="spatial-dot" cx="367" cy="360" r="3"/>
+            <text class="spatial-eyebrow" x="438" y="356">Layer 04</text>
+            <text class="spatial-label" x="438" y="374">Your data</text>
+            <line class="spatial-leader" x1="367" y1="452" x2="430" y2="452"/>
+            <circle class="spatial-dot" cx="367" cy="452" r="3"/>
+            <text class="spatial-eyebrow" x="438" y="448">Layer 05</text>
+            <text class="spatial-label" x="438" y="466">Infrastructure</text>
+          </svg>
+        </div>
+      </div>
+      <div class="cr-page-foot" style="margin-top:auto">
+        <span style="font-weight:600">example-brand.com</span>
+        <span>AI Integration Field Guide · 05</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ PAGE 6 · THE ENGAGEMENT MODEL (Part 02) ═════════════════════
+       Plan↔Build duality + the four-phase ledger. Recomposed from the original (different copy & order). -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">02 · The System</div>
+      </div>
+      <div class="cr-headline-block" style="margin-top:13mm; max-width:165mm">
+        <h2 class="cr-display-lg">One Accountable Team, From First Question to Last Mile.</h2>
+        <p class="cr-body" style="max-width:156mm">Two sides of the same engagement: the planning that decides what is worth building, and the integration that makes it real and keeps it running. Four phases carry you from uncertainty to a measured, scaling capability.</p>
+      </div>
+      <div class="cr-grid cr-cols-2" style="margin-top:9mm; gap:6mm">
+        <div class="cr-band tone-sky">
+          <div class="cr-eyebrow" style="color:var(--accent); margin-bottom:4mm">Plan · the strategy side</div>
+          <div class="feat-title">Decide what's worth building</div>
+          <p class="cr-list-body" style="margin-top:2mm; color:var(--cr-charcoal)">Assess the opportunities, then sequence them into a roadmap with a business case and named owners.</p>
+        </div>
+        <div class="cr-band tone-sage">
+          <div class="cr-eyebrow" style="color:var(--accent); margin-bottom:4mm">Build · the integration side</div>
+          <div class="feat-title">Make it real, then make it last</div>
+          <p class="cr-list-body" style="margin-top:2mm; color:var(--cr-charcoal)">Integrate AI into the systems you run, enable your teams, and measure against the numbers you already report.</p>
+        </div>
+      </div>
+      <div class="cr-stat-ledger cr-stat-ledger--value-first" style="margin-top:9mm">
+        <div class="cr-stat-line"><div class="cr-stat-value">01</div><div class="cr-stat-label">Assess — map where AI creates value and score it by impact, feasibility, and readiness.</div></div>
+        <div class="cr-stat-line"><div class="cr-stat-value">02</div><div class="cr-stat-label">Strategize — turn the shortlist into a sequenced roadmap with a clear business case.</div></div>
+        <div class="cr-stat-line"><div class="cr-stat-value">03</div><div class="cr-stat-label">Integrate &amp; Enable — build into existing systems and bring teams into the daily workflow.</div></div>
+        <div class="cr-stat-line"><div class="cr-stat-value">04</div><div class="cr-stat-label">Measure &amp; Scale — track against board metrics, then expand what works.</div></div>
+      </div>
+      <div class="cr-page-foot" style="margin-top:auto">
+        <span style="font-weight:600">example-brand.com</span>
+        <span>AI Integration Field Guide · 06</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ PAGE 7 · ISOMETRIC HERO #2 · THE ENGAGEMENT SEQUENCE (Part 02) ═════════════════════
+       Spatial process-sequence (doc-scoped .spatial-*, pattern from preview/spatial/process-sequence.html;
+       Tier-1 core identical to ISO #1). Four phase cubes step down the iso-X axis, wired by hairline
+       connectors + arrows. INTEGRATE is the ONE focal (accent + sheen). Each cube carries real chips. -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">02 · The System</div>
+      </div>
+      <div class="cr-headline-block" style="margin-top:13mm; max-width:165mm">
+        <h2 class="cr-display-lg">The Path Is Sequenced, Not Scattered.</h2>
+        <p class="cr-body" style="max-width:156mm">Each phase hands the next a concrete artifact — a scored shortlist, a roadmap, an integrated workflow, a measured result. The build phase is where the value turns on.</p>
+      </div>
+      <div style="flex:1; display:flex; align-items:center; justify-content:center; margin-top:6mm">
+        <div style="width:100%; max-width:192mm">
+        <svg class="spatial-svg" viewBox="78 90 680 396" role="img" aria-label="Isometric sequence of four phases stepping down: Assess, Strategize, Integrate (highlighted), Measure and Scale">
+          <defs><linearGradient id="spatialSheen2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="0.34"/></linearGradient></defs>
+          <!-- connectors · drawn first (behind the blocks) so they run block-CENTRE to block-CENTRE
+               and emerge through the middle of each slab, not along its side edge -->
+          <line class="spatial-proc-link" x1="170" y1="140" x2="330" y2="220"/>
+          <line class="spatial-proc-link" x1="330" y1="220" x2="490" y2="300"/>
+          <line class="spatial-proc-link" x1="490" y1="300" x2="650" y2="380"/>
+          <!-- Phase 1 · Assess (center 170,140) -->
+          <g class="tone-sky">
+            <polygon class="spatial-face spatial-face-left" points="90,140 170,180 170,190 90,150"/>
+            <polygon class="spatial-face spatial-face-right" points="170,180 250,140 250,150 170,190"/>
+            <polygon class="spatial-face spatial-face-top" points="170,100 250,140 170,180 90,140"/>
+            <polygon class="spatial-chip" points="173.2,114.4 181.2,118.4 173.2,122.4 165.2,118.4"/>
+            <polygon class="spatial-chip" points="146,128 154,132 146,136 138,132"/>
+            <polygon class="spatial-chip" points="194,152 202,156 194,160 186,156"/>
+            <polygon class="spatial-chip" points="166.8,165.6 174.8,169.6 166.8,173.6 158.8,169.6"/>
+          </g>
+          <!-- Phase 2 · Strategize (center 330,220) -->
+          <g class="tone-sky">
+            <polygon class="spatial-face spatial-face-left" points="250,220 330,260 330,270 250,230"/>
+            <polygon class="spatial-face spatial-face-right" points="330,260 410,220 410,230 330,270"/>
+            <polygon class="spatial-face spatial-face-top" points="330,180 410,220 330,260 250,220"/>
+            <polygon class="spatial-chip" points="333.2,194.4 341.2,198.4 333.2,202.4 325.2,198.4"/>
+            <polygon class="spatial-chip" points="306,208 314,212 306,216 298,212"/>
+            <polygon class="spatial-chip" points="354,232 362,236 354,240 346,236"/>
+            <polygon class="spatial-chip" points="326.8,245.6 334.8,249.6 326.8,253.6 318.8,249.6"/>
+          </g>
+          <!-- Phase 3 · Integrate (center 490,300) — FOCAL -->
+          <g class="tone-sky spatial-focal">
+            <polygon class="spatial-face spatial-face-left" points="410,300 490,340 490,350 410,310"/>
+            <polygon class="spatial-face spatial-face-right" points="490,340 570,300 570,310 490,350"/>
+            <polygon class="spatial-face spatial-face-top" points="490,260 570,300 490,340 410,300"/>
+            <polygon class="spatial-sheen" style="fill:url(#spatialSheen2)" points="490,260 570,300 490,340 410,300"/>
+            <path class="spatial-cyl-body" d="M 462,292 L 462,304 A 10,5 0 0 0 482,304 L 482,292 A 10,5 0 0 1 462,292 Z"/>
+            <ellipse class="spatial-cyl-top" cx="472" cy="292" rx="10" ry="5"/>
+            <polygon class="spatial-chip" points="513.2,289.9 522.2,294.4 513.2,298.9 504.2,294.4"/>
+            <polygon class="spatial-chip" points="458.8,317.1 467.8,321.6 458.8,326.1 449.8,321.6"/>
+          </g>
+          <!-- Phase 4 · Measure & Scale (center 650,380) -->
+          <g class="tone-sky">
+            <polygon class="spatial-face spatial-face-left" points="570,380 650,420 650,430 570,390"/>
+            <polygon class="spatial-face spatial-face-right" points="650,420 730,380 730,390 650,430"/>
+            <polygon class="spatial-face spatial-face-top" points="650,340 730,380 650,420 570,380"/>
+            <polygon class="spatial-embed" points="650,365.4 660,370.4 650,375.4 640,370.4"/>
+            <polygon class="spatial-embed" points="651.6,383.8 661.6,388.8 651.6,393.8 641.6,388.8"/>
+          </g>
+          <!-- leaders -->
+          <line class="spatial-leader" x1="170" y1="180" x2="170" y2="198"/>
+          <circle class="spatial-dot" cx="170" cy="180" r="3"/>
+          <text class="spatial-eyebrow" x="170" y="214" text-anchor="middle">Phase 01</text>
+          <text class="spatial-label" x="170" y="232" text-anchor="middle">Assess</text>
+          <line class="spatial-leader" x1="330" y1="260" x2="330" y2="278"/>
+          <circle class="spatial-dot" cx="330" cy="260" r="3"/>
+          <text class="spatial-eyebrow" x="330" y="294" text-anchor="middle">Phase 02</text>
+          <text class="spatial-label" x="330" y="312" text-anchor="middle">Strategize</text>
+          <line class="spatial-leader" x1="490" y1="340" x2="490" y2="358"/>
+          <circle class="spatial-dot" cx="490" cy="340" r="3"/>
+          <text class="spatial-eyebrow" x="490" y="374" text-anchor="middle">Phase 03</text>
+          <text class="spatial-label" x="490" y="392" text-anchor="middle">Integrate</text>
+          <line class="spatial-leader" x1="650" y1="420" x2="650" y2="438"/>
+          <circle class="spatial-dot" cx="650" cy="420" r="3"/>
+          <text class="spatial-eyebrow" x="650" y="454" text-anchor="middle">Phase 04</text>
+          <text class="spatial-label" x="650" y="472" text-anchor="middle">Measure</text>
+        </svg>
+        </div>
+      </div>
+      <div class="cr-page-foot" style="margin-top:auto">
+        <span style="font-weight:600">example-brand.com</span>
+        <span>AI Integration Field Guide · 07</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ PAGE 8 · PHASES A · ASSESS + STRATEGIZE (Part 02) ═════════════════════
+       Phases compressed 5→2 (anti-clone). One component per row: editorial stack, then a viz-delta.
+       ILLUSTRATIVE projection — flagged. -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">02 · The System · Plan</div>
+      </div>
+      <div class="cr-headline-block" style="margin-top:13mm; max-width:165mm">
+        <h2 class="cr-display-lg">Start Where AI Actually Pays Off — Fast.</h2>
+        <p class="cr-body" style="max-width:156mm">Assess maps the opportunities and scores each by impact, feasibility, and readiness. Strategize sequences the shortlist into a roadmap where early wins fund and de-risk the larger bets behind them.</p>
+      </div>
+      <div class="cr-stack" style="margin-top:11mm">
+        <div class="cr-list-row" style="border-top:0"><div class="cr-list-num">A</div><div class="cr-list-label">Score, don't guess</div><div class="cr-list-body">Every candidate ranked on the same three axes, so the first build is the one most likely to land — not the loudest idea in the room.</div></div>
+        <div class="cr-list-row"><div class="cr-list-num">B</div><div class="cr-list-label">Sequence for momentum</div><div class="cr-list-body">Quick wins first to build trust and free capacity; larger structural bets staged behind them with a named owner and one metric each.</div></div>
+      </div>
+      <div class="cr-stack" style="margin-top:13mm; gap:5mm">
+        <div class="feat-title">Time to a prioritized shortlist</div>
+        <div class="viz-delta tone-sky">
+          <div class="viz-delta-cell viz-delta-from">
+            <span class="viz-delta-k">Typical</span>
+            <span class="cr-stat-value">12<span class="unit">wk</span></span>
+          </div>
+          <div class="viz-delta-arrow"><svg viewBox="0 0 24 24"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></div>
+          <div class="viz-delta-cell">
+            <span class="viz-delta-k">With Assess</span>
+            <span class="cr-stat-value">3<span class="unit">wk</span></span>
+          </div>
+        </div>
+        <div class="viz-delta-chg">≈ 75% faster to a decision</div>
+        <p class="viz-flag" style="margin-top:1mm">Representative planning figure, not a measurement — set against your own baseline during Assess.</p>
+      </div>
+      <div class="cr-page-foot" style="margin-top:auto">
+        <span style="font-weight:600">example-brand.com</span>
+        <span>AI Integration Field Guide · 08</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ PAGE 9 · PHASES B · INTEGRATE + MEASURE (Part 02) ═════════════════════
+       One component per row: editorial stack, then a viz-pair (before/after straight-through processing).
+       ILLUSTRATIVE — flagged. -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">02 · The System · Build</div>
+      </div>
+      <div class="cr-headline-block" style="margin-top:13mm; max-width:165mm">
+        <h2 class="cr-display-lg">Build It Into the Work, Then Measure It There.</h2>
+        <p class="cr-body" style="max-width:156mm">Integrate threads AI through your existing tools with approval points and guardrails built in. Measure ties every initiative to a number the board already watches, tracked before and after go-live.</p>
+      </div>
+      <div class="cr-stack" style="margin-top:10mm; gap:4mm; max-width:162mm">
+        <div class="feat-title">What "integrated" means here</div>
+        <p class="cr-list-body" style="margin:0; color:var(--cr-charcoal)">Work flows through your existing systems end to end — fewer manual handoffs, fewer re-keyed records, fewer cases waiting for a person to act — with human judgment kept in charge at the points that matter.</p>
+      </div>
+      <div class="tone-periwinkle" style="margin-top:10mm">
+        <div class="cr-divider"></div>
+        <div class="viz-legend" style="justify-content:center; margin-top:7mm; margin-bottom:6mm">
+          <span><i class="sw-ref"></i>Before integration</span>
+          <span><i class="sw-sub"></i>After integration</span>
+        </div>
+        <div class="viz-pair" style="gap:5mm; align-items:center; text-align:center">
+          <svg class="viz-chart" viewBox="0 0 120 90" preserveAspectRatio="xMidYMax meet" style="height:44mm" role="img" aria-label="Straight-through processing rises from about 35 percent to about 90 percent after integration">
+            <rect x="22" y="58" width="30" height="24.5" fill="var(--surface)"/>
+            <rect x="68" y="19.5" width="30" height="63" fill="var(--accent)"/>
+            <line x1="10" y1="82.5" x2="110" y2="82.5" stroke="var(--cr-keyline)" stroke-width="1"/>
+          </svg>
+          <div class="cr-stat-value" style="font-size:58px; line-height:1">~90<span class="unit">%</span></div>
+          <div class="feat-title">Straight-through processing</div>
+        </div>
+      </div>
+      <p class="viz-flag" style="margin-top:7mm">Illustrative before/after for a representative workflow — measured on yours before and after go-live.</p>
+      <div class="cr-page-foot" style="margin-top:auto">
+        <span style="font-weight:600">example-brand.com</span>
+        <span>AI Integration Field Guide · 09</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ PAGE 10 · THE SYSTEMS HUB (Part 02) ═════════════════════
+       FLAT 2D hub & spoke (doc-scoped .diag-*, pattern from preview/diagrams/hub-spoke.html; Tier-1 .diag-*
+       core byte-identical). The Example Brand AI hub at the centre, wired to three business systems (sky) and
+       three data sources (sage). Diagram colour stance: flat tonal fills, hairline spokes, NO gradients.
+       "Works with what you already run." (Replaced the earlier isometric ecosystem at user request.) -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">02 · The System</div>
+      </div>
+      <div class="cr-headline-block" style="margin-top:13mm; max-width:165mm">
+        <h2 class="cr-display-lg">It Works With the Systems You Already Run.</h2>
+        <p class="cr-body" style="max-width:156mm">Your applications and your data sources stay where they are. The integration hub wires them together — no rip-and-replace, no clean-slate environment.</p>
+      </div>
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:9mm; margin-top:6mm">
+        <div class="diag-hub">
+          <svg viewBox="0 0 360 330" role="img" aria-label="A 2D hub-and-spoke: the Example Brand AI hub at the centre connected to three business systems (ERP, CRM, Helpdesk) and three data sources (Records, Documents, Events)">
+            <!-- spokes (drawn first, behind the circles) -->
+            <line class="diag-hub-line" x1="180" y1="168" x2="180"   y2="52"/>
+            <line class="diag-hub-line" x1="180" y1="168" x2="280.5" y2="110"/>
+            <line class="diag-hub-line" x1="180" y1="168" x2="280.5" y2="226"/>
+            <line class="diag-hub-line" x1="180" y1="168" x2="180"   y2="284"/>
+            <line class="diag-hub-line" x1="180" y1="168" x2="79.5"  y2="226"/>
+            <line class="diag-hub-line" x1="180" y1="168" x2="79.5"  y2="110"/>
+            <!-- outer nodes · 3 systems (sky) + 3 data sources (sage) -->
+            <circle class="diag-hub-node" cx="180"   cy="52"  r="34" style="fill:var(--cr-tone-sky)"/><text class="diag-hub-lab" x="180"   y="52">ERP</text>
+            <circle class="diag-hub-node" cx="280.5" cy="110" r="34" style="fill:var(--cr-tone-sky)"/><text class="diag-hub-lab" x="280.5" y="110">CRM</text>
+            <circle class="diag-hub-node" cx="79.5"  cy="110" r="34" style="fill:var(--cr-tone-sky)"/><text class="diag-hub-lab" x="79.5"  y="110">Helpdesk</text>
+            <circle class="diag-hub-node" cx="280.5" cy="226" r="34" style="fill:var(--cr-tone-sage)"/><text class="diag-hub-lab" x="280.5" y="226">Records</text>
+            <circle class="diag-hub-node" cx="180"   cy="284" r="34" style="fill:var(--cr-tone-sage)"/><text class="diag-hub-lab" x="180"   y="284">Documents</text>
+            <circle class="diag-hub-node" cx="79.5"  cy="226" r="34" style="fill:var(--cr-tone-sage)"/><text class="diag-hub-lab" x="79.5"  y="226">Events</text>
+            <!-- hub -->
+            <circle class="diag-hub-core" cx="180" cy="168" r="46"/><text class="diag-hub-core-lab" x="180" y="168">AI hub</text>
+          </svg>
+        </div>
+        <div class="viz-legend" style="justify-content:center">
+          <span><i style="background:var(--cr-tone-sky)"></i>Your systems</span>
+          <span><i style="background:var(--cr-tone-sage)"></i>Your data sources</span>
+        </div>
+      </div>
+      <div class="cr-page-foot" style="margin-top:auto">
+        <span style="font-weight:600">example-brand.com</span>
+        <span>AI Integration Field Guide · 10</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ PAGE 11 · THE VALUE MODEL (Part 03) ═════════════════════
+       FULL-WIDTH viz-cluster — tasks per person per week, manual vs. with AI, by function. ILLUSTRATIVE. -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">03 · The Proof</div>
+      </div>
+      <div class="cr-headline-block" style="margin-top:13mm; max-width:165mm">
+        <h2 class="cr-display-lg">The Same Team Handles Materially More.</h2>
+        <p class="cr-body" style="max-width:156mm">Where AI is integrated into the workflow, throughput rises without adding headcount — illustrated here as tasks cleared per person per week, manual today versus with AI in the loop.</p>
+      </div>
+      <div class="viz-legend" style="margin-top:11mm">
+        <span><i class="sw-ref"></i>Manual today</span>
+        <span><i class="sw-sub"></i>With AI integrated</span>
+      </div>
+      <div class="viz-cluster tone-periwinkle" style="margin-top:7mm">
+        <div class="viz-cluster-grp"><div class="viz-cbars">
+          <div class="viz-cbar viz-cbar--ref" style="height:25%"><span class="viz-cbar-val">30</span></div>
+          <div class="viz-cbar viz-cbar--sub" style="height:79%"><span class="viz-cbar-val">95</span></div>
+        </div><div class="viz-cluster-cat">Finance ops</div></div>
+        <div class="viz-cluster-grp"><div class="viz-cbars">
+          <div class="viz-cbar viz-cbar--ref" style="height:33%"><span class="viz-cbar-val">40</span></div>
+          <div class="viz-cbar viz-cbar--sub" style="height:92%"><span class="viz-cbar-val">110</span></div>
+        </div><div class="viz-cluster-cat">Customer service</div></div>
+        <div class="viz-cluster-grp"><div class="viz-cbars">
+          <div class="viz-cbar viz-cbar--ref" style="height:21%"><span class="viz-cbar-val">25</span></div>
+          <div class="viz-cbar viz-cbar--sub" style="height:58%"><span class="viz-cbar-val">70</span></div>
+        </div><div class="viz-cluster-cat">Sales ops</div></div>
+        <div class="viz-cluster-grp"><div class="viz-cbars">
+          <div class="viz-cbar viz-cbar--ref" style="height:29%"><span class="viz-cbar-val">35</span></div>
+          <div class="viz-cbar viz-cbar--sub" style="height:71%"><span class="viz-cbar-val">85</span></div>
+        </div><div class="viz-cluster-cat">Supply chain</div></div>
+      </div>
+      <div style="margin-top:6mm"><p class="viz-flag">Tasks per person per week, indexed and illustrative (scale 0–120) — representative for planning, measured against your own baseline.</p></div>
+      <div class="cr-page-foot" style="margin-top:auto">
+        <span style="font-weight:600">example-brand.com</span>
+        <span>AI Integration Field Guide · 11</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ PAGE 12 · THE VALUE BREAKDOWN (Part 03) ═════════════════════
+       HERO donut + its own bold-% legend (one figure). Genuine parts-of-a-whole (sums to 100%). ILLUSTRATIVE. -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">03 · The Proof</div>
+      </div>
+      <div class="cr-headline-block" style="margin-top:13mm; max-width:165mm">
+        <h2 class="cr-display-lg">Where the Value Comes From.</h2>
+        <p class="cr-body" style="max-width:156mm">Across a typical engagement the gains break into four levers. Labor capacity reclaimed leads, but speed and quality compound the return.</p>
+      </div>
+      <div style="margin-top:9mm; display:flex; flex-direction:column; align-items:center; gap:9mm">
+        <div class="viz-donut viz-donut--hero">
+          <svg viewBox="0 0 120 120" role="img" aria-label="Value mix: labor capacity 42 percent, error and rework 24 percent, cycle time 20 percent, revenue and retention 14 percent">
+            <g transform="rotate(-90 60 60)">
+              <circle class="viz-donut-seg" cx="60" cy="60" r="42" stroke="var(--cr-tone-sky-accent)" stroke-dasharray="110.8 263.9" stroke-dashoffset="0"/>
+              <circle class="viz-donut-seg" cx="60" cy="60" r="42" stroke="color-mix(in srgb, var(--cr-tone-sky-accent) 70%, #fff)" stroke-dasharray="63.3 263.9" stroke-dashoffset="-110.8"/>
+              <circle class="viz-donut-seg" cx="60" cy="60" r="42" stroke="color-mix(in srgb, var(--cr-tone-sky-accent) 45%, #fff)" stroke-dasharray="52.8 263.9" stroke-dashoffset="-174.1"/>
+              <circle class="viz-donut-seg" cx="60" cy="60" r="42" stroke="color-mix(in srgb, var(--cr-tone-sky-accent) 25%, #fff)" stroke-dasharray="36.9 263.9" stroke-dashoffset="-226.9"/>
+            </g>
+          </svg>
+          <div class="viz-donut-label"><div class="viz-donut-cap">Value<br>mix</div></div>
+        </div>
+        <div class="viz-legend2" style="display:grid; grid-template-columns:repeat(2, minmax(0,68mm)); gap:4mm 14mm">
+          <div class="viz-legend2-row"><span class="viz-legend2-sw" style="background:var(--cr-tone-sky-accent)"></span><span class="viz-legend2-pct">42<span style="font-size:.6em">%</span></span><span class="viz-legend2-lab">Labor capacity reclaimed</span></div>
+          <div class="viz-legend2-row"><span class="viz-legend2-sw" style="background:color-mix(in srgb, var(--cr-tone-sky-accent) 70%, #fff)"></span><span class="viz-legend2-pct">24<span style="font-size:.6em">%</span></span><span class="viz-legend2-lab">Error &amp; rework reduction</span></div>
+          <div class="viz-legend2-row"><span class="viz-legend2-sw" style="background:color-mix(in srgb, var(--cr-tone-sky-accent) 45%, #fff)"></span><span class="viz-legend2-pct">20<span style="font-size:.6em">%</span></span><span class="viz-legend2-lab">Cycle time &amp; speed</span></div>
+          <div class="viz-legend2-row"><span class="viz-legend2-sw" style="background:color-mix(in srgb, var(--cr-tone-sky-accent) 25%, #fff)"></span><span class="viz-legend2-pct">14<span style="font-size:.6em">%</span></span><span class="viz-legend2-lab">Revenue &amp; retention lift</span></div>
+        </div>
+      </div>
+      <div style="margin-top:9mm; display:flex; flex-direction:column; gap:3mm">
+        <div class="cr-divider"></div>
+        <div class="viz-flag">Illustrative composition for a representative engagement — not a measured breakdown of your environment. Shares sum to 100%.</div>
+      </div>
+      <div class="cr-page-foot" style="margin-top:auto">
+        <span style="font-weight:600">example-brand.com</span>
+        <span>AI Integration Field Guide · 12</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ PAGE 13 · THE ECONOMICS (Part 03) ═════════════════════
+       viz-benchmark--metric (cost per transaction) as one row; a payback viz-delta as a second row. ILLUSTRATIVE. -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">03 · The Proof</div>
+      </div>
+      <div class="cr-headline-block" style="margin-top:13mm; max-width:165mm">
+        <h2 class="cr-display-lg">Less Cost per Unit, Fast Payback.</h2>
+        <p class="cr-body" style="max-width:156mm">When a high-volume workflow runs on integrated AI, the cost to process each unit falls sharply — and the investment is recovered from reclaimed hours and avoided errors well inside the first year.</p>
+      </div>
+      <div class="viz-benchmark viz-benchmark--metric tone-sky" style="margin-top:11mm">
+        <div class="viz-title">Cost to process one transaction</div>
+        <div class="viz-bars">
+          <div class="viz-bar-row">
+            <div class="viz-bar viz-bar--track" style="width:100%"></div>
+            <div class="cr-stat-sub">Manual today (reference)</div>
+          </div>
+          <div class="viz-bar-row">
+            <div class="viz-bar viz-bar--ink" style="width:22%"></div>
+            <div class="cr-stat-sub">With AI integrated</div>
+          </div>
+        </div>
+        <div class="viz-metric">
+          <div class="cr-stat-value">~78<span class="unit">%</span></div>
+          <div class="cr-stat-sub">lower cost per transaction</div>
+        </div>
+      </div>
+      <div style="margin-top:13mm">
+        <div class="cr-divider"></div>
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:8mm; margin-top:6mm; flex-wrap:wrap">
+          <div class="viz-delta">
+            <div class="viz-delta-cell viz-delta-from"><span class="viz-delta-k">Investment</span><span class="cr-stat-value">Mo 0</span></div>
+            <div class="viz-delta-arrow"><svg viewBox="0 0 24 24"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></div>
+            <div class="viz-delta-cell"><span class="viz-delta-k">Recovered by</span><span class="cr-stat-value">Mo 4</span></div>
+          </div>
+          <div style="text-align:right"><div class="cr-stat-value" style="font-size:32px">&lt;5<span class="unit">mo</span></div><div class="cr-stat-sub">typical payback</div></div>
+        </div>
+      </div>
+      <div style="margin-top:7mm"><p class="viz-flag">Representative figures for planning only — recovered from reclaimed hours and avoided errors, measured against your own baseline.</p></div>
+      <div class="cr-page-foot" style="margin-top:auto">
+        <span style="font-weight:600">example-brand.com</span>
+        <span>AI Integration Field Guide · 13</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ PAGE 14 · VALUE OVER THE ENGAGEMENT (Part 03) ═════════════════════
+       FULL-WIDTH viz-trend — value-realization arc across the ordered phases. ILLUSTRATIVE. -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">03 · The Proof</div>
+      </div>
+      <div class="cr-headline-block" style="margin-top:13mm; max-width:165mm">
+        <h2 class="cr-display-lg">Value Compounds as the Engagement Moves.</h2>
+        <p class="cr-body" style="max-width:156mm">Little shows in Assess and Strategize — that's the groundwork. Realized value accelerates through Integrate and Measure, then compounds as the playbook scales to the next workflow.</p>
+      </div>
+      <div class="viz-trend tone-sky" style="margin-top:11mm">
+        <svg viewBox="0 0 320 158" preserveAspectRatio="none" role="img" aria-label="Illustrative cumulative value rising across the five engagement phases">
+          <path class="viz-trend-area" d="M20,132 L20,126 L90,115 L160,81 L230,52 L300,18 L300,132 Z"/>
+          <line class="viz-trend-base" x1="20" y1="132" x2="300" y2="132"/>
+          <polyline class="viz-trend-line" points="20,126 90,115 160,81 230,52 300,18"/>
+          <circle class="viz-trend-dot" cx="20" cy="126" r="3"/>
+          <circle class="viz-trend-dot" cx="90" cy="115" r="3"/>
+          <circle class="viz-trend-dot" cx="160" cy="81" r="3"/>
+          <circle class="viz-trend-dot" cx="230" cy="52" r="3"/>
+          <circle class="viz-trend-dot" cx="300" cy="18" r="4"/>
+          <text class="viz-trend-pt" x="20" y="121" text-anchor="middle">5</text>
+          <text class="viz-trend-pt" x="300" y="13" text-anchor="end">100</text>
+          <text class="viz-trend-ax" x="20" y="147" text-anchor="start">Assess</text>
+          <text class="viz-trend-ax" x="90" y="147" text-anchor="middle">Strategize</text>
+          <text class="viz-trend-ax" x="160" y="147" text-anchor="middle">Integrate</text>
+          <text class="viz-trend-ax" x="230" y="147" text-anchor="middle">Measure</text>
+          <text class="viz-trend-ax" x="300" y="147" text-anchor="end">Scale</text>
+        </svg>
+      </div>
+      <div style="margin-top:8mm; display:flex; flex-direction:column; gap:3mm">
+        <div class="cr-divider"></div>
+        <div class="viz-flag"><strong>Representative value-realization arc for planning</strong> — cumulative value indexed to 100 at scale. Illustrative placeholder figures.</div>
+      </div>
+      <div class="cr-page-foot" style="margin-top:auto">
+        <span style="font-weight:600">example-brand.com</span>
+        <span>AI Integration Field Guide · 14</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ PAGE 15 · WHERE IT PAYS OFF (Part 03) ═════════════════════
+       HERO viz-rank — ranked horizontal bar (value opportunity by function). ILLUSTRATIVE. -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">03 · The Proof</div>
+      </div>
+      <div class="cr-headline-block" style="margin-top:13mm; max-width:165mm">
+        <h2 class="cr-display-lg">The Value Concentrates Where Volume Meets Repetition.</h2>
+        <p class="cr-body" style="max-width:156mm">Across engagements, the largest opportunity tends to sit in customer and finance operations — high-volume, rules-heavy work where integrated AI clears the queue.</p>
+      </div>
+      <div class="viz-rank tone-sky" style="margin-top:13mm">
+        <div class="viz-rank-row"><div class="viz-rank-label">Customer operations</div><div class="viz-rank-track"><div class="viz-rank-bar" style="width:100%"></div></div><div class="viz-rank-val">100</div></div>
+        <div class="viz-rank-row"><div class="viz-rank-label">Finance &amp; accounting</div><div class="viz-rank-track"><div class="viz-rank-bar" style="width:78%"></div></div><div class="viz-rank-val">78</div></div>
+        <div class="viz-rank-row"><div class="viz-rank-label">Sales &amp; marketing</div><div class="viz-rank-track"><div class="viz-rank-bar" style="width:64%"></div></div><div class="viz-rank-val">64</div></div>
+        <div class="viz-rank-row"><div class="viz-rank-label">Supply chain &amp; ops</div><div class="viz-rank-track"><div class="viz-rank-bar" style="width:55%"></div></div><div class="viz-rank-val">55</div></div>
+        <div class="viz-rank-row"><div class="viz-rank-label">HR &amp; back office</div><div class="viz-rank-track"><div class="viz-rank-bar" style="width:34%"></div></div><div class="viz-rank-val">34</div></div>
+        <div class="viz-rank-row"><div class="viz-rank-label">IT service management</div><div class="viz-rank-track"><div class="viz-rank-bar" style="width:28%"></div></div><div class="viz-rank-val">28</div></div>
+      </div>
+      <div style="margin-top:7mm"><p class="viz-flag">Estimated annual value opportunity by function, indexed to the leader (scale 0–100) — illustrative and representative, not a measurement of your organization.</p></div>
+      <div class="cr-page-foot" style="margin-top:auto">
+        <span style="font-weight:600">example-brand.com</span>
+        <span>AI Integration Field Guide · 15</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ PAGE 16 · HOW THE APPROACHES COMPARE (Part 03) ═════════════════════
+       FULL-WIDTH viz-table — qualitative comparison (no numbers; §4 doesn't bite). -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">03 · The Proof</div>
+      </div>
+      <div class="cr-headline-block" style="margin-top:13mm; max-width:165mm">
+        <h2 class="cr-display-lg">Not Another Tool. A Different Way to Get There.</h2>
+        <p class="cr-body" style="max-width:156mm">Traditional automation and off-the-shelf AI each solve part of the problem. The difference is who owns the path from idea to a measured result in your operations.</p>
+      </div>
+      <div class="viz-table" style="margin-top:11mm">
+        <div class="viz-table-head">&nbsp;</div>
+        <div class="viz-table-head">Traditional automation</div>
+        <div class="viz-table-head">Off-the-shelf AI</div>
+        <div class="viz-table-subjh">Example Brand engagement</div>
+
+        <div class="viz-table-rowh">Handles exceptions</div>
+        <div class="viz-table-cell">Stops at the first one</div>
+        <div class="viz-table-cell">Sometimes, unpredictably</div>
+        <div class="viz-table-subj">Designed in, with guardrails</div>
+
+        <div class="viz-table-rowh">Works with your systems</div>
+        <div class="viz-table-cell">Brittle, point-to-point</div>
+        <div class="viz-table-cell">Needs you to wire it up</div>
+        <div class="viz-table-subj">Integrated end to end</div>
+
+        <div class="viz-table-rowh">Tied to a business metric</div>
+        <div class="viz-table-cell">Rarely</div>
+        <div class="viz-table-cell">Left to you</div>
+        <div class="viz-table-subj">Accountable from day one</div>
+
+        <div class="viz-table-rowh">Who owns the outcome</div>
+        <div class="viz-table-cell">The IT backlog</div>
+        <div class="viz-table-cell">The vendor's roadmap</div>
+        <div class="viz-table-subj">One embedded team, with you</div>
+      </div>
+      <div class="cr-page-foot" style="margin-top:auto">
+        <span style="font-weight:600">example-brand.com</span>
+        <span>AI Integration Field Guide · 16</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ PAGE 17 · THE APPROVAL FLOW (Part 04) ═════════════════════
+       FLAT process flow (doc-scoped .diag-*, pattern from preview/diagrams/process.html; Tier-1 .diag-*
+       core byte-identical). Agent proposes → HUMAN approves (the highlighted gate, tone-periwinkle) →
+       system acts → logged. Flat tonal nodes + hairline connectors, NO gradients. Paired with a
+       cr-checklist of guardrails. (Replaced the earlier isometric console at user request.) "Is it safe?" -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">04 · The Trust</div>
+      </div>
+      <div class="cr-headline-block" style="margin-top:13mm; max-width:165mm">
+        <h2 class="cr-display-lg">Safe by Design — a Human Stays at the Controls.</h2>
+        <p class="cr-body" style="max-width:156mm">Every consequential action is proposed, surfaced for human review, and approved by a person before it runs — and every step is logged. Governance is built into the integration, not bolted on after.</p>
+      </div>
+      <div style="margin-top:12mm">
+        <div class="diag-process-row">
+          <div class="diag-node tone-sky">
+            <div class="diag-process-no">Step 01</div>
+            <div class="diag-node-label">Agent proposes</div>
+            <div class="diag-node-text">with the evidence</div>
+          </div>
+          <div class="diag-process-link"><span class="diag-connector diag-connector--h"></span><span class="diag-arrow diag-arrow--r"></span></div>
+          <div class="diag-node tone-periwinkle">
+            <div class="diag-process-no">Step 02 · the gate</div>
+            <div class="diag-node-label">Human approves</div>
+            <div class="diag-node-text">before it runs</div>
+          </div>
+          <div class="diag-process-link"><span class="diag-connector diag-connector--h"></span><span class="diag-arrow diag-arrow--r"></span></div>
+          <div class="diag-node tone-sky">
+            <div class="diag-process-no">Step 03</div>
+            <div class="diag-node-label">System acts</div>
+            <div class="diag-node-text">in your tools</div>
+          </div>
+          <div class="diag-process-link"><span class="diag-connector diag-connector--h"></span><span class="diag-arrow diag-arrow--r"></span></div>
+          <div class="diag-node tone-sky">
+            <div class="diag-process-no">Step 04</div>
+            <div class="diag-node-label">Logged</div>
+            <div class="diag-node-text">for review &amp; audit</div>
+          </div>
+        </div>
+      </div>
+      <div class="cr-eyebrow" style="margin-top:14mm; color:var(--cr-graphite)">The guardrails behind it</div>
+      <div class="cr-band tone-sky" style="margin-top:4mm">
+        <div class="cr-checklist cr-checklist--cols-2">
+          <div class="cr-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Human approval on every consequential action</div>
+          <div class="cr-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Your data stays in your environment</div>
+          <div class="cr-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Every action logged and auditable</div>
+          <div class="cr-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Agents act only within set guardrails</div>
+        </div>
+      </div>
+      <div class="cr-page-foot" style="margin-top:auto">
+        <span style="font-weight:600">example-brand.com</span>
+        <span>AI Integration Field Guide · 17</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ PAGE 18 · OUTCOMES + CLOSE (Part 05) ═════════════════════
+       cr-stat-wall (illustrative) → navy cr-quote → full-bleed cr-band--dark CTA banner. -->
+  <section class="cr-page">
+    <div class="fill">
+      <div class="cr-page-header">
+        <img class="cr-logo" src="../assets/logo/example-brand-color.svg" alt="Example Brand" />
+        <div class="cr-eyebrow">05 · The Partnership</div>
+      </div>
+      <div class="cr-headline-block" style="margin-top:13mm; max-width:165mm">
+        <h2 class="cr-display-lg">Adopt AI Safely, Strategically, and With Measurable Value.</h2>
+        <p class="cr-body" style="max-width:156mm">Not technology for its own sake — capacity, a sharper edge, and capability that lasts, every engagement measured against the numbers you already report.</p>
+      </div>
+      <div class="cr-stat-wall" style="margin-top:10mm">
+        <div class="cr-stat-row cr-grid cr-cols-3" style="border-top:0; padding-top:0">
+          <div class="cr-stat"><div class="cr-stat-value">~78<span class="unit">%</span></div><div class="cr-stat-sub">lower cost per transaction</div></div>
+          <div class="cr-stat"><div class="cr-stat-value">~2.4<span class="unit">×</span></div><div class="cr-stat-sub">throughput per person</div></div>
+          <div class="cr-stat"><div class="cr-stat-value">&lt;5<span class="unit">mo</span></div><div class="cr-stat-sub">typical payback</div></div>
+        </div>
+      </div>
+      <div style="margin-top:4mm"><p class="viz-flag">Representative outcomes for planning only — measured against your own baseline before and after go-live.</p></div>
+      <p class="cr-body-strong" style="max-width:156mm; margin-top:11mm; color:var(--cr-charcoal)">From the first uncertainty to live integration, Example Brand works as an embedded partner — not a report that lands on your desk and waits.</p>
+      <div class="cr-band cr-band--dark cr-band--bleed" style="margin-top:auto; margin-bottom:calc(-1 * var(--page-pad)); padding:11mm 16mm 13mm">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:8mm; flex-wrap:wrap">
+          <div style="display:flex; flex-direction:column; gap:3mm; max-width:118mm">
+            <div style="font:500 var(--fs-h2)/1.2 var(--font-display); letter-spacing:-.02em; color:#fff">Let's Make AI Practical.</div>
+            <div class="cr-body" style="color:var(--cr-stone)">A low-pressure conversation about where AI fits in your business — and where it doesn't.</div>
+          </div>
+          <a class="cr-btn" href="https://example-brand.com">Let's Talk →</a>
+        </div>
+        <div class="cr-checklist cr-checklist--cols-3" style="margin-top:8mm">
+          <div class="cr-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>No rip-and-replace</div>
+          <div class="cr-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Start with one workflow</div>
+          <div class="cr-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Measured against your numbers</div>
+        </div>
+        <div class="cr-page-foot" style="margin-top:9mm; border:0">
+          <span style="font-weight:600; color:rgba(255,255,255,.85)">example-brand.com</span>
+          <span style="letter-spacing:.06em; text-transform:uppercase; font-weight:600; font-size:12px; color:rgba(255,255,255,.6)">AI Integration Field Guide · 18</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

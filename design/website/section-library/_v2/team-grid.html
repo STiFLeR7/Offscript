@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Team grid</title>
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+<!--
+  COMPOSITION  — Pixel-faithful re-skin of the Amini "Meet the team" section.
+                 HEADER (no nav — this is a mid-page / about-us body section):
+                   row 1  = coloured eyebrow, left-aligned;
+                   row 2  = 2-col split — a 2-line bold headline (left, wider col)
+                            beside a ~3-line supporting grey lede (right, narrow col),
+                            both TOP-aligned to each other (not to the eyebrow).
+                 GRID = 3 columns × 2 rows, 6 people. Column gap tight (~28px),
+                   ROW gap deliberately larger (~64px) — matches the source's
+                   wider vertical rhythm (NOT the 16px bento rule; fidelity wins).
+                 CARD = near-square portrait photo (aspect 47/50) on top + a white
+                   footer strip below: bold NAME + solid LinkedIn mark top-right on
+                   one row, ROLE in grey underneath. Borderless white cards on a
+                   light-grey page band — separation comes from surface contrast,
+                   no shadow, no border (CR charter).
+  INSPIRATION  — Amini "Amini is built by a diverse, mission-driven team."
+                 Layout / composition / spacing / region-vocabulary only.
+                 Re-skinned to CR: Urbanist/Inter, eyebrow → neutral grey (the
+                 source's maroon is DROPPED per the inspiration rule, not mapped to
+                 brand blue — #149DFF fails AA on this grey band), CR voice copy,
+                 real face-crop avatars saved local
+                 to assets/avatars/team-*.jpg (object-fit:cover).
+  LINKEDIN ICON— Inline SOLID LinkedIn SVG, NOT Lucide. The fidelity contract
+                 treats brand logos as a carve-out from the Lucide-only rule
+                 ("brand logos → real recognizable equivalent logos (SVG)"), and
+                 the source shows the solid "in" glyph. No Lucide CDN loaded —
+                 this is the section's only icon.
+  MOTION       — Staggered scroll-reveal: header + cards fade-up in sequence
+                 (--d step) on first viewport entry, 0.7s cubic, then STATIC
+                 (user chose the no-hover option). The only hover/focus state is a
+                 colour shift on the LinkedIn <a> (grey → brand blue) — an a11y
+                 affordance for a real link, not card motion.
+                 Uses the .has-js default-VISIBLE pattern: content shows at full
+                 opacity without JS (and when the <script> is stripped for clean
+                 screenshot stills); JS adds html.has-js then .in-view to animate.
+  ROW RATIOS   — Photo region fixed at aspect-ratio 47/50 (≈0.94, the source's
+                 slightly-portrait near-square); footer height content-driven.
+-->
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cr-bg-grey-100);          /* var(--cr-bg-grey-100) light-grey band → white cards separate by contrast */
+    font-family: var(--cr-font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Section wrapper ─────────────────────────────────────────── */
+  .team { padding: 96px 64px; }
+  .well { max-width: var(--cr-content-narrow); margin: 0 auto; } /* echoes the source's contained ~73% well */
+
+  /* ── Header ──────────────────────────────────────────────────── */
+  .eyebrow {
+    font-family: var(--cr-font-body);
+    font-weight: 600; font-size: 15px;
+    letter-spacing: 0.01em;
+    /* Neutral grey kicker. The source's maroon is DROPPED (inspiration rule = ignore source colours),
+       NOT re-skinned to brand blue: var(--cr-brand) on this var(--cr-bg-grey-100) band is only ~2.5:1 (fails AA + the 3:1
+       large-text floor). --cr-fg-3 clears AA (~5.3:1); position above the headline reads it as a kicker. */
+    color: var(--cr-fg-3);
+    margin: 0 0 22px;
+  }
+  /* 2-col split: headline (wide) | lede (narrow), top-aligned.
+     Composition follows the source — left/right roles are NOT hardcoded as a rule. */
+  .head {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    column-gap: 64px;
+    align-items: start;
+  }
+  .head-title {
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    /* 44px = the on-ramp section-title size; holds the headline to 2 lines in the
+       header column (a longer wordmark than the source's "Amini" wraps at 50px). */
+    font-size: clamp(30px, 4.4vw, 44px);
+    line-height: 1.12; letter-spacing: -0.02em;
+    color: var(--cr-ink);
+    margin: 0; min-width: 0;
+  }
+  .head-lede {
+    font-family: var(--cr-font-body);
+    font-weight: 400; font-size: 19px;
+    line-height: 1.55;
+    color: var(--cr-fg-3);
+    margin: 6px 0 0; min-width: 0;
+  }
+
+  /* ── Card grid ───────────────────────────────────────────────── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 28px;                           /* tight, ~6% of card width — matches source */
+    row-gap: 64px;                              /* larger vertical rhythm — matches source */
+    margin-top: 72px;
+  }
+
+  .card {
+    background: var(--cr-bg);                    /* white card on the grey band */
+    border-radius: 4px;                          /* near-sharp, matching the source's crisp cards */
+    overflow: hidden;                            /* photo clips to the card corners */
+    min-width: 0;
+  }
+
+  .photo {
+    aspect-ratio: 47 / 50;                        /* ≈0.94 — source's slightly-portrait near-square */
+    overflow: hidden;
+    background: var(--cr-bg-grey-200);            /* placeholder tone while the photo loads */
+  }
+  .photo img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: 50% 22%;
+    display: block;
+  }
+
+  /* ── Card footer — name + LinkedIn, then role ────────────────── */
+  .foot { padding: 22px 24px 26px; }
+  .foot-top {
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 12px;
+  }
+  .name {
+    font-family: var(--cr-font-display);
+    font-weight: 700; font-size: 18px;
+    line-height: 1.3; color: var(--cr-ink);
+    min-width: 0;
+  }
+  .li {
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--cr-fg-3);                       /* grey at rest — ≥3:1 for the link mark (WCAG 1.4.11); → brand blue on hover/focus */
+    border-radius: 4px;
+    transition: color .2s ease;
+    text-decoration: none;
+  }
+  .li svg { width: 20px; height: 20px; display: block; }
+  .li:hover, .li:focus-visible { color: var(--cr-brand); }  /* a11y affordance for a real link — not card motion */
+  .li:focus-visible { outline: 2px solid var(--cr-brand); outline-offset: 3px; }
+  .role {
+    font-family: var(--cr-font-body);
+    font-weight: 400; font-size: 15px;
+    line-height: 1.4; color: var(--cr-fg-3);
+    margin-top: 5px;
+  }
+
+  /* ── Entrance reveal — .has-js default-VISIBLE pattern ───────── */
+  .reveal { opacity: 1; }                         /* visible without JS / when script is stripped */
+  html.has-js .reveal { opacity: 0; transform: translateY(16px); }
+  html.has-js .team.in-view .reveal {
+    animation: reveal-in .7s cubic-bezier(.22,.61,.36,1) forwards;
+    animation-delay: var(--d, 0ms);
+  }
+  @keyframes reveal-in { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    html.has-js .reveal { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* ── Responsive ──────────────────────────────────────────────── */
+  /* Header collapses to one column early (≤1160): the 2-col header only lives
+     where its left column is wide enough to hold the 2-line headline; below this
+     the headline takes the full well width (still 2 lines via the <br>). */
+  @media (max-width: 1160px) {
+    .head { grid-template-columns: 1fr; row-gap: 16px; }
+    .head-lede { max-width: 560px; }
+  }
+  @media (max-width: 880px) {
+    .team { padding: 72px 40px; }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 48px; margin-top: 56px; }
+  }
+  @media (max-width: 560px) {
+    .team { padding: 56px 22px; }
+    .grid { grid-template-columns: 1fr; row-gap: 28px; margin-top: 44px; }
+    .head-title { font-size: clamp(28px, 8vw, 38px); }
+    .hl-br { display: none; }                      /* let the headline flow at narrow widths — avoids an orphaned "focused," */
+    .photo { aspect-ratio: 5 / 4; }               /* shorter banner crop on a full-width single column */
+  }
+</style>
+</head>
+<body>
+
+<section class="team" data-screen-label="Team grid">
+  <div class="well">
+
+    <p class="eyebrow reveal" style="--d:0ms">Meet the team</p>
+
+    <div class="head">
+      <h2 class="head-title reveal" style="--d:60ms">We're a focused, <br class="hl-br">outcomes-driven team</h2>
+      <p class="head-lede reveal" style="--d:120ms">Engineers, data scientists and operations leads across four countries — building the autonomous agents that run live inside our clients' core systems.</p>
+    </div>
+
+    <div class="grid">
+
+      <!-- 1 ─────────────────────────────────────────────────────── -->
+      <article class="card reveal" style="--d:200ms">
+        <div class="photo"><img src="../assets/../../brand-pack/assets/imagery/avatars/team-6.jpg" alt="Amara Okonkwo" style="object-position:50% 30%"></div>
+        <div class="foot">
+          <div class="foot-top">
+            <span class="name">Amara Okonkwo</span>
+            <a class="li" href="#" aria-label="Amara Okonkwo on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+            </a>
+          </div>
+          <p class="role">Founder &amp; CEO</p>
+        </div>
+      </article>
+
+      <!-- 2 ─────────────────────────────────────────────────────── -->
+      <article class="card reveal" style="--d:270ms">
+        <div class="photo"><img src="../assets/../../brand-pack/assets/imagery/avatars/team-2.jpg" alt="Lucía Romero" style="object-position:50% 18%"></div>
+        <div class="foot">
+          <div class="foot-top">
+            <span class="name">Lucía Romero</span>
+            <a class="li" href="#" aria-label="Lucía Romero on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+            </a>
+          </div>
+          <p class="role">Chief Operating Officer</p>
+        </div>
+      </article>
+
+      <!-- 3 ─────────────────────────────────────────────────────── -->
+      <article class="card reveal" style="--d:340ms">
+        <div class="photo"><img src="../assets/../../brand-pack/assets/imagery/avatars/team-1.jpg" alt="Daniel Weiss" style="object-position:50% 20%"></div>
+        <div class="foot">
+          <div class="foot-top">
+            <span class="name">Daniel Weiss</span>
+            <a class="li" href="#" aria-label="Daniel Weiss on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+            </a>
+          </div>
+          <p class="role">Head of AI Engineering</p>
+        </div>
+      </article>
+
+      <!-- 4 ─────────────────────────────────────────────────────── -->
+      <article class="card reveal" style="--d:410ms">
+        <div class="photo"><img src="../assets/../../brand-pack/assets/imagery/avatars/team-4.jpg" alt="Hannah Pearce" style="object-position:50% 20%"></div>
+        <div class="foot">
+          <div class="foot-top">
+            <span class="name">Hannah Pearce</span>
+            <a class="li" href="#" aria-label="Hannah Pearce on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+            </a>
+          </div>
+          <p class="role">Head of Data Science</p>
+        </div>
+      </article>
+
+      <!-- 5 ─────────────────────────────────────────────────────── -->
+      <article class="card reveal" style="--d:480ms">
+        <div class="photo"><img src="../assets/../../brand-pack/assets/imagery/avatars/team-5.jpg" alt="Marcus Tan" style="object-position:50% 16%"></div>
+        <div class="foot">
+          <div class="foot-top">
+            <span class="name">Marcus Tan</span>
+            <a class="li" href="#" aria-label="Marcus Tan on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+            </a>
+          </div>
+          <p class="role">Head of Platform</p>
+        </div>
+      </article>
+
+      <!-- 6 ─────────────────────────────────────────────────────── -->
+      <article class="card reveal" style="--d:550ms">
+        <div class="photo"><img src="../assets/../../brand-pack/assets/imagery/avatars/team-3.jpg" alt="Tomás Vidal" style="object-position:50% 18%"></div>
+        <div class="foot">
+          <div class="foot-top">
+            <span class="name">Tomás Vidal</span>
+            <a class="li" href="#" aria-label="Tomás Vidal on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+            </a>
+          </div>
+          <p class="role">Solutions &amp; Delivery Lead</p>
+        </div>
+      </article>
+
+    </div><!-- /grid -->
+  </div><!-- /well -->
+</section>
+
+<script>
+  document.documentElement.classList.add('has-js');
+  var section = document.querySelector('.team');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in-view'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    io.observe(section);
+  } else {
+    section.classList.add('in-view');
+  }
+</script>
+</body>
+</html>

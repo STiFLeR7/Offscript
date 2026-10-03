@@ -1,0 +1,26 @@
+{
+  "name": "creative-intent-exporter",
+  "version": "1.0.0",
+  "description": "Standalone, read-only exporter that turns an approved creative from the Creatives Generation system (Output/_LOG.md) into a validated Creative Intent artifact (CG6 contract, CG7 schema). Fail-closed on approval, digest, and schema; deterministic; never mutates its source.",
+  "type": "module",
+  "bin": {
+    "creative-intent-exporter": "./src/cli.ts"
+  },
+  "scripts": {
+    "export": "tsx src/cli.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0",
+    "vitest": "^2.1.0"
+  }
+}

@@ -1,0 +1,107 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../_card.css">
+<style>
+  /* ─────────────────────────────────────────────────────────────────────
+     DATA VIZ · DELTA  (doc-scoped .viz-* — pure HTML/CSS + inline SVG, no JS)
+     A before → after metric. Governing RULES live in README-DATA-VIZ.md; the notes
+     below are this idiom's MECHANICS only (doc-scoped — never in colors_and_type.css).
+
+     What it's for (Rulebook §7–§8): TWO states of one measure (Level-2 comparative
+     metric) → a before/after / delta metric visualization, NOT a trend chart (two
+     points are not a time-series). It reads as type, not a plotted figure.
+
+     Colour (Rulebook §4): this idiom carries NO encoded marks — it is typographic, so
+     §4's "marks are never navy" simply doesn't bite. The FROM numeral is muted graphite
+     (the reference), the TO numeral is the system's dark ink (the subject), the connector
+     arrow is a quiet stone stroke, and the change line is dark display ink. All type.
+     ───────────────────────────────────────────────────────────────────── */
+  .viz-delta       { display:flex; align-items:center; gap:7mm; flex-wrap:wrap; }
+  .viz-delta-cell  { display:flex; flex-direction:column; gap:1.5mm; }
+  .viz-delta-cell .cr-stat-value { font-size:42px; }
+  .viz-delta-from .cr-stat-value { color:var(--cr-graphite); }       /* muted reference */
+  .viz-delta-k     { font:600 var(--fs-eyebrow)/1.4 var(--font-body); letter-spacing:var(--tracking-eyebrow); text-transform:uppercase; color:var(--cr-graphite); }
+  .viz-delta-arrow { display:flex; align-items:center; color:var(--cr-stone); }
+  .viz-delta-arrow svg { width:30px; height:30px; stroke:currentColor; fill:none; stroke-width:1.75; stroke-linecap:round; stroke-linejoin:round; }
+  .viz-delta-chg   { font:500 var(--fs-h4)/1 var(--font-display); letter-spacing:var(--tracking-display); color:var(--cr-ink); }
+  .viz-flag        { font:400 13px/1.5 var(--font-body); color:var(--cr-graphite); }
+
+  /* preview-page chrome */
+  .viz-demo  { max-width:178mm; display:flex; flex-direction:column; gap:34px; }
+  .viz-stack { display:flex; flex-direction:column; gap:4mm; }
+  .viz-caveat{ font:400 13px/1.55 var(--font-body); color:var(--cr-graphite); max-width:178mm; margin-top:26px; }
+</style>
+</head>
+<body style="background:#FFFFFF">
+<div class="viz-demo">
+
+  <!-- (1) Time to a decision -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">1 · Inline · before → after, with a change line</div>
+    <div class="viz-stack">
+      <div class="viz-delta">
+        <div class="viz-delta-cell viz-delta-from">
+          <span class="viz-delta-k">Typical</span>
+          <span class="cr-stat-value">12<span class="unit">wk</span></span>
+        </div>
+        <div class="viz-delta-arrow"><svg viewBox="0 0 24 24"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></div>
+        <div class="viz-delta-cell">
+          <span class="viz-delta-k">With Assess</span>
+          <span class="cr-stat-value">3<span class="unit">wk</span></span>
+        </div>
+      </div>
+      <div class="viz-delta-chg">≈ 75% faster to a decision</div>
+    </div>
+  </div>
+
+  <!-- (2) Cost per task -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">2 · Currency values · the FROM numeral mutes to graphite</div>
+    <div class="viz-stack">
+      <div class="viz-delta">
+        <div class="viz-delta-cell viz-delta-from">
+          <span class="viz-delta-k">Manual</span>
+          <span class="cr-stat-value">$100</span>
+        </div>
+        <div class="viz-delta-arrow"><svg viewBox="0 0 24 24"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></div>
+        <div class="viz-delta-cell">
+          <span class="viz-delta-k">With AI</span>
+          <span class="cr-stat-value">$8</span>
+        </div>
+      </div>
+      <div class="viz-delta-chg">≈ 92% lower cost per task</div>
+    </div>
+  </div>
+
+  <!-- (3) Manual effort -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">3 · Another measure · same structure, hours saved</div>
+    <div class="viz-stack">
+      <div class="viz-delta">
+        <div class="viz-delta-cell viz-delta-from">
+          <span class="viz-delta-k">Per week, today</span>
+          <span class="cr-stat-value">40<span class="unit">h</span></span>
+        </div>
+        <div class="viz-delta-arrow"><svg viewBox="0 0 24 24"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></div>
+        <div class="viz-delta-cell">
+          <span class="viz-delta-k">Per week, with AI</span>
+          <span class="cr-stat-value">6<span class="unit">h</span></span>
+        </div>
+      </div>
+      <div class="viz-delta-chg">≈ 85% less manual effort</div>
+      <p class="viz-flag" style="margin-top:1mm">Representative figures for planning only — measured against your own baseline.</p>
+    </div>
+  </div>
+
+  <div class="viz-caveat">
+    <strong>Delta</strong> · a before → after <strong>metric visualization</strong> for
+    <strong>two states of one measure</strong> (<strong>Level-2</strong> — not a trend; two points are
+    not a time-series). <strong>Governing rules: the Data-Viz Rulebook</strong>
+    (<code>README-DATA-VIZ.md</code> — §7–§8 selection, §6 integrity). This idiom is
+    <strong>typographic</strong> — it carries no encoded marks, so §4's "marks are never navy" doesn't
+    apply: the FROM numeral mutes to graphite (reference), the TO numeral is dark ink (subject), the
+    connector is a quiet stone arrow. Numerals reuse <code>.cr-stat-value</code>. <strong>Pure
+    HTML/CSS + inline SVG, no JavaScript.</strong> Doc-scoped (never in <code>colors_and_type.css</code>).
+    Figures are illustrative placeholders.
+  </div>
+
+</div>
+</body></html>

@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Bento · feature-dominant     from component-feature-bento.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **A set with a genuine centre keeps its centre.** The profile is
+              explicit that the unequal grid does the hierarchy equal cards
+              cannot — the tall integration card leads, the metric column and
+              the ROI card are read as its context. That asymmetry is the
+              section; nothing here may flatten it.
+
+  STRUCTURE   Unchanged. Centred header · open three-column bento with no outer
+              tray · tall capability card (L) · three stacked metric cards (C) ·
+              tall ROI card (R). DOM, both scripts, every id / `data-*` /
+              `aria-*` / `src` are byte-compatible with the frozen original
+              (DR-22).
+
+  ACCENT      NONE, and that is the decision. v2 spent colour NINE times in one
+              section — four hued system chips, a capability icon, a toggle, a
+              metric label, a shortcut icon and a shortcut key — against a
+              ceiling of one. There is no primary CTA here to carry the one
+              permitted moment (`.cfg-btn` is a ghost control, and promoting it
+              would name the wrong thing as the section's ask), so the moment is
+              not spent at all. Every mark is neutral ink. A page where
+              everything is marked marks nothing.
+
+  ENVIRONMENT `env-lake-mirror`, on the ROI card's deco block. v2 drew an
+              abstract dot matrix there with a radial gradient; the blanket rule
+              retires every abstract creative background in favour of an
+              approved environment carrying the texture stack. The deco block
+              holds no type and never will — the ROI numeral sits to its left in
+              the same flex row. Below 840px that row collapses around the
+              numeral, so the block is removed outright rather than allowed to
+              slide under the number: it is carried at the two viewports where
+              it can be carried cleanly, and at no other. Remove the photograph
+              and not one word changes legibility.
+
+  MOTION      v2 animated the header and the bento with a keyframe stagger and
+              carried NO reduced-motion guard at all. One is added, matched to
+              the trigger's specificity.
+
+  TYPE        The mini-artifacts — the overlapping system stack and the shortcut
+              key row — are marked `cr-graphic` and are exempt from the type
+              ramp, because a 34px chip cannot be typeset at the supporting
+              size. Colour is never exempt: both are neutral ink.
+
+  RESPONSIVE  The original's breakpoints (1080 / 840 / 600), unchanged. Type
+              steps on the pack's own ramp, so the per-breakpoint size overrides
+              are gone rather than re-authored.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CR – Feature Bento</title>
+  <link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--cr-page-ground);
+      font-family: var(--cr-font-body);
+      color: var(--cr-text-primary);
+      font-size: var(--cr-text-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    @keyframes cr-up {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* ─── Section ─────────────────────────────────────────────── */
+    .fb {
+      padding: var(--cr-space-2xl) var(--cr-page-gutter);
+      background: var(--cr-page-ground);
+    }
+
+    .fb-well {
+      max-width: var(--cr-content-max);
+      margin: 0 auto;
+    }
+
+    /* ─── Header ──────────────────────────────────────────────── */
+    .fb-head {
+      text-align: center;
+      margin-bottom: var(--cr-rhythm-content);
+      animation: cr-up .6s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    /* The eyebrow's own face, size and case come from the pack — supporting
+       text is never uppercased and never tracked, so nothing is restated here
+       except the micro gap to the headline. */
+    .fb-head .cr-h-eyebrow { margin-bottom: var(--cr-space-xs); }
+
+    .fb-head-title {
+      font-family: var(--cr-font-display);
+      font-weight: 400;
+      font-size: var(--cr-text-h3);
+      line-height: var(--cr-leading-heading);
+      letter-spacing: var(--cr-tracking-heading);
+      color: var(--cr-text-primary);
+      margin-bottom: var(--cr-rhythm-cluster);
+    }
+
+    .fb-head-sub {
+      font-family: var(--cr-font-body);
+      font-weight: 400;
+      font-size: var(--cr-text-body);
+      line-height: var(--cr-leading-body);
+      color: var(--cr-text-secondary);
+      max-width: var(--cr-measure-body);
+      margin: 0 auto;
+    }
+
+    /* ─── Open bento grid — no outer wrapper ─────────────────── */
+    .bento {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: var(--cr-space-xs);
+      align-items: stretch;
+      animation: cr-up .6s cubic-bezier(.16,1,.3,1) both;
+      animation-delay: .13s;
+    }
+
+    /* ─── Base card ───────────────────────────────────────────── */
+    .bc {
+      background: var(--cr-bg-raised);
+      border: var(--cr-stroke) solid var(--cr-border-default);
+      border-radius: var(--cr-radius-card);
+      overflow: hidden;
+    }
+
+    /* ─── Col 1: Workflow Automation ──────────────────────────── */
+    /* The two tall cards set the row height, and the metric column lives inside
+       whatever they leave. On the ramp the middle column needs more room than
+       v2's 400px gave it — the big percentage was being squeezed to nothing
+       between three stacked cards — so the tall pair steps up one rung of the
+       spacing ladder rather than the type stepping back down off it. */
+    .bc-integration {
+      padding: var(--cr-space-s);
+      display: flex;
+      flex-direction: column;
+      min-height: calc(var(--cr-space-3xl) * 3.5);
+    }
+
+    /* Ghost skeleton deco — workflow UI wireframe behind icon */
+    .deco {
+      position: relative;
+      height: 88px;
+      margin-bottom: var(--cr-space-s);
+      flex-shrink: 0;
+    }
+
+    .deco-rects {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: 1fr 0.4fr;
+      grid-template-rows: repeat(3, 1fr);
+      gap: var(--cr-space-xs);
+    }
+
+    .deco-rects em {
+      display: block;
+      background: var(--cr-text-primary);
+      border-radius: var(--cr-radius-control);
+      font-style: normal;
+      opacity: .09;
+    }
+
+    .deco-rects em:nth-child(2n) { opacity: .055; }
+
+    .feat-icon {
+      position: absolute;
+      top: 0; left: 0;
+      width: 46px; height: 46px;
+      background: var(--cr-text-primary);
+      border-radius: var(--cr-radius-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cr-text-inverse);
+      z-index: 2;
+    }
+
+    .feat-icon [data-lucide] { stroke-width: var(--cr-icon-stroke-md); }
+
+    .bc-integration h3 {
+      font-family: var(--cr-font-display);
+      font-weight: 400;
+      font-size: var(--cr-text-h6);
+      line-height: var(--cr-leading-heading);
+      letter-spacing: var(--cr-tracking-heading);
+      color: var(--cr-text-primary);
+      margin-bottom: var(--cr-space-s);
+    }
+
+    .bc-integration > p {
+      font-size: var(--cr-text-supporting);
+      line-height: var(--cr-leading-body);
+      color: var(--cr-text-secondary);
+      flex: 1;
+    }
+
+    .bc-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: var(--cr-space-s);
+      padding-top: var(--cr-space-s);
+      border-top: var(--cr-stroke) solid var(--cr-border-default);
+    }
+
+    /* A <button> inherits neither face nor size — both are stated. The pill
+       radius is retired; the control radius is what a control takes. */
+    .cfg-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--cr-space-xs);
+      padding: var(--cr-space-xs);
+      border: var(--cr-stroke) solid var(--cr-border-default);
+      border-radius: var(--cr-radius-control);
+      background: transparent;
+      font-family: var(--cr-font-body);
+      font-size: var(--cr-text-supporting);
+      font-weight: 500;
+      color: var(--cr-text-secondary);
+      cursor: pointer;
+      transition: border-color .15s;
+    }
+
+    .cfg-btn:hover { border-color: var(--cr-text-secondary); }
+    .cfg-btn [data-lucide] { stroke-width: var(--cr-icon-stroke-sm); }
+
+    /* A toggle in its on state reads from the knob's position, not from hue —
+       which is the only reason it can be ink here without losing its meaning. */
+    .toggle-pill {
+      width: 40px; height: 22px;
+      background: var(--cr-text-primary);
+      border-radius: var(--cr-radius-control);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .toggle-pill::after {
+      content: '';
+      position: absolute;
+      right: 3px; top: 3px;
+      width: 16px; height: 16px;
+      background: var(--cr-text-inverse);
+      border-radius: 50%;
+    }
+
+    /* ─── Col 2: Middle column ────────────────────────────────── */
+    .col-mid {
+      display: flex;
+      flex-direction: column;
+      gap: var(--cr-space-xs);
+    }
+
+    /* Card labels sit at the supporting size and separate from their sub-line
+       by WEIGHT and INK, not by a size step — the ramp's next rung up would be
+       a card headline, and these are labels. */
+    .ctitle {
+      font-family: var(--cr-font-display);
+      font-weight: 500;
+      font-size: var(--cr-text-supporting);
+      line-height: var(--cr-leading-heading);
+      color: var(--cr-text-primary);
+    }
+
+    .csub {
+      font-size: var(--cr-text-supporting);
+      line-height: var(--cr-leading-body);
+      color: var(--cr-text-secondary);
+      margin-top: var(--cr-space-xs);
+    }
+
+    /* 2a — Systems Connected */
+    .bc-trackers {
+      padding: var(--cr-space-s);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+    }
+
+    /* MINI-ARTIFACT, exempt from the ramp by naming the exemption in its own
+       selector. Four hues became one ink: an overlapping stack separates by the
+       ring and the offset, which is what it was always doing — the colour was
+       four accent moments doing no work. */
+    .cr-graphic .lchip {
+      width: 34px; height: 34px;
+      border-radius: var(--cr-radius-control);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--cr-font-body);
+      font-weight: 500;
+      font-size: 9px;
+      color: var(--cr-text-inverse);
+      background: var(--cr-text-primary);
+      border: 2px solid var(--cr-bg-raised);
+      margin-left: -7px;
+      flex-shrink: 0;
+    }
+
+    .cr-graphic .lchip:first-child { margin-left: 0; }
+
+    /* 2b — Process Efficiency */
+    .bc-stat {
+      padding: var(--cr-space-s);
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .stat-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--cr-space-xs);
+    }
+
+    .stat-accent {
+      font-size: var(--cr-text-supporting);
+      font-weight: 500;
+      color: var(--cr-text-secondary);
+    }
+
+    .bc-stat .csub { margin-bottom: var(--cr-space-s); }
+
+    .big-pct {
+      font-family: var(--cr-font-display);
+      font-weight: 400;
+      font-size: var(--cr-text-h2);
+      line-height: 1;
+      letter-spacing: var(--cr-tracking-heading);
+      color: var(--cr-text-primary);
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .stat-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: var(--cr-space-xs);
+      border-top: var(--cr-stroke) solid var(--cr-border-default);
+      margin-top: var(--cr-space-xs);
+    }
+
+    .stat-fl { font-size: var(--cr-text-supporting); color: var(--cr-text-secondary); }
+    .stat-fr { font-size: var(--cr-text-supporting); font-weight: 500; color: var(--cr-text-primary); }
+
+    /* 2c — Agent Shortcuts */
+    .bc-keys {
+      padding: var(--cr-space-s);
+      display: flex;
+      align-items: center;
+      gap: var(--cr-space-xs);
+      flex-shrink: 0;
+    }
+
+    .keys-icon {
+      width: 40px; height: 40px;
+      background: var(--cr-text-primary);
+      border-radius: var(--cr-radius-card);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--cr-text-inverse);
+      flex-shrink: 0;
+    }
+
+    .keys-icon [data-lucide] { stroke-width: var(--cr-icon-stroke-md); }
+
+    .keys-text { flex: 1; min-width: 0; }
+
+    /* MINI-ARTIFACT — a keycap cluster, exempt from the ramp for the same
+       reason and by the same mechanism. The exemption carries ONLY the values
+       it needs to carry: layout stays on the plain class, because a compound
+       selector here would outrank the breakpoint that hides this row and the
+       cluster would survive into mobile, where there is no room for it. */
+    .key-row {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .cr-graphic.key-row { gap: 4px; }
+
+    .cr-graphic .kbadge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px; height: 28px;
+      padding: 0 6px;
+      background: var(--cr-bg-raised);
+      border: var(--cr-stroke) solid var(--cr-border-default);
+      border-radius: var(--cr-radius-control);
+      font-family: var(--cr-font-body);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--cr-text-primary);
+    }
+
+    .cr-graphic .ksep { font-size: 12px; color: var(--cr-text-secondary); }
+
+    .cr-graphic .kdot {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px; height: 28px;
+      background: var(--cr-text-primary);
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--cr-text-inverse);
+    }
+
+    /* ─── Col 3: ROI stat ─────────────────────────────────────── */
+    .bc-roi {
+      padding: var(--cr-space-s);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      min-height: calc(var(--cr-space-3xl) * 3.5);
+    }
+
+    .roi-top {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      overflow: hidden;
+    }
+
+    /* THE STANDARD CREATIVE TREATMENT, replacing v2's abstract dot matrix. One
+       background stack, three layers, in this order: grain on top, grunge under
+       it, the environment underneath both. It has to be ONE stack — a blend
+       mode composites against what is beneath it in the SAME background, so
+       moving the grain to a pseudo-element resolves `overlay` against
+       transparency and renders the texture at full strength as grey static.
+       The URLs are written out rather than reached through `--cr-env-*`,
+       because a `url()` inside a custom property resolves against the CONSUMING
+       document and fails silently. The block carries no type at any viewport. */
+    .dot-mat {
+      position: absolute;
+      top: 0; right: 0;
+      width: var(--cr-space-3xl); height: var(--cr-space-3xl);
+      pointer-events: none;
+      background-color: var(--cr-bg-dark);
+      background-image:
+        url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+        url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+        url("../../brand-pack/assets/imagery/environments/env-lake-mirror.jpg");
+      background-size: var(--cr-texture-noise-size, auto), cover, cover;
+      background-position: 0 0, center, 50% 50%;
+      background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+      background-repeat: repeat, no-repeat, no-repeat;
+    }
+
+    .roi-num {
+      font-family: var(--cr-font-display);
+      font-weight: 400;
+      font-size: var(--cr-text-h1);
+      line-height: 1;
+      letter-spacing: var(--cr-tracking-heading);
+      color: var(--cr-text-primary);
+      position: relative;
+      z-index: 1;
+    }
+
+    .roi-body { }
+
+    .roi-body h3 {
+      font-family: var(--cr-font-display);
+      font-weight: 400;
+      font-size: var(--cr-text-h6);
+      line-height: var(--cr-leading-heading);
+      letter-spacing: var(--cr-tracking-heading);
+      color: var(--cr-text-primary);
+      margin-bottom: var(--cr-space-xs);
+    }
+
+    .roi-body p {
+      font-size: var(--cr-text-supporting);
+      line-height: var(--cr-leading-body);
+      color: var(--cr-text-secondary);
+    }
+
+    /* ─── Motion guard — v2 had none, and it animated ──────────── */
+    @media (prefers-reduced-motion: reduce) {
+      .fb-head, .bento {
+        animation: none;
+        opacity: 1;
+        transform: none;
+      }
+      .cfg-btn { transition: none; }
+    }
+
+    /* ─── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 1080px) {
+      .fb { padding: var(--cr-space-xl) var(--cr-page-gutter); }
+      /* The card narrows faster than the numeral does, so the deco block steps
+         down a rung with it — measured clearance between the two, not guessed. */
+      .dot-mat { width: var(--cr-space-2xl); height: var(--cr-space-2xl); }
+    }
+
+    @media (max-width: 840px) {
+      .fb { padding: var(--cr-space-xl) var(--cr-page-gutter); }
+
+      .bento {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+        gap: var(--cr-space-xs);
+      }
+
+      .bc-integration { grid-column: 1; grid-row: 1 / 3; min-height: auto; }
+      .col-mid        { grid-column: 2; grid-row: 1; }
+
+      .bc-roi {
+        grid-column: 1 / 3;
+        grid-row: 3;
+        flex-direction: row;
+        align-items: center;
+        gap: var(--cr-space-m);
+        min-height: auto;
+        padding: var(--cr-space-s);
+      }
+
+      .roi-top { flex: 0 0 auto; overflow: visible; }
+      /* THE ROW COLLAPSE IS WHY THIS IS REMOVED, not a breakpoint tidy-up. In
+         this band `.roi-top` shrink-wraps the numeral, so a block anchored to
+         its top-right corner would land underneath the number — type on a
+         photograph, which never happens. It does NOT return below 600: the card
+         is a column again there, but the row above left `align-items:center`
+         standing, so `.roi-top` shrink-wraps the numeral and the block would
+         cover it outright. Measured, at 390: the numeral occupies 169–220 and
+         the block would occupy 60–220. The environment is carried at the two
+         viewports where it can be carried without a word landing on it. */
+      .dot-mat { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .fb { padding: var(--cr-space-m) var(--cr-page-gutter); }
+
+      .bento {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        gap: var(--cr-space-xs);
+      }
+
+      .bc-integration { grid-column: 1; grid-row: auto; min-height: auto; }
+      .col-mid        { grid-column: 1; grid-row: auto; }
+      .bc-roi {
+        grid-column: 1; grid-row: auto;
+        flex-direction: column;
+        min-height: auto;
+      }
+      .roi-top  { flex: 1; overflow: hidden; }
+      .key-row  { display: none; }
+    }
+  </style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. Nothing is marked `directed`: the 1fr/1fr/1fr envelope, the
+     tall-card asymmetry and every grid track are exactly where v2 left them.
+     The one line worth reading twice is the min-height on `.bc`, which is the
+     tall pair stepping from 400 to a rung of the closed spacing ladder — the
+     metric column between them was squeezing its own percentage out of
+     existence once the type came onto the ramp, and the honest fix is more
+     room rather than smaller type.
+  .bc            | border-radius          | radius-pair
+  .bc            | column-gap             | spacing-scale
+  .bc            | font-size              | type-ramp
+  .bc            | min-height             | spacing-scale
+  .bc            | padding-bottom         | spacing-scale
+  .bc            | padding-left           | spacing-scale
+  .bc            | padding-right          | spacing-scale
+  .bc            | padding-top            | spacing-scale
+  .bc            | row-gap                | spacing-scale
+  .bc-footer     | font-size              | type-ramp
+  .bc-footer     | padding-top            | spacing-scale
+  .bento         | column-gap             | spacing-scale
+  .bento         | font-size              | type-ramp
+  .bento         | row-gap                | spacing-scale
+  .big-pct       | font-size              | type-ramp
+  .big-pct       | line-height            | type-ramp
+  .cfg-btn       | border-radius          | radius-pair
+  .cfg-btn       | column-gap             | spacing-scale
+  .cfg-btn       | font-size              | type-ramp
+  .cfg-btn       | padding-bottom         | spacing-scale
+  .cfg-btn       | padding-left           | spacing-scale
+  .cfg-btn       | padding-right          | spacing-scale
+  .cfg-btn       | padding-top            | spacing-scale
+  .cfg-btn       | row-gap                | spacing-scale
+  .col-mid       | column-gap             | spacing-scale
+  .col-mid       | font-size              | type-ramp
+  .col-mid       | row-gap                | spacing-scale
+  .cr-h-eyebrow  | font-size              | type-ramp
+  .cr-h-eyebrow  | line-height            | type-ramp
+  .csub          | font-size              | type-ramp
+  .csub          | line-height            | type-ramp
+  .csub          | margin-bottom          | spacing-scale
+  .csub          | margin-top             | spacing-scale
+  .ctitle        | font-size              | type-ramp
+  .ctitle        | line-height            | type-ramp
+  .deco          | font-size              | type-ramp
+  .deco-rects    | column-gap             | spacing-scale
+  .deco-rects    | font-size              | type-ramp
+  .deco-rects    | row-gap                | spacing-scale
+  .fb-head       | font-size              | type-ramp
+  .fb-head       | margin-bottom          | spacing-scale
+  .fb-head-sub   | font-size              | type-ramp
+  .fb-head-sub   | line-height            | type-ramp
+  .fb-head-sub   | margin-left            | spacing-scale
+  .fb-head-sub   | margin-right           | spacing-scale
+  .fb-head-sub   | max-width              | measure
+  .fb-head-title | font-size              | type-ramp
+  .fb-head-title | line-height            | type-ramp
+  .fb-head-title | margin-bottom          | spacing-scale
+  .fb-well       | font-size              | type-ramp
+  .key-row       | font-size              | type-ramp
+  .keys-text     | font-size              | type-ramp
+  .lchip         | border-radius          | radius-pair
+  .logo-row      | font-size              | type-ramp
+  .lucide        | font-size              | type-ramp
+  .roi-body      | font-size              | type-ramp
+  .roi-num       | font-size              | type-ramp
+  .roi-num       | line-height            | type-ramp
+  .roi-top       | font-size              | type-ramp
+  .stat-accent   | font-size              | type-ramp
+  .stat-fl       | font-size              | type-ramp
+  .stat-foot     | font-size              | type-ramp
+  .stat-fr       | font-size              | type-ramp
+  .stat-hd       | font-size              | type-ramp
+  .stat-hd       | margin-bottom          | spacing-scale
+  circle         | font-size              | type-ramp
+  div            | font-size              | type-ramp
+  h3             | font-size              | type-ramp
+  h3             | line-height            | type-ramp
+  h3             | margin-bottom          | spacing-scale
+  p              | font-size              | type-ramp
+  p              | line-height            | type-ramp
+  path           | font-size              | type-ramp
+  rect           | font-size              | type-ramp
+-->
+  <section class="fb" data-screen-label="Feature Bento"
+           data-archetype="editorial-stack" data-hierarchy="primary" data-intent="educate"
+           data-register="editorial" data-signature="large-statistic" data-density="medium">
+    <div class="fb-well">
+
+      <!-- Header -->
+      <div class="fb-head">
+        <p class="cr-h-eyebrow">Capabilities</p>
+        <h2 class="fb-head-title">What Our Agents Deliver</h2>
+        <p class="fb-head-sub">From intake to resolution — every workflow handled,
+          every exception caught, every decision backed by data.</p>
+      </div>
+
+      <!-- Open bento — 3 cols directly on section bg -->
+      <div class="bento">
+
+        <!-- Col 1: Workflow Automation -->
+        <div class="bc bc-integration">
+          <div class="deco">
+            <div class="deco-rects">
+              <em></em><em></em>
+              <em></em><em></em>
+              <em></em><em></em>
+            </div>
+            <div class="feat-icon">
+              <i data-lucide="zap" width="20" height="20"></i>
+            </div>
+          </div>
+          <h3>Workflow Automation</h3>
+          <p>Connect your existing stack — SAP, Salesforce, Zoho — and let CR agents absorb routine work. Go live in four weeks, no rip-and-replace required.</p>
+          <div class="bc-footer">
+            <button class="cfg-btn">
+              <i data-lucide="settings" width="14" height="14"></i>
+              Configure
+            </button>
+            <div class="toggle-pill"></div>
+          </div>
+        </div>
+
+        <!-- Col 2: 3 stacked cards -->
+        <div class="col-mid">
+
+          <div class="bc bc-trackers">
+            <div>
+              <div class="ctitle">Systems Connected</div>
+              <div class="csub">06 Active Integrations</div>
+            </div>
+            <div class="logo-row cr-graphic">
+              <div class="lchip lc-sf">SF</div>
+              <div class="lchip lc-sap">SAP</div>
+              <div class="lchip lc-zoho">Z</div>
+              <div class="lchip lc-ora">ORA</div>
+            </div>
+          </div>
+
+          <div class="bc bc-stat">
+            <div class="stat-hd">
+              <div class="ctitle">Process Efficiency</div>
+              <span class="stat-accent">Range Ratio</span>
+            </div>
+            <div class="csub">Productivity Analytics</div>
+            <div class="big-pct">80%</div>
+            <div class="stat-foot">
+              <span class="stat-fl">of routine work automated</span>
+              <span class="stat-fr">Monthly Average</span>
+            </div>
+          </div>
+
+          <div class="bc bc-keys">
+            <div class="keys-icon">
+              <i data-lucide="keyboard" width="18" height="18"></i>
+            </div>
+            <div class="keys-text">
+              <div class="ctitle">Agent Shortcuts</div>
+              <div class="csub">Trigger any agent from your command palette.</div>
+            </div>
+            <div class="key-row cr-graphic">
+              <span class="kbadge">&#8984;</span>
+              <span class="ksep">+</span>
+              <span class="kbadge">&#8997;</span>
+              <span class="ksep">+</span>
+              <span class="kdot">A</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Col 3: ROI stat -->
+        <div class="bc bc-roi">
+          <div class="roi-top">
+            <div class="dot-mat"></div>
+            <div class="roi-num">11×</div>
+          </div>
+          <div class="roi-body">
+            <h3>ROI in Production</h3>
+            <p>Average return on automation investment, measured 90 days post-deployment.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

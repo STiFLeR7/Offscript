@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Divider · dither dissolve (use sparingly)</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Dither divider      from component-divider-dither.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **Punctuation, in a technical register.** The profile is exact
+              about the job: *Leads with orient · Emphasis structure · Role
+              punctuation · "the texture reads as engineered, which suits pages
+              whose subject is a system"*. It carries no copy of its own. The two
+              bands on this page are context — they exist so the ramp can be seen
+              doing its work between a dark surface and a light one.
+
+  STRUCTURE   Unchanged. DOM, element order, both scripts, every `aria-*` and
+              `href` are byte-compatible with the frozen original (DR-22). The v2
+              file is beside this one in `_v2/`.
+
+  ENVIRONMENT NONE — and not because the section was checked and came up empty.
+              **The ramp IS the component.** A dither dissolve is not decoration
+              sitting behind content; it is the mechanism that performs the
+              transition, and the two elements that draw it — the canvas and its
+              no-JS dot-gradient fallback — are the whole of the section's
+              subject. Replacing that with a photograph would not modernize the
+              divider, it would delete it.
+
+              So the ramp is KEPT and expressed in tokens instead: its two
+              endpoints are now surface tokens rather than hand-mixed near-blacks
+              and creams, which is what makes the seam claim below checkable.
+              Nothing else here is abstract — no glow plate, no orbit ring, no
+              blur, no wash — so there is also no decorative node to retire and
+              none has been invented. The demo bands could not take a photograph
+              in any case: every one of them wraps type, and there is no type-free
+              sub-region to give an image without changing the composition.
+
+  THE SEAM    The original's real argument, preserved and now token-true. The
+              solid cap the canvas paints, the dot colour, and the dark band
+              above all resolve to ONE token, so they read as one continuous
+              surface with no hairline step; the light field, the light band and
+              the page ground resolve to one other token, so the foot of the
+              dissolve has no seam either. Two tokens, four surfaces, both edges
+              designed out — the failure mode this component exists to avoid.
+
+  THE RAMP'S OWN GEOMETRY  The band heights (280 / 230 / 170) are deliberately
+              NOT moved onto the spacing scale, and that is not an oversight. The
+              frozen script computes the solid cap and the dissolve end as
+              FRACTIONS of the rendered height, so the height is an argument to
+              the painting, not a spacing decision — the same reasoning trap 8
+              applies to a carousel's stride. Height carries no token, so nothing
+              had to be claimed to leave it alone.
+
+  ACCENT      ZERO, and that is the register rather than an economy. A transition
+              between two sections must read quieter than either of them, so it
+              cannot hold the loudest colour on the page. The one control on this
+              page is a light pill on the dark band — a value contrast, which is
+              what a primary action is on a dark surface — and the wordmark's
+              separator, which v2 spent brand blue on, is held-back ink.
+
+  TYPE        Two regions arrived uppercase and letter-spaced (the eyebrow) or
+              off the ramp entirely (the two headline sizes were fluid). Supporting
+              text is never uppercase and never tracked here, and `clamp()` is gone
+              throughout — the pack already steps its ramp at its own breakpoints,
+              and a per-section fluid size is a second ramp nobody authored.
+
+  MOTION      The original's one-time canvas fade, unchanged in kind. The reduce
+              guard now names BOTH the hidden state and the revealed variant at
+              their own specificity, so the fade snaps rather than transitioning
+              into a state it was forced into. There is no per-frame loop to stop:
+              the script draws once and on resize, never on a frame timer.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<script>document.documentElement.classList.add("has-js");</script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background-color: var(--cr-page-ground);
+    font-family: var(--cr-font-body); color: var(--cr-text-primary);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── The divider block — content-agnostic transition art ───────────────
+     The two endpoints stay CSS custom properties because the frozen script
+     READS one of them (`--div-dark`) to colour the dots. They now resolve to
+     tokens, which is what puts the canvas on the palette without touching the
+     script. The third knob v2 exposed (`--div-accent`) is gone: nothing read
+     it, and a divider spends no accent. */
+  .cr-divider {
+    --div-dark:   var(--cr-bg-dark);      /* dots + solid cap — the SAME token as the dark band */
+    --div-light:  var(--cr-page-ground);  /* the light field — the SAME token as the light band */
+    /* A NAME COLLISION, NEUTRALISED. The pack ships a `.cr-divider` rule of its
+       own — a hairline horizontal rule — and this component is a full band that
+       happens to carry the same class, which the frozen script selects on and
+       so cannot be renamed. Left alone the pack's border draws a light line
+       across the top of the ink cap, which is precisely the hard seam this
+       component exists to design out, and it also shifts the inset canvas down
+       a pixel. This restores the authored value; it does not author a new one. */
+    border: 0;
+    position: relative;
+    width: 100%;
+    height: 280px;                        /* the ramp's own length; the script reads it as a fraction */
+    background-color: var(--div-light);
+    overflow: hidden;
+    line-height: 0;                        /* kill the inline-canvas descender gap */
+  }
+  .div-canvas,
+  .div-fallback { position: absolute; inset: 0; display: block; }
+  .div-canvas   { pointer-events: none; }
+
+  /* No-JS fallback — the same mechanism, degraded: a masked dot-gradient plus
+     the solid cap. Hidden once JS runs. A MASK CARRIES ALPHA, NOT COLOUR — the
+     stops below choose how much of the dot field survives at each depth, and
+     none of them paints anything a reader can see as a hue. */
+  .div-fallback {
+    background-color: var(--div-light);
+    background-image: radial-gradient(var(--div-dark) 1.5px, transparent 1.7px);
+    background-size: 6px 6px;
+    background-position: 0 0;
+    -webkit-mask-image: linear-gradient(to bottom, black 0, black 12%, rgb(0 0 0 / .82) 28%, transparent 60%);
+            mask-image: linear-gradient(to bottom, black 0, black 12%, rgb(0 0 0 / .82) 28%, transparent 60%);
+  }
+  .div-fallback::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0;
+    height: 12%; background-color: var(--div-dark);
+  }
+  .has-js .div-fallback { display: none; }
+
+  /* Flip — solid cap to the bottom, the dissolve rises into the light */
+  .cr-divider.flip .div-canvas,
+  .cr-divider.flip .div-fallback { transform: scaleY(-1); }
+
+  /* One-time fade-in (restrained; never competes with the control below it) */
+  .has-js .div-canvas {
+    opacity: 0;
+    transition: opacity .7s cubic-bezier(.2,.7,.2,1);
+  }
+  .cr-divider.reveal .div-canvas { opacity: 1; }
+
+  /* ── Demo bands — the divider's two surfaces ───────────────────────────
+     Both are FLAT governed surfaces. The dark one is the same token the ramp's
+     cap resolves to, so the join is invisible by construction rather than by
+     eye-matching two near-blacks. */
+  .band {
+    padding: var(--cr-space-xl) var(--cr-page-gutter);
+    text-align: center;
+  }
+  .band--dark {
+    position: relative; overflow: hidden;
+    background-color: var(--cr-bg-dark); color: var(--cr-neutral-500);
+  }
+  .band--light { background-color: var(--cr-page-ground); color: var(--cr-text-secondary); }
+
+  .band-inner { position: relative; z-index: 1; max-width: var(--cr-measure-title); margin: 0 auto; }
+
+  /* An eyebrow is supporting text. It separates by position and colour, not by
+     a case change and a tracking value the ramp does not hold. */
+  .eyebrow {
+    font-family: var(--cr-font-body);
+    font-weight: 500; font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    margin: 0 0 var(--cr-space-s);
+  }
+  .band--dark  .eyebrow { color: var(--cr-neutral-500); }
+  .band--light .eyebrow { color: var(--cr-text-secondary); }
+
+  .band-h {
+    font-family: var(--cr-font-display);
+    font-weight: 400; font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading); letter-spacing: var(--cr-tracking-heading);
+    margin: 0;
+  }
+  .band--dark  .band-h { color: var(--cr-text-inverse); }
+  .band--light .band-h { color: var(--cr-text-primary); }
+
+  .band-sub {
+    font-family: var(--cr-font-body);
+    font-weight: 400; font-size: var(--cr-text-body); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    margin: var(--cr-space-s) auto 0; max-width: var(--cr-measure-body);
+  }
+  .band--dark .band-sub { color: var(--cr-neutral-500); }
+
+  /* THE ONE CONTROL — and it spends no hue. On a dark band a primary action is
+     a VALUE contrast: a light pill in the page's own surface, with the page's
+     own ink on it. The pill radius is retired for controls. */
+  .pill {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    margin-top: var(--cr-space-s);
+    background-color: var(--cr-surface-1); color: var(--cr-text-primary);
+    border: 0; border-radius: var(--cr-radius-control); cursor: pointer; text-decoration: none;
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    font-family: var(--cr-font-body);
+    font-weight: 500; font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    transition: background-color .16s ease, transform .12s ease;
+  }
+  .pill .arrow { display: inline-block; transition: transform .16s ease; }
+  .pill:hover { background-color: var(--cr-surface-5); }
+  .pill:hover .arrow { transform: translateX(4px); }
+  .pill:active { transform: scale(.97); }
+  .pill:focus-visible {
+    outline: var(--cr-stroke) solid var(--cr-text-inverse);
+    outline-offset: var(--cr-stroke);
+  }
+
+  .reassure {
+    font-family: var(--cr-font-body);
+    font-weight: 500; font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-neutral-500);
+    margin: var(--cr-space-s) 0 0;
+  }
+
+  /* Compact closing dark band (flip demo) */
+  .band--slim { padding: var(--cr-space-m) var(--cr-page-gutter); }
+  .wordmark {
+    font-family: var(--cr-font-body);
+    font-weight: 500; font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-neutral-500); margin: 0;
+  }
+  /* v2 spent brand blue on a separator dot. A separator is not an accent
+     moment; it is held-back ink. */
+  .wordmark .dot { color: var(--cr-neutral-600); }
+
+  /* ── Responsive ──────────────────────────────────────────────────────
+     Only the ramp's own length steps. The horizontal gutter is the pack's
+     single responsive spacing decision and the type ramp steps itself, so
+     there is nothing else here that needs a breakpoint. */
+  @media (max-width: 900px) {
+    .cr-divider { height: 230px; }
+  }
+  @media (max-width: 560px) {
+    .cr-divider { height: 170px; }
+  }
+
+  /* Named at the trigger's own specificity, and BOTH states named — a guard
+     that loses the cascade is not a guard. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .div-canvas,
+    .cr-divider.reveal .div-canvas { opacity: 1; transition: none; }
+    .pill, .pill .arrow { transition: none; }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget
+  .arrow      | line-height            | type-ramp
+  .band-h     | font-size              | type-ramp
+  .band-h     | line-height            | type-ramp
+  .band-inner | margin-left            | spacing-scale
+  .band-inner | margin-right           | spacing-scale
+  .band-inner | max-width              | measure
+  .band-sub   | font-size              | type-ramp
+  .band-sub   | line-height            | type-ramp
+  .band-sub   | margin-left            | spacing-scale
+  .band-sub   | margin-right           | spacing-scale
+  .band-sub   | margin-top             | spacing-scale
+  .band-sub   | max-width              | measure
+  .dot        | font-size              | type-ramp
+  .dot        | line-height            | type-ramp
+  .eyebrow    | font-size              | type-ramp
+  .eyebrow    | line-height            | type-ramp
+  .eyebrow    | margin-bottom          | spacing-scale
+  .pill       | border-radius          | radius-pair
+  .pill       | column-gap             | spacing-scale
+  .pill       | line-height            | type-ramp
+  .pill       | margin-top             | spacing-scale
+  .pill       | padding-bottom         | spacing-scale
+  .pill       | padding-left           | spacing-scale
+  .pill       | padding-right          | spacing-scale
+  .pill       | padding-top            | spacing-scale
+  .pill       | row-gap                | spacing-scale
+  .reassure   | font-size              | type-ramp
+  .reassure   | line-height            | type-ramp
+  .reassure   | margin-top             | spacing-scale
+  .wordmark   | font-size              | type-ramp
+  .wordmark   | line-height            | type-ramp
+  br          | font-size              | type-ramp
+  br          | line-height            | type-ramp
+-->
+
+<section data-screen-label="Divider · dither dissolve (use sparingly)"
+         data-archetype="editorial-stack" data-hierarchy="supporting" data-intent="orient"
+         data-register="technical" data-signature="architectural-whitespace" data-density="low">
+
+  <!-- ── Canonical use: dark CTA band → divider → next (light) section ──── -->
+  <div class="band band--dark">
+    <div class="band-inner">
+      <p class="eyebrow">Book a Working Session</p>
+      <h2 class="band-h">See It Running in Your Stack,<br>Not in a Demo.</h2>
+      <a class="pill" href="#">Book a Demo Call <span class="arrow" aria-hidden="true">&rarr;</span></a>
+      <p class="reassure">30 minutes · No commitment · We show you the numbers first</p>
+    </div>
+  </div>
+
+  <!-- The divider — dark dissolves down into the light field below -->
+  <div class="cr-divider">
+    <div class="div-fallback" aria-hidden="true"></div>
+    <canvas class="div-canvas" aria-hidden="true"></canvas>
+  </div>
+
+  <div class="band band--light">
+    <div class="band-inner">
+      <p class="eyebrow">What You Get</p>
+      <h2 class="band-h">Outcomes You Can Measure.</h2>
+      <p class="band-sub">Every workflow accounted for, every exception caught — billed on results, not on seats.</p>
+    </div>
+  </div>
+
+  <!-- ── Flip variant: a light section closing down into a dark band ────── -->
+  <div class="band band--light">
+    <div class="band-inner">
+      <p class="eyebrow">Proof, Not Promises</p>
+      <h2 class="band-h">From Production Deployments.</h2>
+    </div>
+  </div>
+
+  <!-- .flip mirrors the canvas: solid cap to the bottom, the dissolve rises up -->
+  <div class="cr-divider flip">
+    <div class="div-fallback" aria-hidden="true"></div>
+    <canvas class="div-canvas" aria-hidden="true"></canvas>
+  </div>
+
+  <div class="band band--dark band--slim">
+    <div class="band-inner">
+      <p class="wordmark">Example Brand<span class="dot"> · </span>Autonomous Process Automation</p>
+    </div>
+  </div>
+
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var BAYER  = buildBayer(8);
+
+  /* Recursive ordered (Bayer) dither matrix, normalised to (0,1). The regular
+     halftone structure is what makes the source read as ordered dithering
+     rather than a generic fade. */
+  function buildBayer(n) {
+    var m = [[0]], size = 1;
+    while (size < n) {
+      var s = size * 2, nm = [], y, x;
+      for (y = 0; y < s; y++) nm[y] = [];
+      for (y = 0; y < size; y++) for (x = 0; x < size; x++) {
+        var v = m[y][x];
+        nm[y][x]               = 4 * v + 0;
+        nm[y][x + size]        = 4 * v + 2;
+        nm[y + size][x]        = 4 * v + 3;
+        nm[y + size][x + size] = 4 * v + 1;
+      }
+      m = nm; size = s;
+    }
+    var d = n * n, out = [];
+    for (var yy = 0; yy < n; yy++) { out[yy] = []; for (var xx = 0; xx < n; xx++) out[yy][xx] = (m[yy][xx] + 0.5) / d; }
+    return out;
+  }
+
+  /* Resolve a CSS custom-property colour (handles var()/token) to an rgb string
+     the canvas can use as fillStyle. */
+  function resolveColor(el, prop, fallback) {
+    var v = getComputedStyle(el).getPropertyValue(prop).trim();
+    if (!v) return fallback;
+    var probe = document.createElement('span');
+    probe.style.cssText = 'display:none;color:' + v;
+    el.appendChild(probe);
+    var c = getComputedStyle(probe).color;
+    el.removeChild(probe);
+    return c || fallback;
+  }
+
+  function num(ds, key, def) { var v = parseFloat(ds[key]); return isNaN(v) ? def : v; }
+
+  function drawOne(div) {
+    var canvas = div.querySelector('.div-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var ds  = div.dataset;
+
+    var cell    = num(ds, 'cell', 5);        // grid pitch (px) — fine halftone
+    var dot     = num(ds, 'dot', 1.9);       // dot radius (px) — dense rows read dark, dots still separated
+    var solidF  = num(ds, 'solid', 0.10);    // solid cap, fraction of height (the band above carries most of the black)
+    var dissF   = num(ds, 'dissolve', 0.82); // dots thin out to nothing by here — a clean, full-height dissolve
+    var gamma   = num(ds, 'gamma', 0.72);    // <1 holds the dark midtones longer → richer, more gradual ramp
+
+    var dark = resolveColor(div, '--div-dark', '#0E0E0E');
+
+    var rect = div.getBoundingClientRect();
+    var W = rect.width, H = rect.height;
+    if (!W || !H) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width  = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+
+    var cols = Math.ceil(W / cell) + 1;
+    var rows = Math.ceil(H / cell) + 1;
+    var solidH = H * solidF, dissEnd = H * dissF;
+
+    /* Solid cap — reaches y=0 so it merges seamlessly with the dark band above. */
+    ctx.fillStyle = dark;
+    ctx.fillRect(0, 0, W, solidH);
+
+    for (var cy = 0; cy < rows; cy++) {
+      var y = cy * cell + cell * 0.5;
+      var brow = BAYER[cy & 7];
+      for (var cx = 0; cx < cols; cx++) {
+        /* Uniform dissolve: solid → Bayer-dithered fade → nothing. Clean tech
+           halftone — no per-column drips/jitter (they read as festive danglers). */
+        var cov;
+        if (y <= solidH) cov = 1;
+        else if (y >= dissEnd) cov = 0;
+        else cov = Math.pow(1 - (y - solidH) / (dissEnd - solidH), gamma);
+
+        if (cov <= 0.001) continue;
+        if (cov > brow[cx & 7]) {
+          ctx.beginPath();
+          ctx.arc(cx * cell + cell * 0.5, y, dot, 0, 6.2832);
+          ctx.fill();
+        }
+      }
+    }
+  }
+
+  var divs = [].slice.call(document.querySelectorAll('.cr-divider'));
+  function drawAll() { divs.forEach(drawOne); }
+  drawAll();
+
+  /* One-time reveal — fade the canvas in on first viewport hit. */
+  if (reduce || !('IntersectionObserver' in window)) {
+    divs.forEach(function (d) { d.classList.add('reveal'); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('reveal'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.2 });
+    divs.forEach(function (d) { io.observe(d); });
+  }
+
+  var rt;
+  window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(drawAll, 160); });
+})();
+</script>
+</body>
+</html>

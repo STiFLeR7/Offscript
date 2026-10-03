@@ -1,0 +1,320 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../_card.css">
+<link rel="stylesheet" href="../../../../design_principles/accent-palette.css">
+<style>
+  /* ── SHARED .spatial-* CORE — byte-identical in every specimen (copy verbatim) ──
+     The primitives every spatial visual reuses: the three isometric faces (top +
+     two depth faces), the focal highlight (flat accent + a white-fade sheen — the
+     one sanctioned same-hue gradient, §11), embedded objects, leader lines, and
+     annotation type. Identical everywhere, so two spatial visuals pasted into one
+     document stay consistent and never collide. Family-specific classes
+     (.spatial-<family>-*) layer on top and are namespaced. SVG polygons whose
+     points already encode the fixed iso angle; no JavaScript, no preserve-3d;
+     inherits the system tokens. Depth faces darken the surface/accent toward
+     black via color-mix — quiet, not a render. ── */
+  .spatial-svg        { display: block; width: 100%; height: auto; overflow: visible; }
+  .spatial-face       { stroke: var(--cr-keyline); stroke-width: 1; stroke-linejoin: round; }
+  .spatial-face-top   { fill: var(--surface, var(--cr-tone-sky)); }
+  .spatial-face-left  { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 86%, #000); }
+  .spatial-face-right { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 76%, #000); }
+  /* the ONE selective highlight — flat accent + a quiet white-fade sheen (same-hue, §11) */
+  .spatial-focal .spatial-face-top   { fill: var(--accent, var(--cr-tone-sky-accent)); }
+  .spatial-focal .spatial-face-left  { fill: color-mix(in srgb, var(--accent, var(--cr-tone-sky-accent)) 82%, #000); }
+  .spatial-focal .spatial-face-right { fill: color-mix(in srgb, var(--accent, var(--cr-tone-sky-accent)) 70%, #000); }
+  .spatial-sheen      { fill: url(#spatialSheen); stroke: none; }
+  .spatial-embed      { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 68%, #000); stroke: none; }
+  .spatial-focal .spatial-embed { fill: color-mix(in srgb, #fff 36%, transparent); }
+  .spatial-leader     { stroke: var(--cr-keyline); stroke-width: 1; fill: none; }
+  .spatial-leader--dash { stroke-dasharray: 2 3; }
+  .spatial-dot        { fill: var(--accent, var(--cr-tone-sky-accent)); }
+  .spatial-label      { font: 500 var(--fs-h4)/1.2 var(--font-display); fill: var(--cr-charcoal); letter-spacing: var(--tracking-display); }
+  .spatial-sub        { font: 400 12px/1.4 var(--font-body); fill: var(--cr-graphite); }
+  .spatial-eyebrow    { font: 600 var(--fs-eyebrow)/1 var(--font-body); fill: var(--accent, var(--cr-tone-sky-accent)); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; }
+  /* scoped DARK inversion (navy .cr-band--dark / .cr-page--dark) — strokes & type lift to stay legible */
+  .cr-band--dark .spatial-face,   .cr-page--dark .spatial-face,
+  .cr-band--dark .spatial-leader, .cr-page--dark .spatial-leader { stroke: var(--cr-keyline-dark); }
+  .cr-band--dark .spatial-label,  .cr-page--dark .spatial-label  { fill: var(--fg-inverse); }
+  .cr-band--dark .spatial-sub,    .cr-page--dark .spatial-sub    { fill: var(--cr-stone); }
+  .cr-band--dark .spatial-eyebrow,.cr-page--dark .spatial-eyebrow{ fill: var(--cr-stone); }
+  .spatial-demo    { max-width: 178mm; display: flex; flex-direction: column; gap: 40px; }
+  .spatial-caption { font: 400 13px/1.55 var(--font-body); color: var(--cr-graphite); max-width: 178mm; margin-top: 26px; }
+
+
+  /* ── DETAIL VOCABULARY (Tier-2 — namespaced; copy the parts a doc uses) ──
+     Richer primitives that ENCODE REAL SUB-STRUCTURE (a datastore, a network, a
+     console), never decoration (Rulebook §14). Volumes (cube = the core faces at
+     full height; cylinder = ellipse lid + wall), surface textures (grid-mesh &
+     node-graph = repeated <line> polylines, NOT an SVG <pattern> — patterns flake
+     in PDF), embedded chips, screen UI, ground grid, droplines, curved connector.
+     All hold the fixed 2:1 iso angle; no JS, no preserve-3d. ── */
+  .spatial-cyl-top   { fill: var(--surface, var(--cr-tone-sky)); stroke: var(--cr-keyline); stroke-width: 1; }
+  .spatial-cyl-body  { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 80%, #000); stroke: var(--cr-keyline); stroke-width: 1; }
+  .spatial-focal .spatial-cyl-top  { fill: var(--accent, var(--cr-tone-sky-accent)); }
+  .spatial-focal .spatial-cyl-body { fill: color-mix(in srgb, var(--accent, var(--cr-tone-sky-accent)) 74%, #000); }
+  .spatial-mesh-line { stroke: var(--cr-keyline); stroke-width: 0.75; fill: none; }
+  .spatial-node-link { stroke: var(--cr-keyline); stroke-width: 1; fill: none; }
+  .spatial-chip      { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 64%, #000); stroke: none; }
+  .spatial-focal .spatial-chip { fill: color-mix(in srgb, #fff 42%, transparent); }
+  .spatial-screen-ui { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 60%, #000); stroke: none; }
+  .spatial-grid-line { stroke: var(--cr-keyline); stroke-width: 1; stroke-dasharray: 2 3; fill: none; }
+  .spatial-drop      { stroke: var(--cr-keyline); stroke-width: 1; stroke-dasharray: 2 3; fill: none; }
+  .spatial-link--curve { stroke: var(--cr-graphite); stroke-width: 1.5; fill: none; }
+  .spatial-link-arrow  { fill: var(--cr-graphite); stroke: none; }
+  .cr-band--dark .spatial-cyl-top,  .cr-page--dark .spatial-cyl-top,
+  .cr-band--dark .spatial-cyl-body, .cr-page--dark .spatial-cyl-body,
+  .cr-band--dark .spatial-mesh-line,.cr-page--dark .spatial-mesh-line,
+  .cr-band--dark .spatial-node-link,.cr-page--dark .spatial-node-link,
+  .cr-band--dark .spatial-grid-line,.cr-page--dark .spatial-grid-line,
+  .cr-band--dark .spatial-drop,     .cr-page--dark .spatial-drop { stroke: var(--cr-keyline-dark); }
+  .cr-band--dark .spatial-link--curve, .cr-page--dark .spatial-link--curve { stroke: var(--cr-stone); }
+  .cr-band--dark .spatial-link-arrow,  .cr-page--dark .spatial-link-arrow  { fill: var(--cr-stone); }
+
+  /* ── METAPHOR-OBJECT layer (concept vocabulary; shared across illustration specimens) ── */
+  .spatial-glyph   { fill: none; stroke: var(--accent, var(--cr-tone-sky-accent)); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+  .spatial-glyph--f{ fill: var(--accent, var(--cr-tone-sky-accent)); stroke: none; }
+  .spatial-ink     { fill: none; stroke: var(--cr-charcoal); stroke-width: 1.3; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+  .spatial-hole    { fill: var(--surface, var(--cr-tone-sky)); stroke: var(--cr-keyline); stroke-width: 1; }
+  .cr-band--dark .spatial-ink, .cr-page--dark .spatial-ink { stroke: var(--cr-keyline-dark); }
+  .cr-band--dark .spatial-hole, .cr-page--dark .spatial-hole { fill: color-mix(in srgb, var(--surface, var(--cr-tone-sky)) 50%, #000); }
+
+  .spatial-card-label { font: 700 0.5px/1 var(--font-display); fill: #fff; letter-spacing: 0.01px; }
+
+  .spatial-flow    { fill: none; stroke: var(--accent, var(--cr-tone-sky-accent)); stroke-width: 2; stroke-linecap: round; }
+  .spatial-flow--dash { stroke-dasharray: 4 4; }
+  .spatial-flow-arrow { fill: var(--accent, var(--cr-tone-sky-accent)); stroke: none; }
+
+  /* ── NARRATIVE CONNECTOR (Tier-2 BOLD flow, §13) — the dimensional "story" arrow
+     that wraps the composition and lands on a layer. A neutral ribbon (not accent),
+     bold enough to read as the through-line; arrowhead sits ON TOP of its target. ── */
+  .spatial-narr      { fill: none; stroke: url(#narrRibbon); stroke-width: 9; stroke-linecap: round; }
+  .spatial-narr-head { fill: color-mix(in srgb, var(--cr-graphite) 62%, #fff); stroke: none; }
+  .cr-band--dark .spatial-narr-head, .cr-page--dark .spatial-narr-head { fill: var(--cr-stone); }
+  /* secondary annotation sub-list under a layer label (the AWS/Azure/… enumerations) */
+  .spatial-sublist   { font: 400 11px/1.45 var(--font-body); fill: var(--cr-graphite); }
+  .cr-band--dark .spatial-sublist, .cr-page--dark .spatial-sublist { fill: var(--cr-stone); }
+
+</style>
+</head>
+<body style="background:#FFFFFF">
+<div class="spatial-demo">
+
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:10px">Foundry — a platform where every layer is a DISTINCT recognizable system</div>
+    <div style="max-width:188mm"><svg class="spatial-svg" viewBox="0 0 720 740"><defs><linearGradient id="spatialSheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.34"/></linearGradient><linearGradient id="narrRibbon" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C5CEDA"/><stop offset="1" stop-color="#9BA7B6"/></linearGradient></defs><g><path class="spatial-narr" d="M 160,172 C 52,288 46,442 206,498"/>
+<path class="spatial-narr" d="M 150,184 C 14,360 26,562 206,590"/>
+<line x1="300" y1="130.0" x2="300" y2="212.0" class="spatial-drop"/>
+<line x1="300" y1="222.0" x2="300" y2="304.0" class="spatial-drop"/>
+<line x1="300" y1="314.0" x2="300" y2="396.0" class="spatial-drop"/>
+<line x1="300" y1="406.0" x2="300" y2="488.0" class="spatial-drop"/>
+<line x1="300" y1="498.0" x2="300" y2="580.0" class="spatial-drop"/>
+<g class="tone-green"><g class="spatial-slab spatial-focal">
+<polygon class="spatial-face spatial-face-left" points="168.00,120.00 300.00,186.00 300.00,200.00 168.00,134.00"/>
+<polygon class="spatial-face spatial-face-right" points="300.00,186.00 432.00,120.00 432.00,134.00 300.00,200.00"/>
+<polygon class="spatial-face spatial-face-top" points="300.00,54.00 432.00,120.00 300.00,186.00 168.00,120.00"/>
+</g>
+<polygon class="spatial-screen-ui" points="300.00,67.20 405.60,120.00 389.76,127.92 284.16,75.12"/>
+<polygon class="spatial-chip" points="268.32,83.04 329.04,113.40 317.16,119.34 256.44,88.98"/>
+<polygon class="spatial-chip" points="247.20,93.60 307.92,123.96 296.04,129.90 235.32,99.54"/>
+<polygon class="spatial-chip" points="226.08,104.16 286.80,134.52 274.92,140.46 214.20,110.10"/>
+<polygon class="spatial-embed" points="297.36,139.80 303.96,143.10 280.20,154.98 273.60,151.68"/>
+<polygon class="spatial-embed" points="324.42,137.49 331.02,140.79 291.42,160.59 284.82,157.29"/>
+<polygon class="spatial-embed" points="325.08,148.38 331.68,151.68 302.64,166.20 296.04,162.90"/>
+<polygon class="spatial-embed" points="354.78,144.75 361.38,148.05 313.86,171.81 307.26,168.51"/></g>
+<line x1="432.0" y1="120.0" x2="466.0" y2="120.0" class="spatial-leader"/>
+<text x="472.0" y="117.0" class="spatial-eyebrow">Layer 01</text>
+<text x="472.0" y="135.0" class="spatial-label">Decision Orchestration</text>
+<text x="472.0" y="153.0" class="spatial-sublist">→ Scenario planning&#160;&#160;→ Approvals</text>
+<g class="tone-sky"><g class="spatial-slab">
+<polygon class="spatial-face spatial-face-left" points="168.00,212.00 300.00,278.00 300.00,292.00 168.00,226.00"/>
+<polygon class="spatial-face spatial-face-right" points="300.00,278.00 432.00,212.00 432.00,226.00 300.00,292.00"/>
+<polygon class="spatial-face spatial-face-top" points="300.00,146.00 432.00,212.00 300.00,278.00 168.00,212.00"/>
+</g>
+<polygon class="spatial-chip" points="299.43,157.23 316.91,165.97 283.62,182.62 266.13,173.88"/>
+<polygon class="spatial-embed" points="299.43,157.23 316.91,165.97 306.26,171.30 288.78,162.55"/>
+<polygon class="spatial-chip" points="327.81,171.42 348.29,181.66 314.99,198.31 294.51,188.07"/>
+<polygon class="spatial-embed" points="327.81,171.42 348.29,181.66 337.64,186.98 317.16,176.74"/>
+<polygon class="spatial-chip" points="356.19,185.61 379.67,197.34 346.37,213.99 322.89,202.26"/>
+<polygon class="spatial-embed" points="356.19,185.61 379.67,197.34 369.01,202.67 345.54,190.93"/>
+<polygon class="spatial-chip" points="384.57,199.80 403.55,209.29 370.25,225.94 351.27,216.45"/>
+<polygon class="spatial-embed" points="384.57,199.80 403.55,209.29 392.90,214.61 373.92,205.12"/>
+<polygon class="spatial-chip" points="261.59,176.15 283.57,187.14 250.27,203.78 228.29,192.80"/>
+<polygon class="spatial-embed" points="261.59,176.15 283.57,187.14 272.91,192.46 250.94,181.47"/>
+<polygon class="spatial-chip" points="289.97,190.34 307.45,199.08 274.16,215.73 256.67,206.99"/>
+<polygon class="spatial-embed" points="289.97,190.34 307.45,199.08 296.80,204.41 279.32,195.66"/>
+<polygon class="spatial-chip" points="318.35,204.53 338.83,214.77 305.53,231.42 285.05,221.18"/>
+<polygon class="spatial-embed" points="318.35,204.53 338.83,214.77 328.18,220.09 307.70,209.85"/>
+<polygon class="spatial-chip" points="346.73,218.72 370.21,230.45 336.91,247.10 313.43,235.37"/>
+<polygon class="spatial-embed" points="346.73,218.72 370.21,230.45 359.55,235.78 336.08,224.04"/>
+<polygon class="spatial-chip" points="223.75,195.07 242.73,204.56 209.43,221.21 190.45,211.72"/>
+<polygon class="spatial-embed" points="223.75,195.07 242.73,204.56 232.08,209.88 213.10,200.39"/>
+<polygon class="spatial-chip" points="252.13,209.26 274.11,220.25 240.81,236.89 218.83,225.91"/>
+<polygon class="spatial-embed" points="252.13,209.26 274.11,220.25 263.45,225.57 241.48,214.58"/>
+<polygon class="spatial-chip" points="280.51,223.45 297.99,232.19 264.70,248.84 247.21,240.10"/>
+<polygon class="spatial-embed" points="280.51,223.45 297.99,232.19 287.34,237.52 269.86,228.77"/>
+<polygon class="spatial-chip" points="308.89,237.64 329.37,247.88 296.07,264.53 275.59,254.29"/>
+<polygon class="spatial-embed" points="308.89,237.64 329.37,247.88 318.72,253.20 298.24,242.96"/></g>
+<line x1="432.0" y1="212.0" x2="466.0" y2="212.0" class="spatial-leader"/>
+<text x="472.0" y="209.0" class="spatial-eyebrow">Layer 02</text>
+<text x="472.0" y="227.0" class="spatial-label">Modular Workflows</text>
+<text x="472.0" y="245.0" class="spatial-sublist">→ Pipelines&#160;&#160;→ Triggers&#160;&#160;→ Schedules</text>
+<g class="tone-sky"><g class="spatial-slab">
+<polygon class="spatial-face spatial-face-left" points="168.00,304.00 300.00,370.00 300.00,382.00 168.00,316.00"/>
+<polygon class="spatial-face spatial-face-right" points="300.00,370.00 432.00,304.00 432.00,316.00 300.00,382.00"/>
+<polygon class="spatial-face spatial-face-top" points="300.00,238.00 432.00,304.00 300.00,370.00 168.00,304.00"/>
+</g>
+<line x1="297.4" y1="300.0" x2="368.6" y2="306.6" class="spatial-node-link"/>
+<line x1="297.4" y1="300.0" x2="315.8" y2="335.7" class="spatial-node-link"/>
+<line x1="297.4" y1="300.0" x2="234.0" y2="300.0" class="spatial-node-link"/>
+<line x1="297.4" y1="300.0" x2="286.8" y2="271.0" class="spatial-node-link"/>
+<line x1="368.6" y1="306.6" x2="352.8" y2="330.4" class="spatial-node-link"/>
+<line x1="315.8" y1="335.7" x2="273.6" y2="330.4" class="spatial-node-link"/>
+<line x1="234.0" y1="300.0" x2="247.2" y2="330.4" class="spatial-node-link"/>
+<line x1="286.8" y1="271.0" x2="241.9" y2="280.2" class="spatial-node-link"/>
+<line x1="297.4" y1="300.0" x2="273.6" y2="330.4" class="spatial-node-link"/>
+<line x1="297.4" y1="300.0" x2="326.4" y2="277.6" class="spatial-node-link"/>
+<line x1="234.0" y1="300.0" x2="286.8" y2="271.0" class="spatial-node-link"/>
+<line x1="368.6" y1="306.6" x2="315.8" y2="335.7" class="spatial-node-link"/>
+<circle cx="297.4" cy="300.0" r="6.0" class="spatial-dot"/>
+<circle cx="297.4" cy="300.0" r="8.5" class="spatial-node-link" fill="none"/>
+<circle cx="368.6" cy="306.6" r="4.0" class="spatial-dot"/>
+<circle cx="368.6" cy="306.6" r="6.5" class="spatial-node-link" fill="none"/>
+<circle cx="315.8" cy="335.7" r="4.0" class="spatial-dot"/>
+<circle cx="315.8" cy="335.7" r="6.5" class="spatial-node-link" fill="none"/>
+<circle cx="234.0" cy="300.0" r="4.0" class="spatial-dot"/>
+<circle cx="234.0" cy="300.0" r="6.5" class="spatial-node-link" fill="none"/>
+<circle cx="286.8" cy="271.0" r="4.0" class="spatial-dot"/>
+<circle cx="286.8" cy="271.0" r="6.5" class="spatial-node-link" fill="none"/>
+<circle cx="273.6" cy="330.4" r="3.0" class="spatial-dot"/>
+<circle cx="273.6" cy="330.4" r="5.5" class="spatial-node-link" fill="none"/>
+<circle cx="326.4" cy="277.6" r="3.0" class="spatial-dot"/>
+<circle cx="326.4" cy="277.6" r="5.5" class="spatial-node-link" fill="none"/>
+<circle cx="352.8" cy="330.4" r="3.0" class="spatial-dot"/>
+<circle cx="352.8" cy="330.4" r="5.5" class="spatial-node-link" fill="none"/>
+<circle cx="247.2" cy="330.4" r="3.0" class="spatial-dot"/>
+<circle cx="247.2" cy="330.4" r="5.5" class="spatial-node-link" fill="none"/>
+<circle cx="241.9" cy="280.2" r="3.0" class="spatial-dot"/>
+<circle cx="241.9" cy="280.2" r="5.5" class="spatial-node-link" fill="none"/></g>
+<line x1="432.0" y1="304.0" x2="466.0" y2="304.0" class="spatial-leader"/>
+<text x="472.0" y="301.0" class="spatial-eyebrow">Layer 03</text>
+<text x="472.0" y="319.0" class="spatial-label">Dynamic Ontology</text>
+<text x="472.0" y="337.0" class="spatial-sublist">→ Entities&#160;&#160;→ Relationships</text>
+<g class="tone-sky"><g class="spatial-slab">
+<polygon class="spatial-face spatial-face-left" points="168.00,396.00 300.00,462.00 300.00,474.00 168.00,408.00"/>
+<polygon class="spatial-face spatial-face-right" points="300.00,462.00 432.00,396.00 432.00,408.00 300.00,474.00"/>
+<polygon class="spatial-face spatial-face-top" points="300.00,330.00 432.00,396.00 300.00,462.00 168.00,396.00"/>
+</g>
+<line x1="300.0" y1="396.0" x2="347.5" y2="419.8" class="spatial-node-link"/>
+<line x1="300.0" y1="396.0" x2="289.5" y2="425.0" class="spatial-node-link"/>
+<line x1="300.0" y1="396.0" x2="241.9" y2="401.3" class="spatial-node-link"/>
+<line x1="300.0" y1="396.0" x2="252.5" y2="372.2" class="spatial-node-link"/>
+<line x1="300.0" y1="396.0" x2="310.5" y2="367.0" class="spatial-node-link"/>
+<line x1="300.0" y1="396.0" x2="358.1" y2="390.7" class="spatial-node-link"/>
+<circle cx="300.0" cy="396.0" r="6.0" class="spatial-dot"/>
+<circle cx="300.0" cy="396.0" r="8.5" class="spatial-node-link" fill="none"/>
+<circle cx="347.5" cy="419.8" r="4.0" class="spatial-dot"/>
+<circle cx="347.5" cy="419.8" r="6.5" class="spatial-node-link" fill="none"/>
+<circle cx="289.5" cy="425.0" r="4.0" class="spatial-dot"/>
+<circle cx="289.5" cy="425.0" r="6.5" class="spatial-node-link" fill="none"/>
+<circle cx="241.9" cy="401.3" r="4.0" class="spatial-dot"/>
+<circle cx="241.9" cy="401.3" r="6.5" class="spatial-node-link" fill="none"/>
+<circle cx="252.5" cy="372.2" r="4.0" class="spatial-dot"/>
+<circle cx="252.5" cy="372.2" r="6.5" class="spatial-node-link" fill="none"/>
+<circle cx="310.5" cy="367.0" r="4.0" class="spatial-dot"/>
+<circle cx="310.5" cy="367.0" r="6.5" class="spatial-node-link" fill="none"/>
+<circle cx="358.1" cy="390.7" r="4.0" class="spatial-dot"/>
+<circle cx="358.1" cy="390.7" r="6.5" class="spatial-node-link" fill="none"/></g>
+<line x1="432.0" y1="396.0" x2="466.0" y2="396.0" class="spatial-leader"/>
+<text x="472.0" y="393.0" class="spatial-eyebrow">Layer 04</text>
+<text x="472.0" y="411.0" class="spatial-label">Model Integration</text>
+<text x="472.0" y="429.0" class="spatial-sublist">→ Forecast&#160;&#160;→ Classify&#160;&#160;→ Rank</text>
+<g class="tone-sky"><g class="spatial-slab">
+<polygon class="spatial-face spatial-face-left" points="168.00,488.00 300.00,554.00 300.00,568.00 168.00,502.00"/>
+<polygon class="spatial-face spatial-face-right" points="300.00,554.00 432.00,488.00 432.00,502.00 300.00,568.00"/>
+<polygon class="spatial-face spatial-face-top" points="300.00,422.00 432.00,488.00 300.00,554.00 168.00,488.00"/>
+</g>
+<line x1="311.9" y1="434.5" x2="193.1" y2="493.9" class="spatial-mesh-line"/>
+<line x1="288.1" y1="434.5" x2="406.9" y2="493.9" class="spatial-mesh-line"/>
+<line x1="323.8" y1="440.5" x2="205.0" y2="499.9" class="spatial-mesh-line"/>
+<line x1="276.2" y1="440.5" x2="395.0" y2="499.9" class="spatial-mesh-line"/>
+<line x1="335.6" y1="446.4" x2="216.8" y2="505.8" class="spatial-mesh-line"/>
+<line x1="264.4" y1="446.4" x2="383.2" y2="505.8" class="spatial-mesh-line"/>
+<line x1="347.5" y1="452.4" x2="228.7" y2="511.8" class="spatial-mesh-line"/>
+<line x1="252.5" y1="452.4" x2="371.3" y2="511.8" class="spatial-mesh-line"/>
+<line x1="359.4" y1="458.3" x2="240.6" y2="517.7" class="spatial-mesh-line"/>
+<line x1="240.6" y1="458.3" x2="359.4" y2="517.7" class="spatial-mesh-line"/>
+<line x1="371.3" y1="464.2" x2="252.5" y2="523.6" class="spatial-mesh-line"/>
+<line x1="228.7" y1="464.2" x2="347.5" y2="523.6" class="spatial-mesh-line"/>
+<line x1="383.2" y1="470.2" x2="264.4" y2="529.6" class="spatial-mesh-line"/>
+<line x1="216.8" y1="470.2" x2="335.6" y2="529.6" class="spatial-mesh-line"/>
+<line x1="395.0" y1="476.1" x2="276.2" y2="535.5" class="spatial-mesh-line"/>
+<line x1="205.0" y1="476.1" x2="323.8" y2="535.5" class="spatial-mesh-line"/>
+<line x1="406.9" y1="482.1" x2="288.1" y2="541.5" class="spatial-mesh-line"/>
+<line x1="193.1" y1="482.1" x2="311.9" y2="541.5" class="spatial-mesh-line"/>
+<circle cx="286.8" cy="468.2" r="3.4" class="spatial-dot"/>
+<circle cx="315.8" cy="503.8" r="3.4" class="spatial-dot"/>
+<circle cx="263.0" cy="506.5" r="3.4" class="spatial-dot"/>
+<circle cx="372.6" cy="491.3" r="3.4" class="spatial-dot"/></g>
+<line x1="432.0" y1="488.0" x2="466.0" y2="488.0" class="spatial-leader"/>
+<text x="472.0" y="485.0" class="spatial-eyebrow">Layer 05</text>
+<text x="472.0" y="503.0" class="spatial-label">Data Platform</text>
+<text x="472.0" y="521.0" class="spatial-sublist">→ AWS&#160;&#160;→ Azure&#160;&#160;→ Snowflake&#160;&#160;→ BigQuery</text>
+<g class="tone-sky"><g class="spatial-slab">
+<polygon class="spatial-face spatial-face-left" points="168.00,580.00 300.00,646.00 300.00,660.00 168.00,594.00"/>
+<polygon class="spatial-face spatial-face-right" points="300.00,646.00 432.00,580.00 432.00,594.00 300.00,660.00"/>
+<polygon class="spatial-face spatial-face-top" points="300.00,514.00 432.00,580.00 300.00,646.00 168.00,580.00"/>
+</g>
+<line x1="300.0" y1="580.0" x2="284.2" y2="548.3" class="spatial-node-link"/>
+<line x1="300.0" y1="580.0" x2="368.6" y2="580.0" class="spatial-node-link"/>
+<line x1="300.0" y1="580.0" x2="331.7" y2="609.0" class="spatial-node-link"/>
+<line x1="300.0" y1="580.0" x2="234.0" y2="581.3" class="spatial-node-link"/>
+<line x1="300.0" y1="580.0" x2="263.0" y2="606.4" class="spatial-node-link"/>
+<line x1="300.0" y1="580.0" x2="239.3" y2="557.6" class="spatial-node-link"/>
+<line x1="300.0" y1="580.0" x2="360.7" y2="605.1" class="spatial-node-link"/>
+<line x1="300.0" y1="580.0" x2="352.8" y2="553.6" class="spatial-node-link"/>
+<g class="spatial-cube">
+<polygon class="spatial-face spatial-face-left" points="267.16,541.52 284.16,550.02 284.16,565.32 267.16,556.82"/>
+<polygon class="spatial-face spatial-face-right" points="284.16,550.02 301.16,541.52 301.16,556.82 284.16,565.32"/>
+<polygon class="spatial-face spatial-face-top" points="284.16,533.02 301.16,541.52 284.16,550.02 267.16,541.52"/>
+</g>
+<g class="spatial-cube">
+<polygon class="spatial-face spatial-face-left" points="340.80,548.80 352.80,554.80 352.80,565.60 340.80,559.60"/>
+<polygon class="spatial-face spatial-face-right" points="352.80,554.80 364.80,548.80 364.80,559.60 352.80,565.60"/>
+<polygon class="spatial-face spatial-face-top" points="352.80,542.80 364.80,548.80 352.80,554.80 340.80,548.80"/>
+</g>
+<g class="spatial-cube">
+<polygon class="spatial-face spatial-face-left" points="227.28,552.76 239.28,558.76 239.28,569.56 227.28,563.56"/>
+<polygon class="spatial-face spatial-face-right" points="239.28,558.76 251.28,552.76 251.28,563.56 239.28,569.56"/>
+<polygon class="spatial-face spatial-face-top" points="239.28,546.76 251.28,552.76 239.28,558.76 227.28,552.76"/>
+</g>
+<g class="spatial-cyl">
+<path class="spatial-cyl-body" d="M 353.64,572.50 L 353.64,586.00 A 15.00,7.50 0 0 0 383.64,586.00 L 383.64,572.50 A 15.00,7.50 0 0 1 353.64,572.50 Z"/>
+<ellipse class="spatial-cyl-top" cx="368.64" cy="572.50" rx="15.00" ry="7.50"/>
+</g>
+<g class="spatial-cyl">
+<path class="spatial-cyl-body" d="M 219.00,573.82 L 219.00,587.32 A 15.00,7.50 0 0 0 249.00,587.32 L 249.00,573.82 A 15.00,7.50 0 0 1 219.00,573.82 Z"/>
+<ellipse class="spatial-cyl-top" cx="234.00" cy="573.82" rx="15.00" ry="7.50"/>
+</g>
+<g class="spatial-cyl">
+<path class="spatial-cyl-body" d="M 348.72,599.08 L 348.72,609.88 A 12.00,6.00 0 0 0 372.72,609.88 L 372.72,599.08 A 12.00,6.00 0 0 1 348.72,599.08 Z"/>
+<ellipse class="spatial-cyl-top" cx="360.72" cy="599.08" rx="12.00" ry="6.00"/>
+</g>
+<g class="spatial-cube">
+<polygon class="spatial-face spatial-face-left" points="250.04,601.20 263.04,607.70 263.04,619.40 250.04,612.90"/>
+<polygon class="spatial-face spatial-face-right" points="263.04,607.70 276.04,601.20 276.04,612.90 263.04,619.40"/>
+<polygon class="spatial-face spatial-face-top" points="263.04,594.70 276.04,601.20 263.04,607.70 250.04,601.20"/>
+</g>
+<g class="spatial-cube">
+<polygon class="spatial-face spatial-face-left" points="316.68,603.04 331.68,610.54 331.68,624.04 316.68,616.54"/>
+<polygon class="spatial-face spatial-face-right" points="331.68,610.54 346.68,603.04 346.68,616.54 331.68,624.04"/>
+<polygon class="spatial-face spatial-face-top" points="331.68,595.54 346.68,603.04 331.68,610.54 316.68,603.04"/>
+</g></g>
+<line x1="432.0" y1="580.0" x2="466.0" y2="580.0" class="spatial-leader"/>
+<text x="472.0" y="577.0" class="spatial-eyebrow">Layer 06</text>
+<text x="472.0" y="595.0" class="spatial-label">Operational Systems</text>
+<text x="472.0" y="613.0" class="spatial-sublist">→ SAP&#160;&#160;→ Oracle&#160;&#160;→ Kafka&#160;&#160;→ Salesforce</text>
+<polygon class="spatial-narr-head" points="228,499 196,485 204,500 195,514"/>
+<polygon class="spatial-narr-head" points="230,591 198,579 206,592 197,605"/></g></svg></div>
+    <div style="font:400 12px/1.5 var(--font-body); color:var(--cr-graphite); max-width:150mm; margin-top:8px">An editorial-hero stack rebuilt meaning-first: Decision = a <b>control console</b> (focal), Workflows = a <b>capability board</b>, Ontology = a <b>knowledge network</b> (irregular web), Model = a <b>model hub</b> (star), Data = a <b>data fabric</b>, Operations = a <b>service ecosystem</b> (varied entities around the core). No two layers interchangeable; none reads as a bare cube or cylinder (Recognition Test, §3; Layer Identity, §5). Illustrative.</div>
+  </div>
+
+</div>
+</body></html>

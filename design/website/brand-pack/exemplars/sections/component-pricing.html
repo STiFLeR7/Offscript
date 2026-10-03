@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR — Pricing (plans + monthly/yearly toggle)</title>
+
+<!--
+  ────────────────────────────────────────────────────────────────────────────
+  COMPONENT: Pricing — 4 plan cards + Monthly/Yearly toggle
+  ────────────────────────────────────────────────────────────────────────────
+  COMPOSITION (faithful reproduction of the supplied inspiration):
+    • Full-bleed LIGHT band (warm cream --cr-bg-warm) carrying white cards — the
+      source's cool off-white wash re-skinned to CR's warm proof surface. The band
+      stays FLAT: the source's faint vertical guide-lines are dropped (charter — no
+      pattern on light bands); separation is borders + the cream-vs-white step.
+    • CENTRED header: a 2-line Urbanist display headline ("Predictable pricing /
+      scalable plans") + a single muted Inter sub line ("Designed for every stage
+      of your journey."). The sub is SUPPORTING text → stays on the Inter body
+      ramp (~18px), never inflated to a display size (charter).
+    • A CENTRED Monthly|Yearly SEGMENTED toggle below the header.
+    • ONE ROW of FOUR EQUAL-HEIGHT cards (Free / Starter / Standard / Pro). Content
+      is TOP-aligned, so the shorter cards (Standard, Pro) carry trailing
+      whitespace at the bottom — the source's exact rhythm (equal outer height,
+      uneven content). Each card: plan icon + name (+ a "Popular" badge on
+      Standard) → big price + "per month" → full-width CTA → hairline divider →
+      a "Everything in X +" lead (cards 2–4) → a feature list of dark-circle
+      white-check rows. The Free card ends with a small muted footnote.
+    • The Standard card is the HIGHLIGHT ("Popular"): a brand-blue border + a
+      brand-blue FILLED Subscribe button (the source's gradient border + black
+      gradient button, re-skinned to the canonical CR primary — flat, no glow).
+    • A bottom TRUST STRIP — "Trusted by 9000+ businesses worldwide" + a row of
+      muted grey customer wordmarks — part of THIS composition (static, not a
+      marquee; distinct from the `logo-strip` component).
+
+  RE-SKIN (brand wins on hue/voice only):
+    • Plan ICONS → Lucide glyphs (sparkle / star / star / sparkles), INLINED as SVG
+      (no-JS safe) and filled with a per-plan CR accent: Free green
+      (--cr-success), Starter amber (--cr-amber), Standard brand-blue (--cr-brand,
+      tying the icon to the highlight), Pro teal (--cr-teal). The source's
+      pink is dropped (CR's --cr-pink is too pale at 24px) — kept to saturated
+      on-brand hues. Feature checks are the Lucide `check` in a dark --cr-fg
+      circle (white tick) — matches the source's dark check chips.
+    • Copy → CR voice: the agent / credits / "AI Actions per agent" / "links to
+      train on" vocabulary already fits CR's APA (autonomous-agent) domain, so it
+      is kept; "Hobby" → "Starter" (a more professional ladder for the brand) and
+      "business" → "businesses" (grammar). PRICES kept from the source for Monthly;
+      the YEARLY prices ($0 / $32 / $120 / $400 = 20% off) are an ASSUMPTION (the
+      source only shows Monthly) — illustrative, swap for real annual pricing.
+    • Trust-strip logos are typographically-varied PLACEHOLDER wordmarks (real
+      customer names would be a false claim, per the `backed-by` rule) — swap for
+      the client's real customer logo SVGs.
+
+  MOTION:
+    • The Monthly/Yearly toggle is a PURE-CSS radio toggle (two sr-only radios at
+      the top of the section; labels drive them; `:checked ~ .pr-inner …` reaches
+      the thumb + every price). So the toggle WORKS WITHOUT JS: clicking Yearly
+      slides the white thumb, recolours the active label, and crossfades all four
+      prices to their annual value (stacked mo/yr spans in one grid cell → stable
+      width, no reflow). Keyboard: tab to the group, arrow keys switch; a
+      `:focus-visible` ring lands on the whole toggle.
+    • JS adds ONLY a one-time scroll-reveal entrance (header → toggle → cards
+      left→right → trust strip stagger-fade up; `.has-js` / `--d` /
+      IntersectionObserver, fires once then disconnects). Content is fully visible
+      + the toggle fully works WITHOUT JS (hidden reveal-state scoped to .has-js).
+    • prefers-reduced-motion → reveal + price/thumb transitions are disabled
+      (snap), but the toggle stays functional.
+    • HOVER lives ONLY on real controls — the CTAs, the toggle, and the underlined
+      feature links. The card SURFACE never reacts (no lift / no glow — charter).
+
+  DISTINCT FROM: `compare-table` (a feature/competitor matrix — this is priced
+    plan cards) and `logo-strip` (a scrolling full-colour marquee — the trust
+    strip here is a small static grey row inside the pricing composition).
+
+  Responsive: 4 cards → 2×2 at ≤1080px → 1 column at ≤600px; header + toggle +
+    price scale via clamp; the trust strip stacks (label over a wrapping logo row).
+    Screenshot-verified at desktop 1440 / tablet 768 / the ~482px headless floor,
+    in BOTH the Monthly and the Yearly toggle states + the no-JS path.
+  ────────────────────────────────────────────────────────────────────────────
+-->
+
+<link rel="stylesheet" href="../_frozen-v2-tokens.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--cr-bg); font-family: var(--cr-font-body); }
+
+  /* ── Section: full-bleed warm light band ─────────────────────────────── */
+  .pr {
+    position: relative;
+    width: 100%;
+    background: var(--cr-bg-warm);            /* var(--cr-bg-grey-50) — flat light band */
+    padding: clamp(72px, 9vw, 120px) 0;
+    overflow: hidden;                          /* contain reveal transforms */
+  }
+  .pr-inner {
+    max-width: var(--cr-content-max);             /* content well (1440) */
+    margin: 0 auto;
+    padding: 0 var(--cr-page-gutter);          /* 100 */
+  }
+
+  /* The pure-CSS toggle's radios — sr-only but focusable; kept as the FIRST
+     children of .pr so `:checked ~ .pr-inner …` reaches the whole subtree. */
+  .pr-radio {
+    position: absolute;
+    width: 1px; height: 1px;
+    opacity: 0;
+    pointer-events: none;                      /* labels drive the checks */
+  }
+
+  /* ── Header ──────────────────────────────────────────────────────────── */
+  .pr-head { text-align: center; }
+  .pr-title {
+    margin: 0;
+    font-family: var(--cr-font-display);       /* Urbanist */
+    font-weight: 700;
+    font-size: clamp(40px, 6vw, 68px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--cr-fg);
+  }
+  .pr-sub {
+    margin: 18px auto 0;
+    max-width: 40ch;
+    font-family: var(--cr-font-body);          /* Inter — supporting text, body ramp */
+    font-weight: 400;
+    font-size: clamp(16px, 1.6vw, 19px);
+    line-height: 1.5;
+    color: var(--cr-fg-3);
+  }
+
+  /* ── Monthly / Yearly toggle (pure-CSS segmented control) ────────────── */
+  .pr-toggle {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: max-content;
+    margin: clamp(34px, 4.5vw, 48px) auto 0;
+    padding: 5px;
+    background: var(--cr-bg-grey-100);         /* grey track so the white thumb reads */
+    border: 1px solid var(--cr-line);
+    border-radius: var(--cr-radius-pill);
+  }
+  .pr-thumb {
+    position: absolute;
+    top: 5px; bottom: 5px; left: 5px;
+    width: 50%;
+    background: var(--cr-bg);                   /* white thumb */
+    border: 1px solid var(--cr-line);           /* border (NOT shadow) so it lifts — charter */
+    border-radius: var(--cr-radius-pill);
+    transition: transform .35s cubic-bezier(.4, 0, .2, 1);
+  }
+  .pr-seg {
+    position: relative;
+    z-index: 1;
+    padding: 9px 30px;
+    text-align: center;
+    font-family: var(--cr-font-body);
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1;
+    color: var(--cr-fg-3);                      /* inactive = muted */
+    cursor: pointer;
+    user-select: none;
+    border-radius: var(--cr-radius-pill);
+    transition: color .25s ease;
+  }
+  /* active label → ink; thumb slides under it */
+  #bill-mo:checked ~ .pr-inner .pr-seg--mo { color: var(--cr-fg); }
+  #bill-yr:checked ~ .pr-inner .pr-seg--yr { color: var(--cr-fg); }
+  #bill-yr:checked ~ .pr-inner .pr-thumb   { transform: translateX(100%); }
+  /* keyboard focus ring on the whole control */
+  .pr-radio:focus-visible ~ .pr-inner .pr-toggle {
+    outline: 2px solid var(--cr-brand);
+    outline-offset: 3px;
+  }
+
+  /* ── Cards grid ──────────────────────────────────────────────────────── */
+  .pr-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    align-items: stretch;                       /* equal-height cards */
+    margin-top: clamp(44px, 5.5vw, 64px);
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: var(--cr-bg);                    /* white on cream */
+    border: 1.5px solid var(--cr-line);          /* uniform width → popular only recolours, no shift */
+    border-radius: var(--cr-radius-lg);          /* 20 */
+    padding: 28px 26px;
+  }
+  .card--popular { border-color: var(--cr-brand); }   /* highlight = brand-blue border */
+
+  /* card head: icon + name (+ Popular badge) */
+  .card-top { display: flex; align-items: center; gap: 10px; }
+  .card-ic { width: 25px; height: 25px; flex: none; color: var(--accent, var(--cr-fg)); }
+  .card-ic svg {
+    width: 100%; height: 100%; display: block;
+    fill: currentColor; stroke: currentColor;    /* both → solid body + visible stroke-only accents */
+    stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round;
+  }
+  .card-name {
+    font-family: var(--cr-font-display);         /* Urbanist */
+    font-weight: 700;
+    font-size: 19px;
+    line-height: 1;
+    color: var(--cr-fg);
+  }
+  .card-badge {
+    margin-left: 4px;
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 11px;
+    border-radius: var(--cr-radius-pill);
+    background: var(--cr-fg);                     /* ink pill, like the source's black "Popular" */
+    color: #fff;
+    font-weight: 600;
+    font-size: 11.5px;
+    line-height: 1;
+    letter-spacing: 0.02em;
+  }
+
+  /* price */
+  .card-price { margin-top: 22px; }
+  .amt {
+    display: inline-grid;                         /* stack mo/yr in ONE cell → stable width, crossfade */
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(38px, 3.4vw, 50px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--cr-fg);
+  }
+  /* mo/yr stacked in one cell. visibility (NOT just opacity) flips so the
+     inactive price leaves the a11y tree (no "$150 $120" double-read) — and it
+     still occupies its grid cell, so width stays stable. The HIDING span delays
+     its visibility flip until AFTER the fade; the SHOWING span flips at once. */
+  .amt > span {
+    grid-area: 1 / 1;
+    transition: opacity .3s ease, transform .3s ease, visibility 0s linear .3s;
+  }
+  .amt .amt--mo {                                  /* monthly = active by default → shown */
+    opacity: 1; transform: none; visibility: visible;
+    transition: opacity .3s ease, transform .3s ease, visibility 0s;
+  }
+  .amt .amt--yr { opacity: 0; transform: translateY(8px); visibility: hidden; }
+  #bill-yr:checked ~ .pr-inner .amt .amt--mo {     /* yearly chosen → monthly hides */
+    opacity: 0; transform: translateY(-8px); visibility: hidden;
+    transition: opacity .3s ease, transform .3s ease, visibility 0s linear .3s;
+  }
+  #bill-yr:checked ~ .pr-inner .amt .amt--yr {     /* yearly chosen → yearly shows */
+    opacity: 1; transform: none; visibility: visible;
+    transition: opacity .3s ease, transform .3s ease, visibility 0s;
+  }
+  .card-per {
+    margin-top: 10px;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1;
+    color: var(--cr-fg-3);
+  }
+
+  /* CTA */
+  .card-cta {
+    margin-top: 22px;
+    display: block;
+    width: 100%;
+    padding: 13px 16px;
+    text-align: center;
+    font-family: var(--cr-font-body);
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1;
+    color: var(--cr-fg);
+    background: var(--cr-bg);
+    border: 1px solid var(--cr-line);
+    border-radius: var(--cr-radius-md);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .2s ease, border-color .2s ease, color .2s ease;
+  }
+  .card-cta:hover { background: var(--cr-bg-grey-50); border-color: var(--cr-fg-3); }
+  .card-cta--primary {
+    background: var(--cr-brand);
+    border-color: var(--cr-brand);
+    color: #fff;
+  }
+  .card-cta--primary:hover { background: var(--cr-brand-700); border-color: var(--cr-brand-700); }
+
+  /* divider */
+  .card-rule { height: 1px; background: var(--cr-line); margin: 24px 0 20px; }
+
+  /* feature "Everything in X +" lead */
+  .card-lead {
+    margin: 0 0 18px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--cr-fg);
+  }
+
+  /* feature list */
+  .feat { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+  .feat li {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--cr-fg-2);
+  }
+  .feat-check {
+    flex: none;
+    width: 20px; height: 20px;
+    margin-top: 1px;
+    border-radius: 50%;
+    background: var(--cr-fg);                     /* dark circle */
+    display: grid;
+    place-items: center;
+  }
+  .feat-check svg { width: 11px; height: 11px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  /* underlined feature = a real link (doc); hover → brand-blue */
+  .feat-link {
+    color: var(--cr-fg);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-color: var(--cr-line-soft);
+    transition: color .2s ease, text-decoration-color .2s ease;
+  }
+  .feat-link:hover { color: var(--cr-brand-700); text-decoration-color: currentColor; }
+
+  /* free-plan footnote */
+  .card-note {
+    margin-top: 18px;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--cr-fg-muted);
+  }
+
+  /* ── Trust strip ─────────────────────────────────────────────────────── */
+  .pr-trust {
+    margin-top: clamp(56px, 7vw, 88px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px 48px;
+    flex-wrap: wrap;
+  }
+  .pr-trust-label {
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--cr-fg-3);
+  }
+  .pr-trust-label strong { font-weight: 700; color: var(--cr-fg); }
+  .pr-trust-logos {
+    display: flex;
+    align-items: center;
+    gap: clamp(26px, 3vw, 44px);
+    flex-wrap: wrap;
+  }
+  .tlogo {
+    font-family: var(--cr-font-body);
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 1;
+    letter-spacing: 0.01em;
+    color: var(--cr-fg-muted);                   /* muted grey customer wordmarks */
+    white-space: nowrap;
+  }
+  .tlogo--caps { text-transform: uppercase; letter-spacing: 0.14em; font-size: 15px; }
+  .tlogo--low  { text-transform: lowercase; letter-spacing: -0.01em; font-weight: 600; }
+
+  /* ── Entrance reveal (JS-gated, fires once) ──────────────────────────── */
+  .has-js .pr-head,
+  .has-js .pr-toggle,
+  .has-js .card,
+  .has-js .pr-trust {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity .6s cubic-bezier(.22, .61, .36, 1),
+                transform .6s cubic-bezier(.22, .61, .36, 1);
+    transition-delay: var(--d, 0ms);
+  }
+  .has-js .pr.in .pr-head,
+  .has-js .pr.in .pr-toggle,
+  .has-js .pr.in .card,
+  .has-js .pr.in .pr-trust { opacity: 1; transform: none; }
+
+  /* ── Responsive ──────────────────────────────────────────────────────── */
+  @media (max-width: 1080px) {
+    .pr-inner { padding: 0 56px; }
+    .pr-grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }   /* 2×2 */
+  }
+  @media (max-width: 600px) {
+    .pr-inner { padding: 0 22px; }
+    .pr-grid { grid-template-columns: 1fr; gap: 16px; }              /* stacked */
+    .card { padding: 24px 22px; }
+    .pr-trust { flex-direction: column; align-items: flex-start; gap: 22px; }
+    .pr-trust-logos { gap: 22px 30px; }
+  }
+
+  /* ── Reduced motion: keep the toggle functional, drop the animation ──── */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .pr-head,
+    .has-js .pr-toggle,
+    .has-js .card,
+    .has-js .pr-trust { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .pr-thumb, .amt > span { transition: none !important; }
+  }
+</style>
+</head>
+
+<body>
+<section class="pr" data-screen-label="Pricing — plans">
+
+  <!-- pure-CSS toggle state (sr-only radios; Monthly default) -->
+  <input type="radio" name="pr-bill" id="bill-mo" class="pr-radio" checked aria-label="Bill monthly" />
+  <input type="radio" name="pr-bill" id="bill-yr" class="pr-radio" aria-label="Bill yearly (save 20%)" />
+
+  <div class="pr-inner">
+
+    <!-- Header -->
+    <header class="pr-head" style="--d:0ms">
+      <h2 class="pr-title">Predictable pricing<br />scalable plans</h2>
+      <p class="pr-sub">Designed for every stage of your journey.</p>
+    </header>
+
+    <!-- Monthly / Yearly toggle -->
+    <div class="pr-toggle" style="--d:90ms">
+      <span class="pr-thumb" aria-hidden="true"></span>
+      <label for="bill-mo" class="pr-seg pr-seg--mo">Monthly</label>
+      <label for="bill-yr" class="pr-seg pr-seg--yr">Yearly</label>
+    </div>
+
+    <!-- Plans -->
+    <div class="pr-grid">
+
+      <!-- ── Free ─────────────────────────────────────────────────────── -->
+      <article class="card" style="--accent: var(--cr-success); --d:150ms">
+        <div class="card-top">
+          <span class="card-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
+          </span>
+          <span class="card-name">Free</span>
+        </div>
+
+        <div class="card-price">
+          <span class="amt"><span class="amt--mo">$0</span><span class="amt--yr">$0</span></span>
+          <div class="card-per">per month</div>
+        </div>
+
+        <a href="#" class="card-cta">Get started</a>
+        <div class="card-rule"></div>
+
+        <ul class="feat">
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><a href="#" class="feat-link">Access to fast models</a></li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>100 message credits/month</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>400,000 characters/agent</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>1 team member</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>1 agent</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Limit of 10 links to train on</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Embed on unlimited websites</li>
+        </ul>
+
+        <p class="card-note">Agents get deleted after 14 days of inactivity on the free plan.</p>
+      </article>
+
+      <!-- ── Starter ──────────────────────────────────────────────────── -->
+      <article class="card" style="--accent: var(--cr-amber); --d:220ms">
+        <div class="card-top">
+          <span class="card-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          </span>
+          <span class="card-name">Starter</span>
+        </div>
+
+        <div class="card-price">
+          <span class="amt"><span class="amt--mo">$40</span><span class="amt--yr">$32</span></span>
+          <div class="card-per">per month</div>
+        </div>
+
+        <a href="#" class="card-cta">Subscribe</a>
+        <div class="card-rule"></div>
+
+        <p class="card-lead">Everything in Free +</p>
+        <ul class="feat">
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><a href="#" class="feat-link">Access to advanced models</a></li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>2,000 message credits/month</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>1 agent</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>5 AI Actions per agent</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>11,000,000 characters/agent</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Unlimited links to train on</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>API access</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><a href="#" class="feat-link">Integrations</a></li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Basic analytics</li>
+        </ul>
+      </article>
+
+      <!-- ── Standard (Popular) ───────────────────────────────────────── -->
+      <article class="card card--popular" style="--accent: var(--cr-brand); --d:290ms">
+        <div class="card-top">
+          <span class="card-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          </span>
+          <span class="card-name">Standard</span>
+          <span class="card-badge">Popular</span>
+        </div>
+
+        <div class="card-price">
+          <span class="amt"><span class="amt--mo">$150</span><span class="amt--yr">$120</span></span>
+          <div class="card-per">per month</div>
+        </div>
+
+        <a href="#" class="card-cta card-cta--primary">Subscribe</a>
+        <div class="card-rule"></div>
+
+        <p class="card-lead">Everything in Starter +</p>
+        <ul class="feat">
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>12,000 message credits/month</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>10 AI Actions per agent</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>3 team members</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>2 agents</li>
+        </ul>
+      </article>
+
+      <!-- ── Pro ──────────────────────────────────────────────────────── -->
+      <article class="card" style="--accent: var(--cr-teal); --d:360ms">
+        <div class="card-top">
+          <span class="card-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+              <path d="M20 3v4" fill="none"/><path d="M22 5h-4" fill="none"/>
+              <path d="M4 17v2" fill="none"/><path d="M5 18H3" fill="none"/>
+            </svg>
+          </span>
+          <span class="card-name">Pro</span>
+        </div>
+
+        <div class="card-price">
+          <span class="amt"><span class="amt--mo">$500</span><span class="amt--yr">$400</span></span>
+          <div class="card-per">per month</div>
+        </div>
+
+        <a href="#" class="card-cta">Subscribe</a>
+        <div class="card-rule"></div>
+
+        <p class="card-lead">Everything in Standard +</p>
+        <ul class="feat">
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>40,000 message credits/month</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>15 AI Actions per agent</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><a href="#" class="feat-link">5+ team members</a></li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>3 agents</li>
+          <li><span class="feat-check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><a href="#" class="feat-link">Advanced analytics</a></li>
+        </ul>
+      </article>
+
+    </div><!-- /.pr-grid -->
+
+    <!-- Trust strip (part of this composition; static) -->
+    <div class="pr-trust" style="--d:430ms">
+      <p class="pr-trust-label"><strong>Trusted by 9000+</strong> businesses worldwide</p>
+      <div class="pr-trust-logos" aria-label="Customer logos (placeholders)">
+        <span class="tlogo tlogo--caps">NORTHWIND</span>
+        <span class="tlogo">Vantage</span>
+        <span class="tlogo tlogo--low">fluxio</span>
+        <span class="tlogo">+meridian</span>
+        <span class="tlogo">Onyx</span>
+        <span class="tlogo tlogo--caps">ALTAIR</span>
+      </div>
+    </div>
+
+  </div><!-- /.pr-inner -->
+</section>
+
+<script>
+  // JS adds ONLY the one-time entrance reveal. The Monthly/Yearly toggle is
+  // pure CSS, so it works (and all content shows) without JS.
+  (function () {
+    var root = document.documentElement;
+    root.classList.add('has-js');
+    var sec = document.querySelector('.pr');
+    if (!sec) return;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) { sec.classList.add('in'); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { sec.classList.add('in'); io.disconnect(); }
+      });
+    }, { threshold: 0.18 });
+    io.observe(sec);
+  })();
+</script>
+</body>
+</html>

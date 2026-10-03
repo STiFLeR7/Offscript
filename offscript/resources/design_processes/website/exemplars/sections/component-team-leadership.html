@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Grid · four-column-equal — team leadership</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Grid · four-column-equal    from component-team-leadership.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **Formality is the argument.** The profile is unusually direct
+              about it: the deliberate crop makes these portraits read as
+              standing rather than as staffing, and the framing cannot be
+              relaxed without losing the point. So the arch stays, the ledger
+              rule stays, and the row of seven stays formal — what changes is
+              everything that was decorating that formality rather than
+              carrying it.
+
+  STRUCTURE   Unchanged. Headline pinned top-left · a void · a 4-column grid of
+              seven people, each an arch photo over a ledger footer. DOM,
+              scripts, ids, `data-*`, `aria-*`, `href`, `src` and every
+              behavioural hook are byte-compatible with the frozen original
+              (DR-22). The v2 file is beside this one in `_v2/`.
+
+  SEVEN PORTRAITS, UNCHANGED.
+              Seven human photographs, none touched — same files, same
+              `object-position: center 22%` holding the faces high in the arch,
+              same `object-fit: cover`, none hidden, none substituted. The arch
+              unmask animation that wipes them in is frozen and untouched.
+
+  NO ENVIRONMENT — and that is a finding, not an omission.
+              v2 carries no abstract creative background: no gradient, no blur
+              plate, no glow, no tint wash. Its only images are the seven
+              portraits, and the composition allocates no second image
+              position. The assigned environment therefore has nowhere to go,
+              and nothing was invented to give it one.
+
+  ACCENT      **Zero.** v2 spent a hue on seven LinkedIn marks and again on
+              their hover — seven moments in a section whose ceiling is one,
+              and none of them a primary control. They resolve in ink:
+              secondary at rest, primary on hover and focus. On a page whose
+              whole claim is restraint, a repeated coloured mark is the one
+              thing that reads as informal.
+
+  TYPE        The role caption was 12.5px, weight 500, UPPERCASE and tracked at
+              0.09em — a mannerism standing in for a monospaced face the kit
+              never shipped. It lands on the one supporting step, in sentence
+              case, untracked. The headline drops from weight 800 to 400 and
+              from a `clamp()` to the h2 step; the names step onto the body
+              size at weight 500.
+
+  FRAME       The arch declared 1/1.06 — off the approved vocabulary of four.
+              It becomes `3/4`, the ratio the pack names for human subjects,
+              and the arch is re-cut as a true semicircle against the new box
+              (horizontal radius half the width, vertical radius the same
+              distance expressed against the taller height). `cover` crops
+              symmetrically about the declared horizontal centre, so no face
+              moves and nothing stretches.
+
+  RESPONSIVE  The original's 1140 / 600 breakpoints. The 1240 step only eased
+              side padding, and the page gutter is now responsive by token, so
+              it has nothing left to do.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  /* ─── scope reset ─────────────────────────────────────────────── */
+  .tm-section, .tm-section * { box-sizing: border-box; }
+  .tm-section {
+    background: var(--cr-page-ground);
+    padding: var(--cr-space-2xl) var(--cr-page-gutter);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+    font-size: var(--cr-text-body);
+  }
+  .tm-wrap { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ─── headline (top-left, single-tone) ────────────────────────── */
+  .tm-head {
+    margin: 0 0 var(--cr-rhythm-content);
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h2);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+
+  /* ─── 4-column people grid ────────────────────────────────────── */
+  .tm-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: var(--cr-space-m);
+    row-gap: var(--cr-space-xl);
+  }
+  .tm-card { display: flex; flex-direction: column; min-width: 0; }
+
+  /* THE PORTRAIT FRAME — an arch, and the section's whole formality.
+     `aspect-ratio` alone governs the proportion: no height floor beside
+     it, and the card is a flex COLUMN, so the frame is a main-axis item
+     that never stretches to a row height. The radius is written as a
+     pair of percentages rather than a pill so the top is a true
+     semicircle at the new proportion — 50% of the width across, and the
+     same distance down expressed against the taller box. */
+  .tm-photo {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    border-radius: 50% 50% 0 0 / 37.5% 37.5% 0 0;
+    overflow: hidden;                          /* holds the arch; the img clip only wipes */
+    background: var(--cr-surface-5);           /* tone under the frame before the photo paints */
+  }
+  .tm-photo img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center 22%;               /* unchanged — faces stay high in the arch */
+    display: block;
+  }
+
+  /* ─── ledger footer ───────────────────────────────────────────── */
+  .tm-meta {
+    border-top: var(--cr-stroke) solid var(--cr-border-default);
+    border-right: var(--cr-stroke) solid var(--cr-border-default);
+    padding: var(--cr-space-xs) var(--cr-space-xs) var(--cr-space-s) 0;
+  }
+  .tm-namerow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--cr-space-xs);
+  }
+  .tm-name {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  /* The link mark, in ink — secondary at rest, primary on hover and
+     focus. Hover still lives only on a real control; the arch photos are
+     informational and never react. */
+  .tm-li {
+    flex: none;
+    display: inline-flex;
+    color: var(--cr-text-secondary);
+    transition: color .2s ease, transform .15s ease;
+  }
+  .tm-li svg { width: 19px; height: 19px; display: block; }
+  .tm-li:hover, .tm-li:focus-visible { color: var(--cr-text-primary); }
+  .tm-li:focus-visible { outline: 2px solid var(--cr-text-primary); outline-offset: 3px; }
+  .tm-li:active { transform: scale(.92); }
+  .tm-role {
+    margin: var(--cr-space-xs) 0 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    color: var(--cr-text-secondary);
+  }
+
+  /* ─── MOTION: arch unmask + meta rise — unchanged in kind ──────── */
+  /* default (no JS): img unclipped, meta visible. Hidden states stay .has-js-scoped. */
+  .has-js .tm-section .tm-photo img { clip-path: inset(100% 0 0 0); }
+  .has-js .tm-section .tm-card.in-view .tm-photo img {
+    animation: tmArch .8s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes tmArch { to { clip-path: inset(0 0 0 0); } }
+
+  .has-js .tm-section .tm-meta { opacity: 0; transform: translateY(10px); }
+  .has-js .tm-section .tm-card.in-view .tm-meta {
+    animation: tmRise .6s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: calc(var(--d, 0s) + .26s);
+  }
+  @keyframes tmRise { to { opacity: 1; transform: none; } }
+
+  /* Matched to the trigger's specificity — a guard that loses the cascade
+     is not a guard. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .tm-section .tm-photo img,
+    .has-js .tm-section .tm-card.in-view .tm-photo img { clip-path: none; animation: none; }
+    .has-js .tm-section .tm-meta,
+    .has-js .tm-section .tm-card.in-view .tm-meta { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* ─── responsive ──────────────────────────────────────────────── */
+  @media (max-width: 1140px) {
+    .tm-section { padding-top: var(--cr-space-xl); padding-bottom: var(--cr-space-xl); }
+    .tm-head { margin-bottom: var(--cr-rhythm-cluster); }
+    .tm-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--cr-space-s); row-gap: var(--cr-space-m); }
+    .tm-meta { border-right: none; padding-right: 0; }  /* the ledger rule drops when only 2 wide */
+  }
+  @media (max-width: 600px) {
+    .tm-section { padding-top: var(--cr-space-m); padding-bottom: var(--cr-space-m); }
+    .tm-head { font-size: var(--cr-text-h4); }
+    .tm-grid { column-gap: var(--cr-space-xs); row-gap: var(--cr-space-s); }
+    .tm-name { font-size: var(--cr-text-supporting); }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget
+  Every dimension this specimen moves, declared. Predicate 6 fails on any
+  change not listed here, and on any line here that moved nothing.
+  .tm-card    | font-size              | type-ramp
+  .tm-grid    | column-gap             | spacing-scale
+  .tm-grid    | font-size              | type-ramp
+  .tm-grid    | row-gap                | spacing-scale
+  .tm-head    | font-size              | type-ramp
+  .tm-head    | line-height            | type-ramp
+  .tm-head    | margin-bottom          | spacing-scale
+  .tm-meta    | font-size              | type-ramp
+  .tm-meta    | padding-bottom         | spacing-scale
+  .tm-meta    | padding-right          | spacing-scale
+  .tm-meta    | padding-top            | spacing-scale
+  .tm-name    | font-size              | type-ramp
+  .tm-name    | line-height            | type-ramp
+  .tm-namerow | column-gap             | spacing-scale
+  .tm-namerow | font-size              | type-ramp
+  .tm-namerow | row-gap                | spacing-scale
+  .tm-role    | font-size              | type-ramp
+  .tm-role    | line-height            | type-ramp
+  .tm-role    | margin-top             | spacing-scale
+  .tm-wrap    | font-size              | type-ramp
+  circle      | font-size              | type-ramp
+  img         | font-size              | type-ramp
+  path        | font-size              | type-ramp
+  rect        | font-size              | type-ramp
+  svg         | font-size              | type-ramp
+-->
+
+<!-- Headline-top-left + 4-col arch grid follow the SOURCE composition — the
+     placement is per-composition, not a hardcoded house rule. -->
+<section class="tm-section" data-screen-label="Team · Leadership grid"
+         data-archetype="proof-layout" data-hierarchy="proof" data-intent="build-trust"
+         data-register="confident" data-signature="editorial-photography" data-density="medium">
+  <div class="tm-wrap">
+
+    <h2 class="tm-head">Meet our leadership team.</h2>
+
+    <div class="tm-grid">
+
+      <!-- row 1 -->
+      <article class="tm-card" style="--d:0s">
+        <div class="tm-photo"><img src="../../brand-pack/assets/imagery/avatars/team-3.jpg" alt="Matt Bivons" decoding="async" /></div>
+        <div class="tm-meta">
+          <div class="tm-namerow">
+            <h3 class="tm-name">Matt Bivons</h3>
+            <a class="tm-li" href="#" aria-label="View Matt Bivons on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="1" y="8.6" width="4" height="13.4" rx="0.4"/><circle cx="3" cy="3.9" r="2.45"/><path d="M8 8.6h3.84v1.83h.05c.53-.96 1.84-1.97 3.79-1.97 4.05 0 4.8 2.5 4.8 5.74V22h-4v-6.3c0-1.5-.03-3.43-2.1-3.43-2.1 0-2.42 1.63-2.42 3.32V22H8V8.6z"/></svg>
+            </a>
+          </div>
+          <p class="tm-role">Founder &amp; CEO</p>
+        </div>
+      </article>
+
+      <article class="tm-card" style="--d:.08s">
+        <div class="tm-photo"><img src="../../brand-pack/assets/imagery/avatars/team-5.jpg" alt="Justin Potts" decoding="async" /></div>
+        <div class="tm-meta">
+          <div class="tm-namerow">
+            <h3 class="tm-name">Justin Potts</h3>
+            <a class="tm-li" href="#" aria-label="View Justin Potts on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="1" y="8.6" width="4" height="13.4" rx="0.4"/><circle cx="3" cy="3.9" r="2.45"/><path d="M8 8.6h3.84v1.83h.05c.53-.96 1.84-1.97 3.79-1.97 4.05 0 4.8 2.5 4.8 5.74V22h-4v-6.3c0-1.5-.03-3.43-2.1-3.43-2.1 0-2.42 1.63-2.42 3.32V22H8V8.6z"/></svg>
+            </a>
+          </div>
+          <p class="tm-role">Chief Technology Officer</p>
+        </div>
+      </article>
+
+      <article class="tm-card" style="--d:.16s">
+        <div class="tm-photo"><img src="../../brand-pack/assets/imagery/avatars/team-dami.jpg" alt="Dami Payne" decoding="async" /></div>
+        <div class="tm-meta">
+          <div class="tm-namerow">
+            <h3 class="tm-name">Dami Payne</h3>
+            <a class="tm-li" href="#" aria-label="View Dami Payne on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="1" y="8.6" width="4" height="13.4" rx="0.4"/><circle cx="3" cy="3.9" r="2.45"/><path d="M8 8.6h3.84v1.83h.05c.53-.96 1.84-1.97 3.79-1.97 4.05 0 4.8 2.5 4.8 5.74V22h-4v-6.3c0-1.5-.03-3.43-2.1-3.43-2.1 0-2.42 1.63-2.42 3.32V22H8V8.6z"/></svg>
+            </a>
+          </div>
+          <p class="tm-role">Head of Product</p>
+        </div>
+      </article>
+
+      <article class="tm-card" style="--d:.24s">
+        <div class="tm-photo"><img src="../../brand-pack/assets/imagery/avatars/team-1.jpg" alt="Kirk Wells" decoding="async" /></div>
+        <div class="tm-meta">
+          <div class="tm-namerow">
+            <h3 class="tm-name">Kirk Wells</h3>
+            <a class="tm-li" href="#" aria-label="View Kirk Wells on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="1" y="8.6" width="4" height="13.4" rx="0.4"/><circle cx="3" cy="3.9" r="2.45"/><path d="M8 8.6h3.84v1.83h.05c.53-.96 1.84-1.97 3.79-1.97 4.05 0 4.8 2.5 4.8 5.74V22h-4v-6.3c0-1.5-.03-3.43-2.1-3.43-2.1 0-2.42 1.63-2.42 3.32V22H8V8.6z"/></svg>
+            </a>
+          </div>
+          <p class="tm-role">Chief Revenue Officer</p>
+        </div>
+      </article>
+
+      <!-- row 2 -->
+      <article class="tm-card" style="--d:.32s">
+        <div class="tm-photo"><img src="../../brand-pack/assets/imagery/avatars/team-jessica.jpg" alt="Jessica Wu" decoding="async" /></div>
+        <div class="tm-meta">
+          <div class="tm-namerow">
+            <h3 class="tm-name">Jessica Wu</h3>
+            <a class="tm-li" href="#" aria-label="View Jessica Wu on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="1" y="8.6" width="4" height="13.4" rx="0.4"/><circle cx="3" cy="3.9" r="2.45"/><path d="M8 8.6h3.84v1.83h.05c.53-.96 1.84-1.97 3.79-1.97 4.05 0 4.8 2.5 4.8 5.74V22h-4v-6.3c0-1.5-.03-3.43-2.1-3.43-2.1 0-2.42 1.63-2.42 3.32V22H8V8.6z"/></svg>
+            </a>
+          </div>
+          <p class="tm-role">VP of People</p>
+        </div>
+      </article>
+
+      <article class="tm-card" style="--d:.40s">
+        <div class="tm-photo"><img src="../../brand-pack/assets/imagery/avatars/avatar-jason.jpg" alt="Scott Melman" decoding="async" /></div>
+        <div class="tm-meta">
+          <div class="tm-namerow">
+            <h3 class="tm-name">Scott Melman</h3>
+            <a class="tm-li" href="#" aria-label="View Scott Melman on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="1" y="8.6" width="4" height="13.4" rx="0.4"/><circle cx="3" cy="3.9" r="2.45"/><path d="M8 8.6h3.84v1.83h.05c.53-.96 1.84-1.97 3.79-1.97 4.05 0 4.8 2.5 4.8 5.74V22h-4v-6.3c0-1.5-.03-3.43-2.1-3.43-2.1 0-2.42 1.63-2.42 3.32V22H8V8.6z"/></svg>
+            </a>
+          </div>
+          <p class="tm-role">Head of Business Operations</p>
+        </div>
+      </article>
+
+      <article class="tm-card" style="--d:.48s">
+        <div class="tm-photo"><img src="../../brand-pack/assets/imagery/avatars/team-trisha.jpg" alt="Trisha Patel Sood" decoding="async" /></div>
+        <div class="tm-meta">
+          <div class="tm-namerow">
+            <h3 class="tm-name">Trisha Patel Sood</h3>
+            <a class="tm-li" href="#" aria-label="View Trisha Patel Sood on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="1" y="8.6" width="4" height="13.4" rx="0.4"/><circle cx="3" cy="3.9" r="2.45"/><path d="M8 8.6h3.84v1.83h.05c.53-.96 1.84-1.97 3.79-1.97 4.05 0 4.8 2.5 4.8 5.74V22h-4v-6.3c0-1.5-.03-3.43-2.1-3.43-2.1 0-2.42 1.63-2.42 3.32V22H8V8.6z"/></svg>
+            </a>
+          </div>
+          <p class="tm-role">Sr. Director of Client Success &amp; Support</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.tm-section');
+  if (!sec) return;
+
+  function reveal() {
+    sec.querySelectorAll('.tm-card').forEach(function (n) { n.classList.add('in-view'); });
+  }
+
+  if (reduce) { reveal(); return; }          // CSS snaps everything in
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) {
+        if (en.isIntersecting) { reveal(); io.disconnect(); }
+      });
+    }, { threshold: 0.15 });
+    io.observe(sec);
+  } else {
+    reveal();
+  }
+})();
+</script>
+
+</body>
+</html>

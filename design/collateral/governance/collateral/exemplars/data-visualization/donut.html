@@ -1,0 +1,143 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../_card.css">
+<style>
+  /* ─────────────────────────────────────────────────────────────────────
+     DATA VIZ · DONUT  (doc-scoped .viz-* — pure HTML/CSS + inline SVG, no JS)
+     A composition ring — genuine parts of a whole. Governing RULES live in
+     README-DATA-VIZ.md; the notes below are this idiom's MECHANICS only (doc-scoped).
+
+     What it's for (Rulebook §7–§8): a Level-5 composition dataset — values that are TRUE
+     parts of one meaningful whole and sum to 100% → a donut, with ≤5 segments. It's low in
+     the §8 hierarchy: only reach for it when the share, not the magnitude, is the point.
+
+     Colour (Rulebook §4 — marks are never navy, no rainbow): a single-hue GRADUATED
+     sequence of the sky tonal accent — the subject (largest) segment deepest, each smaller
+     share a lighter step (color-mix toward white). No navy wedge, no multi-hue rainbow. The
+     legend carries bold-% numerals in dark ink (type); the centre label is a quiet eyebrow.
+     Segments are SVG arcs: stroke-dasharray="<share·C> <C>", C = 2πr = 2π·42 ≈ 263.9,
+     each offset by the running total.
+
+     ⚠ DEVIATION (user-directed, flagged in-file — specimen 3): a MULTI-ACCENT variation that
+     colours each segment a DIFFERENT accent instead of one graduated hue. §4/§9 normally say
+     "subject = accent, the rest tonal; no rainbow" — the Rulebook is left unchanged (SSOT); this
+     variation is the documented exception, kept restrained (brand accents, not a saturated
+     rainbow). #segments always == #callouts; legend callouts are LEFT-aligned.
+
+     COLOUR-PAIRING RULE (this component's standing rule — user-directed): a segment and its
+     legend callout MUST carry the EXACT same colour, so colour alone tells the reader which share
+     is which. Draw the segments from the ACCENT palette and vary them by BRIGHTNESS / shade (not
+     hue alone) so neighbouring shares stay distinguishable; pair each callout swatch to its
+     segment's colour expression verbatim.
+     ───────────────────────────────────────────────────────────────────── */
+  .viz-donut        { width:54mm; height:54mm; flex-shrink:0; position:relative; }
+  .viz-donut--hero  { width:88mm; height:88mm; }                     /* hero / focal size */
+  .viz-donut svg    { width:100%; height:100%; display:block; }
+  .viz-donut-seg    { fill:none; stroke-width:17; }
+  .viz-donut-label  { position:absolute; inset:0; display:grid; place-items:center; text-align:center; }
+  .viz-donut-cap    { font:600 var(--fs-eyebrow)/1.3 var(--font-body); letter-spacing:var(--tracking-eyebrow); text-transform:uppercase; color:var(--cr-graphite); }
+  .viz-legend2      { display:flex; flex-direction:column; gap:4mm; }
+  .viz-legend2-row  { display:grid; grid-template-columns:7mm auto 1fr; align-items:baseline; gap:4mm; padding-bottom:3mm; border-bottom:1px solid var(--cr-keyline); }   /* callouts LEFT-aligned; swatch colour-paired to its segment */
+  .viz-legend2-sw   { width:11px; height:11px; border-radius:var(--radius-sm); align-self:center; }
+  .viz-legend2-pct  { font:600 20px/1 var(--font-display); letter-spacing:var(--tracking-display); color:var(--cr-ink); }   /* bold-% numeral = type, stays dark */
+  .viz-legend2-lab  { font:400 var(--fs-body)/1.35 var(--font-body); color:var(--cr-charcoal); }
+  .viz-flag         { font:400 13px/1.5 var(--font-body); color:var(--cr-graphite); }
+
+  /* preview-page chrome */
+  .viz-demo  { max-width:178mm; display:flex; flex-direction:column; gap:42px; }
+  .viz-caveat{ font:400 13px/1.55 var(--font-body); color:var(--cr-graphite); max-width:178mm; margin-top:26px; }
+</style>
+</head>
+<body style="background:#FFFFFF">
+<div class="viz-demo">
+
+  <!-- (1) Hero · centred donut + its own bold-% legend (one figure) -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">1 · Hero · centred, four shares + the figure's own bold-% legend beneath</div>
+    <div style="display:flex; flex-direction:column; align-items:center; gap:9mm">
+      <div class="viz-donut viz-donut--hero">
+        <svg viewBox="0 0 120 120" role="img" aria-label="Value mix: labor capacity 42 percent, error and rework 24 percent, cycle time 20 percent, revenue and retention 14 percent">
+          <g transform="rotate(-90 60 60)">
+            <circle class="viz-donut-seg" cx="60" cy="60" r="42" stroke="var(--cr-tone-sky-accent)" stroke-dasharray="110.8 263.9" stroke-dashoffset="0"/>
+            <circle class="viz-donut-seg" cx="60" cy="60" r="42" stroke="color-mix(in srgb, var(--cr-tone-sky-accent) 70%, #fff)" stroke-dasharray="63.3 263.9" stroke-dashoffset="-110.8"/>
+            <circle class="viz-donut-seg" cx="60" cy="60" r="42" stroke="color-mix(in srgb, var(--cr-tone-sky-accent) 45%, #fff)" stroke-dasharray="52.8 263.9" stroke-dashoffset="-174.1"/>
+            <circle class="viz-donut-seg" cx="60" cy="60" r="42" stroke="color-mix(in srgb, var(--cr-tone-sky-accent) 25%, #fff)" stroke-dasharray="36.9 263.9" stroke-dashoffset="-226.9"/>
+          </g>
+        </svg>
+        <div class="viz-donut-label"><div class="viz-donut-cap">Value<br>mix</div></div>
+      </div>
+      <div class="viz-legend2" style="display:grid; grid-template-columns:repeat(2, minmax(0,68mm)); gap:4mm 14mm">
+        <div class="viz-legend2-row"><span class="viz-legend2-sw" style="background:var(--cr-tone-sky-accent)"></span><span class="viz-legend2-pct">42<span style="font-size:.6em">%</span></span><span class="viz-legend2-lab">Labor capacity reclaimed</span></div>
+        <div class="viz-legend2-row"><span class="viz-legend2-sw" style="background:color-mix(in srgb, var(--cr-tone-sky-accent) 70%, #fff)"></span><span class="viz-legend2-pct">24<span style="font-size:.6em">%</span></span><span class="viz-legend2-lab">Error &amp; rework reduction</span></div>
+        <div class="viz-legend2-row"><span class="viz-legend2-sw" style="background:color-mix(in srgb, var(--cr-tone-sky-accent) 45%, #fff)"></span><span class="viz-legend2-pct">20<span style="font-size:.6em">%</span></span><span class="viz-legend2-lab">Cycle time &amp; speed</span></div>
+        <div class="viz-legend2-row"><span class="viz-legend2-sw" style="background:color-mix(in srgb, var(--cr-tone-sky-accent) 25%, #fff)"></span><span class="viz-legend2-pct">14<span style="font-size:.6em">%</span></span><span class="viz-legend2-lab">Revenue &amp; retention lift</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- (2) Base · body scale, three shares, single-column legend beside it -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">2 · Base · body scale, three shares, legend beside it</div>
+    <div style="display:flex; align-items:center; gap:14mm; flex-wrap:wrap">
+      <div class="viz-donut">
+        <svg viewBox="0 0 120 120" role="img" aria-label="Effort mix: automated 60 percent, assisted 25 percent, manual review 15 percent">
+          <g transform="rotate(-90 60 60)">
+            <circle class="viz-donut-seg" cx="60" cy="60" r="42" stroke="var(--cr-tone-sky-accent)" stroke-dasharray="158.3 263.9" stroke-dashoffset="0"/>
+            <circle class="viz-donut-seg" cx="60" cy="60" r="42" stroke="color-mix(in srgb, var(--cr-tone-sky-accent) 70%, #fff)" stroke-dasharray="66.0 263.9" stroke-dashoffset="-158.3"/>
+            <circle class="viz-donut-seg" cx="60" cy="60" r="42" stroke="color-mix(in srgb, var(--cr-tone-sky-accent) 45%, #fff)" stroke-dasharray="39.6 263.9" stroke-dashoffset="-224.3"/>
+          </g>
+        </svg>
+        <div class="viz-donut-label"><div class="viz-donut-cap">Effort<br>mix</div></div>
+      </div>
+      <div class="viz-legend2" style="min-width:74mm">
+        <div class="viz-legend2-row"><span class="viz-legend2-sw" style="background:var(--cr-tone-sky-accent)"></span><span class="viz-legend2-pct">60<span style="font-size:.6em">%</span></span><span class="viz-legend2-lab">Automated end to end</span></div>
+        <div class="viz-legend2-row"><span class="viz-legend2-sw" style="background:color-mix(in srgb, var(--cr-tone-sky-accent) 70%, #fff)"></span><span class="viz-legend2-pct">25<span style="font-size:.6em">%</span></span><span class="viz-legend2-lab">AI-assisted, human in the loop</span></div>
+        <div class="viz-legend2-row"><span class="viz-legend2-sw" style="background:color-mix(in srgb, var(--cr-tone-sky-accent) 45%, #fff)"></span><span class="viz-legend2-pct">15<span style="font-size:.6em">%</span></span><span class="viz-legend2-lab">Manual review &amp; exceptions</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- (3) Multi-accent (deviation) · each segment a different tonal accent; #segments == #callouts -->
+  <div>
+    <div class="cr-eyebrow" style="margin-bottom:14px">3 · Multi-accent (⚠ §4/§9 deviation) · each segment its own tonal accent — not one graduated hue; segments == callouts</div>
+    <div style="display:flex; flex-direction:column; align-items:center; gap:9mm">
+      <div class="viz-donut viz-donut--hero">
+        <svg viewBox="0 0 120 120" role="img" aria-label="Workload mix: document intake 35 percent, validation and matching 28 percent, exception review 22 percent, reporting and handoff 15 percent">
+          <g transform="rotate(-90 60 60)">
+            <circle class="viz-donut-seg" cx="60" cy="60" r="42" stroke="var(--cr-tone-periwinkle-accent)" stroke-dasharray="92.4 263.9"  stroke-dashoffset="0"/>
+            <circle class="viz-donut-seg" cx="60" cy="60" r="42" stroke="color-mix(in srgb, var(--cr-tone-sky-accent) 65%, #fff)"   stroke-dasharray="73.9 263.9"  stroke-dashoffset="-92.4"/>
+            <circle class="viz-donut-seg" cx="60" cy="60" r="42" stroke="var(--cr-tone-sage-accent)"       stroke-dasharray="58.1 263.9"  stroke-dashoffset="-166.3"/>
+            <circle class="viz-donut-seg" cx="60" cy="60" r="42" stroke="color-mix(in srgb, var(--cr-tone-lilac-accent) 45%, #fff)" stroke-dasharray="39.6 263.9"  stroke-dashoffset="-224.4"/>
+          </g>
+        </svg>
+        <div class="viz-donut-label"><div class="viz-donut-cap">Workload<br>mix</div></div>
+      </div>
+      <div class="viz-legend2" style="display:grid; grid-template-columns:repeat(2, minmax(0,72mm)); gap:4mm 14mm">
+        <div class="viz-legend2-row"><span class="viz-legend2-sw" style="background:var(--cr-tone-periwinkle-accent)"></span><span class="viz-legend2-pct">35<span style="font-size:.6em">%</span></span><span class="viz-legend2-lab">Document intake &amp; capture</span></div>
+        <div class="viz-legend2-row"><span class="viz-legend2-sw" style="background:color-mix(in srgb, var(--cr-tone-sky-accent) 65%, #fff)"></span><span class="viz-legend2-pct">28<span style="font-size:.6em">%</span></span><span class="viz-legend2-lab">Validation &amp; matching</span></div>
+        <div class="viz-legend2-row"><span class="viz-legend2-sw" style="background:var(--cr-tone-sage-accent)"></span><span class="viz-legend2-pct">22<span style="font-size:.6em">%</span></span><span class="viz-legend2-lab">Exception review</span></div>
+        <div class="viz-legend2-row"><span class="viz-legend2-sw" style="background:color-mix(in srgb, var(--cr-tone-lilac-accent) 45%, #fff)"></span><span class="viz-legend2-pct">15<span style="font-size:.6em">%</span></span><span class="viz-legend2-lab">Reporting &amp; handoff</span></div>
+      </div>
+    </div>
+    <p class="viz-flag" style="margin-top:7mm">Illustrative composition; shares sum to 100%. Multi-accent is an intentional, flagged exception to §4/§9 — the Rulebook is unchanged.</p>
+  </div>
+
+  <div class="viz-caveat">
+    <strong>Donut</strong> · a composition ring for <strong>genuine parts of a whole that sum to
+    100%</strong> (<strong>Level-5</strong>, ≤5 segments — low in the §8 hierarchy; use only when the
+    share is the point). <strong>Governing rules: the Data-Viz Rulebook</strong>
+    (<code>README-DATA-VIZ.md</code> — §9 donut, §4 colour, §6 integrity). Segments are a
+    <strong>single-hue graduated</strong> sequence of the sky tonal accent — subject deepest, each
+    smaller share a lighter step; <strong>no navy wedge, no rainbow</strong>. Bold-% legend numerals stay
+    dark ink (type), and the <strong>legend callouts are left-aligned</strong>. <strong>Colour-pairing
+    rule (standing):</strong> each segment and its legend callout carry the <strong>exact same
+    colour</strong>, drawn from the accent palette and varied by <strong>brightness</strong> so shares
+    stay distinguishable — colour alone tells the reader which share is which.
+    <strong>⚠ Specimen 3 is a flagged deviation:</strong> a restrained <strong>multi-accent</strong> ring
+    (one accent per segment) — §4/§9 normally keep one hue with the rest tonal, so the Rulebook
+    stays unchanged (SSOT) and this variation carries the exception. <strong>#segments always ==
+    #callouts.</strong> <strong>Pure HTML/CSS + inline SVG, no JavaScript.</strong> Doc-scoped (never in
+    <code>colors_and_type.css</code>). <strong>Illustrative composition — not a measured breakdown;</strong>
+    shares sum to 100%.
+  </div>
+
+</div>
+</body></html>

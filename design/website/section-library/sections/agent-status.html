@@ -1,0 +1,291 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Agent status</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Agent status (atom)            from component-agent-status.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  An ATOM PREVIEW, not a band — the same shape `comparison`,
+                `stat-tiles`, `faq`, `buttons`, `footer-links`, `problem-card`
+                and `industry-chips` turned out to be. The v2 file is eighteen
+                lines with NO stylesheet of its own: every value is an inline
+                `style` attribute, and the only sheet it links besides the token
+                file is `card.css`, the harness the atom previews inside. That
+                link is kept and repointed; the file it names does not exist
+                anywhere in the repo, so BOTH the control and this specimen
+                resolve it to nothing and the preview shape — the card, its
+                rhythm, the caption ink — is declared in the stylesheet below
+                rather than inherited from the harness.
+
+  THE CLAIM     **A system in operation, not a record of results.** That is the
+                profile's own line separating it from `stat-tiles`, and it is
+                the whole design problem: the same content has to read as a
+                STATE rather than as a summary. Its profile also says what it
+                must never be — it fills an artifact slot where a real
+                screenshot is unavailable, and is never presented as a real
+                product screenshot. So the panel keeps its instruments and
+                spends nothing on making them look like a screenshot of
+                something.
+
+  STRUCTURE     Unchanged. One card, a heading over a spec line, a rule, a
+                measure beside a dial, a second measure over a sixty-segment
+                ramp, and a third measure with its label. DOM order, element
+                types and depth are byte-compatible with the frozen original
+                (DR-22). Inline `style` attributes are presentation, not
+                contract, so they move into the sheet — which is the whole
+                migration on a file that had no sheet.
+
+  THE DECLARATION, and where its archetype comes from. The profile carries no
+                Envelope archetype — an atom inherits the role of its host band
+                — so the declaration names the host shape it contributes into.
+                `proof-layout` is the row that matches what this does: the
+                profile has it LEADING WITH `prove`, carrying proof · capability
+                · evidence, and emphasising the creative, which is a measure
+                panel and nothing else. The rest is the profile read straight —
+                hierarchy `proof`, density `high` — and the signature is
+                `large-statistic`, because three numerals set above everything
+                else in the card is what a reader sees first.
+
+  THE TWO GRADIENTS ARE INSTRUMENTS, NOT A BACKGROUND — and this is the one
+                judgement in the file. The blanket rule retires every ABSTRACT
+                creative background: a wash, a glow, a blur plate, a tint. What
+                is here is neither. The conic gradient is a dial — its stop is
+                the reading, and moving the stop moves the value. The radial
+                gradient is not painted at all; it is the MASK that cuts the
+                disc into a ring, and deleting it deletes the instrument's
+                shape. A functional gradient is not a creative background, so
+                both stay, expressed in tokens rather than in a hue name.
+
+  ENVIRONMENT   **None, no abstract background.** With the two gradients
+                classified as instruments there is nothing left to retire — no
+                wash, no glow, no blur plate. And there is nothing to invent:
+                the card is a data panel where every box holds either words or
+                an instrument, so a photograph behind it would be type on a
+                photograph, which the direction refuses. The assigned
+                environment goes unused, which is the correct answer here rather
+                than a skipped step.
+
+  ACCENT        **Zero spent.** v2 drew the dial's arc in the positive accent
+                and the ramp's filled segments in a legacy teal alias that now
+                resolves to the same green. The direction spends its single
+                accent moment on the primary control and nothing else, and this
+                atom HAS no control — so both instruments come onto primary ink
+                against the quiet cream step and the default hairline. They read
+                identically to each other, which they did not before, and the
+                panel survives being printed in one colour.
+
+  MEANING IS NEVER IN THE HUE. A status instrument that encodes its reading in
+                colour alone is unreadable to a reader who cannot separate the
+                two, and it was already at risk here. Both instruments now carry
+                the reading three ways and none of them is hue: the dial by ARC
+                LENGTH, the ramp by SEGMENT COUNT — forty-eight of sixty — and
+                both by the numeral and label set immediately beside them. Take
+                every colour out of this card and every value in it is still
+                legible, which is the test.
+
+  HOW THE RAMP CHANGED COLOUR WITHOUT THE SCRIPT CHANGING. The sixty segments
+                are written by a frozen `document.write`, and its inline fill
+                names two legacy aliases. The script is byte-identical to the
+                original — not one character moved. What moved is the ALIAS: the
+                specimen re-points the teal alias at the primary ink token
+                inside the ramp's own scope, so the frozen call site resolves to
+                ink there and nowhere else. Read the script's `var(--cr-teal-400)`
+                as the segment's on-state, not as a hue.
+
+  SCALE         The three measures were set at two different sizes for no reason
+                the panel states — one at 28 and two at 22. They are peers, so
+                they take ONE step, and it is the larger of the two, which is
+                where the leading measure already sat. The heading comes up to
+                the ramp's H6 and the four spec captions come up from a
+                hand-written 12 — well below the ramp's floor — to the
+                supporting step, each sitting its micro step below the value it
+                names.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/sections/card.css">
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<style>
+  html, body {
+    margin: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+  }
+  body { padding: var(--cr-space-s); }
+
+  /* The panel. A raised surface on the cream page, the card half of the closed
+     radius pair, one default hairline. The 420px width is the atom's identity
+     and is carried over untouched; only the inset comes onto the scale. No
+     `box-sizing` reset is declared, so the card's box model is the one the
+     frozen original had. */
+  .as-card {
+    width: 420px;
+    background: var(--cr-bg-raised);
+    border-radius: var(--cr-radius-card);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    padding: var(--cr-space-s);
+  }
+
+  .as-title {
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-h6);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+
+  /* The spec captions. `card.css` would have supplied `.muted`; it is absent,
+     so the secondary ink it names is declared here. Each one sits the scale's
+     label-to-value step below the value it names — which is what all four of
+     them are. */
+  .muted {
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+    margin-top: var(--cr-space-xs);
+  }
+
+  .as-rule {
+    border: 0;
+    border-top: var(--cr-stroke) solid var(--cr-border-default);
+    margin: var(--cr-space-s) 0;
+  }
+
+  /* `card.css` would have supplied `.row` / `.gap-4`; it is absent, so the row
+     its own class names claim is declared here. */
+  .as-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--cr-space-s);
+  }
+
+  /* Three peers, one step. Weight and position carry any difference between
+     them, because there is none for size to carry. */
+  .as-num {
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-h5);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+
+  /* ── The dial — an INSTRUMENT, not a decorated plate ──────────────────
+     Its 96px box and its true circle are the atom's own and do not move; a
+     true circle is the one radius outside the closed pair the direction keeps.
+     The track is the quiet cream step, the arc is primary ink, and the reading
+     is the arc's own length: the conic stop IS the value. The radial gradient
+     below paints nothing — it is the mask that cuts the disc into a ring, and
+     its two radii are the ring's own gauge. */
+  .as-dial {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    flex-shrink: 0;
+  }
+  .as-dial-track {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--cr-surface-5);
+  }
+  .as-dial-arc {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(var(--cr-text-primary) 0 80%, transparent 80% 100%);
+    mask: radial-gradient(circle, transparent 38px, var(--cr-text-primary) 39px);
+    -webkit-mask: radial-gradient(circle, transparent 38px, var(--cr-text-primary) 39px);
+  }
+
+  .as-block { margin-top: var(--cr-space-xs); }
+
+  /* ── The ramp — sixty segments, forty-eight of them on ────────────────
+     The pitch between segments is NOT a spacing decision: sixty 3px segments at
+     2px apart measure 298px, which is what fits the card's content box, and the
+     closed scale's smallest step would run the same ramp to 888px and destroy
+     the instrument. It stays at its authored value and names itself, so the
+     exemption is counted and printed rather than passed silently.
+
+     The alias re-point: the frozen script writes each segment's fill as
+     `var(--cr-teal-400)` when on and `var(--cr-line)` when off. The script is
+     untouched; the alias is re-pointed HERE, in the ramp's own scope, so the
+     on-state resolves to primary ink and the off-state to the default hairline
+     — 10.2:1 against each other — and nothing outside this element is affected. */
+  .as-bars {
+    --cr-teal-400: var(--cr-text-primary);
+    display: flex;
+    gap: 2px;   /* frozen-geometry: the ramp's pitch — sixty 3px segments 2px apart measure 298px and fit the card's content box; the closed scale's smallest step would run the same ramp to 888px */
+    margin-top: var(--cr-space-xs);
+  }
+
+  .as-foot {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--cr-space-xs);
+  }
+  .as-foot .muted { align-self: flex-end; }
+</style>
+</head><body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing.
+     TWO `directed` lines, and both are the harness rather than the design. The
+     measure block and the dial move their min-height from a resolved zero to
+     `auto` because the row that holds them becomes a flex container and they
+     become flex items. Neither changes size — the dial is the same 96px circle
+     and the measure block holds the same two lines — but the Pilot Constraint
+     has no other reason for it, and `card.css`, which would have declared
+     `.row` as the flex row its class name names and `.gap-4` as the rhythm
+     across it, does not exist anywhere in the repo. The specimen declares the
+     preview shape its own markup already claims, and says so here rather than
+     passing it through.
+
+     Note what is NOT here: no width line, no line on the ramp's gap, and
+     nothing on the dial's own box. The card's 420, the dial's 96 and its two
+     mask radii are carried over at their original values, and the ramp's 2px
+     pitch is exempted in the sheet under `frozen-geometry` rather than moved —
+     the verifier counts and prints it.
+  .as-bars    | margin-top             | spacing-scale
+  .as-block   | margin-top             | spacing-scale
+  .as-card    | padding-bottom         | spacing-scale
+  .as-card    | padding-left           | spacing-scale
+  .as-card    | padding-right          | spacing-scale
+  .as-card    | padding-top            | spacing-scale
+  .as-dial    | min-height             | directed
+  .as-foot    | margin-top             | spacing-scale
+  .as-measure | min-height             | directed
+  .as-num     | font-size              | type-ramp
+  .as-num     | line-height            | type-ramp
+  .as-rule    | margin-bottom          | spacing-scale
+  .as-rule    | margin-top             | spacing-scale
+  .as-title   | font-size              | type-ramp
+  .as-title   | line-height            | type-ramp
+  .muted      | font-size              | type-ramp
+  .muted      | line-height            | type-ramp
+  .muted      | margin-top             | spacing-scale
+  .row        | column-gap             | spacing-scale
+  .row        | row-gap                | spacing-scale
+-->
+<div class="as-card"
+     data-archetype="proof-layout" data-hierarchy="proof" data-intent="prove"
+     data-register="technical" data-signature="large-statistic" data-density="high">
+  <div class="as-title">Active Agent Workflow</div>
+  <div class="muted">Production environment · Autonomous execution</div>
+  <hr class="as-rule">
+  <div class="row gap-4 as-row">
+    <div class="as-measure"><div class="as-num">30–50%</div><div class="muted">Cycle-time reduction</div></div>
+    <div class="as-dial"><div class="as-dial-track"></div><div class="as-dial-arc"></div></div>
+  </div>
+  <div class="as-block"><div class="as-num">80%</div><div class="muted">Routine Operational Work Automated</div></div>
+  <div class="as-bars">
+    <!--bars-->
+    <script>document.write(Array.from({length:60},(_,i)=>`<span style="display:inline-block;width:3px;height:18px;border-radius:1px;background:${i<48?'var(--cr-teal-400)':'var(--cr-line)'}"></span>`).join(''))</script>
+  </div>
+  <div class="as-foot"><div class="as-num">99%</div><div class="muted">Enhancement</div></div>
+</div>
+</body></html>

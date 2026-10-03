@@ -1,0 +1,67 @@
+<!-- CURATED EXEMPLAR — archetype: footer. Distilled from apa-landing.html footer. Match the rhythm/discipline; do NOT clone. -->
+<footer id="footer" role="contentinfo" class="cr-footer">
+  <style>
+    /* LAYOUT ONLY — surface, type, links & hover all come from colors_and_type.css.
+       Doc-scope is the footer column grid + the responsive collapse, nothing else. */
+    #footer .fo-inner { display: grid; grid-template-columns: 1.4fr 2fr; gap: var(--cr-space-15); }
+    #footer .fo-brand { display: flex; flex-direction: column; gap: var(--cr-space-4); align-items: flex-start; }
+    #footer .cr-logo { gap: var(--cr-space-2); }
+    #footer .fo-blurb { max-width: 320px; }
+    #footer .fo-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--cr-space-8); }
+    #footer .fo-col { display: flex; flex-direction: column; gap: var(--cr-space-3); align-items: flex-start; }
+    #footer .fo-base { display: flex; align-items: center; justify-content: space-between; gap: var(--cr-space-4);
+      margin-top: var(--cr-space-15); padding-top: var(--cr-space-6); border-top: 1px solid var(--cr-line); }
+    #footer .fo-legal { display: flex; gap: var(--cr-space-5); }
+    @media (max-width: 900px) {
+      #footer .fo-inner { grid-template-columns: 1fr; gap: var(--cr-space-12); }
+      #footer .fo-cols { grid-template-columns: 1fr 1fr; }
+      #footer .fo-base { flex-direction: column; align-items: flex-start; gap: var(--cr-space-4); }
+    }
+  </style>
+
+  <div class="fo-inner">
+    <div class="fo-brand">
+      <span class="cr-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" style="stroke:var(--cr-brand)" aria-hidden="true"><path d="M4 14a6 6 0 0 1 4-10 7 7 0 0 1 13 3 4.5 4.5 0 0 1-1 9H7a4 4 0 0 1-3-2z"/></svg>
+        <span class="logo-word">Acme</span>
+      </span>
+      <p class="cr-p fo-blurb">One-line product description goes here — the outcome you deliver, in plain words.</p>
+      <a class="cr-link" href="#cta">Book a free process audit <span class="cr-arrow" aria-hidden="true">&rarr;</span></a>
+    </div>
+
+    <nav class="fo-cols" aria-label="Footer">
+      <div class="fo-col">
+        <p class="cr-h-eyebrow">Capabilities</p>
+        <a class="cr-link" href="#">Accelerate Growth</a>
+        <a class="cr-link" href="#">Scale SME Operations</a>
+        <a class="cr-link" href="#">Automate Workflows</a>
+        <a class="cr-link" href="#">Knowledge &amp; Insights</a>
+        <a class="cr-link" href="#">Custom AI Development</a>
+        <a class="cr-link" href="#">AI Strategy &amp; Integration</a>
+      </div>
+      <div class="fo-col">
+        <p class="cr-h-eyebrow">Products</p>
+        <a class="cr-link" href="#">Agent Studio</a>
+        <a class="cr-link" href="#">Process Audit</a>
+        <a class="cr-link" href="#">Knowledge Base</a>
+        <a class="cr-link" href="#">Integrations</a>
+      </div>
+      <div class="fo-col">
+        <p class="cr-h-eyebrow">Company</p>
+        <a class="cr-link" href="#">Case studies</a>
+        <a class="cr-link" href="#">About</a>
+        <a class="cr-link" href="#">Resources</a>
+        <a class="cr-link" href="#">Contact</a>
+      </div>
+    </nav>
+  </div>
+
+  <div class="fo-base">
+    <p class="cr-caption">&copy; 2026 Acme. All rights reserved.</p>
+    <div class="fo-legal">
+      <a class="cr-link" href="#">Privacy</a>
+      <a class="cr-link" href="#">Security</a>
+      <a class="cr-link" href="#">Terms</a>
+    </div>
+  </div>
+</footer>

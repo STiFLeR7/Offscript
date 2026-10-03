@@ -1,0 +1,79 @@
+<!-- CURATED EXEMPLAR — archetype: contact. Authored on the house .cr-* system (v2 re-theme); rhythm referenced from Website-offscript-v2/fragments/contact.html. Match the rhythm/discipline; do NOT clone. -->
+<section id="contact" class="cr-band-light cr-section" aria-label="Get in touch">
+  <style>
+    /* doc-scoped: two-column reassurance/form layout + floating-label fields +
+       contact pills ONLY. Headings, eyebrow, buttons are house-defined. The form
+       is CSS-only (floating labels via :placeholder-shown); non-submitting mock. */
+    #contact .cf-grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: var(--cr-space-15);
+      margin-top: var(--cr-space-10); align-items: start; }
+    #contact .cf-routes { display: flex; flex-direction: column; gap: var(--cr-space-4); margin-top: var(--cr-space-6); }
+    #contact .cf-pill { display: inline-flex; align-items: center; gap: var(--cr-space-3);
+      align-self: flex-start; padding: 12px 20px; border-radius: var(--cr-radius-pill);
+      border: 1px solid var(--cr-line); color: var(--cr-fg); font-family: var(--cr-font-body);
+      font-weight: 500; font-size: 15px; transition: border-color .2s ease, background .2s ease; }
+    #contact .cf-pill:hover { border-color: var(--cr-fg-3); background: var(--cr-bg-grey-50); }
+    #contact .cf-pill svg { width: 18px; height: 18px; stroke: var(--cr-brand); stroke-width: 1.75;
+      fill: none; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+    /* form */
+    #contact .cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--cr-space-6); margin-bottom: var(--cr-space-6); }
+    #contact .cf-field { position: relative; }
+    #contact .cf-field--full { margin-bottom: var(--cr-space-6); }
+    #contact .cf-input, #contact .cf-textarea { width: 100%; border: 0; outline: none; background: none;
+      border-bottom: 1px solid var(--cr-line); font-family: var(--cr-font-body); font-size: 16px;
+      color: var(--cr-fg); padding: 22px 0 10px; }
+    #contact .cf-textarea { resize: vertical; min-height: 92px; line-height: 1.5; }
+    #contact .cf-label { position: absolute; left: 0; top: 22px; font-family: var(--cr-font-body);
+      font-size: 16px; color: var(--cr-fg-3); pointer-events: none; transform-origin: left top;
+      transition: transform .2s ease, color .2s ease; }
+    #contact .cf-input:focus + .cf-label, #contact .cf-input:not(:placeholder-shown) + .cf-label,
+    #contact .cf-textarea:focus + .cf-label, #contact .cf-textarea:not(:placeholder-shown) + .cf-label {
+      transform: translateY(-22px) scale(.8); color: var(--cr-fg-2); }
+    #contact .cf-input:focus + .cf-label, #contact .cf-textarea:focus + .cf-label { color: var(--cr-brand); }
+    /* brand underline draws in on focus — motion is transform-only */
+    #contact .cf-field::after { content: ""; position: absolute; left: 0; bottom: 0; height: 2px; width: 100%;
+      background: var(--cr-brand); transform: scaleX(0); transform-origin: left;
+      transition: transform .3s cubic-bezier(.16,1,.3,1); }
+    #contact .cf-field:focus-within::after { transform: scaleX(1); }
+    #contact .cf-reveal { animation: cfRise .6s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--d, 0s); }
+    @keyframes cfRise { from { transform: translateY(14px); } to { transform: none; } }
+    @media (prefers-reduced-motion: reduce) { #contact .cf-reveal { animation: none; } #contact .cf-field::after { transition: none; } }
+    @media (max-width: 900px) { #contact .cf-grid { grid-template-columns: 1fr; gap: var(--cr-space-10); }
+      #contact .cf-row { grid-template-columns: 1fr; } }
+  </style>
+
+  <div class="cr-container">
+    <div class="cf-grid">
+      <div class="cf-reveal" style="--d:.05s">
+        <span class="cr-eyebrow">Get in touch</span>
+        <h2 class="cr-h-sub">Bring Us Your Highest-Friction Process.</h2>
+        <p class="cr-p">Tell us where the hours go. We&rsquo;ll map what an agent taskforce could take off your team&rsquo;s plate &mdash; and show you the numbers first. We reply within one business day.</p>
+        <div class="cf-routes">
+          <a class="cf-pill" href="#"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>hello@acme.example</a>
+          <a class="cf-pill" href="#"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-3 2a12 12 0 005 5l2-3 5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg>Book a 30-min call</a>
+        </div>
+      </div>
+
+      <form class="cf-form cf-reveal" style="--d:.14s" action="#" novalidate>
+        <div class="cf-row">
+          <div class="cf-field">
+            <input class="cf-input" id="cf-name" type="text" placeholder=" ">
+            <label class="cf-label" for="cf-name">Your name</label>
+          </div>
+          <div class="cf-field">
+            <input class="cf-input" id="cf-company" type="text" placeholder=" ">
+            <label class="cf-label" for="cf-company">Company</label>
+          </div>
+        </div>
+        <div class="cf-field cf-field--full">
+          <input class="cf-input" id="cf-email" type="email" placeholder=" ">
+          <label class="cf-label" for="cf-email">Work email</label>
+        </div>
+        <div class="cf-field cf-field--full">
+          <textarea class="cf-textarea" id="cf-msg" placeholder=" "></textarea>
+          <label class="cf-label" for="cf-msg">Which process eats the most time?</label>
+        </div>
+        <button class="cr-btn cr-btn-primary" type="submit">Request a process audit <span class="cr-arrow" aria-hidden="true">&rarr;</span></button>
+      </form>
+    </div>
+  </div>
+</section>

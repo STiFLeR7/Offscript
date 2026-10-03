@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FAQ — split column</title>
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background: var(--cr-bg-grey-50);
+    font-family: var(--cr-font-body); color: var(--cr-ink-flat);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .section {
+    padding: 120px 100px;
+    max-width: var(--cr-content-max); margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 120px;
+    align-items: start;
+  }
+
+  /* ── Left column (intro) ──────────────────────────────────── */
+  .eyebrow {
+    font-family: "Inter", sans-serif; font-weight: 600; font-size: 13px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--cr-fg-3);
+    margin: 0 0 24px;
+  }
+  .headline {
+    font-family: "Urbanist", sans-serif; font-weight: 700;
+    font-size: 48px; line-height: 1.1; letter-spacing: -0.02em;
+    color: var(--cr-ink-flat); margin: 0; max-width: 420px;
+  }
+
+  /* ── Right column (list) ──────────────────────────────────── */
+  .list { border-top: 1px solid var(--cr-line); }
+
+  .qa {
+    border-bottom: 1px solid var(--cr-line);
+  }
+
+  /* Question row */
+  .q {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    gap: 32px; padding: 28px 0;
+    background: transparent; border: 0; cursor: pointer;
+    font: inherit; color: inherit; text-align: left;
+  }
+  .qt {
+    font-family: "Urbanist", sans-serif; font-weight: 600; font-size: 22px;
+    letter-spacing: -0.01em; line-height: 1.35;
+    /* Inactive: grey. Hover → ink. Open → ink. */
+    color: var(--cr-fg-muted);
+    transition: color .2s ease;
+  }
+  .qa:hover .qt { color: var(--cr-ink-flat); }
+  .qa:hover .qi { border-color: var(--cr-fg-3); }
+  .qa.open .qt { color: var(--cr-ink-flat); }
+
+  /* Plus toggle */
+  .qi {
+    flex-shrink: 0;
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 1px solid var(--cr-line); background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--cr-ink-flat);
+    transition: transform .3s ease, background .2s ease, border-color .2s ease, color .2s ease;
+  }
+  .qi svg { width: 14px; height: 14px; stroke-width: 1.5; transition: transform .25s ease; }
+  .qa.open .qi {
+    transform: rotate(45deg);
+    background: var(--cr-ink-flat); border-color: var(--cr-ink-flat); color: #fff;
+  }
+
+  /* Answer — height transition via grid trick */
+  .a {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .35s ease;
+  }
+  .a-inner { overflow: hidden; min-height: 0; }
+  .qa.open .a { grid-template-rows: 1fr; }
+
+  .a-body {
+    padding: 0 80px 32px 0;
+    font-family: "Inter", sans-serif; font-weight: 400; font-size: 16px;
+    line-height: 1.65; color: var(--cr-fg-2);
+    /* fade-in for body */
+    opacity: 0; transform: translateY(-4px);
+    transition: opacity .35s ease .05s, transform .35s ease .05s;
+  }
+  .qa.open .a-body { opacity: 1; transform: none; }
+
+  /* ── Responsive ───────────────────────────────────────────── */
+  @media (max-width: 1100px) {
+    .section { padding: 80px 60px; gap: 60px; grid-template-columns: 1fr 1.4fr; }
+    .headline { font-size: 40px; }
+    .qt { font-size: 19px; }
+  }
+  @media (max-width: 800px) {
+    .section { grid-template-columns: 1fr; gap: 40px; padding: 64px 32px; }
+    .headline { font-size: 32px; max-width: none; }
+    .qt { font-size: 18px; }
+    .a-body { padding-right: 0; }
+  }
+  @media (max-width: 480px) {
+    .section { padding: 48px 20px; }
+    .headline { font-size: 26px; }
+    .qt { font-size: 16px; }
+    .q { padding: 22px 0; gap: 20px; }
+    .qi { width: 28px; height: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="section" data-screen-label="FAQ — split column">
+  <!-- LEFT -->
+  <div>
+    <div class="eyebrow">Questions you may have</div>
+    <h2 class="headline">Frequently<br/>asked questions</h2>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="list" id="list">
+    <!-- items rendered by JS -->
+  </div>
+</section>
+
+<script>
+  const ITEMS = [
+    {
+      q: "Will this require us to replace our existing system?",
+      a: "We connect to your current tools via API or browser automation — SAP, Salesforce, Zoho, Oracle, Epic, Cerner, or custom spreadsheets. Example Brand deploys parallel to your existing workflow without forcing a rip-and-replace."
+    },
+    {
+      q: "How is this different from the RPA tools we've tried before?",
+      a: "RPA breaks the moment your screen layout changes. Our agents reason about the task rather than the pixels, so they handle exceptions, draft responses, and escalate the ones that genuinely need a human."
+    },
+    {
+      q: "What happens if the agent makes a mistake?",
+      a: "Every action is logged with a confidence score. Below the threshold the agent escalates to a human. Above the threshold it acts but flags a sample for review. You see every decision."
+    },
+    {
+      q: "Is our data safe? What is the security model?",
+      a: "Your data stays in your environment. We deploy inside your VPC or on-prem; we never train on your data; SOC 2 + HIPAA available on request."
+    },
+    {
+      q: "Which industries have you deployed in?",
+      a: "BFSI, Healthcare, Staffing & Recruitment, and Supply Chain & Logistics. Deeper case studies available on request."
+    },
+    {
+      q: "What does the 30-day pilot actually look like?",
+      a: "Week 1: process audit. Week 2: blueprint signed. Weeks 3–4: agent live in shadow mode beside your existing workflow. Day 30: cutover or extend."
+    },
+  ];
+
+  const list = document.getElementById('list');
+  list.innerHTML = ITEMS.map((it, i) => `
+    <div class="qa ${i === 0 ? 'open' : ''}" data-i="${i}">
+      <button class="q" aria-expanded="${i === 0}">
+        <span class="qt">${it.q}</span>
+        <span class="qi"><i data-lucide="plus"></i></span>
+      </button>
+      <div class="a"><div class="a-inner"><div class="a-body">${it.a}</div></div></div>
+    </div>
+  `).join('');
+  lucide.createIcons();
+
+  // Accordion behaviour — exactly one open at a time
+  list.addEventListener('click', e => {
+    const btn = e.target.closest('.q');
+    if (!btn) return;
+    const item = btn.parentElement;
+    const wasOpen = item.classList.contains('open');
+    list.querySelectorAll('.qa').forEach(el => {
+      el.classList.remove('open');
+      el.querySelector('.q').setAttribute('aria-expanded', 'false');
+    });
+    if (!wasOpen) {
+      item.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  });
+</script>
+</body>
+</html>

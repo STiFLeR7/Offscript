@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<!--
+  component-hero-lending.html
+  Composition: centred product hero on white over a faint BLUEPRINT GRID
+    (geometric line-grid + scattered crosshair "+" marks). Top = light-theme CR
+    nav (canonical links + CTA, theme-swapped from the dark locked nav for a light
+    hero). Centre = announcement pill (Lucide arrow, no emoji) → huge Urbanist
+    ExtraBold headline with ONE boxed word ("AI") → centred lede → action pair
+    (ink primary + white-outline secondary, → chevrons). Below = a 3-CARD HERO ROW
+    (1fr 1fr 2fr): ① photo + floating stat card (hairline border, no shadow),
+    ② WIREFRAME-SPHERE geometric (line globe + glowing brand node + flow arrows +
+    plus-in-circle, on a faint grid), ③ CR dashboard UI mock inside a brand-blue
+    gradient corner frame. Bottom = greyscale client logo strip.
+  Multi-use: product hero / landing header.
+  Inspiration: Canopy "Build better B2B lending products" hero — replicated closely;
+    CR-kit substitutions only where charter/palette demand: serif → Urbanist,
+    green frame → CR blue, 👉 emoji → Lucide, shadows → borders, dark nav → light.
+    The geometric devices (blueprint grid, wireframe sphere) are kept per user request.
+  Motion: transform-only staggered rise on entrance (always visible, preview-safe);
+    a slow radar pulse on the sphere node; hover on nav/buttons/announce arrow.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CR — Product Hero</title>
+  <link rel="stylesheet" href="../_frozen-v2-tokens.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--cr-bg); font-family: var(--cr-font-body); -webkit-font-smoothing: antialiased; }
+
+    /* ── Entrance: transform-only rise (always visible) ── */
+    @keyframes h-rise { from { transform: translateY(16px); } to { transform: none; } }
+    @media (prefers-reduced-motion: no-preference) {
+      .cr-rise { animation: h-rise .6s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--d, 0s); }
+    }
+
+    /* ── Section + blueprint grid ─────────────────────────────────── */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: var(--cr-bg);
+      padding-bottom: 72px;
+    }
+    .hero-grid {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(20,32,56,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20,32,56,0.02) 1px, transparent 1px);
+      background-size: 232px 232px;
+      background-position: center top;
+      -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 52%, transparent 88%);
+              mask-image: linear-gradient(180deg, #000 0%, #000 52%, transparent 88%);
+    }
+    .xmark { position: absolute; width: 13px; height: 13px; z-index: 0; pointer-events: none; }
+    .xmark::before, .xmark::after { content: ''; position: absolute; background: rgba(20,32,56,0.08); }
+    .xmark::before { left: 50%; top: 0; width: 1.5px; height: 100%; transform: translateX(-50%); }
+    .xmark::after  { top: 50%; left: 0; height: 1.5px; width: 100%; transform: translateY(-50%); }
+
+    .hero-inner { position: relative; z-index: 1; }
+
+    /* ── Nav (light theme) ────────────────────────────────────────── */
+    .hnav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 26px var(--cr-page-gutter);
+    }
+    .hnav-logo { height: 28px; width: auto; display: block; }
+    .hnav-links {
+      display: flex; align-items: center; gap: 40px;
+      font-family: var(--cr-font-display); font-weight: 500; font-size: 16px;
+      color: var(--cr-fg); letter-spacing: -0.01em;
+    }
+    .hnav-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      cursor: pointer; color: var(--cr-fg); text-decoration: none;
+      transition: color .15s ease;
+    }
+    .hnav-link:hover { color: var(--cr-brand); }
+    .hnav-link svg { width: 14px; height: 14px; }
+    .hnav-cta {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--cr-ink); color: #fff;
+      font-family: var(--cr-font-display); font-weight: 600; font-size: 15px;
+      padding: 11px 20px; border-radius: var(--cr-radius-pill); border: 0; cursor: pointer;
+      transition: background .2s ease;
+    }
+    .hnav-cta:hover { background: #000; }
+    .hnav-cta svg { width: 15px; height: 15px; }
+
+    /* ── Hero centre ──────────────────────────────────────────────── */
+    .hero-mid { text-align: center; padding: 36px var(--cr-page-gutter) 0; }
+
+    .announce {
+      display: inline-flex; align-items: center; gap: 14px;
+      padding: 6px 6px 6px 20px; margin-bottom: 30px;
+      background: rgba(20,32,56,0.04);
+      border: 1px solid var(--cr-line);
+      border-radius: var(--cr-radius-pill);
+      font-size: 15px; color: var(--cr-fg-2);
+    }
+    .announce b { font-weight: 600; color: var(--cr-fg); }
+    .announce-arrow {
+      width: 30px; height: 30px; flex-shrink: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--cr-brand); color: #fff; border-radius: var(--cr-radius-sm);
+    }
+    .announce-arrow svg { width: 15px; height: 15px; }
+
+    .hero-title {
+      font-family: var(--cr-font-display);
+      font-weight: 700;
+      font-size: clamp(38px, 5.7vw, 76px);
+      line-height: 1.04;
+      letter-spacing: -0.028em;
+      color: var(--cr-fg);
+      max-width: 900px; margin: 0 auto 26px;
+    }
+    .hero-title .box {
+      display: inline-block;
+      border: 1.5px solid var(--cr-line);
+      border-radius: 16px;
+      padding: 0 0.26em;
+      margin: 0 0.04em;
+    }
+    .hero-sub {
+      font-size: 20px; line-height: 1.5; color: var(--cr-fg-3);
+      max-width: 620px; margin: 0 auto 34px;
+    }
+
+    .hero-btns { display: inline-flex; gap: 14px; }
+    .h-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 26px; border-radius: var(--cr-radius-pill);
+      font-family: var(--cr-font-display); font-weight: 600; font-size: 16px;
+      text-decoration: none; cursor: pointer; border: 1px solid transparent;
+      transition: background .2s ease, border-color .2s ease;
+    }
+    .h-btn svg { width: 16px; height: 16px; }
+    .h-btn-ink { background: var(--cr-ink); color: #fff; }
+    .h-btn-ink:hover { background: #000; }
+    .h-btn-ghost { background: var(--cr-bg); color: var(--cr-fg); border-color: var(--cr-line); }
+    .h-btn-ghost:hover { border-color: var(--cr-fg-muted); }
+
+    /* ── 3-card hero row ─────────────────────────────────────────── */
+    .hero-cards {
+      display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 20px;
+      padding: 64px var(--cr-page-gutter) 0;
+      align-items: stretch;
+    }
+    .hcard {
+      position: relative; overflow: hidden;
+      border: 1px solid var(--cr-line);
+      border-radius: var(--cr-radius-xl);
+      min-height: 580px;
+      background: var(--cr-bg);
+    }
+
+    /* Card 1 — photo + floating stat */
+    .hcard-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .float-stat {
+      position: absolute; top: 22px; left: 22px; right: 22px;
+      background: rgba(255,255,255,0.96);
+      border: 1px solid rgba(255,255,255,0.7);
+      border-radius: var(--cr-radius-md);
+      padding: 16px 18px;
+    }
+    .float-stat-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .float-stat-top svg { width: 17px; height: 17px; color: var(--cr-brand); }
+    .float-stat-lbl { font-size: 14px; font-weight: 500; color: var(--cr-fg-2); }
+    .float-stat-num { font-family: var(--cr-font-display); font-weight: 700; font-size: 32px; color: var(--cr-fg); letter-spacing: -0.02em; }
+
+    /* Card 2 — wireframe geometric */
+    .hcard-wire {
+      display: flex; align-items: center; justify-content: center;
+      background:
+        linear-gradient(rgba(20,32,56,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20,32,56,0.03) 1px, transparent 1px),
+        var(--cr-bg);
+      background-size: 46px 46px, 46px 46px, auto;
+    }
+    .hcard-wire svg { width: 78%; height: auto; }
+    .wire-line { stroke: rgba(20,32,56,0.16); stroke-width: 1; fill: none; }
+    .wire-accent { stroke: var(--cr-brand); stroke-width: 1.5; fill: none; }
+
+    /* Card 3 — dashboard UI in a soft blue gradient frame */
+    .hcard-ui {
+      background: linear-gradient(132deg, #9CC4F1 0%, #6E9FDC 48%, #5589CD 100%);
+      border: none;
+    }
+    .ui-panel {
+      position: absolute; top: 40px; left: 40px; right: -72px; bottom: -1px;
+      background: var(--cr-bg);
+      border-radius: 16px 0 0 0;
+      overflow: hidden;
+      display: flex;
+      font-size: 13px;
+    }
+    .ui-side { width: 188px; flex-shrink: 0; border-right: 1px solid var(--cr-line); padding: 18px 14px; }
+    .ui-logo { height: 15px; margin: 4px 6px 22px; display: block; }
+    .ui-nav { display: flex; flex-direction: column; gap: 3px; }
+    .ui-nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 11px; border-radius: 8px;
+      color: var(--cr-fg-3); font-size: 13px;
+    }
+    .ui-nav-item svg { width: 15px; height: 15px; }
+    .ui-nav-item.on { background: var(--cr-brand-100); color: var(--cr-brand-700); font-weight: 600; }
+    .ui-main { flex: 1; padding: 18px 20px; min-width: 0; }
+    .ui-crumb { display: flex; align-items: center; gap: 7px; color: var(--cr-fg-muted); font-size: 12px; margin-bottom: 18px; }
+    .ui-crumb svg { width: 13px; height: 13px; }
+    .ui-idlbl { font-size: 12px; color: var(--cr-fg-3); margin-bottom: 4px; }
+    .ui-idrow { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+    .ui-id { font-family: var(--cr-font-display); font-weight: 700; font-size: 26px; color: var(--cr-fg); letter-spacing: -0.01em; }
+    .ui-badge { font-size: 11px; font-weight: 600; color: var(--cr-success); background: var(--cr-success-100); padding: 4px 11px; border-radius: 500px; }
+    .ui-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+    .ui-metric { border: 1px solid var(--cr-line); border-radius: 12px; padding: 13px 15px; }
+    .ui-metric-lbl { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--cr-fg-3); margin-bottom: 8px; }
+    .ui-metric-lbl svg { width: 13px; height: 13px; }
+    .ui-metric-val { font-family: var(--cr-font-display); font-weight: 700; font-size: 22px; color: var(--cr-fg); }
+    .ui-block { border: 1px solid var(--cr-line); border-radius: 12px; padding: 14px 15px; }
+    .ui-block-h { font-size: 13px; font-weight: 600; color: var(--cr-fg); margin-bottom: 9px; }
+    .ui-block-row { font-size: 12px; color: var(--cr-fg-3); line-height: 1.55; }
+    .ui-bars { display: flex; align-items: flex-end; gap: 4px; height: 44px; margin-top: 10px; }
+    .ui-bars i { flex: 1; background: var(--cr-brand-300); border-radius: 2px 2px 0 0; }
+    .ui-bars i.tall { background: var(--cr-brand); }
+
+    /* ── Logo strip ──────────────────────────────────────────────── */
+    .hero-logos {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 24px; flex-wrap: wrap;
+      padding: 56px var(--cr-page-gutter) 0;
+    }
+    .hlogo { display: flex; align-items: center; gap: 8px; opacity: 0.4; }
+    .hlogo svg { width: 22px; height: 22px; color: var(--cr-fg); }
+    .hlogo span { font-family: var(--cr-font-display); font-weight: 700; font-size: 19px; color: var(--cr-fg); letter-spacing: -0.01em; }
+
+    /* ── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 1080px) {
+      .hnav, .hero-mid, .hero-cards, .hero-logos { padding-left: 48px; padding-right: 48px; }
+      .hero-cards { grid-template-columns: 1fr 1fr; }
+      .hcard-ui { grid-column: 1 / -1; min-height: 520px; }
+    }
+    @media (max-width: 880px) {
+      .hnav-links { display: none; }
+    }
+    @media (max-width: 720px) {
+      .hnav, .hero-mid, .hero-cards, .hero-logos { padding-left: 20px; padding-right: 20px; }
+      .hero-cards { grid-template-columns: 1fr; }
+      .hcard { min-height: 440px; }
+      .hcard-ui { min-height: 480px; }
+      .hero-sub { font-size: 17px; }
+      .hero-btns { display: flex; flex-direction: column; width: 100%; }
+      .h-btn { width: 100%; justify-content: center; }
+      .hero-logos { gap: 18px 28px; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero" data-screen-label="Product Hero">
+
+    <!-- Blueprint grid + crosshairs -->
+    <div class="hero-grid" aria-hidden="true"></div>
+    <span class="xmark" style="top:330px; left:7%;"></span>
+    <span class="xmark" style="top:230px; right:9%;"></span>
+    <span class="xmark" style="top:560px; left:4%;"></span>
+
+    <div class="hero-inner">
+
+      <!-- Nav -->
+      <nav class="hnav cr-rise">
+        <img class="hnav-logo" src="../assets/logo-color.svg" alt="Example Brand">
+        <div class="hnav-links">
+          <a class="hnav-link">AI <i data-lucide="chevron-down"></i></a>
+          <a class="hnav-link">Industry <i data-lucide="chevron-down"></i></a>
+          <a class="hnav-link">FosterX <i data-lucide="chevron-down"></i></a>
+          <a class="hnav-link">About us</a>
+          <a class="hnav-link">Resources <i data-lucide="chevron-down"></i></a>
+        </div>
+        <button class="hnav-cta">Let's talk <i data-lucide="chevron-right"></i></button>
+      </nav>
+
+      <!-- Centre -->
+      <div class="hero-mid">
+        <div class="announce cr-rise" style="--d:.04s">
+          <span><b>[2025 Guide]</b> How to scale AI automation across your operations</span>
+          <span class="announce-arrow"><i data-lucide="arrow-right"></i></span>
+        </div>
+        <h1 class="hero-title cr-rise" style="--d:.08s">Build better <span class="box">AI</span> automation products.</h1>
+        <p class="hero-sub cr-rise" style="--d:.12s">Get everything you need to deploy, run, and scale production AI agents. Plus the ability to operate across your entire stack. All on a single platform.</p>
+        <div class="hero-btns cr-rise" style="--d:.16s">
+          <a class="h-btn h-btn-ink" href="#">Get Started <i data-lucide="chevron-right"></i></a>
+          <a class="h-btn h-btn-ghost" href="#">Explore the Platform <i data-lucide="chevron-right"></i></a>
+        </div>
+      </div>
+
+      <!-- 3-card row -->
+      <div class="hero-cards">
+
+        <!-- Card 1: photo + floating stat -->
+        <div class="hcard hcard-photo cr-rise" style="--d:.2s">
+          <img src="../assets/avatars/hero-work.jpg" alt="">
+          <div class="float-stat">
+            <div class="float-stat-top">
+              <i data-lucide="trending-up"></i>
+              <span class="float-stat-lbl">Total processed</span>
+            </div>
+            <div class="float-stat-num">$1.84M</div>
+          </div>
+        </div>
+
+        <!-- Card 2: wireframe geometric -->
+        <div class="hcard hcard-wire cr-rise" style="--d:.24s">
+          <svg viewBox="0 0 380 580" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- sphere -->
+            <circle class="wire-line" cx="190" cy="172" r="120"/>
+            <ellipse class="wire-line" cx="190" cy="172" rx="84" ry="120"/>
+            <ellipse class="wire-line" cx="190" cy="172" rx="42" ry="120"/>
+            <ellipse class="wire-line" cx="190" cy="172" rx="120" ry="84"/>
+            <ellipse class="wire-line" cx="190" cy="172" rx="120" ry="42"/>
+            <line class="wire-line" x1="190" y1="52" x2="190" y2="292"/>
+            <line class="wire-line" x1="70" y1="172" x2="310" y2="172"/>
+            <!-- node (static, soft) -->
+            <circle cx="190" cy="172" r="25" stroke="var(--cr-brand)" stroke-opacity="0.20" stroke-width="1.25" fill="none"/>
+            <circle cx="190" cy="172" r="12" fill="url(#nodeGrad)"/>
+            <!-- flow arrows -->
+            <line class="wire-line" x1="112" y1="372" x2="262" y2="372"/>
+            <polyline class="wire-line" points="250,364 264,372 250,380"/>
+            <line class="wire-line" x1="268" y1="404" x2="118" y2="404"/>
+            <polyline class="wire-line" points="130,396 116,404 130,412"/>
+            <line class="wire-line" x1="112" y1="436" x2="262" y2="436"/>
+            <polyline class="wire-line" points="250,428 264,436 250,444"/>
+            <!-- plus in circle -->
+            <circle class="wire-line" cx="190" cy="510" r="32"/>
+            <line class="wire-accent" x1="190" y1="494" x2="190" y2="526"/>
+            <line class="wire-accent" x1="174" y1="510" x2="206" y2="510"/>
+            <defs>
+              <radialGradient id="nodeGrad" cx="0.5" cy="0.4" r="0.6">
+                <stop offset="0" stop-color="#9BD2FF"/>
+                <stop offset="1" stop-color="var(--cr-brand)"/>
+              </radialGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <!-- Card 3: dashboard UI in blue gradient frame -->
+        <div class="hcard hcard-ui cr-rise" style="--d:.28s">
+          <div class="ui-panel">
+            <aside class="ui-side">
+              <img class="ui-logo" src="../assets/logo-color.svg" alt="Example Brand">
+              <nav class="ui-nav">
+                <span class="ui-nav-item"><i data-lucide="layout-dashboard"></i>Dashboard</span>
+                <span class="ui-nav-item on"><i data-lucide="bot"></i>Agents</span>
+                <span class="ui-nav-item"><i data-lucide="workflow"></i>Workflows</span>
+                <span class="ui-nav-item"><i data-lucide="users"></i>Customers</span>
+                <span class="ui-nav-item"><i data-lucide="scroll-text"></i>Logs</span>
+              </nav>
+            </aside>
+            <div class="ui-main">
+              <div class="ui-crumb"><i data-lucide="chevron-left"></i> Agents <span>/</span> 4174391439</div>
+              <div class="ui-idlbl">Agent ID</div>
+              <div class="ui-idrow">
+                <span class="ui-id">4174391439</span>
+                <span class="ui-badge">Active</span>
+              </div>
+              <div class="ui-metrics">
+                <div class="ui-metric">
+                  <div class="ui-metric-lbl"><i data-lucide="check-circle-2"></i> Tasks today</div>
+                  <div class="ui-metric-val">1,284</div>
+                </div>
+                <div class="ui-metric">
+                  <div class="ui-metric-lbl"><i data-lucide="target"></i> Success rate</div>
+                  <div class="ui-metric-val">99.2%</div>
+                </div>
+              </div>
+              <div class="ui-block">
+                <div class="ui-block-h">Customer</div>
+                <div class="ui-block-row">Acme Operations, Inc.</div>
+                <div class="ui-block-row">12 Strawberry Road, Suite 101<br>Atlanta, GA 30391</div>
+                <div class="ui-bars">
+                  <i style="height:40%"></i><i style="height:62%"></i><i style="height:48%"></i>
+                  <i class="tall" style="height:88%"></i><i style="height:54%"></i><i style="height:70%"></i>
+                  <i style="height:44%"></i><i class="tall" style="height:80%"></i><i style="height:58%"></i>
+                  <i style="height:66%"></i><i style="height:38%"></i><i style="height:52%"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Logo strip -->
+      <div class="hero-logos cr-rise" style="--d:.32s">
+        <div class="hlogo">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+          <span>MedFlow</span>
+        </div>
+        <div class="hlogo">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2L22 21H2L12 2Z" stroke="currentColor" stroke-width="1.8"/></svg>
+          <span>Apex</span>
+        </div>
+        <div class="hlogo">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="2" width="8.5" height="8.5" rx="1.5" fill="currentColor"/><rect x="13.5" y="2" width="8.5" height="8.5" rx="1.5" fill="currentColor"/><rect x="2" y="13.5" width="8.5" height="8.5" rx="1.5" fill="currentColor"/><rect x="13.5" y="13.5" width="8.5" height="8.5" rx="1.5" fill="currentColor"/></svg>
+          <span>NovaCorp</span>
+        </div>
+        <div class="hlogo">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2L22 12L12 22L2 12L12 2Z" stroke="currentColor" stroke-width="1.8"/></svg>
+          <span>Meridian</span>
+        </div>
+        <div class="hlogo">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3.6" fill="currentColor"/></svg>
+          <span>OrbisOps</span>
+        </div>
+        <div class="hlogo">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2 17L12 7L22 17" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Vertex</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR — AI demo modal (book + see-demo combined)</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — AI demo modal                     from component-demo-modal.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  The v2 atom authored under the v3 editorial-restraint
+                direction. DOM, the whole focus-trap / inert / Esc / restore
+                script, both ids, every `aria-*`, the form's fields, names,
+                labels and submit behaviour, and every class the script drives
+                (`open`, `show`, `ctrl--on`, `demo-x`, `demo-modal`) are
+                byte-compatible with the frozen original (DR-22, the Pilot
+                Constraint). The v2 file sits beside this one in `_v2/`.
+
+  THE CLAIM     **Defer the fields until the reader has committed to the
+                action.** The profile is explicit that an overlay holds no
+                place in the page's progression — it attaches to an action
+                elsewhere. So the modal has one job: show what is about to
+                happen, and take the two fields that make it happen. The stage
+                is the promise, the form is the price, and nothing else in the
+                panel raises its voice.
+
+  DEPTH IS GONE — AND IT WAS THE POINT.
+                v2 carried TWO shadow declarations, arguing that a panel over a
+                dimmed page is the one defensible lift. The direction does not
+                grant that exception: no shadow, no blur, no backdrop veil, no
+                glass. Separation is now done the way the system does it —
+                a SURFACE STEP (the panel takes the raised white against the
+                page ground) and a HAIRLINE at the system stroke. The second
+                shadow was the input focus ring; a focus indicator is dark ink
+                at ~13:1, which is what the pack's ring is for, and a soft halo
+                was never carrying that job anyway.
+
+  THE SCRIM STAYS — AND IT IS NOT A VEIL.
+                A modal scrim dims the page BENEATH the dialog so the dialog is
+                unmistakably the thing in hand. That is a modal affordance, not
+                a wash laid over a photograph to win contrast back, and DR-46
+                has no quarrel with it. What changes is how it is expressed: v2
+                authored a colour function inline, and the pack already holds
+                the value. The element keeps its own opacity, because the
+                frozen script closes on the `transitionend` that fade emits —
+                so the constant dim moves to a layer of its own and the element
+                stays the animation channel. Nothing in the DOM moved to do it.
+
+  THE CREATIVE  `.demo-stage` was an abstract creative plate: a flat grey frame
+                standing in for a subject, whose only job was to hold the
+                product mock away from the panel edge. It is replaced by an
+                approved environment — `cliffside-muted`, focus `50% 42%` — as
+                ONE background stack. It has to be one stack: a blend mode
+                composites against what is beneath it in the SAME background,
+                so putting the grain on a child or a pseudo-element resolves
+                the blend against transparency and renders at full strength as
+                grey static. The URLs are written out rather than reached
+                through a custom property, because a url() inside one resolves
+                against the CONSUMING document and fails silently.
+
+                `cliffside-muted` is the catalogue's most restrained member —
+                it recedes furthest — which is exactly what a margin band
+                around an interface needs to do.
+
+  NO TYPE ON THE PHOTOGRAPH  Every word inside the stage lives in the product
+                mock or in the chat bubble, and BOTH are opaque. An opaque
+                panel over an image is the permitted case, and it is what makes
+                them read as product artifacts rather than page decoration.
+                Remove the environment and not one word changes legibility.
+
+  THE ARTIFACT  The mock is a miniature interface, marked `cr-graphic` and
+                EXEMPT FROM THE TYPE RAMP — a table row at the supporting size
+                does not fit the console it sits inside, and every exempt rule
+                claims the exemption in its own selector so it stays greppable.
+                COLOUR IS NOT EXEMPT: the rail's alpha-white states, the three
+                status pills and every mark in the table resolve to neutral
+                steps.
+
+  ACCENT        ONE moment, and it is the ask — `Join session`. v2 spent colour
+                four more times: the page trigger in the brand hue, the rail's
+                logo chip, a live-status green on the availability line and its
+                pulsing dot, and three status pills in three hues inside the
+                mock. That is five marks competing with the one thing the
+                overlay exists to have clicked. The trigger behind is now the
+                dark primary, the status pills separate by SURFACE STEP rather
+                than by hue, and the availability line is ink. On hover the ask
+                darkens a step, and its label inverts with it — dark ink on
+                that darker fill measures under the AA floor, so the label goes
+                to the inverse ink where it measures well clear.
+
+  THE ORBS      Two radial-gradient plates — the agent avatar and the bubble's
+                dot — are abstract decoration rather than photography, so they
+                flatten to one ink mark each. Nothing human is substituted
+                anywhere in this file, because nothing here is a portrait.
+
+  RESPONSIVE    The original's breakpoints (860 / 560), unchanged, including
+                the single-column collapse and the wider rail at the mobile
+                floor. `clamp()` is gone throughout — it resolves to sizes
+                nobody authored — so type steps on the pack's own ramp. The
+                reduce guard keeps the specificity the two triggers use.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--cr-page-ground); font-family: var(--cr-font-body); color: var(--cr-text-primary); }
+
+  /* ── Page behind the modal (inert while open) ────────────────────────── */
+  .page {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: var(--cr-space-m) var(--cr-page-gutter);
+    background: var(--cr-page-ground);
+  }
+  .trigger-wrap { max-width: 560px; text-align: center; }
+  /* Supporting text stays supporting — never uppercased, never tracked. */
+  .trigger-eyebrow {
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--cr-text-secondary);
+  }
+  .trigger-h1 {
+    margin: var(--cr-space-xs) 0 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h3);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .trigger-p {
+    margin: var(--cr-space-s) auto 0; max-width: 460px;
+    font-size: var(--cr-text-body); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  /* The page's own control is the DARK primary, not the accent — the overlay's
+     ask takes the section's one accent moment, and a page where two controls
+     are marked marks neither. */
+  .trigger {
+    margin-top: var(--cr-space-s);
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-inverse); background: var(--cr-text-primary);
+    border: 0; border-radius: var(--cr-radius-control);   /* the pill is retired for controls */
+    cursor: pointer;
+    transition: background .2s ease, transform .1s ease;
+  }
+  .trigger:hover { background: var(--cr-neutral-800); }
+  .trigger:active { transform: scale(.98); }
+  .trigger:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 3px; }
+  .trigger svg { width: 18px; height: 18px; }
+
+  /* ── Overlay + backdrop ──────────────────────────────────────────────── */
+  .demo-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    display: grid; place-items: center;
+    padding: var(--cr-space-s);
+  }
+  /* THE SCRIM. The element itself carries NO fill — it is the fade channel the
+     frozen script listens to (`transitionend` -> finishClose), so its opacity
+     may not be spent on the dim. The constant dim sits on a layer of its own,
+     in tokens, and it dims the PAGE BENEATH a dialog rather than veiling a
+     photograph to win contrast back. */
+  .demo-backdrop {
+    position: absolute; inset: 0;
+  }
+  .demo-backdrop::after {
+    content: ""; position: absolute; inset: 0;
+    background: var(--cr-bg-dark);
+    opacity: .55;
+  }
+
+  /* ── Modal panel ─────────────────────────────────────────────────────
+     v2's two shadows are gone. The panel separates from the dimmed page by a
+     SURFACE STEP (raised white above the page ground) and a HAIRLINE at the
+     system stroke — which is how everything else in this system separates. */
+  .demo-modal {
+    position: relative; z-index: 1;
+    width: min(1360px, 100%);
+    max-height: min(90vh, 808px);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    background: var(--cr-surface-1);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+  }
+  /* top bar: plain close (right) — the source's white header strip */
+  .demo-topbar {
+    flex: none;
+    display: flex; align-items: center; justify-content: flex-end;
+    padding: var(--cr-space-xs) var(--cr-space-xs) 0;
+  }
+  .demo-x {
+    width: 32px; height: 32px;
+    display: grid; place-items: center;
+    background: transparent; color: var(--cr-text-secondary);
+    border: 0; border-radius: var(--cr-radius-control);
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+  }
+  .demo-x:hover { background: var(--cr-surface-5); color: var(--cr-text-primary); }
+  .demo-x:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 2px; }
+  .demo-x svg { width: 20px; height: 20px; stroke-width: var(--cr-icon-stroke-md); }
+
+  /* The split itself is the composition — a track change here is a different
+     component, so it is left exactly as authored. */
+  .demo-grid {
+    flex: 1; min-height: 0;
+    display: grid;
+    grid-template-columns: 1.85fr 1fr;
+  }
+
+  /* ── LEFT: demo stage ────────────────────────────────────────────────── */
+  .demo-left {
+    min-width: 0; min-height: 0;
+    display: flex; flex-direction: column;
+    gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s) var(--cr-space-s);
+    overflow: hidden;                     /* clip the mock cleanly inside its column */
+  }
+  /* THE ENVIRONMENT. v2's flat grey frame was an abstract plate standing in for
+     a subject; it becomes an approved environment as ONE background stack —
+     grain on top, grunge under it, the environment beneath both. It has to be
+     one stack: a blend mode composites against what is beneath it in the SAME
+     background, so the grain on a pseudo-element would resolve against
+     transparency and render as grey static. The last position is the asset's
+     measured focus from ASSETS.md, not a guess. Never a `background:`
+     shorthand on this element — the shorthand resets `background-image`.
+
+     The padding IS the visible band of environment around the artifact, which
+     is why it moves onto the scale rather than staying a hand-tuned number. */
+  .demo-stage {
+    position: relative;
+    flex: 1; min-height: 0;
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-m);
+    overflow: hidden;
+    display: flex;
+    background-color: var(--cr-bg-dark);
+    background-image:
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-cliffside-muted.jpg");
+    background-size: var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, center, 50% 42%;
+    background-blend-mode: var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: repeat, no-repeat, no-repeat;
+  }
+
+  /* ── The product mock — OPAQUE, which is why it may sit over the
+        environment, and `cr-graphic`, which is why its internals are exempt
+        from the type ramp. A table header at the supporting size does not fit
+        the console it sits inside. COLOUR IS NEVER EXEMPT. ──────────────── */
+  .mock.cr-graphic {
+    flex: 1; min-height: 0;
+    display: flex;
+    background: var(--cr-surface-1);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-card);
+    overflow: hidden;
+  }
+  .cr-graphic .mock-rail {
+    width: 29%; max-width: 148px;
+    background: var(--cr-bg-dark); color: var(--cr-text-inverse);
+    padding: 16px 14px;
+    display: flex; flex-direction: column;
+    font-size: 12px;
+  }
+  .cr-graphic .mock-logo { display: flex; align-items: center; gap: 7px; font-weight: 500; font-size: 13px; margin-bottom: 16px; }
+  /* An in-mock brand chip is not the section's accent — the ask is. Ink. */
+  .cr-graphic .mock-logo i { width: 16px; height: 16px; border-radius: 5px; background: var(--cr-text-inverse); display: inline-block; flex: none; }
+  .cr-graphic .mock-nav { display: flex; flex-direction: column; gap: 3px; }
+  /* v2's rail states were alpha-white colour functions where the pack already
+     holds the value. Neutral steps instead. */
+  .cr-graphic .mock-nav span {
+    padding: 7px 9px; border-radius: 7px;
+    color: var(--cr-neutral-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .cr-graphic .mock-nav span.on { background: var(--cr-neutral-900); color: var(--cr-text-inverse); }
+  .cr-graphic .mock-foot { margin-top: auto; display: flex; align-items: center; gap: 8px; padding-top: 14px; }
+  .cr-graphic .mock-foot i { width: 22px; height: 22px; border-radius: 6px; background: var(--cr-neutral-900); color: var(--cr-text-inverse); display: grid; place-items: center; font-size: 10px; font-weight: 500; flex: none; }
+  .cr-graphic .mock-foot small { color: var(--cr-neutral-500); font-size: 10px; line-height: 1.3; }
+
+  .cr-graphic .mock-main { flex: 1; min-width: 0; padding: 16px 16px 0; overflow: hidden; }
+  .cr-graphic .mock-title { font-family: var(--cr-font-display); font-weight: 500; font-size: 16px; color: var(--cr-text-primary); }
+  .cr-graphic .mock-filters { display: flex; gap: 6px; margin: 13px 0 10px; }
+  .cr-graphic .mock-filters span { font-size: 10.5px; color: var(--cr-text-secondary); border: var(--cr-stroke) solid var(--cr-border-default); border-radius: 6px; padding: 5px 9px; white-space: nowrap; }
+  .cr-graphic .mock-search {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 10.5px; color: var(--cr-text-secondary);
+    border: var(--cr-stroke) solid var(--cr-border-default); border-radius: 8px;
+    padding: 8px 11px; margin-bottom: 12px;
+  }
+  .cr-graphic .mock-search svg { width: 12px; height: 12px; flex: none; color: var(--cr-text-secondary); stroke-width: var(--cr-icon-stroke-md); }
+  .cr-graphic .mock-table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+  .cr-graphic .mock-table th { text-align: left; color: var(--cr-text-secondary); font-weight: 500; padding: 9px 10px; border-bottom: var(--cr-stroke) solid var(--cr-border-default); white-space: nowrap; }
+  .cr-graphic .mock-table td { padding: 12px 10px; border-bottom: var(--cr-stroke) solid var(--cr-border-subtle); color: var(--cr-text-secondary); white-space: nowrap; }
+  .cr-graphic .mock-table .who { color: var(--cr-text-primary); font-weight: 500; }
+  /* THREE STATUSES, ZERO HUES. v2 gave each pill its own colour — three accent
+     moments inside a picture of an interface, against a ceiling of one for the
+     whole overlay, already spent on the ask. They separate by SURFACE STEP
+     instead, darkest to lightest in the order live → queued → done, which is
+     an ordering a hue set never carried anyway. */
+  .cr-graphic .badge { font-size: 9.5px; font-weight: 500; padding: 2px 7px; border-radius: var(--cr-radius-control); }
+  .cr-graphic .badge--live { background: var(--cr-text-primary); color: var(--cr-text-inverse); }
+  .cr-graphic .badge--queue { background: var(--cr-neutral-500); color: var(--cr-text-primary); }
+  .cr-graphic .badge--done { background: var(--cr-surface-5); color: var(--cr-text-secondary); }
+  .cr-graphic .mock-chev { color: var(--cr-text-secondary); }
+  .cr-graphic .mock-chev svg { width: 13px; height: 13px; display: block; stroke-width: var(--cr-icon-stroke-md); }
+
+  /* "Have a question?" chat bubble — OPAQUE, so it may sit over the
+     environment, and it is chrome the reader reads, so it stays ON the ramp. */
+  .mock-bubble {
+    position: absolute; right: var(--cr-space-s); bottom: var(--cr-space-s);
+    display: flex; align-items: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs);
+    background: var(--cr-bg-dark); color: var(--cr-text-inverse);
+    border-radius: var(--cr-radius-control);
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    font-weight: 500;
+  }
+  /* was a three-stop radial plate — abstract decoration, so one ink mark */
+  .mock-bubble i {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--cr-text-inverse);
+    flex: none;
+  }
+
+  /* mic / speaker controls */
+  .demo-controls { display: flex; justify-content: center; gap: var(--cr-space-xs); }
+  .ctrl {
+    width: 44px; height: 44px;
+    display: grid; place-items: center;
+    background: var(--cr-surface-3); color: var(--cr-text-secondary);
+    border: var(--cr-stroke) solid var(--cr-border-default); border-radius: 50%;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .ctrl:hover { background: var(--cr-surface-5); color: var(--cr-text-primary); }
+  .ctrl:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 3px; }
+  .ctrl svg { width: 18px; height: 18px; stroke-width: var(--cr-icon-stroke-md); }
+  .ctrl.ctrl--on { background: var(--cr-surface-1); color: var(--cr-text-primary); border-color: var(--cr-text-primary); }
+
+  /* ── RIGHT: info + form ──────────────────────────────────────────────── */
+  .demo-right {
+    min-width: 0; min-height: 0; overflow-y: auto;
+    padding: var(--cr-space-s) var(--cr-space-m) var(--cr-space-m);
+    display: flex; flex-direction: column;
+  }
+  .demo-title {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h4);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+  .demo-sub {
+    margin: var(--cr-space-s) 0 0;
+    font-size: var(--cr-text-body); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  .agent { display: flex; align-items: center; gap: var(--cr-space-xs); margin-top: var(--cr-space-s); }
+  /* was a three-stop radial plate; it is a placeholder mark, not a portrait —
+     nothing human is substituted anywhere in this file */
+  .agent-orb {
+    width: 40px; height: 40px; border-radius: 50%; flex: none;
+    background: var(--cr-text-primary);
+  }
+  .agent-name { font-weight: 500; font-size: var(--cr-text-body); line-height: var(--cr-leading-body); color: var(--cr-text-primary); }
+  .agent-name span { font-weight: 400; color: var(--cr-text-secondary); margin-left: var(--cr-space-xs); }
+  /* The availability line was a live-status green — a second accent inside an
+     overlay that spends one, on the ask. Ink, and the pulse still carries the
+     "live" reading without a hue. */
+  .agent-avail {
+    display: flex; align-items: center; gap: var(--cr-space-xs);
+    margin-top: var(--cr-space-xs);
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    font-weight: 500; color: var(--cr-text-secondary);
+  }
+  .agent-dot { position: relative; width: 9px; height: 9px; border-radius: 50%; background: var(--cr-text-primary); flex: none; }
+  .agent-dot::after {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background: var(--cr-text-primary);
+    animation: demo-pulse 2s ease-out infinite;
+  }
+  @keyframes demo-pulse { 0% { transform: scale(1); opacity: .55; } 100% { transform: scale(2.6); opacity: 0; } }
+
+  /* This is a SENTENCE with a link in it, laid out as a flex row — so the
+     prose and the link are two columns that wrap against each other, and at
+     the supporting size they collided into a two-line stub beside a two-line
+     link. The row is allowed to WRAP instead: the note keeps its line, the
+     link takes the next one whole. The row stays a flex row rather than
+     becoming text flow, because the boxes it makes are not this pass's to
+     re-author — only the wrapping behaviour is. */
+  .demo-note {
+    display: flex; align-items: center; flex-wrap: wrap; gap: var(--cr-space-xs);
+    margin: var(--cr-space-s) 0 0;
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  .demo-note svg { width: 16px; height: 16px; flex: none; stroke-width: var(--cr-icon-stroke-sm); }
+  .demo-note a { color: var(--cr-text-primary); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--cr-border-default); }
+  .demo-note a:hover { color: var(--cr-text-secondary); text-decoration-color: currentColor; }
+
+  /* ── The form. Fields, names, labels and submit behaviour are frozen; only
+        the skin moves. Inputs and buttons do not inherit a family, so every
+        one of them names it. ─────────────────────────────────────────────── */
+  .demo-form { margin-top: var(--cr-space-s); display: flex; flex-direction: column; }
+  .demo-form label {
+    font-family: var(--cr-font-body);
+    font-weight: 500; font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-primary); margin-bottom: var(--cr-space-xs);
+  }
+  .demo-form label span { font-weight: 400; color: var(--cr-text-secondary); }
+  .demo-form input {
+    font-family: var(--cr-font-body);
+    font-size: var(--cr-text-body); line-height: var(--cr-leading-body);
+    color: var(--cr-text-primary);
+    padding: var(--cr-space-xs) var(--cr-space-s); margin-bottom: var(--cr-space-s);
+    background: var(--cr-surface-1);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-control);   /* inputs take the control radius */
+    transition: border-color .2s ease;
+  }
+  .demo-form input::placeholder { color: var(--cr-text-secondary); }
+  .demo-form input:hover { border-color: var(--cr-text-secondary); }
+  /* v2 won its focus state with a soft halo, which is depth doing an
+     indicator's job. Two cues replace it, and they are for two different
+     paths: the BORDER darkens to primary ink on any focus, which is the
+     pointer cue (a border carries no contrast obligation of its own), and the
+     RING appears on `:focus-visible`, which is the keyboard cue — dark ink at
+     ~13:1 against the field, which is what the pack's ring is for. */
+  .demo-form input:focus { outline: none; border-color: var(--cr-text-primary); }
+  .demo-form input:focus-visible {
+    border-color: var(--cr-text-primary);
+    outline: 2px solid var(--cr-focus-ring);
+    outline-offset: 2px;
+  }
+  /* THE ONE ACCENT MOMENT — the ask, and nothing else in the overlay. */
+  .demo-join {
+    margin-top: var(--cr-space-xs);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    font-family: var(--cr-font-body);
+    font-weight: 500; font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-on-accent-light); background: var(--cr-accent-orange);
+    border: 0; border-radius: var(--cr-radius-control);
+    cursor: pointer;
+    transition: background .2s ease, transform .1s ease;
+  }
+  /* The fill darkens a step on hover, and the label inverts WITH it — dark ink
+     on that darker step measures under the AA floor, the inverse ink measures
+     well clear. */
+  .demo-join:hover { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+  .demo-join:active { transform: scale(.99); }
+  .demo-join:focus-visible { outline: 2px solid var(--cr-focus-ring); outline-offset: 3px; }
+  .demo-fine {
+    margin: var(--cr-space-s) 0 0;
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  .demo-fine a { color: var(--cr-text-secondary); text-decoration: underline; text-underline-offset: 2px; }
+
+  /* ── JS open/close + animation (hidden-unless-open scoped to .has-js) ────
+     The backdrop's opacity is the channel the frozen script listens to — it
+     closes on the `transitionend` this fade emits, so nothing here may spend
+     it on the dim. */
+  .has-js .demo-overlay { display: none; }
+  .has-js .demo-overlay.open { display: grid; }
+  .has-js .demo-overlay .demo-backdrop { opacity: 0; transition: opacity .3s ease; }
+  .has-js .demo-overlay .demo-modal {
+    opacity: 0; transform: translateY(10px) scale(.975);
+    transition: opacity .35s ease, transform .35s cubic-bezier(.22, .61, .36, 1);
+  }
+  .has-js .demo-overlay.show .demo-backdrop { opacity: 1; }
+  .has-js .demo-overlay.show .demo-modal { opacity: 1; transform: none; }
+
+  /* ── Responsive — the ORIGINAL's breakpoints ─────────────────────────── */
+  @media (max-width: 860px) {
+    .demo-overlay { padding: 0; place-items: stretch; }
+    .demo-modal { width: 100%; max-height: 100vh; max-height: 100dvh; border-radius: 0; border: 0; }
+    .demo-grid { grid-template-columns: 1fr; overflow-y: auto; overflow-x: hidden; }
+    .demo-left { min-height: 320px; padding: var(--cr-space-s) var(--cr-space-s) 0; }
+    .demo-stage { padding: var(--cr-space-s); }
+    .demo-right { overflow: visible; padding: var(--cr-space-s) var(--cr-space-s) var(--cr-space-m); }
+    .demo-title { font-size: var(--cr-text-h5); }
+  }
+  @media (max-width: 560px) {
+    /* The body step is not moved here — the ramp leaves it alone at every
+       width, because that step IS the reading floor and a phone is where it
+       matters most. */
+    .trigger-h1 { font-size: var(--cr-text-h5); }
+    .demo-left { min-height: 280px; }
+    .cr-graphic .mock-rail { width: 42%; }
+  }
+
+  /* ── Reduced motion — each guard names the trigger it guards ──────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .demo-overlay .demo-backdrop,
+    .has-js .demo-overlay .demo-modal { transition: none !important; }
+    .agent-dot::after { animation: none !important; }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here that
+     moved nothing. There is no `directed` line: the Pilot Constraint was not
+     asked to yield anywhere in this overlay. The panel's width and height caps,
+     the two-track split, the control diameters and every dimension INSIDE the
+     product mock are untouched — a miniature interface is exempt from the ramp
+     and was not re-proportioned, so it does not appear here at all. The four
+     border-width lines are the hairline that replaced the panel's shadow.
+  .agent           | column-gap             | spacing-scale
+  .agent           | margin-top             | spacing-scale
+  .agent           | row-gap                | spacing-scale
+  .agent-avail     | column-gap             | spacing-scale
+  .agent-avail     | font-size              | type-ramp
+  .agent-avail     | line-height            | type-ramp
+  .agent-avail     | margin-top             | spacing-scale
+  .agent-avail     | row-gap                | spacing-scale
+  .agent-name      | font-size              | type-ramp
+  .agent-name      | line-height            | type-ramp
+  .badge           | border-radius          | radius-pair
+  .demo-fine       | font-size              | type-ramp
+  .demo-fine       | line-height            | type-ramp
+  .demo-fine       | margin-top             | spacing-scale
+  .demo-join       | border-radius          | radius-pair
+  .demo-join       | font-size              | type-ramp
+  .demo-join       | line-height            | type-ramp
+  .demo-join       | margin-top             | spacing-scale
+  .demo-join       | padding-bottom         | spacing-scale
+  .demo-join       | padding-left           | spacing-scale
+  .demo-join       | padding-right          | spacing-scale
+  .demo-join       | padding-top            | spacing-scale
+  .demo-left       | column-gap             | spacing-scale
+  .demo-left       | padding-bottom         | spacing-scale
+  .demo-left       | padding-left           | spacing-scale
+  .demo-left       | padding-right          | spacing-scale
+  .demo-left       | padding-top            | spacing-scale
+  .demo-left       | row-gap                | spacing-scale
+  .demo-modal      | border-bottom-width    | stroke
+  .demo-modal      | border-left-width      | stroke
+  .demo-modal      | border-radius          | radius-pair
+  .demo-modal      | border-right-width     | stroke
+  .demo-modal      | border-top-width       | stroke
+  .demo-note       | column-gap             | spacing-scale
+  .demo-note       | font-size              | type-ramp
+  .demo-note       | line-height            | type-ramp
+  .demo-note       | margin-top             | spacing-scale
+  .demo-note       | row-gap                | spacing-scale
+  .demo-overlay    | padding-bottom         | spacing-scale
+  .demo-overlay    | padding-left           | spacing-scale
+  .demo-overlay    | padding-right          | spacing-scale
+  .demo-overlay    | padding-top            | spacing-scale
+  .demo-right      | padding-bottom         | spacing-scale
+  .demo-right      | padding-left           | spacing-scale
+  .demo-right      | padding-right          | spacing-scale
+  .demo-right      | padding-top            | spacing-scale
+  .demo-stage      | border-radius          | radius-pair
+  .demo-stage      | padding-bottom         | spacing-scale
+  .demo-stage      | padding-left           | spacing-scale
+  .demo-stage      | padding-right          | spacing-scale
+  .demo-stage      | padding-top            | spacing-scale
+  .demo-sub        | font-size              | type-ramp
+  .demo-sub        | line-height            | type-ramp
+  .demo-sub        | margin-top             | spacing-scale
+  .demo-title      | font-size              | type-ramp
+  .demo-title      | line-height            | type-ramp
+  .mock-bubble     | border-radius          | radius-pair
+  .mock-bubble     | column-gap             | spacing-scale
+  .mock-bubble     | font-size              | type-ramp
+  .mock-bubble     | line-height            | type-ramp
+  .mock-bubble     | padding-bottom         | spacing-scale
+  .mock-bubble     | padding-left           | spacing-scale
+  .mock-bubble     | padding-right          | spacing-scale
+  .mock-bubble     | padding-top            | spacing-scale
+  .mock-bubble     | row-gap                | spacing-scale
+  .mock-foot       | margin-top             | spacing-scale
+  .trigger         | border-radius          | radius-pair
+  .trigger         | column-gap             | spacing-scale
+  .trigger         | font-size              | type-ramp
+  .trigger         | line-height            | type-ramp
+  .trigger         | margin-top             | spacing-scale
+  .trigger         | padding-bottom         | spacing-scale
+  .trigger         | padding-left           | spacing-scale
+  .trigger         | padding-right          | spacing-scale
+  .trigger         | padding-top            | spacing-scale
+  .trigger         | row-gap                | spacing-scale
+  .trigger-eyebrow | font-size              | type-ramp
+  .trigger-eyebrow | line-height            | type-ramp
+  .trigger-eyebrow | margin-bottom          | spacing-scale
+  .trigger-eyebrow | margin-top             | spacing-scale
+  .trigger-h1      | font-size              | type-ramp
+  .trigger-h1      | line-height            | type-ramp
+  .trigger-h1      | margin-top             | spacing-scale
+  .trigger-p       | font-size              | type-ramp
+  .trigger-p       | line-height            | type-ramp
+  .trigger-p       | margin-left            | spacing-scale
+  .trigger-p       | margin-right           | spacing-scale
+  .trigger-p       | margin-top             | spacing-scale
+  a                | font-size              | type-ramp
+  a                | line-height            | type-ramp
+  circle           | font-size              | type-ramp
+  circle           | line-height            | type-ramp
+  circle           | stroke-width           | stroke
+  input            | border-radius          | radius-pair
+  input            | font-size              | type-ramp
+  input            | line-height            | type-ramp
+  input            | margin-bottom          | spacing-scale
+  input            | padding-bottom         | spacing-scale
+  input            | padding-top            | spacing-scale
+  label            | font-size              | type-ramp
+  label            | line-height            | type-ramp
+  label            | margin-bottom          | spacing-scale
+  line             | font-size              | type-ramp
+  line             | line-height            | type-ramp
+  line             | stroke-width           | stroke
+  path             | font-size              | type-ramp
+  path             | line-height            | type-ramp
+  polyline         | stroke-width           | stroke
+  span             | font-size              | type-ramp
+  span             | line-height            | type-ramp
+  span             | margin-left            | spacing-scale
+  svg              | font-size              | type-ramp
+  svg              | line-height            | type-ramp
+  svg              | stroke-width           | stroke
+-->
+
+  <!-- ── PAGE (behind the modal; set inert while open) ─────────────────── -->
+  <div class="page" id="page">
+    <div class="trigger-wrap">
+      <p class="trigger-eyebrow">Interactive demo</p>
+      <h1 class="trigger-h1">See Example Brand run your work, live</h1>
+      <p class="trigger-p">Watch an AI agent pick up a real workflow and run it end to end — no setup, no sales call.</p>
+      <button class="trigger" id="openDemo" type="button">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        See AI Demo
+      </button>
+    </div>
+  </div>
+
+  <!-- ── MODAL (sibling of .page) ──────────────────────────────────────── -->
+  <div class="demo-overlay open show" id="demoOverlay"
+       data-archetype="product-showcase" data-hierarchy="closing" data-intent="convert"
+       data-register="technical" data-signature="embedded-screenshot" data-density="high">
+    <div class="demo-backdrop" data-close></div>
+
+    <div class="demo-modal" role="dialog" aria-modal="true" aria-labelledby="demoTitle">
+      <div class="demo-topbar">
+        <button class="demo-x" type="button" aria-label="Close demo" data-close>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="demo-grid">
+
+        <!-- LEFT: demo stage -->
+        <div class="demo-left">
+          <div class="demo-stage">
+            <div class="mock cr-graphic" aria-hidden="true">
+              <div class="mock-rail">
+                <div class="mock-logo"><i></i> Example Brand</div>
+                <div class="mock-nav">
+                  <span class="on">Agents</span>
+                  <span>Runs</span>
+                  <span>Knowledge</span>
+                  <span>Integrations</span>
+                  <span>Settings</span>
+                </div>
+                <div class="mock-foot"><i>DO</i><small>Demo Org<br/>workspace</small></div>
+              </div>
+              <div class="mock-main">
+                <div class="mock-title">Agents</div>
+                <div class="mock-filters"><span>All time</span><span>All status</span><span>All touchpoints</span></div>
+                <div class="mock-search">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  Search agents…
+                </div>
+                <table class="mock-table">
+                  <thead><tr><th>Agent</th><th>Last run</th><th>Touchpoint</th><th>Status</th><th></th></tr></thead>
+                  <tbody>
+                    <tr><td class="who">Invoice triage</td><td>4:53 PM</td><td>Inbox</td><td><span class="badge badge--live">Live</span></td><td class="mock-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td></tr>
+                    <tr><td class="who">Lead enrichment</td><td>4:54 PM</td><td>CRM</td><td><span class="badge badge--done">Done</span></td><td class="mock-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td></tr>
+                    <tr><td class="who">PO matching</td><td>4:54 PM</td><td>ERP</td><td><span class="badge badge--live">Live</span></td><td class="mock-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td></tr>
+                    <tr><td class="who">Ticket routing</td><td>4:54 PM</td><td>Helpdesk</td><td><span class="badge badge--queue">Queued</span></td><td class="mock-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td></tr>
+                    <tr><td class="who">Contract review</td><td>4:55 PM</td><td>Drive</td><td><span class="badge badge--done">Done</span></td><td class="mock-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td></tr>
+                    <tr><td class="who">Onboarding</td><td>4:55 PM</td><td>HRIS</td><td><span class="badge badge--live">Live</span></td><td class="mock-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td></tr>
+                    <tr><td class="who">Refund approval</td><td>4:56 PM</td><td>Billing</td><td><span class="badge badge--done">Done</span></td><td class="mock-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td></tr>
+                    <tr><td class="who">Doc parsing</td><td>4:56 PM</td><td>Drive</td><td><span class="badge badge--live">Live</span></td><td class="mock-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td></tr>
+                    <tr><td class="who">Data sync</td><td>4:57 PM</td><td>Warehouse</td><td><span class="badge badge--queue">Queued</span></td><td class="mock-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="mock-bubble"><i></i> Have a question?</div>
+          </div>
+
+          <div class="demo-controls">
+            <button class="ctrl" type="button" aria-label="Unmute microphone" aria-pressed="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="2" y1="2" x2="22" y2="22"/><path d="M18.89 13.23A7.12 7.12 0 0 0 19 12v-2"/><path d="M5 10v2a7 7 0 0 0 12 5"/><path d="M15 9.34V5a3 3 0 0 0-5.68-1.33"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+            </button>
+            <button class="ctrl ctrl--on" type="button" aria-label="Mute speaker" aria-pressed="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- RIGHT: info + form -->
+        <div class="demo-right">
+          <h2 class="demo-title" id="demoTitle">Example Brand Demo</h2>
+          <p class="demo-sub">5–10 min interactive session with an automation expert</p>
+
+          <div class="agent">
+            <span class="agent-orb" aria-hidden="true"></span>
+            <div>
+              <div class="agent-name">Aria <span>AI demo agent</span></div>
+              <div class="agent-avail"><span class="agent-dot" aria-hidden="true"></span> Available now</div>
+            </div>
+          </div>
+
+          <p class="demo-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            For the best experience, <a href="#">allow microphone access</a>
+          </p>
+
+          <form class="demo-form" id="demoForm">
+            <label for="demoEmail">Email</label>
+            <input id="demoEmail" name="email" type="email" placeholder="you@company.com" autocomplete="email" />
+            <label for="demoSrc">Where did you hear about us? <span>(optional)</span></label>
+            <input id="demoSrc" name="source" type="text" />
+            <button class="demo-join" type="submit">Join session</button>
+          </form>
+
+          <p class="demo-fine">AI can sometimes make mistakes. By continuing, you agree to our <a href="#">Privacy Policy</a>.</p>
+        </div>
+
+      </div><!-- /.demo-grid -->
+    </div><!-- /.demo-modal -->
+  </div><!-- /.demo-overlay -->
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    root.classList.add('has-js');
+
+    var overlay = document.getElementById('demoOverlay');
+    var modal   = overlay.querySelector('.demo-modal');
+    var page    = document.getElementById('page');
+    var openBtn = document.getElementById('openDemo');
+    var reduce  = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var lastFocus = null;
+    var closeTimer = null;
+
+    function focusables() {
+      return Array.prototype.slice.call(modal.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])'
+      )).filter(function (el) { return el.offsetParent !== null || el === document.activeElement; });
+    }
+
+    function onKey(e) {
+      if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+      if (e.key === 'Tab') {
+        var f = focusables(); if (!f.length) return;
+        var first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    }
+
+    // viaUser=false → passive catalog show (no focus-steal / no trap intent)
+    function open(viaUser) {
+      overlay.removeEventListener('transitionend', finishClose);  // cancel a pending close (rapid reopen)
+      if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+      overlay.classList.add('open');
+      void overlay.offsetWidth;            // reflow so the .show transition runs
+      overlay.classList.add('show');
+      page.setAttribute('inert', '');      // SR + tab skip the page behind
+      document.body.style.overflow = 'hidden';
+      document.addEventListener('keydown', onKey);
+      if (viaUser) {
+        lastFocus = document.activeElement;
+        var x = modal.querySelector('.demo-x'); if (x) x.focus();
+      }
+    }
+
+    function finishClose() {
+      if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+      overlay.removeEventListener('transitionend', finishClose);
+      overlay.classList.remove('open');
+    }
+    function close() {
+      overlay.classList.remove('show');
+      page.removeAttribute('inert');
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', onKey);
+      if (reduce) { finishClose(); }
+      else {
+        overlay.addEventListener('transitionend', finishClose);
+        closeTimer = setTimeout(finishClose, 420);   // fallback: never strand the overlay if transitionend doesn't fire
+      }
+      if (lastFocus && lastFocus.focus) { lastFocus.focus(); }
+      else if (openBtn) { openBtn.focus(); }
+      lastFocus = null;
+    }
+
+    overlay.querySelectorAll('[data-close]').forEach(function (el) {
+      el.addEventListener('click', close);
+    });
+    if (openBtn) openBtn.addEventListener('click', function () { open(true); });
+
+    // mic / speaker toggles (real controls)
+    overlay.querySelectorAll('.ctrl').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var pressed = b.getAttribute('aria-pressed') === 'true';
+        b.setAttribute('aria-pressed', String(!pressed));
+        b.classList.toggle('ctrl--on');
+      });
+    });
+
+    // demo form does not actually submit
+    var form = document.getElementById('demoForm');
+    if (form) form.addEventListener('submit', function (e) { e.preventDefault(); });
+
+    // Catalog default: show open on load, but PASSIVELY (no focus-steal).
+    open(false);
+  })();
+</script>
+</body>
+</html>

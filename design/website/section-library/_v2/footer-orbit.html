@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CR — Footer · orbit (newsletter CTA + footer)</title>
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css">
+<!--
+  COMPONENT: Footer · orbit (newsletter CTA + footer)
+  COMPOSITION: A FULL-BLEED dark band (edge-to-edge — no outer frame/rounding;
+    the band itself is overflow:hidden to clip the wordmark) whose content sits
+    in a centered max-width (1240) well. TWO stacked regions inside the well:
+    (1) a nested CTA CARD (inset ~24px, slightly lifted dark fill, 1px
+    --cr-line-dark border, 24px radius) split 2-col — LEFT: a Urbanist 700
+    headline "Subscribe to our newsletter" + a 2-line muted body + a FORM ROW
+    (a dark pill EMAIL INPUT with a leading Lucide mail icon + a white "Sign up"
+    pill button); RIGHT: the ORBIT MOTIF — a central white Lucide globe ringed by
+    FOUR concentric 1px circles (the CR orbit motif) over a soft radial cool navy GRADIENT centre (a gradient fill, NOT a blur/shadow — charter-safe),
+    with FOUR floating FROSTED-GLASS app-tiles (translucent gradient fill + a
+    rim-light ::before sheen + a colour-matched glass border, each holding a
+    Lucide icon in an on-palette --cr-data tint — blue/teal/green/amber, the
+    categorical tokens mapped to the source's brush/music/leaf/flame colours
+    (the source's violet/pink re-pointed to brand blue/teal — never violet/pink).
+    Placement matches the source close-up: blue top-right, teal upper-centre,
+    green left-mid, amber right-mid. The glass look is layered gradients + sheen
+    + tinted border — NO backdrop-filter blur (the charter's no-blur rule holds).
+    (2) the FOOTER proper — LEFT: the CR logo lockup (logo-white.svg) + a muted
+    copyright line; RIGHT: two link columns ("Useful links": Careers / Terms of
+    Service / Privacy Policy — and "Follow us": Twitter / LinkedIn / YouTube, each
+    a small INLINE BRAND SVG, the established carve-out from the Lucide-only rule).
+    Behind the footer, a GIANT faint "example-brand" wordmark (Urbanist 800, ~3%
+    white) is pinned to the bottom and clipped by the shell.
+  INSPIRATION: a "Subscribe to our newsletter" footer (Avenue/baked.design) —
+    layout/composition only. Matched 1:1: nested CTA card, headline+body+
+    email-pill+Sign-up, the globe/concentric-arcs/floating-app-tiles decorative,
+    the brand+copyright / Useful-links / Follow-us footer row, and the huge faint
+    wordmark bleeding off the bottom. Re-skinned to the CR kit per the LOCKED
+    inspiration rule (brand wins on palette/voice): the source's neutral-charcoal
+    + multi-colour glowy apps → CR navy-dark + cool brand-family tints, NO glow/
+    blur/shadow (rings are 1px borders, depth is a radial gradient); "Avenue" →
+    Example Brand; lorem → CR voice; the source's "@MRNICK_BUZZ / BAKED.DESIGN 2025"
+    top line is the designer's own watermark (not part of the footer) — OMITTED.
+  MOTION: scroll-reveal entrance (default — answer 3 was the fidelity note "make
+    no mistake", not a motion idea). On first viewport hit the CTA text + form
+    fade+rise (--d 0/80/160ms); the orbit rings EXPAND from the globe outward
+    (scale 0.6→1, staggered --d 120/200/280/360ms) and the four tiles pop in
+    (--d 300→480ms); the footer brand + link columns fade+rise (--d 80→320ms).
+    IntersectionObserver fires once. .has-js default-VISIBLE pattern (without JS /
+    script-stripped EVERYTHING shows at full opacity & full scale — nothing is
+    gated blank); prefers-reduced-motion snaps in. Lucide (CDN) draws the globe,
+    mail, and 4 tile glyphs; social marks are inline brand SVGs (no CDN).
+  RESPONSIVE: CTA 2-col ≥ 880px → 1-col ≤ 879 (text over a centred orbit; orbit
+    shrinks). Footer row 2-col ≥ 760px → stacked ≤ 759 (brand over the two link
+    columns). Form row wraps the button under the input ≤ 460px. Headline +
+    wordmark scale via clamp; the orbit caps its size so it never overflows.
+-->
+<style>
+  .cr-fo {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, #0D0D14 0%, #0A0A10 100%);
+    font-family: var(--cr-font-body);
+  }
+
+  /* ── Full-bleed dark band → centered content well ───────── */
+  .fo-shell {
+    position: relative;
+    z-index: 1;
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+    padding: clamp(40px, 5vw, 72px) clamp(24px, 5vw, 64px) 0;
+  }
+
+  /* ── CTA card ───────────────────────────────────────────── */
+  .fo-cta {
+    position: relative;
+    border: 1px solid var(--cr-line-dark);
+    border-radius: 24px;
+    background: linear-gradient(180deg, #16161E 0%, #121218 100%);
+    padding: clamp(28px, 4vw, 52px);
+    display: grid;
+    grid-template-columns: 1.08fr 0.92fr;
+    gap: 32px;
+    align-items: center;
+    overflow: hidden;
+  }
+  .fo-cta-left { min-width: 0; }
+
+  .fo-title {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(32px, 3.8vw, 48px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    color: #fff;
+  }
+  .fo-sub {
+    margin: 16px 0 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--cr-fg-muted);
+    max-width: 400px;
+  }
+
+  /* Form row */
+  .fo-form {
+    margin-top: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .fo-input-wrap {
+    position: relative;
+    flex: 1 1 240px;
+    min-width: 0;
+  }
+  .fo-input-wrap .fo-mail {
+    position: absolute;
+    left: 16px; top: 50%;
+    transform: translateY(-50%);
+    width: 17px; height: 17px;
+    color: var(--cr-fg-muted);
+    pointer-events: none;
+  }
+  .fo-input {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: var(--cr-font-body);
+    font-size: 15px;
+    color: #fff;
+    padding: 14px 18px 14px 44px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--cr-line-dark);
+    border-radius: var(--cr-radius-pill);
+    outline: none;
+    transition: border-color .18s ease, background .18s ease;
+  }
+  .fo-input::placeholder { color: var(--cr-fg-muted); }
+  .fo-input:focus {
+    border-color: rgba(255,255,255,0.32);
+    background: rgba(255,255,255,0.06);
+  }
+  .fo-signup {
+    flex: 0 0 auto;
+    font-family: var(--cr-font-display);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--cr-ink);
+    background: #fff;
+    border: none;
+    border-radius: var(--cr-radius-pill);
+    padding: 14px 26px;
+    cursor: pointer;
+    transition: background .18s ease, transform .18s ease;
+  }
+  .fo-signup:hover { background: #E9E9E9; }
+  .fo-signup:focus-visible { outline: 2px solid var(--cr-brand); outline-offset: 3px; }
+
+  /* ── Orbit motif ────────────────────────────────────────── */
+  .fo-orbit {
+    position: relative;
+    justify-self: center;
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: 1 / 0.86;
+  }
+  /* radial cool navy depth (gradient fill — no blur, no shadow) */
+  .fo-orbit-glow {
+    position: absolute;
+    width: 78%; aspect-ratio: 1;
+    left: 50%; top: 56%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle,
+      rgba(20, 157, 255, 0.30) 0%,
+      rgba(20, 35, 58, 0.20) 40%,
+      rgba(11, 27, 48, 0) 72%);
+    pointer-events: none;
+  }
+  .fo-ring {
+    position: absolute;
+    left: 50%; top: 56%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.05);
+    pointer-events: none;
+    transform-origin: center;
+  }
+  .fo-ring.r1 { width: 38%; aspect-ratio: 1; border-color: rgba(255,255,255,0.14); }
+  .fo-ring.r2 { width: 60%; aspect-ratio: 1; border-color: rgba(255,255,255,0.10); }
+  .fo-ring.r3 { width: 82%; aspect-ratio: 1; border-color: rgba(255,255,255,0.07); }
+  .fo-ring.r4 { width: 104%; aspect-ratio: 1; border-color: rgba(255,255,255,0.045); }
+
+  /* central globe */
+  .fo-globe {
+    position: absolute;
+    left: 50%; top: 56%;
+    transform: translate(-50%, -50%);
+    width: 72px; height: 72px;
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .fo-globe svg { width: 72px; height: 72px; stroke-width: 1.4; }
+
+  /* floating app tiles — FROSTED-GLASS colour chips: a layered translucent
+     gradient fill + a rim-light ::before sheen + a colour-matched glass border.
+     Reads as glass on the dark surface with NO backdrop-filter blur (per the
+     locked no-blur charter). */
+  .fo-tile {
+    position: absolute;
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(150deg,
+      rgba(255,255,255,0.18) 0%,
+      rgba(255,255,255,0.08) 50%,
+      rgba(255,255,255,0.035) 100%);
+    border: 1px solid rgba(255,255,255,0.18);
+    display: flex; align-items: center; justify-content: center;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+  }
+  .fo-tile::before {                 /* glass rim light — top-left sheen */
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(158deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0) 48%);
+    pointer-events: none;
+  }
+  .fo-tile svg { width: 21px; height: 21px; stroke-width: 2; position: relative; }
+  /* placement matched to the source close-up: blue top-right, teal upper-
+     centre, green left-mid, amber right-mid. Border colour matches the icon
+     (a colour-tinted glass edge) using the --cr-data token hexes — on-brand
+     blue/teal/green/amber only, never violet/pink. */
+  .fo-tile.t1 { left: 76%; top: 24%; border-color: rgba(20,157,255,0.55); } /* blue  --cr-data-1 */
+  .fo-tile.t2 { left: 46%; top: 34%; border-color: rgba(30,110,110,0.60); } /* teal  --cr-data-2 */
+  .fo-tile.t3 { left: 22%; top: 62%; border-color: rgba(55,174,97,0.55); }  /* green --cr-data-3 */
+  .fo-tile.t4 { left: 80%; top: 55%; border-color: rgba(220,166,77,0.55); } /* amber --cr-data-4 */
+  .fo-tile.t1 svg { color: var(--cr-data-1); }  /* blue  */
+  .fo-tile.t2 svg { color: var(--cr-data-2); }  /* teal  */
+  .fo-tile.t3 svg { color: var(--cr-data-3); }  /* green */
+  .fo-tile.t4 svg { color: var(--cr-data-4); }  /* amber */
+
+  /* ── Footer main ────────────────────────────────────────── */
+  .fo-main {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    padding: clamp(48px, 6vw, 80px) 0 clamp(56px, 7vw, 96px);
+  }
+  .fo-brand-logo { height: 26px; width: auto; display: block; }
+  .fo-copy {
+    margin: 22px 0 0;
+    font-size: 13px;
+    color: var(--cr-fg-muted);
+  }
+
+  .fo-cols {
+    display: flex;
+    gap: clamp(48px, 8vw, 110px);
+  }
+  .fo-col-head {
+    margin: 0 0 18px;
+    font-family: var(--cr-font-display);
+    font-weight: 600;
+    font-size: 16px;
+    color: #fff;
+  }
+  .fo-col a {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 14px;
+    color: var(--cr-fg-muted);
+    text-decoration: none;
+    padding: 7px 0;
+    transition: color .18s ease;
+  }
+  .fo-col a:hover, .fo-col a:focus-visible { color: #fff; }
+  .fo-col a svg { width: 16px; height: 16px; flex: 0 0 auto; }
+
+  /* ── Giant wordmark ─────────────────────────────────────── */
+  .fo-wordmark {
+    position: absolute;
+    left: 50%;
+    bottom: -0.18em;
+    transform: translateX(-50%);
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 800;
+    font-size: clamp(120px, 22vw, 300px);
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    color: rgba(255,255,255,0.035);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+
+  /* ── Scroll-reveal (default-VISIBLE) ────────────────────── */
+  .cr-fo.has-js .reveal { opacity: 0; transform: translateY(16px); }
+  .cr-fo.has-js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  /* rings expand outward from the globe */
+  .cr-fo.has-js .fo-ring.anim { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+  .cr-fo.has-js .fo-ring.anim.in {
+    opacity: 1; transform: translate(-50%, -50%) scale(1);
+    transition: opacity .7s ease, transform .8s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  .cr-fo.has-js .fo-tile.anim { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+  .cr-fo.has-js .fo-tile.anim.in {
+    opacity: 1; transform: translate(-50%, -50%) scale(1);
+    transition: opacity .5s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cr-fo.has-js .reveal,
+    .cr-fo.has-js .fo-ring.anim,
+    .cr-fo.has-js .fo-tile.anim { opacity: 1; transform: translate(-50%, -50%) scale(1); transition: none; }
+    .cr-fo.has-js .reveal { transform: none; }
+  }
+
+  /* ── Responsive ─────────────────────────────────────────── */
+  @media (max-width: 879px) {
+    .fo-cta { grid-template-columns: 1fr; gap: 8px; }
+    .fo-orbit { max-width: 340px; margin-top: 12px; }
+    .fo-sub { max-width: none; }
+  }
+  @media (max-width: 759px) {
+    .fo-main { grid-template-columns: 1fr; gap: 44px; }
+  }
+  @media (max-width: 460px) {
+    .fo-form { flex-direction: column; align-items: stretch; }
+    .fo-signup { width: 100%; }
+    .fo-cols { gap: 48px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="cr-fo" data-screen-label="Footer · orbit (newsletter CTA)">
+  <div class="fo-shell">
+
+    <!-- ── Newsletter CTA card ───────────────────────────── -->
+    <div class="fo-cta">
+      <div class="fo-cta-left">
+        <h2 class="fo-title reveal" style="--d:0ms">Subscribe to our newsletter</h2>
+        <p class="fo-sub reveal" style="--d:80ms">One email a month on what we&rsquo;re shipping, what&rsquo;s working in production, and the automation plays moving the needle for ops teams. No fluff.</p>
+
+        <form class="fo-form reveal" style="--d:160ms" novalidate>
+          <span class="fo-input-wrap">
+            <i class="fo-mail" data-lucide="mail"></i>
+            <input class="fo-input" type="email" name="email"
+                   placeholder="name@company.com" aria-label="Email address">
+          </span>
+          <button type="submit" class="fo-signup">Sign up</button>
+        </form>
+      </div>
+
+      <!-- Orbit motif -->
+      <div class="fo-orbit" aria-hidden="true">
+        <div class="fo-orbit-glow"></div>
+        <div class="fo-ring r4 anim" style="--d:360ms"></div>
+        <div class="fo-ring r3 anim" style="--d:280ms"></div>
+        <div class="fo-ring r2 anim" style="--d:200ms"></div>
+        <div class="fo-ring r1 anim" style="--d:120ms"></div>
+        <div class="fo-globe"><i data-lucide="globe"></i></div>
+        <div class="fo-tile t1 anim" style="--d:300ms"><i data-lucide="sparkles"></i></div>
+        <div class="fo-tile t2 anim" style="--d:360ms"><i data-lucide="bot"></i></div>
+        <div class="fo-tile t3 anim" style="--d:420ms"><i data-lucide="zap"></i></div>
+        <div class="fo-tile t4 anim" style="--d:480ms"><i data-lucide="file-text"></i></div>
+      </div>
+    </div>
+
+    <!-- ── Footer main ───────────────────────────────────── -->
+    <div class="fo-main">
+      <div class="fo-brand">
+        <img class="fo-brand-logo reveal" style="--d:80ms"
+             src="../assets/../../brand-pack/assets/logo/logo-white.svg" alt="Example Brand">
+        <p class="fo-copy reveal" style="--d:160ms">&copy; Copyright 2026 Example Brand, Inc. All rights reserved.</p>
+      </div>
+
+      <div class="fo-cols">
+        <nav class="fo-col reveal" style="--d:240ms" aria-label="Useful links">
+          <p class="fo-col-head">Useful links</p>
+          <a href="#">Careers</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Privacy Policy</a>
+        </nav>
+
+        <nav class="fo-col reveal" style="--d:320ms" aria-label="Follow us">
+          <p class="fo-col-head">Follow us</p>
+          <a href="#">
+            <svg viewBox="0 0 24 24" fill="#1DA1F2" aria-hidden="true"><path d="M23.953 4.57a10 10 0 0 1-2.825.775 4.958 4.958 0 0 0 2.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 0 0-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 0 0-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 0 1-2.228-.616v.06a4.923 4.923 0 0 0 3.946 4.827 4.996 4.996 0 0 1-2.212.085 4.937 4.937 0 0 0 4.604 3.417 9.868 9.868 0 0 1-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 0 0 7.557 2.209c9.054 0 13.999-7.496 13.999-13.986 0-.21 0-.42-.015-.63A9.936 9.936 0 0 0 24 4.59z"/></svg>
+            Twitter
+          </a>
+          <a href="#">
+            <svg viewBox="0 0 24 24" fill="#0A66C2" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            LinkedIn
+          </a>
+          <a href="#">
+            <svg viewBox="0 0 24 24" fill="#FF0000" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            YouTube
+          </a>
+        </nav>
+      </div>
+    </div>
+
+  </div><!-- /.fo-shell -->
+
+  <!-- Giant faint wordmark — spans the full-bleed band, clipped at its edges -->
+  <p class="fo-wordmark" aria-hidden="true">example-brand</p>
+</section>
+
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<script>
+  (function () {
+    if (window.lucide) lucide.createIcons();
+
+    var sec = document.querySelector('.cr-fo');
+    if (!sec || !('IntersectionObserver' in window)) return;
+    sec.classList.add('has-js');
+
+    var done = false;
+    function revealAll() {
+      if (done) return;
+      done = true;
+      sec.querySelectorAll('.reveal, .fo-ring.anim, .fo-tile.anim')
+         .forEach(function (el) { el.classList.add('in'); });
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        revealAll();
+        io.disconnect();
+      });
+    }, { threshold: 0.06 });
+    io.observe(sec);
+
+    // Safety net: some snapshot/headless contexts never fire IO — never leave
+    // the footer gated blank. Reveal after a short delay regardless.
+    setTimeout(revealAll, 1200);
+  })();
+</script>
+</body>
+</html>

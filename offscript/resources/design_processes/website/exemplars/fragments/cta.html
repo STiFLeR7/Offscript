@@ -1,0 +1,33 @@
+<!-- CURATED EXEMPLAR — archetype: cta-banner. Distilled from apa-landing.html #cta. Match the rhythm/discipline; do NOT clone. -->
+<section id="cta-banner" class="cr-band-cta cr-on-dark cr-section cta" aria-label="Closing call to action">
+  <style>
+    /* doc-scoped: ONLY unique layout / centering + the orbit decoration + breakpoint.
+       Surfaces, headings, buttons, captions all come from the house sheet. */
+    .cta { overflow: hidden; }
+    /* faint orbit ring — separation by line + scale, NEVER shadow/glow */
+    .cta-orbit { position: absolute; width: 1300px; height: 1300px; left: 50%; top: 120%;
+      transform: translate(-50%, -50%); border: 1px solid var(--cr-line-dark);
+      border-radius: var(--cr-radius-pill); pointer-events: none; }
+    .cta-inner { position: relative; display: flex; flex-direction: column; align-items: center;
+      text-align: center; gap: var(--cr-space-5); }
+    .cta-head { max-width: 800px; }
+    .cta-lede { max-width: 600px; }
+    .cta-actions { display: flex; flex-direction: column; align-items: center;
+      gap: var(--cr-space-4); margin-top: var(--cr-space-4); }
+    /* entrance — transform-only (opacity stays 1 → preview never blank) */
+    .cta-reveal { animation: ctaRise .7s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--d, 0s); }
+    @keyframes ctaRise { from { transform: translateY(16px); } to { transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .cta-reveal { animation: none; } }
+  </style>
+
+  <span class="cta-orbit" aria-hidden="true"></span>
+  <div class="cr-container cta-inner">
+    <span class="cr-eyebrow cta-reveal" style="--d:.02s">Get started</span>
+    <h2 class="cr-h-section cta-head cta-reveal" style="--d:.08s">Find the One Workflow Worth Automating. The Audit's <span class="cr-accent">Free</span>.</h2>
+    <p class="cr-p-lede cta-lede cta-reveal" style="--d:.16s">Thirty minutes, your highest-friction process, and a clear map of what an agent taskforce could take off your team's plate.</p>
+    <div class="cta-actions cta-reveal" style="--d:.24s">
+      <a class="cr-btn cr-btn-primary" href="#">Book a free process audit <span class="cr-arrow" aria-hidden="true">&rarr;</span></a>
+      <span class="cr-caption">30 minutes &middot; No commitment &middot; We show you the numbers first</span>
+    </div>
+  </div>
+</section>

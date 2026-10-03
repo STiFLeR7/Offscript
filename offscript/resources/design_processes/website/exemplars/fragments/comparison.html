@@ -1,0 +1,109 @@
+<!-- CURATED EXEMPLAR — archetype: plan-comparison. Distilled from apa-landing.html #cmp. Match the rhythm/discipline; do NOT clone. -->
+<section id="comparison" class="cr-band-warm cr-section" aria-label="Approach comparison">
+  <style>
+    /* doc-scoped — comparison table layout only; type/surface/colour come from the house sheet */
+    #comparison .cmp-table { max-width: var(--cr-content-max); margin: 0 auto; border: 1px solid var(--cr-line);
+      border-radius: var(--cr-radius-md); overflow: hidden; }
+    #comparison .cmp-row { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; }
+    #comparison .cmp-cell { display: flex; align-items: center; gap: var(--cr-space-2);
+      padding: var(--cr-space-5) var(--cr-space-6); font-family: var(--cr-font-body); font-size: 16px;
+      line-height: 1.4; color: var(--cr-fg-3); border-bottom: 1px solid var(--cr-line); }
+    #comparison .cmp-row:last-child .cmp-cell { border-bottom: 0; }
+    /* row label — left rail */
+    #comparison .cmp-label { font-family: var(--cr-font-display); font-weight: 600; color: var(--cr-fg-2); }
+    /* header row — approach names */
+    #comparison .cmp-headrow .cmp-cell { padding-top: var(--cr-space-6); padding-bottom: var(--cr-space-6);
+      font-family: var(--cr-font-display); font-weight: 600; font-size: 18px; color: var(--cr-fg-3); }
+    #comparison .cmp-corner { background: transparent; }
+    /* status-quo cells — neutral cool-grey type; let contrast do the work */
+    #comparison .cmp-cell--neg { color: var(--cr-fg-muted); }
+    /* subject column — the only accented one: brand tint surface + brand rails */
+    #comparison .cmp-cr { background: var(--cr-brand-100); border-left: 1px solid var(--cr-brand);
+      border-right: 1px solid var(--cr-brand); color: var(--cr-fg); }
+    #comparison .cmp-headrow .cmp-cr { color: var(--cr-brand); font-weight: 700; border-top: 1px solid var(--cr-brand); }
+    #comparison .cmp-row:last-child .cmp-cr { border-bottom: 1px solid var(--cr-brand); }
+    /* marks — inline svg; var() set via CSS (never as an svg attribute) */
+    #comparison .cmp-ico { width: 17px; height: 17px; flex: none; fill: none; stroke-width: 2.2;
+      stroke-linecap: round; stroke-linejoin: round; }
+    #comparison .cmp-ico--yes { stroke: var(--cr-success); }
+    #comparison .cmp-ico--no  { stroke: var(--cr-fg-muted); }
+    /* mobile — label becomes a full-width sub-heading; the 3 approaches stay side-by-side */
+    @media (max-width: 900px) {
+      #comparison .cmp-row { grid-template-columns: repeat(3, 1fr); }
+      #comparison .cmp-label { grid-column: 1 / -1; padding-bottom: var(--cr-space-2);
+        font-size: 14px; color: var(--cr-fg-3); border-bottom: 0; }
+      #comparison .cmp-corner { display: none; }
+      #comparison .cmp-cell { padding: var(--cr-space-4); font-size: 14px; }
+      #comparison .cmp-headrow .cmp-cell { font-size: 15px; }
+    }
+  </style>
+
+  <div class="cr-container">
+    <div class="cr-head cr-head--center" style="margin-bottom: var(--cr-space-15);">
+      <span class="cr-eyebrow">Acme vs the Alternatives</span>
+      <h2 class="cr-h-section">Three Ways to Clear the Backlog. Only One Thinks.</h2>
+    </div>
+
+    <div class="cmp-table" role="table" aria-label="How three approaches compare">
+      <div class="cmp-row cmp-headrow" role="row">
+        <span class="cmp-cell cmp-corner" role="columnheader" aria-hidden="true"></span>
+        <span class="cmp-cell" role="columnheader">Rule-based RPA</span>
+        <span class="cmp-cell" role="columnheader">Hire More People</span>
+        <span class="cmp-cell cmp-cr cr-accent" role="columnheader">Acme</span>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <span class="cmp-cell cmp-label" role="rowheader">Handles exceptions</span>
+        <span class="cmp-cell cmp-cell--neg" role="cell">
+          <svg class="cmp-ico cmp-ico--no" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>Scripted only</span>
+        <span class="cmp-cell" role="cell">Yes, slowly</span>
+        <span class="cmp-cell cmp-cr" role="cell">
+          <svg class="cmp-ico cmp-ico--yes" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Reasons through</span>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <span class="cmp-cell cmp-label" role="rowheader">Adapts when systems change</span>
+        <span class="cmp-cell cmp-cell--neg" role="cell">
+          <svg class="cmp-ico cmp-ico--no" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>Re-program</span>
+        <span class="cmp-cell" role="cell">Yes</span>
+        <span class="cmp-cell cmp-cr" role="cell">
+          <svg class="cmp-ico cmp-ico--yes" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Adapts</span>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <span class="cmp-cell cmp-label" role="rowheader">Time to value</span>
+        <span class="cmp-cell" role="cell">Months</span>
+        <span class="cmp-cell" role="cell">Hire + ramp</span>
+        <span class="cmp-cell cmp-cr" role="cell">
+          <svg class="cmp-ico cmp-ico--yes" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>~3 weeks</span>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <span class="cmp-cell cmp-label" role="rowheader">Scales without new headcount</span>
+        <span class="cmp-cell" role="cell">Partial</span>
+        <span class="cmp-cell cmp-cell--neg" role="cell">
+          <svg class="cmp-ico cmp-ico--no" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>No</span>
+        <span class="cmp-cell cmp-cr" role="cell">
+          <svg class="cmp-ico cmp-ico--yes" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Yes</span>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <span class="cmp-cell cmp-label" role="rowheader">Makes judgment calls</span>
+        <span class="cmp-cell cmp-cell--neg" role="cell">
+          <svg class="cmp-ico cmp-ico--no" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>No</span>
+        <span class="cmp-cell cmp-cell--neg" role="cell">
+          <svg class="cmp-ico cmp-ico--no" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>No</span>
+        <span class="cmp-cell cmp-cr" role="cell">
+          <svg class="cmp-ico cmp-ico--yes" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>With escalation</span>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <span class="cmp-cell cmp-label" role="rowheader">Cost model</span>
+        <span class="cmp-cell" role="cell">Licences</span>
+        <span class="cmp-cell" role="cell">Salaries</span>
+        <span class="cmp-cell cmp-cr" role="cell">
+          <svg class="cmp-ico cmp-ico--yes" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Outcome-linked</span>
+      </div>
+    </div>
+  </div>
+</section>

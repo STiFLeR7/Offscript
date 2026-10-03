@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Value prop — Proof stats</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — Value prop · Proof stats             split-layout-asymmetric.html
+  ════════════════════════════════════════════════════════════════════════
+  COMPOSITION  A two-column value-proposition / stats section on PURE WHITE
+               (~41% text left | ~59% stat bento right). REUSABLE as a features
+               section — swap the three stats for feature blurbs.
+               • LEFT (a flex column, justify space-between so the bottom cluster
+                 pins to the base of the bento): a grey EYEBROW PILL (icon +
+                 "Performance stats") → a 2-line bold headline → a TWO-TONE sub
+                 (a muted-grey clause running into a dark clause) → a brand-blue
+                 "Explore the full demo →" link → (void) → a small two-tone line
+                 → an OVERLAPPING AVATAR STACK + "rated 4.8/5".
+               • RIGHT bento: a TALL WIDE card on top (spans both columns) + TWO
+                 cards below (2-up). Each card = a small icon + label (top), a big
+                 void, a HUGE stat number, then a caption. Light-grey cards on
+                 white, rounded, NO shadow (separate by surface). The top card is
+                 taller than the bottom row (minmax rows hold the rhythm).
+
+  INSPIRATION  A clean SaaS "Performance stats / Proven by leading sales teams"
+               section (text left, 1-wide-+-2 stat bento right). Layout / two-tone
+               copy / eyebrow pill / avatar-stack / bento geometry reproduced;
+               colours / fonts / copy / stats re-skinned to CR.
+
+  RE-SKIN      The source's GREEN accent → the pack's marker accent, spent ONCE:
+               the eyebrow glyph, and nowhere else. Card glyphs stay neutral —
+               five coloured marks in one band is scattering, not emphasis.
+
+  v3 PASS      Presentation authored under the editorial-restraint direction;
+               structure, script and every behavioural hook are byte-compatible
+               with the v2 file in `_v2/` (DR-22, the Pilot Constraint).
+               · The eyebrow was a grey pill with a coloured glyph — interface
+                 furniture. It is now the supporting role in ink, with the glyph.
+               · Bento tiles take the raised surface, the card radius and one
+                 hairline; the grey fill that stood in for structure is gone.
+               · Measures onto the metric role; captions and card labels onto
+                 the one supporting step, untracked.
+               · Bento track heights composed from the closed spacing scale.
+
+  NO SHADOW    Cards lift by SURFACE CONTRAST (grey on white) only — no shadow /
+               border (charter). Overlapping avatars use POSITIONED offsets, not
+               negative margins (charter: no negative margins). Hover lives only
+               on the real controls (the demo link).
+
+  MOTION       (user choice) "Count-up + reveal" — on first viewport entry the
+               left items + the three cards fade up staggered, AND each big stat
+               COUNTS from 0 to its value (11.3× / 80% / 92%, easeOutCubic ~1.2s).
+               IntersectionObserver fires once. NO-JS SAFE: the final numbers are
+               in the HTML and the reveal hidden-state is `.has-js`-scoped, so
+               without JS the cards + final numbers show. `prefers-reduced-motion`
+               (and no-IO) → final numbers shown, no count. Lucide drawn once.
+
+  RESPONSIVE   2-col ≥901px → 1-col ≤900 (text over bento; the bottom cluster's
+               bottom-pin relaxes to a fixed gap). Bento stays 1-wide-+-2 until
+               ≤560, where the two lower cards stack to one column. Type + padding
+               step down. Grid children carry `min-width:0`.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<script>document.documentElement.classList.add('has-js');</script>
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  html, body { margin: 0; background: var(--cr-page-ground); font-family: var(--cr-font-body); color: var(--cr-text-secondary); }
+  .vs-section, .vs-section * { box-sizing: border-box; }
+  .vs-section { font-family: var(--cr-font-body); }
+
+  /* Surface, section padding and the well are the pack's — SECTION_LAYOUT §16. */
+  .vs-wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+    column-gap: var(--cr-space-m);
+    align-items: stretch;                  /* left column stretches to bento height */
+  }
+  .vs-left { display: flex; flex-direction: column; min-width: 0; }
+
+  /* THE EYEBROW WAS A CHIP. A grey pill with a coloured glyph is interface
+     furniture; the direction's supporting role is one step below body, in ink,
+     with nothing around it. The glyph stays — it is the section's ONE accent
+     moment, in the accent whose whole job is the small mark. */
+  .vs-eyebrow { display: inline-flex; align-items: center; gap: var(--cr-space-xs); align-self: flex-start; }
+  .vs-eyebrow i { width: 18px; height: 18px; flex: none; color: var(--cr-accent-orange); stroke-width: var(--cr-icon-stroke-sm); }
+
+  .vs-head { margin: var(--cr-space-s) 0 0; }
+  .vs-sub  { margin: var(--cr-space-s) 0 0; }
+  .vs-sub .vs-muted { color: var(--cr-text-secondary); }
+
+  /* A link reads as primary text; the underline carries the affordance. */
+  .vs-link {
+    margin-top: var(--cr-space-s); align-self: flex-start;
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    font-size: var(--cr-text-supporting); color: var(--cr-text-primary);
+    text-decoration: underline; text-underline-offset: 0.25em;
+  }
+  .vs-link .vs-arr { transition: transform .2s ease; }
+  .vs-link:hover .vs-arr { transform: translate(3px, -3px); }
+
+  .vs-foot { margin-top: auto; padding-top: var(--cr-space-xl); }
+  .vs-foot-txt { margin: 0 0 var(--cr-space-xs); }
+  .vs-foot-txt strong { font-weight: 500; color: var(--cr-text-primary); }
+  .vs-rated { display: flex; align-items: center; gap: var(--cr-space-xs); }
+  .vs-avatars { position: relative; width: 96px; height: 28px; flex: none; }
+  .vs-avatars img {
+    position: absolute; top: 0; width: 28px; height: 28px;
+    border-radius: 50%; border: var(--cr-stroke) solid var(--cr-page-ground);
+    object-fit: cover; object-position: center 28%;
+  }
+
+  .vs-bento {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* Track heights composed from the closed scale, so the bento's rhythm is a
+       decision with a size rather than two numbers that happened to look right. */
+    grid-template-rows: minmax(calc(var(--cr-space-3xl) + var(--cr-space-xl)), auto)
+                        minmax(calc(var(--cr-space-3xl) + var(--cr-space-m)), auto);
+    gap: var(--cr-space-s);
+  }
+  .vs-card {
+    display: flex; flex-direction: column; justify-content: space-between;
+    min-width: 0;
+    padding: var(--cr-space-m);
+  }
+  .vs-card--wide { grid-column: 1 / -1; }
+  .vs-card-top { display: flex; align-items: center; gap: var(--cr-space-xs); }
+  /* Card glyphs stay neutral. Four more coloured marks would be four more
+     accent moments in one band, and an accent spent everywhere marks nothing. */
+  .vs-card-top i { width: 18px; height: 18px; flex: none; color: var(--cr-text-secondary); stroke-width: var(--cr-icon-stroke-sm); }
+  .vs-num { font-variant-numeric: tabular-nums; }
+  .vs-cap { margin: var(--cr-space-xs) 0 0; }
+
+  .has-js .vs-section [data-reveal] { opacity: 0; transform: translateY(18px); }
+  .has-js .vs-section [data-reveal].in-view {
+    animation: vsRise .7s cubic-bezier(.16,1,.3,1) forwards; animation-delay: var(--d, 0s);
+  }
+  @keyframes vsRise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .vs-section [data-reveal],
+    .has-js .vs-section [data-reveal].in-view { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* Responsive: the original's breakpoints — responsive behaviour is frozen.
+     Type steps with the pack's ramp; section padding steps with `.cr-band`. */
+  @media (max-width: 900px) {
+    .vs-wrap { grid-template-columns: minmax(0, 1fr); row-gap: var(--cr-space-m); }
+    .vs-foot { margin-top: 0; padding-top: var(--cr-space-xs); }
+  }
+  @media (max-width: 560px) {
+    .vs-bento { grid-template-columns: 1fr; grid-template-rows: none; gap: var(--cr-space-xs); }
+    .vs-card--wide { grid-column: auto; }
+    .vs-card { padding: var(--cr-space-s); }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line
+     here that moved nothing. Retrofitted from measurement for the pilot
+     ten; declared before authoring from Phase 1 onward.
+  .lucide       | font-size              | type-ramp
+  .lucide       | line-height            | type-ramp
+  .vs-arr       | font-size              | type-ramp
+  .vs-bento     | column-gap             | spacing-scale
+  .vs-bento     | row-gap                | spacing-scale
+  .vs-cap       | font-size              | type-ramp
+  .vs-cap       | line-height            | type-ramp
+  .vs-cap       | max-width              | measure
+  .vs-card      | border-bottom-width    | stroke
+  .vs-card      | border-left-width      | stroke
+  .vs-card      | border-radius          | radius-pair
+  .vs-card      | border-right-width     | stroke
+  .vs-card      | border-top-width       | stroke
+  .vs-card      | min-height             | spacing-scale
+  .vs-card      | padding-bottom         | spacing-scale
+  .vs-card      | padding-left           | spacing-scale
+  .vs-card      | padding-right          | spacing-scale
+  .vs-card      | padding-top            | spacing-scale
+  .vs-card-top  | column-gap             | spacing-scale
+  .vs-card-top  | font-size              | type-ramp
+  .vs-card-top  | line-height            | type-ramp
+  .vs-card-top  | max-width              | measure
+  .vs-card-top  | row-gap                | spacing-scale
+  .vs-eyebrow   | border-radius          | radius-pair
+  .vs-eyebrow   | column-gap             | spacing-scale
+  .vs-eyebrow   | font-size              | type-ramp
+  .vs-eyebrow   | line-height            | type-ramp
+  .vs-eyebrow   | padding-bottom         | spacing-scale
+  .vs-eyebrow   | padding-left           | spacing-scale
+  .vs-eyebrow   | padding-right          | spacing-scale
+  .vs-eyebrow   | padding-top            | spacing-scale
+  .vs-eyebrow   | row-gap                | spacing-scale
+  .vs-foot      | margin-top             | spacing-scale
+  .vs-foot      | padding-top            | spacing-scale
+  .vs-foot-txt  | font-size              | type-ramp
+  .vs-foot-txt  | line-height            | type-ramp
+  .vs-foot-txt  | margin-bottom          | spacing-scale
+  .vs-foot-txt  | max-width              | measure
+  .vs-head      | font-size              | type-ramp
+  .vs-head      | line-height            | type-ramp
+  .vs-head      | margin-top             | spacing-scale
+  .vs-head      | max-width              | measure
+  .vs-link      | column-gap             | spacing-scale
+  .vs-link      | font-size              | type-ramp
+  .vs-link      | margin-top             | spacing-scale
+  .vs-link      | row-gap                | spacing-scale
+  .vs-muted     | font-size              | type-ramp
+  .vs-muted     | line-height            | type-ramp
+  .vs-num       | font-size              | type-ramp
+  .vs-num       | line-height            | type-ramp
+  .vs-rated-txt | font-size              | type-ramp
+  .vs-rated-txt | line-height            | type-ramp
+  .vs-rated-txt | max-width              | measure
+  .vs-sub       | font-size              | type-ramp
+  .vs-sub       | line-height            | type-ramp
+  .vs-sub       | margin-top             | spacing-scale
+  .vs-sub       | max-width              | measure
+  .vs-wrap      | column-gap             | spacing-scale
+  .vs-wrap      | padding-left           | spacing-scale
+  .vs-wrap      | padding-right          | spacing-scale
+  .vs-wrap      | row-gap                | spacing-scale
+  br            | font-size              | type-ramp
+  br            | line-height            | type-ramp
+  img           | border-bottom-width    | stroke
+  img           | border-left-width      | stroke
+  img           | border-right-width     | stroke
+  img           | border-top-width       | stroke
+  path          | font-size              | type-ramp
+  path          | line-height            | type-ramp
+  span          | font-size              | type-ramp
+  span          | line-height            | type-ramp
+  strong        | font-size              | type-ramp
+  strong        | line-height            | type-ramp
+-->
+
+
+<section class="vs-section cr-band" data-archetype="feature-comparison" data-hierarchy="proof" data-intent="prove" data-register="confident" data-signature="large-statistic" data-density="medium" data-screen-label="Value prop · Proof stats">
+  <div class="vs-wrap cr-well">
+
+    <!-- ── LEFT ───────────────────────────────────────────────── -->
+    <div class="vs-left">
+      <div class="vs-eyebrow cr-h-eyebrow" data-reveal style="--d:0s">
+        <i data-lucide="bar-chart-3"></i><span>Performance stats</span>
+      </div>
+      <h2 class="vs-head cr-h-section" data-reveal style="--d:.06s">Proven by the teams<br>who run on it</h2>
+      <p class="vs-sub cr-p" data-reveal style="--d:.12s"><span class="vs-muted">Clear backlogs and remove manual work</span> faster, with agents that run in your own stack.</p>
+      <a class="vs-link" href="#" data-reveal style="--d:.18s">Explore the full demo <span class="vs-arr">&rarr;</span></a>
+
+      <div class="vs-foot" data-reveal style="--d:.24s">
+        <p class="vs-foot-txt cr-meta"><strong>Running in real time</strong> &mdash; every action logged, every exception caught, and every result measured.</p>
+        <div class="vs-rated">
+          <div class="vs-avatars">
+            <img src="../../brand-pack/assets/imagery/avatars/leader-2.jpg" alt="" style="left:0" decoding="async" />
+            <img src="../../brand-pack/assets/imagery/avatars/team-1.jpg" alt="" style="left:17px" decoding="async" />
+            <img src="../../brand-pack/assets/imagery/avatars/team-jessica.jpg" alt="" style="left:34px" decoding="async" />
+            <img src="../../brand-pack/assets/imagery/avatars/team-dami.jpg" alt="" style="left:51px" decoding="async" />
+            <img src="../../brand-pack/assets/imagery/avatars/avatar-olivia.jpg" alt="" style="left:68px" decoding="async" />
+          </div>
+          <span class="vs-rated-txt cr-meta">&mdash; rated 4.8/5</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT bento ────────────────────────────────────────── -->
+    <div class="vs-bento">
+
+      <div class="vs-card vs-card--wide cr-card" data-reveal style="--d:.1s">
+        <div class="vs-card-top cr-meta"><i data-lucide="wallet"></i><span>Higher ROI</span></div>
+        <div>
+          <div class="vs-num cr-num-display" data-to="11.3" data-decimals="1" data-suffix="&times;">11.3&times;</div>
+          <p class="vs-cap cr-meta">Average return in the first year</p>
+        </div>
+      </div>
+
+      <div class="vs-card cr-card" data-reveal style="--d:.18s">
+        <div class="vs-card-top cr-meta"><i data-lucide="wallet"></i><span>Faster Throughput</span></div>
+        <div>
+          <div class="vs-num cr-num-display" data-to="80" data-decimals="0" data-suffix="%">80%</div>
+          <p class="vs-cap cr-meta">Of routine work automated</p>
+        </div>
+      </div>
+
+      <div class="vs-card cr-card" data-reveal style="--d:.26s">
+        <div class="vs-card-top cr-meta"><i data-lucide="wallet"></i><span>Better Efficiency</span></div>
+        <div>
+          <div class="vs-num cr-num-display" data-to="92" data-decimals="0" data-suffix="%">92%</div>
+          <p class="vs-cap cr-meta">Operational cost removed</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.vs-section');
+  if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
+  if (!sec) return;
+
+  var nums = Array.prototype.slice.call(sec.querySelectorAll('.vs-num'));
+
+  function fmt(v, dec, suf) { return v.toFixed(dec) + suf; }
+  function countUp(el) {
+    var to = parseFloat(el.getAttribute('data-to'));
+    var dec = parseInt(el.getAttribute('data-decimals'), 10) || 0;
+    var suf = el.getAttribute('data-suffix') || '';
+    var dur = 1200, t0 = null;
+    function step(ts) {
+      if (t0 === null) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);          // easeOutCubic
+      el.textContent = fmt(to * eased, dec, suf);
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = fmt(to, dec, suf);     // land exactly on target
+    }
+    requestAnimationFrame(step);
+  }
+
+  function revealOnly() {
+    sec.querySelectorAll('[data-reveal]').forEach(function (el) { el.classList.add('in-view'); });
+  }
+
+  // reduced-motion or no IntersectionObserver → show everything + final numbers (no count)
+  if (reduce || !('IntersectionObserver' in window)) { revealOnly(); return; }
+
+  // pre-set to 0 so the count starts clean, then count up + reveal on first view
+  nums.forEach(function (el) {
+    var dec = parseInt(el.getAttribute('data-decimals'), 10) || 0;
+    el.textContent = fmt(0, dec, el.getAttribute('data-suffix') || '');
+  });
+  var io = new IntersectionObserver(function (ents) {
+    ents.forEach(function (en) {
+      if (en.isIntersecting) {
+        revealOnly();
+        nums.forEach(countUp);
+        io.disconnect();
+      }
+    });
+  }, { threshold: 0.25 });
+  io.observe(sec);
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Grid · four-column-equal — team about</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Grid · four-column-equal        from component-team-about.html
+  ════════════════════════════════════════════════════════════════════════
+  THE CLAIM   **The people and the account of themselves are one argument.**
+              The profile is explicit that this is the only one of the four
+              team structures carrying a *story*; the rest present people. So
+              the header is allowed to run — eyebrow, headline, rule, a
+              two-column intro — and the roster underneath it is what the story
+              is about. This is the richest band in the group and it is
+              supposed to be; the density is the point, not an excess.
+
+  STRUCTURE   Unchanged. Eyebrow row · headline · hairline · two-column intro ·
+              a 4 × 2 grid of eight cells, seven of them portraits and one an
+              accent cell. DOM, scripts, ids, `data-*`, `aria-*`, `href`, `src`
+              and every behavioural hook are byte-compatible with the frozen
+              original (DR-22). The v2 file is beside this one in `_v2/`.
+
+  SEVEN PORTRAITS, UNCHANGED.
+              Seven human photographs, none touched — same files, same
+              `object-position: center 22%`, same `object-fit: cover`, none
+              hidden, none substituted. The social badges that appear over a
+              portrait on hover are OPAQUE circles carrying a glyph, not text,
+              and they were already there; an opaque control over an image is
+              the permitted case.
+
+  NO ENVIRONMENT — and that is a finding, not an omission.
+              v2 carries no abstract creative background: no gradient, no blur
+              plate, no glow, no tint wash. The eighth cell is a solid colour
+              fill, which is a surface rather than an abstract creative, and
+              the other seven are portraits. The assigned environment therefore
+              has nowhere to go. Putting one behind this band would sit a
+              landscape under an eight-line story and eight name plates, which
+              is precisely the case the blanket rule excludes.
+
+  ACCENT      **One, and it is the eighth cell.** A whole cell of colour, and
+              the composition's own device — the roster is seven people and one
+              deliberate absence, and the colour is what makes the absence read
+              as a joke rather than a gap. Everything else that was carrying a
+              hue in v2 is now ink: the badge fills on all eight cells, and the
+              pill outlines. Its ink is the token the pack names for what sits
+              on blue, which clears AA on that fill; the deep step is for other
+              hues and would not.
+
+              The joke attribution inside the quote was a second, lighter ink
+              on the coloured cell. It resolves to the same ink as the quote:
+              a second text step on a coloured surface buys a distinction the
+              em-dashes already make, and pays for it in contrast.
+
+  TYPE        The eyebrow pills were 12px, weight 600, UPPERCASE and tracked;
+              the lead statement was uppercase and weight 700; the headline was
+              an uppercase `clamp()` at weight 800. All of it lands on the ramp
+              in sentence case at 400 or 500 — including the headline, whose
+              size and face carry it without the caps that were doing the work
+              in v2.
+
+  FRAME       The portrait frame declared 1/1.04 — off the approved vocabulary
+              of four. It becomes `3/4`, the ratio the pack names for human
+              subjects. The frame is the first child of a flex COLUMN, so it is
+              a main-axis item and the grid's `align-items: stretch` reaches
+              the cell, never the frame — the declared ratio governs and no
+              height floor stands beside it. `cover` crops symmetrically about
+              the declared horizontal centre, so no face moves and nothing
+              stretches. The accent cell declares no ratio: it is a cell, not a
+              creative frame.
+
+  RESPONSIVE  The original's 1040 / 760 / 600 breakpoints. The 1240 step only
+              eased side padding, and the page gutter is now responsive by
+              token, so it has nothing left to do.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  /* ─── scope reset ─────────────────────────────────────────────── */
+  .ta-section, .ta-section * { box-sizing: border-box; }
+  /* The quiet cream step, so the raised cards separate by SURFACE CONTRAST
+     alone — no border, no depth. That was the v2 composition and it is the
+     correct one; only the token name changed. */
+  .ta-section {
+    background: var(--cr-surface-5);
+    padding: var(--cr-space-2xl) var(--cr-page-gutter);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+    font-size: var(--cr-text-body);
+  }
+  .ta-wrap { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ─── header ──────────────────────────────────────────────────── */
+  /* ONE TAG, NOT THREE — directed, DR-50. The source spells "Who We Are"
+     across three sibling spans, and each of them rendered as its own
+     outlined chip: three tags where the section has one thing to say. The
+     DOM is frozen (DR-22), so the merge is made in presentation rather
+     than by deleting two spans — the column gap closes, the interior
+     borders are suppressed, and the interior corners square off, so the
+     three boxes resolve into a single continuous chip. Every word keeps
+     its own padding, so the spacing inside the chip is still the closed
+     scale and no new value is introduced. */
+  .ta-eyebrow { display: flex; align-items: center; gap: var(--cr-space-xs); column-gap: 0; }
+  .ta-spark { width: 20px; height: 20px; color: var(--cr-text-primary); stroke-width: var(--cr-icon-stroke-md); }
+  .ta-eye-pill {
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: 0;
+    padding: var(--cr-space-xs);
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    color: var(--cr-text-primary);
+  }
+  /* The chip's outer corners are the control radius; the interior ones do
+     not exist, because inside one chip there is no corner. `of-type` and
+     not `first-child`: the container's first child is the sparkle mark. */
+  .ta-eye-pill:first-of-type {
+    margin-left: var(--cr-space-xs);          /* the distance the closed gap no longer supplies */
+    border-top-left-radius: var(--cr-radius-control);
+    border-bottom-left-radius: var(--cr-radius-control);
+  }
+  .ta-eye-pill:last-of-type {
+    border-top-right-radius: var(--cr-radius-control);
+    border-bottom-right-radius: var(--cr-radius-control);
+  }
+  /* Both sides of every interior seam, not one: dropping only the left
+     border leaves the previous chip's right border standing and the seam
+     is still drawn. */
+  .ta-eye-pill + .ta-eye-pill { border-left-width: 0; }
+  .ta-eye-pill:not(:last-of-type) { border-right-width: 0; }
+
+  .ta-title {
+    margin: var(--cr-space-s) 0 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h2);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+
+  .ta-rule { border: 0; border-top: var(--cr-stroke) solid var(--cr-border-default); margin: var(--cr-space-m) 0; }
+
+  /* lead (narrow) beside body (wide), top-aligned — the track ratio is the
+     composition and is left exactly as authored. */
+  .ta-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.3fr);
+    column-gap: var(--cr-space-m);
+    align-items: start;
+  }
+  .ta-lead {
+    margin: 0; min-width: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    color: var(--cr-text-primary);
+  }
+  .ta-body { min-width: 0; max-width: var(--cr-measure-body); }
+  .ta-body p {
+    margin: 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+  .ta-body p + p { margin-top: var(--cr-space-s); }
+
+  /* ─── people grid ─────────────────────────────────────────────── */
+  .ta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: var(--cr-space-s);
+    row-gap: var(--cr-space-m);
+    margin-top: var(--cr-rhythm-content);
+    align-items: stretch;                      /* the accent cell stretches to row height */
+  }
+  .ta-cell { display: flex; flex-direction: column; min-width: 0; }
+
+  /* THE PORTRAIT FRAME. `aspect-ratio` alone governs the proportion — no
+     height floor beside it, and the cell is a flex COLUMN, so the frame is
+     a main-axis item that the grid's stretch never reaches. */
+  .ta-card {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    border-radius: var(--cr-radius-card);
+    overflow: hidden;
+    background: var(--cr-bg-raised);
+  }
+  .ta-card img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center 22%;   /* unchanged */
+    display: block;
+  }
+  /* hover/focus reveals the badges — progressive disclosure of real controls */
+  .ta-card-socials {
+    position: absolute; top: var(--cr-space-xs); left: var(--cr-space-xs);
+    display: flex; gap: var(--cr-space-xs);
+    opacity: 0; transform: translateY(-6px); pointer-events: none;
+    transition: opacity .22s ease, transform .22s ease;
+  }
+  .ta-card:hover .ta-card-socials,
+  .ta-card:focus-within .ta-card-socials { opacity: 1; transform: none; pointer-events: auto; }
+
+  /* name plate + role (below the portrait cards) */
+  .ta-meta { margin-top: var(--cr-space-xs); }
+  .ta-pill {
+    display: inline-block;
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-control);
+    padding: var(--cr-space-xs);
+    font-family: var(--cr-font-display);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-heading);
+    color: var(--cr-text-primary);
+  }
+  .ta-role {
+    margin: var(--cr-space-xs) 0 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    letter-spacing: 0;
+    color: var(--cr-text-secondary);
+  }
+
+  /* social badge — an OPAQUE ink disc, which is why it may sit over a
+     photograph. In ink rather than a hue: eight cells times two badges is
+     sixteen marks, and the section spends one accent moment, on the cell. */
+  .ta-badge {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--cr-text-primary);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--cr-text-inverse); text-decoration: none;
+    transition: transform .15s ease, background .2s ease;
+  }
+  .ta-badge svg { width: 16px; height: 16px; display: block; }
+  .ta-badge:hover { background: var(--cr-neutral-1000); transform: translateY(-1px); }
+  .ta-badge:active { transform: scale(.94); }
+  .ta-badge:focus-visible { outline: 2px solid var(--cr-text-primary); outline-offset: 2px; }
+
+  /* ─── the accent cell — the section's ONE accent moment ─────────── */
+  .ta-accent {
+    display: flex; flex-direction: column;
+    background: var(--cr-bg-accent);
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-s);
+    min-height: 0;
+    color: var(--cr-on-accent-light);          /* the ink the pack names for what sits on blue */
+  }
+  .ta-accent .ta-card-socials {
+    position: static; opacity: 1; transform: none; pointer-events: auto;  /* always visible here */
+  }
+  .ta-accent-quote {
+    margin: var(--cr-space-s) 0 0;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-on-accent-light);
+  }
+  /* one ink on a coloured surface — see the header note */
+  .ta-accent-quote span { color: var(--cr-on-accent-light); }
+  .ta-accent-meta { margin-top: auto; padding-top: var(--cr-space-s); }
+  .ta-accent .ta-pill {
+    border-color: var(--cr-text-primary);
+    color: var(--cr-on-accent-light);
+  }
+  .ta-accent .ta-role { color: var(--cr-on-accent-light); }
+
+  /* ─── MOTION: reveal — unchanged in kind; no-JS shows everything ── */
+  .has-js .ta-section [data-reveal] { opacity: 0; transform: translateY(20px); }
+  .has-js .ta-section [data-reveal].in-view {
+    animation: taRise .7s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes taRise { to { opacity: 1; transform: none; } }
+
+  /* Matched to the trigger's specificity — a guard that loses the cascade
+     is not a guard. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .ta-section [data-reveal],
+    .has-js .ta-section [data-reveal].in-view { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* ─── responsive ──────────────────────────────────────────────── */
+  @media (max-width: 1040px) {
+    .ta-section { padding-top: var(--cr-space-xl); padding-bottom: var(--cr-space-xl); }
+    .ta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--cr-space-s); row-gap: var(--cr-space-m); }
+  }
+  @media (max-width: 760px) {
+    .ta-intro { grid-template-columns: minmax(0, 1fr); row-gap: var(--cr-space-s); }
+    .ta-body { max-width: none; }
+  }
+  @media (max-width: 600px) {
+    .ta-section { padding-top: var(--cr-space-m); padding-bottom: var(--cr-space-m); }
+    .ta-title { font-size: var(--cr-text-h4); }
+    .ta-grid { column-gap: var(--cr-space-xs); row-gap: var(--cr-space-s); }
+    .ta-accent { padding: var(--cr-space-xs); }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget
+  Every dimension this specimen moves, declared. Predicate 6 fails on any
+  change not listed here, and on any line here that moved nothing.
+
+  THREE LINES ARE `directed`, and they are one decision: the eyebrow's three
+  chips are merged into a single tag (DR-50). The DOM is frozen, so the merge
+  is drawn rather than deleted — both borders at each interior seam go to
+  zero, and the first chip takes the margin the closed column gap no longer
+  supplies. The chips' widths move with that and are resultants the predicate
+  suppresses under the authored change on the same node. The radius is not
+  among the three: squaring the interior corners is still the radius pair,
+  and the line that already claimed it covers the move.
+  .in-view         | font-size              | type-ramp
+  .lucide          | font-size              | type-ramp
+  .ta-accent-meta  | font-size              | type-ramp
+  .ta-accent-meta  | margin-top             | spacing-scale
+  .ta-accent-meta  | padding-top            | spacing-scale
+  .ta-accent-quote | font-size              | type-ramp
+  .ta-accent-quote | line-height            | type-ramp
+  .ta-body         | font-size              | type-ramp
+  .ta-body         | max-width              | measure
+  .ta-card         | aspect-ratio           | ratio-vocabulary
+  .ta-card         | border-radius          | radius-pair
+  .ta-card         | font-size              | type-ramp
+  .ta-card-socials | column-gap             | spacing-scale
+  .ta-card-socials | font-size              | type-ramp
+  .ta-card-socials | row-gap                | spacing-scale
+  .ta-cell         | border-radius          | radius-pair
+  .ta-cell         | padding-bottom         | spacing-scale
+  .ta-cell         | padding-left           | spacing-scale
+  .ta-cell         | padding-right          | spacing-scale
+  .ta-cell         | padding-top            | spacing-scale
+  .ta-eye-pill     | border-left-width      | directed
+  .ta-eye-pill     | border-radius          | radius-pair
+  .ta-eye-pill     | border-right-width     | directed
+  .ta-eye-pill     | font-size              | type-ramp
+  .ta-eye-pill     | line-height            | type-ramp
+  .ta-eye-pill     | margin-left            | directed
+  .ta-eye-pill     | padding-bottom         | spacing-scale
+  .ta-eye-pill     | padding-left           | spacing-scale
+  .ta-eye-pill     | padding-right          | spacing-scale
+  .ta-eye-pill     | padding-top            | spacing-scale
+  .ta-eyebrow      | column-gap             | spacing-scale
+  .ta-eyebrow      | font-size              | type-ramp
+  .ta-eyebrow      | row-gap                | spacing-scale
+  .ta-grid         | column-gap             | spacing-scale
+  .ta-grid         | font-size              | type-ramp
+  .ta-grid         | margin-top             | spacing-scale
+  .ta-grid         | row-gap                | spacing-scale
+  .ta-intro        | column-gap             | spacing-scale
+  .ta-intro        | row-gap                | spacing-scale
+  .ta-lead         | font-size              | type-ramp
+  .ta-lead         | line-height            | type-ramp
+  .ta-meta         | font-size              | type-ramp
+  .ta-meta         | margin-top             | spacing-scale
+  .ta-pill         | border-radius          | radius-pair
+  .ta-pill         | font-size              | type-ramp
+  .ta-pill         | line-height            | type-ramp
+  .ta-pill         | padding-bottom         | spacing-scale
+  .ta-pill         | padding-left           | spacing-scale
+  .ta-pill         | padding-right          | spacing-scale
+  .ta-pill         | padding-top            | spacing-scale
+  .ta-role         | font-size              | type-ramp
+  .ta-role         | line-height            | type-ramp
+  .ta-role         | margin-top             | spacing-scale
+  .ta-rule         | margin-bottom          | spacing-scale
+  .ta-rule         | margin-top             | spacing-scale
+  .ta-title        | font-size              | type-ramp
+  .ta-title        | line-height            | type-ramp
+  .ta-title        | margin-top             | spacing-scale
+  .ta-wrap         | font-size              | type-ramp
+  br               | font-size              | type-ramp
+  br               | line-height            | type-ramp
+  img              | font-size              | type-ramp
+  p                | font-size              | type-ramp
+  p                | line-height            | type-ramp
+  path             | font-size              | type-ramp
+  span             | font-size              | type-ramp
+  span             | line-height            | type-ramp
+  svg              | font-size              | type-ramp
+-->
+
+<section class="ta-section" data-screen-label="Team · Who we are"
+         data-archetype="editorial-stack" data-hierarchy="primary" data-intent="build-trust"
+         data-register="reflective" data-signature="editorial-photography" data-density="high">
+  <div class="ta-wrap">
+
+    <!-- ── header ─────────────────────────────────────────────── -->
+    <div data-reveal style="--d:0s">
+      <div class="ta-eyebrow">
+        <i data-lucide="sparkle" class="ta-spark"></i>
+        <span class="ta-eye-pill">Who</span>
+        <span class="ta-eye-pill">We</span>
+        <span class="ta-eye-pill">Are</span>
+      </div>
+      <h2 class="ta-title">A Team Of<br>Automation Experts</h2>
+    </div>
+
+    <hr class="ta-rule" data-reveal style="--d:.08s" />
+
+    <!-- left/right intro split follows the SOURCE (not hardcoded) -->
+    <div class="ta-intro" data-reveal style="--d:.14s">
+      <p class="ta-lead">Example Brand started as a tool to take one team's busywork off their plate.</p>
+      <div class="ta-body">
+        <p>We built internal tooling to clear a finance team's repetitive operations work. But the moment it shipped, every other team wanted their backlog gone too &mdash; and our small services shop grew fast.</p>
+        <p>We realised point tools don't scale: each one quietly centralises the work back onto us. So we turned the platform into autonomous agents that drop into your existing stack &mdash; SAP, Salesforce, Epic, custom spreadsheets &mdash; and run the routine work in production. Now your operators keep the judgment; Example Brand just takes the busywork away.</p>
+      </div>
+    </div>
+
+    <!-- ── people grid (4 × 2) ────────────────────────────────── -->
+    <div class="ta-grid">
+
+      <!-- row 1 -->
+      <article class="ta-cell" data-reveal style="--d:.20s">
+        <div class="ta-card">
+          <img src="../../brand-pack/assets/imagery/avatars/avatar-jason.jpg" alt="Chris Bruce" decoding="async" />
+          <div class="ta-card-socials">
+            <a class="ta-badge" href="#" aria-label="Chris Bruce on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+            <a class="ta-badge" href="#" aria-label="Chris Bruce on GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.23 0 4.62-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg></a>
+          </div>
+        </div>
+        <div class="ta-meta">
+          <span class="ta-pill">Chris Bruce</span>
+          <p class="ta-role">Founder &amp; CEO</p>
+        </div>
+      </article>
+
+      <article class="ta-cell" data-reveal style="--d:.26s">
+        <div class="ta-card">
+          <img src="../../brand-pack/assets/imagery/avatars/team-1.jpg" alt="Sean Carey" decoding="async" />
+          <div class="ta-card-socials">
+            <a class="ta-badge" href="#" aria-label="Sean Carey on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+            <a class="ta-badge" href="#" aria-label="Sean Carey on GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.23 0 4.62-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg></a>
+          </div>
+        </div>
+        <div class="ta-meta">
+          <span class="ta-pill">Sean Carey</span>
+          <p class="ta-role">Founder &amp; CTO</p>
+        </div>
+      </article>
+
+      <article class="ta-cell" data-reveal style="--d:.32s">
+        <div class="ta-card">
+          <img src="../../brand-pack/assets/imagery/avatars/team-2.jpg" alt="Aileen Gomes" decoding="async" />
+          <div class="ta-card-socials">
+            <a class="ta-badge" href="#" aria-label="Aileen Gomes on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+            <a class="ta-badge" href="#" aria-label="Aileen Gomes on GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.23 0 4.62-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg></a>
+          </div>
+        </div>
+        <div class="ta-meta">
+          <span class="ta-pill">Aileen Gomes</span>
+          <p class="ta-role">Chief of Staff</p>
+        </div>
+      </article>
+
+      <!-- accent "mystery member" card -->
+      <article class="ta-cell ta-accent" data-reveal style="--d:.38s">
+        <div class="ta-card-socials">
+          <a class="ta-badge" href="#" aria-label="Rambo on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+          <a class="ta-badge" href="#" aria-label="Rambo on GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.23 0 4.62-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg></a>
+        </div>
+        <p class="ta-accent-quote">&ldquo;The best incident is the one you never hear about.&rdquo; <span>&mdash; Marcus Aurelius, probably &mdash; Rambo</span></p>
+        <div class="ta-accent-meta">
+          <span class="ta-pill">&ldquo;Rambo&rdquo;</span>
+          <p class="ta-role">Agent Reliability Engineer</p>
+        </div>
+      </article>
+
+      <!-- row 2 -->
+      <article class="ta-cell" data-reveal style="--d:.44s">
+        <div class="ta-card">
+          <img src="../../brand-pack/assets/imagery/avatars/team-3.jpg" alt="Thomas Stätter" decoding="async" />
+          <div class="ta-card-socials">
+            <a class="ta-badge" href="#" aria-label="Thomas Stätter on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+            <a class="ta-badge" href="#" aria-label="Thomas Stätter on GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.23 0 4.62-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg></a>
+          </div>
+        </div>
+        <div class="ta-meta">
+          <span class="ta-pill">Thomas Stätter</span>
+          <p class="ta-role">Backend Engineer</p>
+        </div>
+      </article>
+
+      <article class="ta-cell" data-reveal style="--d:.50s">
+        <div class="ta-card">
+          <img src="../../brand-pack/assets/imagery/avatars/team-oleksii.jpg" alt="Oleksii Suslov" decoding="async" />
+          <div class="ta-card-socials">
+            <a class="ta-badge" href="#" aria-label="Oleksii Suslov on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+            <a class="ta-badge" href="#" aria-label="Oleksii Suslov on GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.23 0 4.62-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg></a>
+          </div>
+        </div>
+        <div class="ta-meta">
+          <span class="ta-pill">Oleksii Suslov</span>
+          <p class="ta-role">Systems Engineer</p>
+        </div>
+      </article>
+
+      <article class="ta-cell" data-reveal style="--d:.56s">
+        <div class="ta-card">
+          <img src="../../brand-pack/assets/imagery/avatars/team-5.jpg" alt="Joe Harrison" decoding="async" />
+          <div class="ta-card-socials">
+            <a class="ta-badge" href="#" aria-label="Joe Harrison on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+            <a class="ta-badge" href="#" aria-label="Joe Harrison on GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.23 0 4.62-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg></a>
+          </div>
+        </div>
+        <div class="ta-meta">
+          <span class="ta-pill">Joe Harrison</span>
+          <p class="ta-role">Frontend Engineer</p>
+        </div>
+      </article>
+
+      <article class="ta-cell" data-reveal style="--d:.62s">
+        <div class="ta-card">
+          <img src="../../brand-pack/assets/imagery/avatars/team-jasonalex.jpg" alt="Jason Alex" decoding="async" />
+          <div class="ta-card-socials">
+            <a class="ta-badge" href="#" aria-label="Jason Alex on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+            <a class="ta-badge" href="#" aria-label="Jason Alex on GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.23 0 4.62-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg></a>
+          </div>
+        </div>
+        <div class="ta-meta">
+          <span class="ta-pill">Jason Alex</span>
+          <p class="ta-role">Site Reliability Engineer</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.ta-section');
+
+  // Lucide — draw the lone ✦ sparkle once, guarded (a blocked CDN must not break the section)
+  if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
+
+  if (!sec) return;
+
+  function reveal() {
+    sec.querySelectorAll('[data-reveal]').forEach(function (n) { n.classList.add('in-view'); });
+  }
+  if (reduce) { reveal(); return; }
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) { if (en.isIntersecting) { reveal(); io.disconnect(); } });
+    }, { threshold: 0.12 });
+    io.observe(sec);
+  } else {
+    reveal();
+  }
+})();
+</script>
+
+</body>
+</html>

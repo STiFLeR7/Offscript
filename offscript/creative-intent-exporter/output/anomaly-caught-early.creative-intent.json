@@ -1,0 +1,11 @@
+{
+  "id": "anomaly-caught-early",
+  "contractVersion": 1,
+  "digest": "sha256:96e6879ec90683e146cef4b3ea141033877e0a8a14ee81fe279dac3da3610064",
+  "belief": "an anomaly was caught and flagged before the customer ever noticed anything was wrong",
+  "feature": "ai-intelligence",
+  "ratio": "3:4",
+  "camera": "macro",
+  "must-include": [],
+  "content-provenance": "augmented"
+}

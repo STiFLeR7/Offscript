@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Resources — What's happening</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Resources carousel        from component-resources-carousel.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  An expanding-panel deck: five panels share one band, one open
+                wide and the rest fanned into strips whose width falls off with
+                distance from the open one. The caption below belongs to
+                whichever panel is open.
+
+  THE CLAIM     **Many items in one band's height, at the cost of showing one
+                at a time.** The profile is explicit that this is a trade, and
+                that it is the right trade for a browsing reader. Everything
+                below protects the browsing: the panels are the subject, the
+                controls are quiet, and the type never competes with them.
+
+  STRUCTURE     Unchanged. Header with two nav buttons, a five-panel track,
+                a caption block holding all five captions with one shown, and
+                a CTA. DOM order, element types and depth are byte-compatible
+                with the frozen original (DR-22). Every listener, key handler
+                and the fan's flex-grow table are untouched.
+
+  ENVIRONMENT   `env-valley-deep` at 64% 45%, on panel ZERO only. That panel
+                was the section's one abstract creative background — a
+                three-stop dark wash, a tiled grain layer and two translucent
+                orbit rings — which is the whole idiom the blanket rule
+                retires. It becomes the approved environment carrying the
+                texture stack, as ONE background stack rather than a layer on
+                top: a blend mode composites against what is beneath it in the
+                SAME background, so grain on a separate element resolves
+                `overlay` against transparency and renders as grey static. The
+                two orbit rings and the grain span are frozen DOM, so they are
+                made INERT rather than deleted.
+
+                Panels one to four are NOT re-anchored to match. They carry
+                real photographs and no directive; the rule forces one change
+                on one panel, and moving the other four would be a redesign.
+
+  NO TYPE ON    The milestone lockup does not sit on the photograph. The panel
+  THE PICTURE   already stacked its type to the BOTTOM, so the type-free region
+                exists in the composition rather than being manufactured: the
+                lockup is anchored to the lower edge and given its own opaque
+                dark plate, and the environment occupies the region above it
+                that carries no words. Remove the photograph and not one word
+                changes legibility.
+
+  THE FADE      The lockup used to fade from 0 to 1 on every slide change. Now
+                that it owns a surface, fading it would slide a HALF-OPAQUE
+                dark plate across a photograph for 450ms on every advance —
+                visible in motion and in any still caught mid-transition. So
+                the plate switches with `visibility` and only the INK fades:
+                the three text lines carry no surface of their own, so their
+                opacity moves ink and nothing else.
+
+  IMAGERY       All four photographs KEPT, and each for its own reason.
+                leader-2 and leader-1 are human portraits, which are never
+                replaced. resource-office is a photograph of the team.
+                resource-docs is the SUBJECT of its panel — the flat-lay is
+                what the DocXter item is about, not a backdrop behind it. The
+                profile records this section as REQUIRING real imagery per
+                item. Only their directory moved; the basenames are the same
+                files.
+
+  GEOMETRY      The track gap moves onto the spacing scale and is NOT claimed
+                as frozen geometry. The frozen script advances by setting
+                `flex-grow` from a fixed fan table; it never reads a width or
+                adds a gap to one, so there is no arithmetic contract here for
+                a spacing change to desync. An exemption claimed where none is
+                needed is counted and printed like any other, which is exactly
+                how a gate stops being one.
+
+  ACCENT        ONE, and it is the primary control. The two nav buttons and
+                the CTA were all in the same hue, which said the deck has three
+                equally important actions; it has one — read the thing — and
+                two ways to look around. The CTA takes the accent, the arrows
+                step down to quiet outlined controls. On hover the CTA's fill
+                descends to the 800 step, so its label inverts: primary ink on
+                that step measures 1.9:1. The focus ring stays dark ink at
+                ~14:1 rather than becoming a hue, because a focus ring is a
+                legibility instrument and not a brand moment.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  .wh-section, .wh-section * { box-sizing: border-box; }
+  .wh-section {
+    background: var(--cr-page-ground);
+    padding: var(--cr-space-xl) var(--cr-page-gutter);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-primary);
+  }
+  .wh-wrap { max-width: var(--cr-content-max); margin: 0 auto; }   /* no side framing rules — per brand */
+
+  /* ─── header ──────────────────────────────────────────────────── */
+  .wh-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: var(--cr-space-s); margin-bottom: var(--cr-space-m);
+  }
+  .wh-title, .wh-subtitle {
+    margin: 0; font-weight: 400; font-size: var(--cr-text-h5);
+    line-height: var(--cr-leading-heading); letter-spacing: var(--cr-tracking-heading);
+  }
+  .wh-title { font-family: var(--cr-font-display); color: var(--cr-text-primary); }
+  /* The grey second line is a sentence, not a heading level — same size by the
+     source's composition, body face and secondary ink by its role. */
+  .wh-subtitle { font-family: var(--cr-font-body); color: var(--cr-text-secondary); }
+
+  .wh-nav { display: flex; gap: var(--cr-space-xs); flex: none; }
+  /* Quiet controls. Looking around is not the action this section wants. */
+  .wh-arrow {
+    width: 46px; height: 42px; border-radius: var(--cr-radius-control);
+    background: var(--cr-surface-1);
+    color: var(--cr-text-primary);
+    border: var(--cr-stroke) solid var(--cr-border-default); cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: background-color .2s ease, border-color .2s ease, transform .12s ease;
+  }
+  .wh-arrow svg { width: 20px; height: 20px; stroke-width: var(--cr-icon-stroke-md); }
+  .wh-arrow:hover { background: var(--cr-surface-5); border-color: var(--cr-border-strong); }
+  .wh-arrow:active { transform: scale(.95); }
+  /* A focus ring is a legibility instrument — dark ink at ~14:1, never a hue. */
+  .wh-arrow:focus-visible { outline: 2px solid var(--cr-text-primary); outline-offset: 2px; }
+
+  /* ─── track + panels (expanding accordion) ────────────────────── */
+  /* The gap is a spacing decision, not an arithmetic contract: the script sets
+     flex-grow from a fixed fan table and never reads a width or a gap. */
+  .wh-track { display: flex; gap: var(--cr-space-xs); height: var(--wh-h, 500px); }
+  .wh-panel {
+    flex: 1 1 0;                  /* basis 0 → smooth, content can't force width */
+    flex-grow: 1;                /* JS sets a DISTANCE-BASED flex-grow (the fan) per active card;
+                                    this uniform value is only the no-JS-edit fallback */
+    min-width: 12px;             /* far-strip floor — low so the last cards go SLICK (thin slivers), per source */
+    position: relative;
+    border: none; padding: 0; margin: 0; background: none;
+    border-radius: var(--cr-radius-card);
+    overflow: hidden;            /* clips the image + any on-panel content */
+    cursor: pointer;
+    transition: flex-grow .55s cubic-bezier(.16,1,.3,1);
+  }
+  .wh-panel.is-open { min-width: 0; cursor: default; }   /* width comes from the inline fan flex-grow */
+  .wh-panel:focus-visible { outline: 2px solid var(--cr-text-primary); outline-offset: 3px; }
+
+  .wh-media { position: absolute; inset: 0; }
+  .wh-media img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+
+  /* THE STANDARD CREATIVE TREATMENT, replacing the panel's three-stop wash.
+     ONE background stack, three layers, in this order: grain on top, grunge
+     under it, the environment underneath both. It has to be one stack — a
+     blend mode composites against what is beneath it in the SAME background,
+     so moving the grain onto a separate element resolves `overlay` against
+     transparency and renders the texture at full strength as grey static. The
+     URLs are written out rather than reached through a `--cr-env-*` custom
+     property, because a url() inside a custom property resolves against the
+     CONSUMING document and fails silently. */
+  .wh-media--brand {
+    background-color: var(--cr-bg-dark);
+    /* THE BRAND WASH RIDES THE SAME STACK — directed, DR-52. v2's own gradient
+       re-taken: the panel runs from an unveiled environment at the top to the
+       direction's dark ink at the bottom. Where v2 ramped between two hand-set
+       inks nobody declared, every stop here is `--cr-bg-dark` at a strength,
+       mixed toward transparent rather than toward a second colour, so the wash
+       cannot drift off the palette. First layer, blending `normal`: an
+       `overlay` would composite it against the environment and the panel would
+       ramp toward a tint rather than the ink. Every other list gains a matching
+       first entry — the four are read in parallel. */
+    background-image:
+      linear-gradient(180deg,
+        color-mix(in srgb, var(--cr-bg-dark) 0%, transparent) 0%,
+        color-mix(in srgb, var(--cr-bg-dark) 46%, transparent) 32%,
+        var(--cr-bg-dark) 58%),
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-valley-deep.jpg");
+    background-size: cover, var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, 0 0, center, 64% 45%;
+    background-blend-mode: normal, var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: no-repeat, repeat, no-repeat, no-repeat;
+  }
+
+  /* The grain span and the two orbit rings are the abstract decoration this
+     pass retires; the texture now lives in the stack above and the rings were
+     never anything but decoration. Frozen DOM, so made inert, never deleted. */
+  .wh-grain { display: none; }
+  .wh-orbit { display: none; }
+
+  /* THE FOOT OF THE WASH — directed, DR-52. Still anchored to the lower edge
+     the type was already stacked against; it simply no longer carries a plate
+     of its own, because the ramp declared on the panel above arrives at full
+     ink exactly here. */
+  .wh-brand-inner {
+    position: absolute; inset: auto 0 0 0; padding: var(--cr-space-s);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    background: var(--cr-bg-dark);
+    color: var(--cr-text-inverse);
+    visibility: hidden;                        /* hidden in a strip */
+    transition: visibility 0s linear .45s;
+  }
+  .wh-panel.is-open .wh-brand-inner { visibility: visible; transition-delay: 0s; }
+  /* Only the INK fades. These three lines carry no surface of their own, so
+     their opacity moves ink and never a plate. */
+  .wh-brand-eyebrow, .wh-brand-stat, .wh-brand-sub {
+    opacity: 0; transition: opacity .45s ease .1s;
+  }
+  .wh-panel.is-open .wh-brand-eyebrow,
+  .wh-panel.is-open .wh-brand-stat,
+  .wh-panel.is-open .wh-brand-sub { opacity: 1; }
+
+  /* Supporting text: no uppercase, no tracking. Secondary ink on the dark
+     plate is the pack's dark-surface pairing at 10.4:1. */
+  .wh-brand-eyebrow {
+    font-family: var(--cr-font-body); font-weight: 500;
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    color: var(--cr-neutral-400);
+    margin: 0 0 var(--cr-space-xs); white-space: nowrap;
+  }
+  .wh-brand-stat {
+    font-family: var(--cr-font-display); font-weight: 400; font-size: var(--cr-text-h3);
+    line-height: 1; letter-spacing: var(--cr-tracking-heading); margin: 0; white-space: nowrap;
+  }
+  .wh-brand-sub {
+    margin: var(--cr-space-xs) 0 0; font-family: var(--cr-font-body);
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    color: var(--cr-neutral-400); white-space: nowrap;
+  }
+
+  /* ─── footer: caption (all rendered, active shown) + CTA ───────── */
+  .wh-foot {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: var(--cr-space-m); margin-top: var(--cr-space-s);
+  }
+  .wh-captions { position: relative; flex: 1 1 auto; max-width: 640px; min-height: var(--cap-h, 84px); }
+  .wh-caption {
+    position: absolute; top: 0; left: 0; right: 0; margin: 0;
+    font-family: var(--cr-font-body); font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    opacity: 0; pointer-events: none; transition: opacity .4s ease;
+  }
+  .wh-caption.is-active { opacity: 1; pointer-events: auto; }
+  .wh-caption strong { font-weight: 500; color: var(--cr-text-primary); }
+  .wh-caption span { color: var(--cr-text-secondary); }
+
+  .wh-cta-wrap { flex: none; }
+  /* THE ONE ACCENT MOMENT — the primary control, and nothing else. */
+  .wh-cta {
+    display: inline-flex; align-items: center; gap: var(--cr-space-xs);
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-on-accent-light); text-decoration: none;
+    border: var(--cr-stroke) solid transparent; border-radius: var(--cr-radius-control);
+    padding: var(--cr-space-xs) var(--cr-space-s); background: var(--cr-accent-orange);
+    transition: background-color .2s ease, color .2s ease;
+  }
+  .wh-cta .wh-arr { transition: transform .2s ease; }
+  /* The fill descends to the 800 step, so the label MUST invert: primary ink
+     on that step measures 1.9:1. */
+  .wh-cta:hover { background: var(--cr-accent-orange-800); color: var(--cr-text-inverse); }
+  .wh-cta:hover .wh-arr { transform: translateX(3px); }
+  .wh-cta:focus-visible { outline: 2px solid var(--cr-text-primary); outline-offset: 2px; }
+
+  /* ─── entrance reveal (anti-race, fires once; no-JS shows all) ─── */
+  .has-js .wh-section [data-reveal] { opacity: 0; transform: translateY(18px); }
+  .has-js .wh-section [data-reveal].in-view {
+    animation: whRise .7s cubic-bezier(.16,1,.3,1) forwards; animation-delay: var(--d, 0s);
+  }
+  @keyframes whRise { to { opacity: 1; transform: none; } }
+
+  /* The guards match their triggers' specificity, so the reveal SNAPS, the
+     fan lands at its width, and the lockup's ink is simply there. */
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .wh-section [data-reveal],
+    .has-js .wh-section [data-reveal].in-view { opacity: 1; transform: none; animation: none; }
+    .wh-panel, .wh-caption, .wh-brand-inner { transition: none; }
+    .wh-brand-eyebrow, .wh-brand-stat, .wh-brand-sub { transition: none; }
+    .wh-panel.is-open .wh-brand-eyebrow,
+    .wh-panel.is-open .wh-brand-stat,
+    .wh-panel.is-open .wh-brand-sub { opacity: 1; }
+  }
+
+  /* ─── responsive ──────────────────────────────────────────────── */
+  /* NO per-section type breakpoint and no per-section gutter: the ramp steps
+     at the pack's own breakpoints and the gutter token is already responsive.
+     What remains is the panel height and the accordion-to-carousel switch,
+     which is layout and stays exactly as it was. */
+  @media (max-width: 1040px) {
+    .wh-track { --wh-h: 440px; }
+  }
+
+  /* ≤768: abandon the accordion → one-slide carousel (arrows page) */
+  @media (max-width: 768px) {
+    .wh-track { --wh-h: 400px; gap: 0; }
+    .wh-panel { display: none; flex: 1 1 100%; min-width: 0; }
+    .wh-panel.is-open { display: block; }
+    .wh-foot { flex-direction: column; align-items: stretch; gap: var(--cr-space-s); }
+    .wh-captions { width: 100%; max-width: none; min-height: var(--cap-h, 110px); }
+  }
+  @media (max-width: 600px) {
+    .wh-head { flex-wrap: wrap; }
+    .wh-track { --wh-h: 360px; }
+    .wh-captions { min-height: var(--cap-h, 118px); }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. Three notes on rows that are not plain spacing.
+
+     There is NO frozen-geometry exemption in this file. The track gap moves
+     onto the spacing scale because the frozen script sets flex-grow from a
+     fixed fan table and never reads a width or adds a gap to one. Claiming an
+     exemption that is not needed gets it counted and printed like any other.
+
+     The lockup's padding row is the plate. It stops being the panel's full
+     inset and becomes the inset of a band anchored to the lower edge, which is
+     what lets the environment keep the region above that carries no words.
+
+     The strong and span rows are inheritance, not a decision: they are the
+     two inline runs inside a caption, and re-typesetting the caption moves the
+     metrics they inherit. Nothing about either run was set independently.
+  .wh-arr           | font-size              | type-ramp
+  .wh-arr           | line-height            | type-ramp
+  .wh-brand-eyebrow | font-size              | type-ramp
+  .wh-brand-eyebrow | line-height            | type-ramp
+  .wh-brand-eyebrow | margin-bottom          | spacing-scale
+  .wh-brand-inner   | padding-bottom         | spacing-scale
+  .wh-brand-inner   | padding-left           | spacing-scale
+  .wh-brand-inner   | padding-right          | spacing-scale
+  .wh-brand-inner   | padding-top            | spacing-scale
+  .wh-brand-stat    | font-size              | type-ramp
+  .wh-brand-stat    | line-height            | type-ramp
+  .wh-brand-sub     | line-height            | type-ramp
+  .wh-caption       | font-size              | type-ramp
+  .wh-caption       | line-height            | type-ramp
+  .wh-cta           | border-radius          | radius-pair
+  .wh-cta           | column-gap             | spacing-scale
+  .wh-cta           | font-size              | type-ramp
+  .wh-cta           | line-height            | type-ramp
+  .wh-cta           | padding-left           | spacing-scale
+  .wh-cta           | padding-right          | spacing-scale
+  .wh-cta           | row-gap                | spacing-scale
+  .wh-foot          | margin-top             | spacing-scale
+  .wh-head          | column-gap             | spacing-scale
+  .wh-head          | row-gap                | spacing-scale
+  .wh-nav           | column-gap             | spacing-scale
+  .wh-nav           | row-gap                | spacing-scale
+  .wh-subtitle      | font-size              | type-ramp
+  .wh-subtitle      | line-height            | type-ramp
+  .wh-title         | font-size              | type-ramp
+  .wh-title         | line-height            | type-ramp
+  .wh-track         | column-gap             | spacing-scale
+  .wh-track         | row-gap                | spacing-scale
+  span              | font-size              | type-ramp
+  span              | line-height            | type-ramp
+  strong            | font-size              | type-ramp
+  strong            | line-height            | type-ramp
+-->
+
+<section class="wh-section" data-screen-label="Resources · What's happening"
+         data-archetype="storytelling-composition" data-hierarchy="supporting" data-intent="educate"
+         data-register="narrative" data-signature="editorial-photography" data-density="medium">
+  <div class="wh-wrap">
+
+    <!-- ── header ─────────────────────────────────────────────── -->
+    <div class="wh-head" data-reveal>
+      <div class="wh-titles">
+        <h2 class="wh-title">What's happening</h2>
+        <p class="wh-subtitle">See the latest from Example Brand.</p>
+      </div>
+      <div class="wh-nav">
+        <button class="wh-arrow" type="button" data-dir="-1" aria-label="Previous slide"><i data-lucide="arrow-left"></i></button>
+        <button class="wh-arrow" type="button" data-dir="1" aria-label="Next slide"><i data-lucide="arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ── expanding-panel track ──────────────────────────────── -->
+    <div class="wh-track" data-reveal style="--d:.08s" role="group" aria-label="Latest from Example Brand" tabindex="0">
+
+      <!-- 0 · featured milestone — brand-gradient designed panel -->
+      <button class="wh-panel is-open" type="button" data-index="0" style="flex-grow:10" aria-label="10,000+ teams had their busiest quarter on Example Brand">
+        <div class="wh-media wh-media--brand">
+          <span class="wh-orbit wh-orbit--1"></span>
+          <span class="wh-orbit wh-orbit--2"></span>
+          <span class="wh-grain"></span>
+          <div class="wh-brand-inner">
+            <p class="wh-brand-eyebrow">Q1 2026 &middot; Milestone</p>
+            <p class="wh-brand-stat">4M+ tasks</p>
+            <p class="wh-brand-sub">cleared autonomously, at 99.99% uptime</p>
+          </div>
+        </div>
+      </button>
+
+      <!-- 1 · customer story -->
+      <button class="wh-panel" type="button" data-index="1" style="flex-grow:3.2" aria-label="Meridian Bank cut month-end close from nine days to two">
+        <div class="wh-media"><img src="../../brand-pack/assets/imagery/avatars/leader-2.jpg" alt="Finance leader at Meridian Bank" decoding="async" /></div>
+      </button>
+
+      <!-- 2 · product · DocXter -->
+      <button class="wh-panel" type="button" data-index="2" style="flex-grow:1.5" aria-label="DocXter now reads 40+ document types out of the box">
+        <div class="wh-media"><img src="../../brand-pack/assets/imagery/resource-docs.jpg" alt="Documents and a laptop on a desk" decoding="async" /></div>
+      </button>
+
+      <!-- 3 · field note -->
+      <button class="wh-panel" type="button" data-index="3" style="flex-grow:0.5" aria-label="A week in the life of an autonomous ops agent">
+        <div class="wh-media"><img src="../../brand-pack/assets/imagery/avatars/leader-1.jpg" alt="Example Brand reliability lead at his desk" decoding="async" /></div>
+      </button>
+
+      <!-- 4 · inside Example Brand -->
+      <button class="wh-panel" type="button" data-index="4" style="flex-grow:0.2" aria-label="We are growing across Pune and remote">
+        <div class="wh-media"><img src="../../brand-pack/assets/imagery/resource-office.jpg" alt="Example Brand engineering team at work" decoding="async" /></div>
+      </button>
+
+    </div>
+
+    <!-- ── footer: caption (all in DOM, active shown) + CTA ─────── -->
+    <div class="wh-foot" data-reveal style="--d:.16s">
+      <div class="wh-captions">
+        <p class="wh-caption is-active" data-cap="0"><strong>10,000+ teams just had their busiest quarter on Example Brand.</strong> <span>Across Q1 2026, Example Brand agents cleared more than 4M routine tasks for finance, healthcare and logistics teams while holding 99.99% uptime.</span></p>
+        <p class="wh-caption" data-cap="1"><strong>Meridian Bank cut month-end close from nine days to two.</strong> <span>Their finance team automated five FTE of reconciliation in four weeks, with every exception logged and reviewable.</span></p>
+        <p class="wh-caption" data-cap="2"><strong>DocXter now reads 40+ document types out of the box.</strong> <span>Invoices, claims, contracts and scanned PDFs &mdash; extracted, validated and routed without a template to maintain.</span></p>
+        <p class="wh-caption" data-cap="3"><strong>A week in the life of an autonomous ops agent.</strong> <span>Our reliability lead walks through how exceptions get caught, escalated and resolved before they ever reach your team.</span></p>
+        <p class="wh-caption" data-cap="4"><strong>We're growing across Pune and remote.</strong> <span>Engineering, forward-deployed and customer roles are open as we scale APA to more teams across more industries.</span></p>
+      </div>
+      <div class="wh-cta-wrap">
+        <a class="wh-cta" href="#">Read more <span class="wh-arr">&rarr;</span></a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.wh-section');
+  if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
+  if (!sec) return;
+
+  // ── carousel ──
+  var panels   = Array.prototype.slice.call(sec.querySelectorAll('.wh-panel'));
+  var captions = Array.prototype.slice.call(sec.querySelectorAll('.wh-caption'));
+  var arrows   = Array.prototype.slice.call(sec.querySelectorAll('.wh-arrow'));
+  var n = panels.length, active = 0;
+  // distance-based FAN widths (open : neighbour : … : farthest) — steep tail so the
+  // last cards go SLICK (thin ~16-40px slivers), matching the source's edge
+  var GROW = [10, 3.2, 1.5, 0.5, 0.2];
+
+  function setActive(i) {
+    active = ((i % n) + n) % n;                       // cyclic — no disabled ends
+    panels.forEach(function (p, idx) {
+      var on = idx === active;
+      p.classList.toggle('is-open', on);
+      p.setAttribute('aria-current', on ? 'true' : 'false');
+      p.style.flexGrow = GROW[Math.min(Math.abs(idx - active), GROW.length - 1)];   // the fan
+    });
+    captions.forEach(function (c, idx) { c.classList.toggle('is-active', idx === active); });
+  }
+
+  panels.forEach(function (p, idx) {
+    p.addEventListener('click', function () {
+      // clicking the OPEN panel advances; clicking a COLLAPSED strip opens it
+      setActive(idx === active ? active + 1 : idx);
+    });
+  });
+  arrows.forEach(function (a) {
+    a.addEventListener('click', function () { setActive(active + parseInt(a.getAttribute('data-dir'), 10)); });
+  });
+
+  // keyboard on the track
+  var track = sec.querySelector('.wh-track');
+  if (track) {
+    track.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { setActive(active + 1); e.preventDefault(); }
+      else if (e.key === 'ArrowLeft') { setActive(active - 1); e.preventDefault(); }
+    });
+  }
+
+  // ── entrance reveal (fires once) ──
+  function reveal() { sec.querySelectorAll('[data-reveal]').forEach(function (el) { el.classList.add('in-view'); }); }
+  if (reduce) { reveal(); return; }
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) { if (en.isIntersecting) { reveal(); io.disconnect(); } });
+    }, { threshold: 0.1 });
+    io.observe(sec);
+  } else { reveal(); }
+})();
+</script>
+
+</body>
+</html>

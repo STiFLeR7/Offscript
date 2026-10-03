@@ -1,0 +1,16 @@
+{
+  "contractVersion": 1,
+  "id": "exception-triage-queue-desktop",
+  "intentDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111a",
+  "artifactType": "html",
+  "location": "test/fixtures/creative-assets-sample/artifact-a/visual.html",
+  "artifactDigest": "sha256:b019af70f0904baf7da51481f5d25a84557586cbc2f76402f5a6493a1448b33e",
+  "createdAt": "2026-08-11T00:00:00.000Z",
+  "generation": {
+    "sourceSystem": "creative-generation-fixture"
+  },
+  "approval": {
+    "status": "approved",
+    "source": "creative-generation-fixture"
+  }
+}

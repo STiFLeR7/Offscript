@@ -1,0 +1,378 @@
+{
+  "_comment": "Declarative source of truth for offscript/scripts/check-capability-closure.ts. All paths are relative to the outer repository root (D:/offscript), not offscript/ \u2014 capability evidence (docs, code, tests) legitimately spans both. A dimension's value is an array of evidence pointers; the checker treats a REQUIRED dimension as satisfied iff at least one pointer resolves to a real file or directory on disk. A dimension may also carry a free-text mnemonic (e.g. a `/offscript <subcommand>` name) alongside its real backing path \u2014 only the real path needs to resolve. `types` declares, per capability type, whether each of the seven closure dimensions is required / optional / not-applicable for that type \u2014 derived from Offscript's actual capability shapes (see CAPABILITY-CLOSURE-REPORT.md Phase 3), not invented wholesale. A capability's `type` selects which row applies; CLI is not-applicable for internal-support and contract-only types, and not-applicable (by explicit repo convention \u2014 see docs/review, docs/execution) for engine-library types, matching the real, documented 'Review/Execution are library-level, no /offscript command surface yet' statements already in this repository.",
+  "types": {
+    "engine-operator": {
+      "contract": "required",
+      "implementation": "required",
+      "tests": "required",
+      "cli": "required",
+      "docs": "required",
+      "validation": "required",
+      "observability": "required"
+    },
+    "engine-library": {
+      "contract": "required",
+      "implementation": "required",
+      "tests": "required",
+      "cli": "not-applicable",
+      "docs": "required",
+      "validation": "required",
+      "observability": "optional"
+    },
+    "standalone-package": {
+      "contract": "required",
+      "implementation": "required",
+      "tests": "required",
+      "cli": "required",
+      "docs": "required",
+      "validation": "required",
+      "observability": "optional"
+    },
+    "governance-tool": {
+      "contract": "optional",
+      "implementation": "required",
+      "tests": "required",
+      "cli": "required",
+      "docs": "required",
+      "validation": "required",
+      "observability": "required"
+    },
+    "contract-only": {
+      "contract": "required",
+      "implementation": "required",
+      "tests": "required",
+      "cli": "not-applicable",
+      "docs": "required",
+      "validation": "required",
+      "observability": "not-applicable"
+    },
+    "internal-support": {
+      "contract": "not-applicable",
+      "implementation": "required",
+      "tests": "required",
+      "cli": "not-applicable",
+      "docs": "optional",
+      "validation": "optional",
+      "observability": "not-applicable"
+    }
+  },
+  "capabilities": [
+    {
+      "name": "website-generation",
+      "type": "engine-operator",
+      "contract": [
+        "offscript/src/generate/types.ts",
+        "offscript/docs/BRIEF-CONTRACT.md",
+        "offscript/docs/brief.schema.json"
+      ],
+      "implementation": [
+        "offscript/scripts/generate.ts",
+        "offscript/src/generate/"
+      ],
+      "tests": [
+        "offscript/test/generate"
+      ],
+      "cli": [
+        "/offscript generate --track website",
+        "offscript/scripts/generate.ts"
+      ],
+      "docs": [
+        "README.md",
+        "CLAUDE.md",
+        "docs/OFFSCRIPT-RUNTIME-ARCHITECTURE.md"
+      ],
+      "validation": [
+        "offscript/test/generate",
+        "offscript/src/generate/validate.ts"
+      ],
+      "observability": [
+        "<client>/website/score.json",
+        "<client>/website/rendering-ir.json"
+      ]
+    },
+    {
+      "name": "collateral-generation",
+      "type": "engine-operator",
+      "contract": [
+        "offscript/src/generate/types.ts",
+        "offscript/docs/BRIEF-CONTRACT.md"
+      ],
+      "implementation": [
+        "offscript/scripts/generate.ts",
+        "offscript/src/generate/"
+      ],
+      "tests": [
+        "offscript/test/generate"
+      ],
+      "cli": [
+        "/offscript generate --track collateral",
+        "offscript/scripts/generate.ts"
+      ],
+      "docs": [
+        "README.md",
+        "CLAUDE.md"
+      ],
+      "validation": [
+        "offscript/test/generate",
+        "offscript/src/generate/validate.ts"
+      ],
+      "observability": [
+        "<client>/collateral/score.json"
+      ]
+    },
+    {
+      "name": "harden-rails",
+      "type": "engine-operator",
+      "contract": [
+        "offscript/src/operator.ts"
+      ],
+      "implementation": [
+        "offscript/scripts/harden.ts",
+        "offscript/scripts/harden-collateral.ts",
+        "offscript/scripts/harden-deck.ts",
+        "offscript/src/operators/"
+      ],
+      "tests": [
+        "offscript/test/harden-review.test.ts",
+        "offscript/test/collateral"
+      ],
+      "cli": [
+        "/offscript check",
+        "offscript/scripts/harden.ts"
+      ],
+      "docs": [
+        "README.md",
+        "CLAUDE.md"
+      ],
+      "validation": [
+        "offscript/src/operators/",
+        "offscript/src/gate.ts"
+      ],
+      "observability": [
+        "<artifact>/score.json",
+        "<artifact>/overlay/"
+      ]
+    },
+    {
+      "name": "fullstack-transformation",
+      "type": "engine-operator",
+      "contract": [
+        "offscript/src/fullstack/workspace-state.ts"
+      ],
+      "implementation": [
+        "offscript/scripts/fullstack.ts",
+        "offscript/src/fullstack/"
+      ],
+      "tests": [
+        "offscript/test/fullstack"
+      ],
+      "cli": [
+        "/offscript fullstack",
+        "offscript/scripts/fullstack.ts"
+      ],
+      "docs": [
+        "docs/OFFSCRIPT-RUNTIME-ARCHITECTURE.md",
+        "docs/PROJECT_WORKFLOW.md"
+      ],
+      "validation": [
+        "offscript/test/fullstack"
+      ],
+      "observability": [
+        "GeneratedProject manifest (console)"
+      ]
+    },
+    {
+      "name": "review",
+      "type": "engine-library",
+      "contract": [
+        "offscript/src/review/review-execution-contract.ts"
+      ],
+      "implementation": [
+        "offscript/src/review/"
+      ],
+      "tests": [
+        "offscript/test/review"
+      ],
+      "cli": [],
+      "docs": [
+        "docs/OFFSCRIPT-RUNTIME-ARCHITECTURE.md",
+        "docs/PROJECT_WORKFLOW.md"
+      ],
+      "validation": [
+        "offscript/test/review"
+      ],
+      "observability": [
+        "ReviewExecutionContract (typed result object)"
+      ]
+    },
+    {
+      "name": "execution",
+      "type": "engine-library",
+      "contract": [
+        "offscript/src/execution/execution-admission.ts"
+      ],
+      "implementation": [
+        "offscript/src/execution/"
+      ],
+      "tests": [
+        "offscript/test/execution"
+      ],
+      "cli": [],
+      "docs": [
+        "docs/OFFSCRIPT-RUNTIME-ARCHITECTURE.md",
+        "docs/PROJECT_WORKFLOW.md"
+      ],
+      "validation": [
+        "offscript/test/execution"
+      ],
+      "observability": [
+        "ExecutionAdmissionDecision (typed result object)"
+      ]
+    },
+    {
+      "name": "project-platform-migration",
+      "type": "engine-operator",
+      "contract": [
+        "offscript/src/project/readiness.ts",
+        "offscript/src/project/generation-contract.ts"
+      ],
+      "implementation": [
+        "offscript/src/project/",
+        "offscript/scripts/migrate-project.ts",
+        "offscript/scripts/plan-migration.ts",
+        "offscript/scripts/plan-fleet-migration.ts",
+        "offscript/scripts/execute-fleet-migration.ts",
+        "offscript/scripts/assess-fleet.ts"
+      ],
+      "tests": [
+        "offscript/test/project"
+      ],
+      "cli": [
+        "offscript/scripts/migrate-project.ts",
+        "offscript/scripts/assess-fleet.ts"
+      ],
+      "docs": [
+        "docs/OFFSCRIPT-RUNTIME-ARCHITECTURE.md",
+        "docs/PROJECT_WORKFLOW.md"
+      ],
+      "validation": [
+        "offscript/test/project"
+      ],
+      "observability": [
+        "<client>/readiness.json"
+      ]
+    },
+    {
+      "name": "governance-sync",
+      "type": "governance-tool",
+      "contract": [
+        "offscript/website-governance-sync/src/sync.ts"
+      ],
+      "implementation": [
+        "offscript/website-governance-sync/src/"
+      ],
+      "tests": [
+        "offscript/website-governance-sync/test"
+      ],
+      "cli": [
+        "offscript/website-governance-sync/src/cli.ts"
+      ],
+      "docs": [
+        "offscript/website-governance-sync/README.md"
+      ],
+      "validation": [
+        "offscript/website-governance-sync/test"
+      ],
+      "observability": [
+        "sync --report output"
+      ]
+    },
+    {
+      "name": "creative-artifact-contract",
+      "type": "contract-only",
+      "contract": [
+        "offscript/creative-artifact-contract/src/artifact/types.ts"
+      ],
+      "implementation": [
+        "offscript/creative-artifact-contract/src/"
+      ],
+      "tests": [
+        "offscript/creative-artifact-contract/test"
+      ],
+      "docs": [
+        "offscript/creative-artifact-contract/README.md"
+      ],
+      "validation": [
+        "offscript/creative-artifact-contract/test"
+      ]
+    },
+    {
+      "name": "creative-generation",
+      "type": "standalone-package",
+      "contract": [
+        "offscript/creative-generation/src/producer.ts",
+        "offscript/creative-artifact-contract/src/artifact/types.ts"
+      ],
+      "implementation": [
+        "offscript/creative-generation/src/"
+      ],
+      "tests": [
+        "offscript/creative-generation/test"
+      ],
+      "cli": [
+        "offscript/creative-generation/src/cli.ts"
+      ],
+      "docs": [
+        "offscript/creative-generation/README.md"
+      ],
+      "validation": [
+        "offscript/creative-generation/test"
+      ],
+      "observability": [
+        "<client>/creative-assets/<id>/artifact.json"
+      ]
+    },
+    {
+      "name": "rendering-ir",
+      "type": "internal-support",
+      "implementation": [
+        "offscript/src/generate/rendering-ir.ts",
+        "offscript/src/generate/rendering-ir-export.ts"
+      ],
+      "tests": [
+        "offscript/test/generate/rendering-ir.test.ts",
+        "offscript/test/generate/rendering-ir-export.test.ts"
+      ],
+      "docs": [
+        "docs/OFFSCRIPT-RUNTIME-ARCHITECTURE.md",
+        "docs/PROJECT_WORKFLOW.md"
+      ]
+    },
+    {
+      "name": "package-isolation-guard",
+      "type": "governance-tool",
+      "contract": [
+        "offscript/scripts/package-boundaries.json"
+      ],
+      "implementation": [
+        "offscript/scripts/check-package-isolation.ts"
+      ],
+      "tests": [
+        "offscript/test/check-package-isolation.test.ts"
+      ],
+      "cli": [
+        "offscript/scripts/check-package-isolation.ts"
+      ],
+      "docs": [
+        "docs/OFFSCRIPT-RUNTIME-ARCHITECTURE.md",
+        "docs/PROJECT_WORKFLOW.md"
+      ],
+      "validation": [
+        "offscript/test/check-package-isolation.test.ts"
+      ],
+      "observability": [
+        "check:isolation console output + exit code"
+      ]
+    }
+  ]
+}

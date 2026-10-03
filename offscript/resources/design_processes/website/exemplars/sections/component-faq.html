@@ -1,0 +1,145 @@
+<!doctype html><html><head><meta charset="utf-8"><title>FAQ row</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — FAQ row (atom)                        from component-faq.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  An ATOM PREVIEW, not a band — the same shape `comparison` and
+                `stat-tiles` turned out to be. The v2 file is ten lines with no
+                stylesheet of its own: every value is an inline `style`
+                attribute, and the only sheet it links besides the token file
+                is `card.css`, the harness the atom previews inside. That link
+                is kept and repointed; the file it names does not exist
+                anywhere in the repo, so BOTH the control and this specimen
+                resolve it to nothing and the preview shape — the column, its
+                rhythm, the caption's ink — is declared in the stylesheet below
+                rather than inherited from the harness.
+
+  THE CLAIM     **It does not answer anything; it signals that answers exist.**
+                The profile is blunt that a row of questions with no answers
+                anywhere is worse than silence — the atom's whole job is to
+                acknowledge doubt on a page that is not the right page to
+                resolve it. So the three rows read as one set at one weight,
+                with nothing that looks like a control: no chevron, no toggle,
+                no hover. Naming the questions IS the whole gesture.
+
+                Its profile carries no Envelope archetype — an atom inherits
+                the role of its host band — so the declaration names the host
+                shape it contributes into: a stacked run of equal type-only
+                rows is `editorial-stack`, which is also what all three FAQ
+                sections it teases resolve to.
+
+  STRUCTURE     Unchanged. One column, three question rows, one caption. DOM
+                order, element types and depth are byte-compatible with the
+                frozen original (DR-22). Inline `style` attributes are
+                presentation, not contract, so they move into the sheet — which
+                is the whole migration on a file that had no sheet.
+
+  ENVIRONMENT   **None, no abstract background.** There is nothing here to
+                retire and nothing to invent: the rows are a flat tint step and
+                each one holds words edge to edge. A photograph behind a list
+                of questions would be a surface under type, which the direction
+                refuses, and this atom has no plate that carries no type.
+
+  ACCENT        Zero. The rows sat on the brand's lightest tint — which the
+                pack itself now resolves to the quiet cream step, because that
+                value was a SURFACE all along and never a hue. Taking the token
+                directly says the same thing and spends nothing: an FAQ answers
+                doubt, it asks for nothing, so it has no moment to spend.
+
+  TYPE          The rows were set on the retired body face at a hand-written
+                weight and size. They come onto the pack's face at 500 and onto
+                the ramp's body step — the size they already were — with the
+                body leading, which they did not have. The caption keeps the
+                mono face it uses to read as a spec note and steps up to the
+                supporting rung; its 11px was below the ramp's floor.
+
+  KNOWN STALE   The caption is frozen text and it now describes values this
+                pass moved: it still names the old tint token and the old
+                padding pair. It is `own` text on a content-bearing node, so
+                correcting it would be a structural change the Pilot Constraint
+                forbids. Recorded here rather than fixed — a spec caption that
+                outran its own specimen.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/sections/card.css"><link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<style>
+  html, body {
+    margin: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+  }
+  .fq-col, .fq-col * { box-sizing: border-box; }
+
+  /* The atom's own container. `card.css` would have supplied `.col` / `.gap-3`;
+     it is absent, so the preview shape its markup already claims is declared
+     here — a column at the micro step, which is the rhythm the rest of the
+     library uses between stacked cells. The 620px cap is the atom's identity
+     and is carried over untouched. */
+  .fq-col {
+    max-width: 620px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--cr-space-xs);
+  }
+
+  /* One row, three times, at one weight — the set has no lead item and no
+     control, because it opens nothing. The tint is the pack's quiet cream
+     step; the radius is the card half of the closed pair, which is the value
+     the atom already used. */
+  .fq-row {
+    background: var(--cr-surface-5);
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-s) var(--cr-space-m);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-primary);
+  }
+
+  /* The spec caption. `card.css` would have supplied `.muted`; it is absent,
+     so the secondary ink it names is declared here. */
+  .muted {
+    margin-top: var(--cr-space-xs);
+    font-family: var(--cr-font-mono);
+    font-size: var(--cr-text-supporting);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+</style>
+</head><body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing.
+
+     ONE `directed` line, and it is the harness rather than the design. The
+     row's min-height moves from a resolved zero to `auto` because the column
+     becomes a flex container and the rows become flex items. Nothing about a
+     row's size changes — it is the same box at the same width holding the
+     same words — but the Pilot Constraint has no other reason for it, and
+     `card.css`, which would have declared `.col` as the column its class name
+     names and `.gap-3` as the rhythm between its cells, does not exist
+     anywhere in the repo. The specimen declares the preview shape its own
+     markup already claims, and says so here rather than passing it through.
+  .col    | column-gap             | spacing-scale
+  .col    | row-gap                | spacing-scale
+  .fq-row | line-height            | type-ramp
+  .fq-row | min-height             | directed
+  .fq-row | padding-bottom         | spacing-scale
+  .fq-row | padding-top            | spacing-scale
+  .muted  | font-size              | type-ramp
+  .muted  | line-height            | type-ramp
+  .muted  | margin-top             | spacing-scale
+-->
+<div class="col gap-3 fq-col"
+     data-archetype="editorial-stack" data-hierarchy="supporting" data-intent="orient"
+     data-register="quiet" data-signature="architectural-whitespace" data-density="low">
+  <div class="fq-row">Will this require us to replace our existing system?</div>
+  <div class="fq-row">How is this different from the RPA tools we've tried before?</div>
+  <div class="fq-row">What happens if the agent makes a mistake?</div>
+</div>
+<div class="muted">FAQ row · bg var(--cr-brand-100) · radius 12 · padding 30/40 · single line.</div>
+</body></html>

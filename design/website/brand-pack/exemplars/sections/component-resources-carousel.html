@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Resources — What's happening</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — Resources · What's happening      component-resources-carousel.html
+  ════════════════════════════════════════════════════════════════════════
+  COMPOSITION  A "what's happening / latest" resources strip on PURE WHITE.
+               • HEADER: a two-line title (line 1 dark "What's happening", line 2
+                 grey "See the latest from Example Brand.") top-left; two prev/next
+                 ARROW buttons (soft blue-tint) top-right.
+               • An EXPANDING-PANEL carousel: a horizontal row of image panels —
+                 ONE is OPEN (wide, ~60-65%), the others COLLAPSE into a FAN of
+                 strips whose width DECREASES with distance from the open card
+                 (a graduated deck with a STEEP tail so the LAST cards go SLICK —
+                 thin ~16-40px slivers — ratios ~10:3.2:1.5:0.5:0.2, matching the
+                 source; NOT uniform-width strips). JS sets each panel's `flex-grow`
+                 by `|index - active|`; the fan is symmetric around the open card.
+               • Below the row: the OPEN slide's CAPTION (a bold dark lead sentence
+                 running into a grey continuation) on the left, and a "Read more →"
+                 CTA on the right.
+               • NO content-width framing side-lines (the source has faint vertical
+                 rules at the content edges — dropped per the CR brand guidelines).
+
+  INSPIRATION  Stripe "What's happening / See the latest" expanding-panel carousel.
+               Layout / open-vs-collapsed strips / caption-below / arrow nav /
+               CTA reproduced; colours / fonts / copy / imagery re-skinned to CR.
+
+  RE-SKIN      Stripe → Example Brand; lavender arrows → CR blue-tint (`--cr-brand-100`
+               + brand-blue glyph). CTA "See the numbers ›" → "Read more →" (the
+               CR `→` glyph). Imagery: the source's varied editorial stills →
+               a DARK BRAND-GRADIENT featured panel (cool navy + grain + orbit —
+               an on-brand "designed visual", carrying the milestone stat) + real
+               editorial photos saved LOCALLY (a customer portrait, a documents
+               flat-lay, a field-note portrait, a tech-office shot). Copy → CR
+               voice (outcome-numeric, no hype/exclamation).
+
+  NO SHADOW    Panels separate by their own imagery + radius; no drop shadow
+               (charter). Arrows + the open/collapsed panels + the CTA are real
+               controls, so they carry the only hover/focus states.
+
+  MOTION       (user choice) "Click to next slide" — clicking the OPEN panel (or
+               the → arrow) advances to the next slide: the open panel COLLAPSES
+               and the next EXPANDS (a flex-grow width transition); clicking any
+               COLLAPSED strip opens THAT slide; ← / → page through. Nav is CYCLIC
+               (wraps, so no disabled end state). The caption + CTA swap to the
+               active slide (cross-fade). On first viewport entry the header /
+               track / footer fade up once (`.has-js` default-VISIBLE pattern, so
+               without JS slide 1 is open, its caption shows, and every panel is
+               visible). `prefers-reduced-motion` removes the width/fade easing.
+
+  A11Y/REFLOW  All five captions are rendered in the DOM and shown via a class
+               (not innerHTML) — no-JS keeps slide 1's caption; the caption block
+               carries a reserved `min-height` so swapping slides does NOT reflow
+               the "Read more" button. Panels are <button>s; arrows are labelled;
+               the track takes ←/→ keys.
+
+  RESPONSIVE   ≥769px: the expanding accordion (open ~70%, strips floor at 64px,
+               `flex:1 1 0` + `min-width` floor + `overflow:hidden`). ≤768px the
+               accordion is ABANDONED for a ONE-SLIDE carousel — only the active
+               panel shows full-width, the arrows page through (no unusable
+               35px slivers); the footer stacks (caption over CTA). Type + panel
+               height step down ≤600. Panels carry `min-width:0`.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../_frozen-v2-tokens.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<style>
+  .wh-section, .wh-section * { box-sizing: border-box; }
+  .wh-section {
+    background: var(--cr-bg);
+    padding: 100px 100px;
+    font-family: var(--cr-font-body);
+    color: var(--cr-fg);
+  }
+  .wh-wrap { max-width: var(--cr-content-max); margin: 0 auto; }   /* no side framing rules — per brand */
+
+  /* ─── header ──────────────────────────────────────────────────── */
+  .wh-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 24px; margin-bottom: 40px;
+  }
+  .wh-title, .wh-subtitle {
+    margin: 0; font-family: var(--cr-font-display);
+    font-weight: 700; font-size: 28px; line-height: 1.28; letter-spacing: -0.01em;
+  }
+  .wh-title { color: var(--cr-fg); }
+  .wh-subtitle { color: var(--cr-fg-3); }            /* grey 2nd line, same size (per source) */
+
+  .wh-nav { display: flex; gap: 8px; flex: none; }
+  .wh-arrow {
+    width: 46px; height: 42px; border-radius: 10px;
+    background: var(--cr-brand-100);                 /* soft blue tint */
+    color: var(--cr-brand); border: none; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: background .2s ease, transform .12s ease;
+  }
+  .wh-arrow svg { width: 20px; height: 20px; stroke-width: 1.8; }
+  .wh-arrow:hover { background: #DCF1FF; }
+  .wh-arrow:active { transform: scale(.95); }
+  .wh-arrow:focus-visible { outline: 2px solid var(--cr-brand); outline-offset: 2px; }
+
+  /* ─── track + panels (expanding accordion) ────────────────────── */
+  .wh-track { display: flex; gap: 10px; height: var(--wh-h, 500px); }
+  .wh-panel {
+    flex: 1 1 0;                  /* basis 0 → smooth, content can't force width */
+    flex-grow: 1;                /* JS sets a DISTANCE-BASED flex-grow (the fan) per active card;
+                                    this uniform value is only the no-JS-edit fallback */
+    min-width: 12px;             /* far-strip floor — low so the last cards go SLICK (thin slivers), per source */
+    position: relative;
+    border: none; padding: 0; margin: 0; background: none;
+    border-radius: var(--cr-radius-lg);
+    overflow: hidden;            /* clips the image + any on-panel content */
+    cursor: pointer;
+    transition: flex-grow .55s cubic-bezier(.16,1,.3,1);
+  }
+  .wh-panel.is-open { min-width: 0; cursor: default; }   /* width comes from the inline fan flex-grow */
+  .wh-panel:focus-visible { outline: 2px solid var(--cr-brand); outline-offset: 3px; }
+
+  .wh-media { position: absolute; inset: 0; }
+  .wh-media img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+
+  /* featured brand-gradient panel (a designed visual — carries the milestone stat) */
+  .wh-media--brand {
+    background: linear-gradient(135deg, var(--cr-ink-cool), var(--cr-ink-cool), var(--cr-ink-card));
+  }
+  .wh-grain {
+    position: absolute; inset: 0;
+    background-image: url("../assets/texture-grain.png");   /* native tile — no background-size */
+    opacity: .07; mix-blend-mode: screen; pointer-events: none;
+  }
+  .wh-orbit {
+    position: absolute; border: 1px solid rgba(255,255,255,0.10); border-radius: 50%;
+    pointer-events: none;
+  }
+  .wh-orbit--1 { width: 620px; height: 620px; right: -190px; top: -150px; }
+  .wh-orbit--2 { width: 360px; height: 360px; right: -60px; top: -10px; border-color: rgba(255,255,255,0.07); }
+  .wh-brand-inner {
+    position: absolute; inset: 0; padding: 34px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    color: #fff; opacity: 0; transition: opacity .45s ease .1s;   /* only when open (hidden in a strip) */
+  }
+  .wh-panel.is-open .wh-brand-inner { opacity: 1; }
+  .wh-brand-eyebrow {
+    font-family: var(--cr-font-body); font-weight: 600; font-size: 13px;
+    letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.66);
+    margin: 0 0 14px; white-space: nowrap;
+  }
+  .wh-brand-stat {
+    font-family: var(--cr-font-display); font-weight: 800; font-size: 64px;
+    line-height: 1; letter-spacing: -0.02em; margin: 0; white-space: nowrap;
+  }
+  .wh-brand-sub {
+    margin: 12px 0 0; font-family: var(--cr-font-body); font-size: 16px;
+    color: rgba(255,255,255,0.82); white-space: nowrap;
+  }
+
+  /* ─── footer: caption (all rendered, active shown) + CTA ───────── */
+  .wh-foot {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 40px; margin-top: 28px;
+  }
+  .wh-captions { position: relative; flex: 1 1 auto; max-width: 640px; min-height: var(--cap-h, 84px); }
+  .wh-caption {
+    position: absolute; top: 0; left: 0; right: 0; margin: 0;
+    font-family: var(--cr-font-body); font-size: 18px; line-height: 1.5;
+    opacity: 0; pointer-events: none; transition: opacity .4s ease;
+  }
+  .wh-caption.is-active { opacity: 1; pointer-events: auto; }
+  .wh-caption strong { font-weight: 600; color: var(--cr-fg); }
+  .wh-caption span { color: var(--cr-fg-3); }
+
+  .wh-cta-wrap { flex: none; }
+  .wh-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: 15px;
+    color: var(--cr-fg); text-decoration: none;
+    border: 1px solid var(--cr-line); border-radius: var(--cr-radius-pill);
+    padding: 12px 22px; background: var(--cr-bg);
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .wh-cta .wh-arr { transition: transform .2s ease; }
+  .wh-cta:hover { border-color: var(--cr-fg-3); background: var(--cr-bg-grey-50); }
+  .wh-cta:hover .wh-arr { transform: translateX(3px); }
+
+  /* ─── entrance reveal (anti-race, fires once; no-JS shows all) ─── */
+  .has-js .wh-section [data-reveal] { opacity: 0; transform: translateY(18px); }
+  .has-js .wh-section [data-reveal].in-view {
+    animation: whRise .7s cubic-bezier(.16,1,.3,1) forwards; animation-delay: var(--d, 0s);
+  }
+  @keyframes whRise { to { opacity: 1; transform: none; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .wh-section [data-reveal],
+    .has-js .wh-section [data-reveal].in-view { opacity: 1; transform: none; animation: none; }
+    .wh-panel, .wh-caption, .wh-brand-inner { transition: none; }
+  }
+
+  /* ─── responsive ──────────────────────────────────────────────── */
+  @media (max-width: 1040px) {
+    .wh-section { padding: 80px 56px; }
+    .wh-track { --wh-h: 440px; }
+  }
+
+  /* ≤768: abandon the accordion → one-slide carousel (arrows page) */
+  @media (max-width: 768px) {
+    .wh-track { --wh-h: 400px; gap: 0; }
+    .wh-panel { display: none; flex: 1 1 100%; min-width: 0; }
+    .wh-panel.is-open { display: block; }
+    .wh-brand-stat { font-size: 56px; }
+    .wh-foot { flex-direction: column; align-items: stretch; gap: 20px; }
+    .wh-captions { width: 100%; max-width: none; min-height: var(--cap-h, 110px); }
+  }
+  @media (max-width: 600px) {
+    .wh-section { padding: 60px 24px; }
+    .wh-head { flex-wrap: wrap; }
+    .wh-title, .wh-subtitle { font-size: 23px; }
+    .wh-track { --wh-h: 360px; }
+    .wh-caption { font-size: 16px; }
+    .wh-captions { min-height: var(--cap-h, 118px); }
+    .wh-brand-inner { padding: 24px; }
+    .wh-brand-stat { font-size: 48px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="wh-section" data-screen-label="Resources · What's happening">
+  <div class="wh-wrap">
+
+    <!-- ── header ─────────────────────────────────────────────── -->
+    <div class="wh-head" data-reveal>
+      <div class="wh-titles">
+        <h2 class="wh-title">What's happening</h2>
+        <p class="wh-subtitle">See the latest from Example Brand.</p>
+      </div>
+      <div class="wh-nav">
+        <button class="wh-arrow" type="button" data-dir="-1" aria-label="Previous slide"><i data-lucide="arrow-left"></i></button>
+        <button class="wh-arrow" type="button" data-dir="1" aria-label="Next slide"><i data-lucide="arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ── expanding-panel track ──────────────────────────────── -->
+    <div class="wh-track" data-reveal style="--d:.08s" role="group" aria-label="Latest from Example Brand" tabindex="0">
+
+      <!-- 0 · featured milestone — brand-gradient designed panel -->
+      <button class="wh-panel is-open" type="button" data-index="0" style="flex-grow:10" aria-label="10,000+ teams had their busiest quarter on Example Brand">
+        <div class="wh-media wh-media--brand">
+          <span class="wh-orbit wh-orbit--1"></span>
+          <span class="wh-orbit wh-orbit--2"></span>
+          <span class="wh-grain"></span>
+          <div class="wh-brand-inner">
+            <p class="wh-brand-eyebrow">Q1 2026 &middot; Milestone</p>
+            <p class="wh-brand-stat">4M+ tasks</p>
+            <p class="wh-brand-sub">cleared autonomously, at 99.99% uptime</p>
+          </div>
+        </div>
+      </button>
+
+      <!-- 1 · customer story -->
+      <button class="wh-panel" type="button" data-index="1" style="flex-grow:3.2" aria-label="Meridian Bank cut month-end close from nine days to two">
+        <div class="wh-media"><img src="../assets/avatars/leader-2.jpg" alt="Finance leader at Meridian Bank" decoding="async" /></div>
+      </button>
+
+      <!-- 2 · product · DocXter -->
+      <button class="wh-panel" type="button" data-index="2" style="flex-grow:1.5" aria-label="DocXter now reads 40+ document types out of the box">
+        <div class="wh-media"><img src="../assets/resource-docs.jpg" alt="Documents and a laptop on a desk" decoding="async" /></div>
+      </button>
+
+      <!-- 3 · field note -->
+      <button class="wh-panel" type="button" data-index="3" style="flex-grow:0.5" aria-label="A week in the life of an autonomous ops agent">
+        <div class="wh-media"><img src="../assets/avatars/leader-1.jpg" alt="Example Brand reliability lead at his desk" decoding="async" /></div>
+      </button>
+
+      <!-- 4 · inside Example Brand -->
+      <button class="wh-panel" type="button" data-index="4" style="flex-grow:0.2" aria-label="We are growing across Pune and remote">
+        <div class="wh-media"><img src="../assets/resource-office.jpg" alt="Example Brand engineering team at work" decoding="async" /></div>
+      </button>
+
+    </div>
+
+    <!-- ── footer: caption (all in DOM, active shown) + CTA ─────── -->
+    <div class="wh-foot" data-reveal style="--d:.16s">
+      <div class="wh-captions">
+        <p class="wh-caption is-active" data-cap="0"><strong>10,000+ teams just had their busiest quarter on Example Brand.</strong> <span>Across Q1 2026, Example Brand agents cleared more than 4M routine tasks for finance, healthcare and logistics teams while holding 99.99% uptime.</span></p>
+        <p class="wh-caption" data-cap="1"><strong>Meridian Bank cut month-end close from nine days to two.</strong> <span>Their finance team automated five FTE of reconciliation in four weeks, with every exception logged and reviewable.</span></p>
+        <p class="wh-caption" data-cap="2"><strong>DocXter now reads 40+ document types out of the box.</strong> <span>Invoices, claims, contracts and scanned PDFs &mdash; extracted, validated and routed without a template to maintain.</span></p>
+        <p class="wh-caption" data-cap="3"><strong>A week in the life of an autonomous ops agent.</strong> <span>Our reliability lead walks through how exceptions get caught, escalated and resolved before they ever reach your team.</span></p>
+        <p class="wh-caption" data-cap="4"><strong>We're growing across Pune and remote.</strong> <span>Engineering, forward-deployed and customer roles are open as we scale APA to more teams across more industries.</span></p>
+      </div>
+      <div class="wh-cta-wrap">
+        <a class="wh-cta" href="#">Read more <span class="wh-arr">&rarr;</span></a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.wh-section');
+  if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
+  if (!sec) return;
+
+  // ── carousel ──
+  var panels   = Array.prototype.slice.call(sec.querySelectorAll('.wh-panel'));
+  var captions = Array.prototype.slice.call(sec.querySelectorAll('.wh-caption'));
+  var arrows   = Array.prototype.slice.call(sec.querySelectorAll('.wh-arrow'));
+  var n = panels.length, active = 0;
+  // distance-based FAN widths (open : neighbour : … : farthest) — steep tail so the
+  // last cards go SLICK (thin ~16-40px slivers), matching the source's edge
+  var GROW = [10, 3.2, 1.5, 0.5, 0.2];
+
+  function setActive(i) {
+    active = ((i % n) + n) % n;                       // cyclic — no disabled ends
+    panels.forEach(function (p, idx) {
+      var on = idx === active;
+      p.classList.toggle('is-open', on);
+      p.setAttribute('aria-current', on ? 'true' : 'false');
+      p.style.flexGrow = GROW[Math.min(Math.abs(idx - active), GROW.length - 1)];   // the fan
+    });
+    captions.forEach(function (c, idx) { c.classList.toggle('is-active', idx === active); });
+  }
+
+  panels.forEach(function (p, idx) {
+    p.addEventListener('click', function () {
+      // clicking the OPEN panel advances; clicking a COLLAPSED strip opens it
+      setActive(idx === active ? active + 1 : idx);
+    });
+  });
+  arrows.forEach(function (a) {
+    a.addEventListener('click', function () { setActive(active + parseInt(a.getAttribute('data-dir'), 10)); });
+  });
+
+  // keyboard on the track
+  var track = sec.querySelector('.wh-track');
+  if (track) {
+    track.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { setActive(active + 1); e.preventDefault(); }
+      else if (e.key === 'ArrowLeft') { setActive(active - 1); e.preventDefault(); }
+    });
+  }
+
+  // ── entrance reveal (fires once) ──
+  function reveal() { sec.querySelectorAll('[data-reveal]').forEach(function (el) { el.classList.add('in-view'); }); }
+  if (reduce) { reveal(); return; }
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) { if (en.isIntersecting) { reveal(); io.disconnect(); } });
+    }, { threshold: 0.1 });
+    io.observe(sec);
+  } else { reveal(); }
+})();
+</script>
+
+</body>
+</html>

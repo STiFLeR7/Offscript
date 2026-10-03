@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Customer stories — carousel</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  COMPONENT — Customer stories (auto-advancing carousel)  component-customer-story.html
+  ════════════════════════════════════════════════════════════════════════
+  COMPOSITION  A FULL-WIDTH WHITE section. A 1240px well holds a CAROUSEL of
+               4 customer stories — one per brand in the logo row. Each slide:
+               • LEFT  — the featured CUSTOMER's brand logo (kicker) → 4-line headline → a CTA = a
+                 brand-blue CIRCLE carrying the literal "→" glyph + "Learn more".
+               • RIGHT — a rounded landscape video-still (per-brand photo) with
+                 a tinted stat card overlaid bottom-right.
+               Below the slides: the 4 brand wordmarks act as a CLICKABLE NAV
+               (active = ink, inactive = muted). Under that, the bottom line is
+               a TIMER: a brand-blue fill grows left→right over the auto-advance
+               delay, then the track SLIDES LEFT to the next brand; loops.
+
+  INTERACTION  Per the request: logos are clickable brand-nav; the bottom line
+               fills with colour to show the delay; on completion the track
+               slides left to the next brand; 4 slides ↔ 4 logos. Auto-advance
+               every 6s, HOVER-PAUSES (anywhere on the section). Infinite
+               always-left loop via a 5th slide = a CLONE of slide 0: advancing
+               onto the clone then snapping (no-transition) back to slide 0 is
+               seamless because they're identical. Mirrors the catalog's
+               "Case study carousel" mechanic (auto-advance + timer + brand nav).
+
+  RE-SKIN      Source mint stat card → CR --cr-brand-300 light-blue (ink text,
+               ~7.6:1 AA — a colour that EXISTS in the source). CTA chevron →
+               CR "→" glyph (no icon CDN — zero icons, so JS stays carousel +
+               count-up only). Brand logos → typographically-varied PLACEHOLDER
+               wordmarks (swap for real SVGs). Photos → tone-matched Unsplash
+               office portraits saved locally (assets/customer-story/cs-*.jpg,
+               object-fit:cover) over onerror fallbacks. Customer names + stats
+               are ILLUSTRATIVE placeholders — swap for real case studies.
+               Fonts → Urbanist + Inter; headline Urbanist BOLD 700. NO shadow,
+               NO play button (source has none).
+
+  MOTION       One-time entrance fade-up (viewport → logos → timer) on first
+               viewport hit, then the carousel starts. Slide change = CSS
+               transform transition (slide-left). Stat COUNTS UP each time its
+               slide becomes active. No-JS safe — only slide 0 shows (others
+               overflow the clipped viewport), stats render final values in
+               markup, hidden reveal-state scoped to `.has-js`.
+               `prefers-reduced-motion` → NO auto-advance (manual nav only),
+               instant slide switches, count snaps. Hover only on real controls
+               (logo nav + CTA).
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/exemplars/_frozen-v2-tokens.css" />
+<script>document.documentElement.classList.add('has-js');</script>
+<style>
+  .cs-section, .cs-section * { box-sizing: border-box; }
+  .cs-section {
+    --cs-card-bg: var(--cr-brand-300);     /* tinted stat card — reads over the photo (ink text ~7.6:1 AA) */
+    --cs-dur: 6s;                          /* auto-advance delay (mirrored in JS) */
+    background: var(--cr-bg);              /* full-width white */
+    padding: 96px 100px;
+    font-family: var(--cr-font-body);
+  }
+  .cs-well { max-width: var(--cr-content-max); margin: 0 auto; }
+
+  /* ─── carousel viewport + track ───────────────────────────────── */
+  .cs-viewport { overflow: hidden; }
+  .cs-track {
+    display: flex;
+    width: 100%;
+    transform: translateX(calc(var(--i, 0) * -100%));
+    transition: transform 0.6s cubic-bezier(.16,1,.3,1);
+  }
+  .cs-track.cs-noanim { transition: none; }   /* used for the seamless wrap snap */
+  .cs-slide { flex: 0 0 100%; min-width: 0; }
+
+  /* ─── slide: text | media ─────────────────────────────────────── */
+  .cs-top {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: clamp(40px, 6vw, 96px);
+    align-items: center;
+  }
+  .cs-text, .cs-media { min-width: 0; }
+
+  /* per-slide brand kicker — the featured CUSTOMER's wordmark (reuses the wall's
+     wordmark styling, in ink; placeholder — swap for the customer's real logo SVG) */
+  .cs-kicker { display: inline-block; color: var(--cr-fg); line-height: 1; }
+  .cs-headline {
+    margin: 28px 0 0;
+    font-family: var(--cr-font-display);
+    font-weight: 700;
+    font-size: clamp(28px, 3.2vw, 42px);
+    line-height: 1.18; letter-spacing: -0.02em;
+    color: var(--cr-fg);
+  }
+
+  /* CTA — brand-blue circle carrying the "→" glyph */
+  .cs-cta { display: inline-flex; align-items: center; gap: 14px; margin-top: 40px; text-decoration: none; }
+  .cs-cta-knob {
+    flex: none; width: 44px; height: 44px;
+    border-radius: var(--cr-radius-pill);
+    background: var(--cr-brand); color: #fff;
+    display: grid; place-items: center; overflow: hidden;
+  }
+  .cs-cta-knob .cs-arrow { font-size: 20px; line-height: 1; transition: transform 150ms ease; }
+  .cs-cta-label { font-family: var(--cr-font-body); font-weight: 600; font-size: 16px; color: var(--cr-fg); }
+  .cs-cta:hover .cs-arrow { transform: translateX(4px); }
+
+  /* ─── media: rounded still + stat overlay ─────────────────────── */
+  .cs-media {
+    position: relative;
+    aspect-ratio: 13 / 10;
+    border-radius: var(--cr-radius-lg);
+    overflow: hidden;
+    background: var(--cr-bg-grey-100);     /* fallback if the photo fails */
+  }
+  .cs-shot { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+  .cs-stat {
+    position: absolute; right: 22px; bottom: 22px;
+    background: var(--cs-card-bg);
+    border-radius: var(--cr-radius-md);
+    padding: 22px 26px; min-width: 184px;
+  }
+  .cs-stat-num {
+    font-family: var(--cr-font-display); font-weight: 700;
+    font-size: clamp(40px, 4vw, 56px); line-height: 1; letter-spacing: -0.02em;
+    color: var(--cr-fg); font-variant-numeric: tabular-nums;
+  }
+  .cs-stat-cap { margin-top: 8px; font-family: var(--cr-font-body); font-weight: 500; font-size: 16px; color: var(--cr-fg); }
+
+  /* ─── brand nav (clickable wordmarks) ─────────────────────────── */
+  .cs-logos {
+    margin-top: clamp(64px, 8vw, 96px);
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 32px; align-items: center; justify-items: center;
+  }
+  .cs-logo {
+    /* button reset */
+    appearance: none; border: 0; background: none; padding: 6px 8px; margin: 0; cursor: pointer;
+    color: var(--cr-fg-muted);            /* inactive = muted grey */
+    text-align: center; line-height: 1; transition: color 200ms ease;
+  }
+  .cs-logo.is-active { color: var(--cr-fg); }              /* active = ink */
+  .cs-logo:hover, .cs-logo:focus-visible { color: var(--cr-fg-2); outline: none; }
+  .cs-logo.is-active:hover { color: var(--cr-fg); }
+  .cs-logo--mark  { font-family: var(--cr-font-display); font-weight: 800; font-size: 26px; letter-spacing: -0.02em; }
+  .cs-logo--caps  { font-family: var(--cr-font-body); font-weight: 700; font-size: 20px; letter-spacing: 0.22em; text-transform: uppercase; }
+  .cs-logo--stack { font-family: var(--cr-font-display); font-weight: 700; font-size: 22px; letter-spacing: 0.02em; }
+  .cs-logo--stack small { display: block; margin-top: 5px; font-family: var(--cr-font-body); font-weight: 500; font-size: 11px; letter-spacing: 0.04em; color: var(--cr-fg-muted); text-transform: none; }
+  .cs-logo--light { font-family: var(--cr-font-display); font-weight: 300; font-size: 26px; letter-spacing: 0.04em; }
+
+  /* ─── timer bar (the bottom line, filling left→right) ─────────── */
+  .cs-timer {
+    margin-top: clamp(40px, 5vw, 64px);
+    height: 2px; position: relative; overflow: hidden;
+    background: var(--cr-line);
+  }
+  .cs-timer-fill {
+    position: absolute; inset: 0;
+    background: var(--cr-brand);
+    transform: scaleX(0); transform-origin: left;
+  }
+
+  /* ─── motion: entrance reveal (anti-race, fires once) ─────────── */
+  .has-js .cs-section [data-reveal] { opacity: 0; transform: translateY(16px); }
+  .has-js .cs-section [data-reveal].in-view {
+    animation: csRise 0.7s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes csRise { to { opacity: 1; transform: none; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .cs-section [data-reveal],
+    .has-js .cs-section [data-reveal].in-view { opacity: 1; transform: none; animation: none; }
+    .cs-track { transition: none; }            /* instant slide switches */
+    .cs-cta-knob .cs-arrow { transition: none; }
+  }
+
+  /* ─── responsive ──────────────────────────────────────────────── */
+  @media (max-width: 960px) {
+    .cs-section { padding: 72px 48px; }
+    .cs-top { grid-template-columns: 1fr; gap: 44px; }   /* text over media */
+    .cs-media { aspect-ratio: 16 / 10; max-width: 640px; }
+    .cs-headline { font-size: clamp(28px, 5vw, 36px); }
+  }
+  @media (max-width: 560px) {
+    .cs-section { padding: 56px 24px; }
+    .cs-headline { margin-top: 20px; font-size: clamp(26px, 8vw, 32px); }
+    .cs-media { aspect-ratio: 4 / 3; }
+    .cs-stat { right: 14px; bottom: 14px; padding: 16px 18px; min-width: 150px; }
+    .cs-stat-num { font-size: clamp(34px, 11vw, 44px); }
+    .cs-stat-cap { font-size: 14px; }
+    .cs-logos { grid-template-columns: repeat(2, 1fr); gap: 32px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- composition follows the source: text-LEFT / media-RIGHT per slide (the
+     reference's order, not a hardcoded house rule). -->
+<section class="cs-section" data-screen-label="Customer stories · Carousel">
+  <div class="cs-well">
+
+    <div class="cs-viewport" data-reveal style="--d:0s">
+      <div class="cs-track" style="--i:0">
+
+        <!-- SLIDE 0 · meridian (logistics) -->
+        <article class="cs-slide">
+          <div class="cs-top">
+            <div class="cs-text">
+              <div class="cs-kicker cs-logo--mark">meridian</div>
+              <h2 class="cs-headline">See how Meridian Logistics uses Example Brand to scale global operations autonomously</h2>
+              <a class="cs-cta" href="#"><span class="cs-cta-knob" aria-hidden="true"><span class="cs-arrow">&rarr;</span></span><span class="cs-cta-label">Learn more</span></a>
+            </div>
+            <div class="cs-media">
+              <img class="cs-shot" src="../assets/../../brand-pack/assets/imagery/customer-story/cs-meridian.jpg" alt="Operations leader at Meridian Logistics" decoding="async" onerror="this.remove()" />
+              <div class="cs-stat"><div class="cs-stat-num"><span class="cs-num-val" data-target="40">40</span></div><div class="cs-stat-cap">Markets live</div></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- SLIDE 1 · vault (finance / BFSI) -->
+        <article class="cs-slide">
+          <div class="cs-top">
+            <div class="cs-text">
+              <div class="cs-kicker cs-logo--light">vault</div>
+              <h2 class="cs-headline">See how Vault Financial clears its reconciliation backlog without adding headcount</h2>
+              <a class="cs-cta" href="#"><span class="cs-cta-knob" aria-hidden="true"><span class="cs-arrow">&rarr;</span></span><span class="cs-cta-label">Learn more</span></a>
+            </div>
+            <div class="cs-media">
+              <img class="cs-shot" src="../assets/../../brand-pack/assets/imagery/customer-story/cs-vault.jpg" alt="Finance leader at Vault Financial" decoding="async" onerror="this.remove()" />
+              <div class="cs-stat"><div class="cs-stat-num"><span class="cs-num-val" data-target="92">92</span><span class="cs-suf">%</span></div><div class="cs-stat-cap">Cost removed</div></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- SLIDE 2 · Staffcore (staffing) -->
+        <article class="cs-slide">
+          <div class="cs-top">
+            <div class="cs-text">
+              <div class="cs-kicker cs-logo--stack">Staffcore<small>Powered by Example Brand</small></div>
+              <h2 class="cs-headline">See how Staffcore places candidates faster with agents working inside their ATS</h2>
+              <a class="cs-cta" href="#"><span class="cs-cta-knob" aria-hidden="true"><span class="cs-arrow">&rarr;</span></span><span class="cs-cta-label">Learn more</span></a>
+            </div>
+            <div class="cs-media">
+              <img class="cs-shot" src="../assets/../../brand-pack/assets/imagery/customer-story/cs-staffcore.jpg" alt="Talent leader at Staffcore" decoding="async" onerror="this.remove()" />
+              <div class="cs-stat"><div class="cs-stat-num"><span class="cs-num-val" data-target="3">3</span><span class="cs-suf">&times;</span></div><div class="cs-stat-cap">Faster placements</div></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- SLIDE 3 · cobalt (healthcare) -->
+        <article class="cs-slide">
+          <div class="cs-top">
+            <div class="cs-text">
+              <div class="cs-kicker cs-logo--caps">cobalt</div>
+              <h2 class="cs-headline">See how Cobalt Health turns every patient visit into a documented record</h2>
+              <a class="cs-cta" href="#"><span class="cs-cta-knob" aria-hidden="true"><span class="cs-arrow">&rarr;</span></span><span class="cs-cta-label">Learn more</span></a>
+            </div>
+            <div class="cs-media">
+              <img class="cs-shot" src="../assets/../../brand-pack/assets/imagery/customer-story/cs-cobalt.jpg" alt="Clinical lead at Cobalt Health" decoding="async" onerror="this.remove()" />
+              <div class="cs-stat"><div class="cs-stat-num"><span class="cs-num-val" data-target="80">80</span><span class="cs-suf">%</span></div><div class="cs-stat-cap">Notes automated</div></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- CLONE of slide 0 — enables the seamless always-left infinite loop -->
+        <article class="cs-slide" aria-hidden="true">
+          <div class="cs-top">
+            <div class="cs-text">
+              <div class="cs-kicker cs-logo--mark">meridian</div>
+              <h2 class="cs-headline">See how Meridian Logistics uses Example Brand to scale global operations autonomously</h2>
+              <a class="cs-cta" href="#" tabindex="-1"><span class="cs-cta-knob" aria-hidden="true"><span class="cs-arrow">&rarr;</span></span><span class="cs-cta-label">Learn more</span></a>
+            </div>
+            <div class="cs-media">
+              <img class="cs-shot" src="../assets/../../brand-pack/assets/imagery/customer-story/cs-meridian.jpg" alt="" decoding="async" onerror="this.remove()" />
+              <div class="cs-stat"><div class="cs-stat-num">40</div><div class="cs-stat-cap">Markets live</div></div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- brand nav — clickable; PLACEHOLDER wordmarks (swap for real customer SVGs) -->
+    <nav class="cs-logos" data-reveal style="--d:.12s" aria-label="Customer stories">
+      <button class="cs-logo cs-logo--mark is-active" type="button" data-go="0" aria-current="true">meridian</button>
+      <button class="cs-logo cs-logo--light"          type="button" data-go="1" aria-current="false">vault</button>
+      <button class="cs-logo cs-logo--stack"          type="button" data-go="2" aria-current="false">Staffcore<small>Powered by Example Brand</small></button>
+      <button class="cs-logo cs-logo--caps"           type="button" data-go="3" aria-current="false">cobalt</button>
+    </nav>
+
+    <!-- the bottom line, doubling as the auto-advance timer -->
+    <div class="cs-timer" data-reveal style="--d:.2s" aria-hidden="true"><div class="cs-timer-fill"></div></div>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.cs-section');
+  if (!sec) return;
+
+  var track  = sec.querySelector('.cs-track');
+  var slides = track.querySelectorAll('.cs-slide');   // 5 (incl. clone)
+  var logos  = sec.querySelectorAll('.cs-logo');
+  var fill   = sec.querySelector('.cs-timer-fill');
+  var N = logos.length;                                // 4 logical brands
+  var DUR = 6000;                                      // matches --cs-dur
+  var i = 0, raf = null, lastTs = null, elapsed = 0, paused = false, started = false;
+
+  function countUp(el) {
+    var target = parseFloat(el.getAttribute('data-target'));
+    var dec = parseInt(el.getAttribute('data-decimals') || '0', 10);
+    var dur = 1300, t0 = null;
+    el.textContent = (0).toFixed(dec);
+    function step(ts) {
+      if (t0 === null) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      var e = 1 - Math.pow(1 - p, 3);
+      el.textContent = (target * e).toFixed(dec);
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = target.toFixed(dec);
+    }
+    requestAnimationFrame(step);
+  }
+  function countSlide(idx) {                            // count the stat of real slide idx (0..N-1)
+    if (reduce || idx >= N) return;
+    var el = slides[idx].querySelector('.cs-num-val');
+    if (el) countUp(el);
+  }
+
+  function setNav(active) {
+    logos.forEach(function (b, bi) {
+      var on = bi === active;
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-current', on ? 'true' : 'false');
+    });
+    slides.forEach(function (s, si) { s.setAttribute('aria-hidden', si === active ? 'false' : 'true'); });
+  }
+
+  function show(n, animate, doCount) {
+    track.classList.toggle('cs-noanim', !animate);
+    i = n;
+    track.style.setProperty('--i', i);
+    setNav(i % N);
+    if (doCount) countSlide(i % N);
+  }
+  function next() { show(i + 1, true, true); }
+
+  // seamless wrap: after the slide-left onto the clone finishes, snap back to 0
+  track.addEventListener('transitionend', function (e) {
+    if (e.propertyName !== 'transform') return;
+    if (i === N) show(0, false, false);   // clone == slide 0 visually → invisible snap
+  });
+
+  // auto-advance timer (rAF) — fills the bottom line, then advances
+  function loop(ts) {
+    if (lastTs === null) lastTs = ts;
+    var dt = ts - lastTs; lastTs = ts;
+    if (!paused) elapsed += dt;
+    fill.style.transform = 'scaleX(' + Math.min(elapsed / DUR, 1) + ')';
+    if (elapsed >= DUR) { elapsed = 0; next(); }
+    raf = requestAnimationFrame(loop);
+  }
+  function resetTimer() { elapsed = 0; lastTs = null; fill.style.transform = 'scaleX(0)'; }
+
+  // manual nav
+  logos.forEach(function (b, bi) {
+    b.addEventListener('click', function () {
+      resetTimer();
+      show(bi, true, true);
+    });
+  });
+
+  // hover-pause (anywhere on the section)
+  sec.addEventListener('pointerenter', function () { paused = true; });
+  sec.addEventListener('pointerleave', function () { paused = false; });
+
+  function start() {
+    if (started) return; started = true;
+    sec.querySelectorAll('[data-reveal]').forEach(function (n) { n.classList.add('in-view'); });
+    setNav(0);
+    countSlide(0);
+    if (!reduce) raf = requestAnimationFrame(loop);   // no auto-advance under reduced-motion
+  }
+
+  if (reduce) { start(); return; }                    // still reveal + set nav; manual nav works
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) { if (en.isIntersecting) { start(); io.disconnect(); } });
+    }, { threshold: 0.2 });
+    io.observe(sec);
+  } else {
+    start();
+  }
+})();
+</script>
+
+</body>
+</html>

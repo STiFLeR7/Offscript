@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bento · feature-dominant — hero</title>
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Bento · feature-dominant        from component-hero-bento.html
+  ════════════════════════════════════════════════════════════════════════
+  PHASE 1, calibration section. Four of Phase 1's ten are heroes, so the
+  calibration is done on a hero — a cheaper section would prove only what was
+  never in doubt. This one is the least entangled of the four: no form, no tabs,
+  nothing sticky, one button, `reveal-only`.
+
+  THE CLAIM   **One headline holds the field alone, and what sits under it
+              corroborates rather than competes.** The profile is explicit that
+              the tiles are *deliberately* unequal — 1.62fr/1fr — so the eye
+              lands on the claim, falls to the largest tile, and reads the rest
+              as support. An equal bento is a different section.
+
+  STRUCTURE   Unchanged. Nav band · centred core (pill → headline → sub → CTA) ·
+              trust-logo row · two-tile bento. DOM, scripts, ids, `data-*`,
+              `src` and every behavioural hook are byte-compatible with the
+              frozen original (DR-22). The v2 file is beside this one in `_v2/`.
+
+  THE ONE REAL DESIGN DECISION — and it is DR-46's, not taste.
+              v2 put a white headline and caption directly ON a photograph and
+              won the contrast back with a scrim ramping to 94% black. DR-46
+              refuses exactly that: *if the type was readable only because a
+              scrim sat on top, the photograph was a surface.* The DOM is
+              frozen, so the text cannot move to another element — but it can
+              move off the image. `.hb-card` becomes a column that pushes
+              `.hb-card-inner` to the bottom on a SOLID dark band; the image
+              fills the card behind it and is seen above that band.
+
+              Remove the photograph now and not one word changes legibility.
+              That is the test, and it passes by construction rather than by
+              measurement — which is why the scrim could go rather than be
+              re-tuned. DR-7's scrim retirement stands untouched.
+
+              Same construction on the right tile, where the abstract gradient
+              (three stops, two hues) is replaced by an approved environment.
+              Its floating systems panel is OPAQUE, so it may sit over the
+              photograph — an opaque panel over an image is the permitted case,
+              and it is what makes the panel read as the product artifact.
+
+  ACCENT      One moment. The CTA. v2 also spent colour on five status dots and
+              five system chips; those are now ink and neutral, because a page
+              where everything is marked marks nothing.
+
+  RESPONSIVE  The original's breakpoints (879 / 860 / 520), unchanged. Type
+              steps on the pack's ramp; `clamp()` is gone throughout — it
+              resolves to sizes nobody authored.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line here
+     that moved nothing. `directed` marks the one change the Pilot Constraint
+     would otherwise forbid: DR-46 required the type to come off the
+     photograph, which gave `.hb-card-inner` its own solid band.
+  .cr-hb            | font-size              | type-ramp
+  .hb-bento         | column-gap             | spacing-scale
+  .hb-bento         | font-size              | type-ramp
+  .hb-bento         | margin-top             | spacing-scale
+  .hb-bento         | row-gap                | spacing-scale
+  .hb-body          | font-size              | type-ramp
+  .hb-body          | padding-bottom         | spacing-scale
+  .hb-body          | padding-left           | spacing-scale
+  .hb-body          | padding-right          | spacing-scale
+  .hb-body          | padding-top            | spacing-scale
+  .hb-card          | border-radius          | radius-pair
+  .hb-card          | font-size              | type-ramp
+  .hb-card          | min-height             | spacing-scale
+  .hb-card-cap      | font-size              | type-ramp
+  .hb-card-cap      | line-height            | type-ramp
+  .hb-card-cap      | max-width              | measure
+  .hb-card-foot     | column-gap             | spacing-scale
+  .hb-card-foot     | font-size              | type-ramp
+  .hb-card-foot     | row-gap                | spacing-scale
+  .hb-card-inner    | column-gap             | spacing-scale
+  .hb-card-inner    | font-size              | type-ramp
+  .hb-card-inner    | min-height             | directed
+  .hb-card-inner    | padding-bottom         | spacing-scale
+  .hb-card-inner    | padding-left           | spacing-scale
+  .hb-card-inner    | padding-right          | spacing-scale
+  .hb-card-inner    | padding-top            | spacing-scale
+  .hb-card-inner    | row-gap                | spacing-scale
+  .hb-card-title    | font-size              | type-ramp
+  .hb-card-title    | line-height            | type-ramp
+  .hb-core          | font-size              | type-ramp
+  .hb-core          | margin-left            | spacing-scale
+  .hb-core          | margin-right           | spacing-scale
+  .hb-core          | max-width              | measure
+  .hb-demo          | border-radius          | radius-pair
+  .hb-demo          | column-gap             | spacing-scale
+  .hb-demo          | margin-top             | spacing-scale
+  .hb-demo          | padding-bottom         | spacing-scale
+  .hb-demo          | padding-left           | spacing-scale
+  .hb-demo          | padding-right          | spacing-scale
+  .hb-demo          | padding-top            | spacing-scale
+  .hb-demo          | row-gap                | spacing-scale
+  .hb-link          | column-gap             | spacing-scale
+  .hb-link          | row-gap                | spacing-scale
+  .hb-links         | column-gap             | spacing-scale
+  .hb-links         | row-gap                | spacing-scale
+  .hb-logo          | font-size              | type-ramp
+  .hb-logo-item     | column-gap             | spacing-scale
+  .hb-logo-item     | font-size              | type-ramp
+  .hb-logo-item     | row-gap                | spacing-scale
+  .hb-logo-wm       | font-size              | type-ramp
+  .hb-logos         | column-gap             | spacing-scale
+  .hb-logos         | font-size              | type-ramp
+  .hb-logos         | margin-top             | spacing-scale
+  .hb-logos         | row-gap                | spacing-scale
+  .hb-nav           | column-gap             | spacing-scale
+  .hb-nav           | font-size              | type-ramp
+  .hb-nav           | padding-bottom         | spacing-scale
+  .hb-nav           | padding-left           | spacing-scale
+  .hb-nav           | padding-right          | spacing-scale
+  .hb-nav           | padding-top            | spacing-scale
+  .hb-nav           | row-gap                | spacing-scale
+  .hb-navcta        | border-radius          | radius-pair
+  .hb-navcta        | font-size              | type-ramp
+  .hb-navcta        | padding-left           | spacing-scale
+  .hb-navcta        | padding-right          | spacing-scale
+  .hb-pill          | border-radius          | radius-pair
+  .hb-pill          | column-gap             | spacing-scale
+  .hb-pill          | font-size              | type-ramp
+  .hb-pill          | padding-bottom         | spacing-scale
+  .hb-pill          | padding-left           | spacing-scale
+  .hb-pill          | padding-right          | spacing-scale
+  .hb-pill          | padding-top            | spacing-scale
+  .hb-pill          | row-gap                | spacing-scale
+  .hb-sub           | font-size              | type-ramp
+  .hb-sub           | line-height            | type-ramp
+  .hb-sub           | margin-left            | spacing-scale
+  .hb-sub           | margin-right           | spacing-scale
+  .hb-sub           | margin-top             | spacing-scale
+  .hb-sub           | max-width              | measure
+  .hb-sys-chip      | border-radius          | radius-pair
+  .hb-sys-chip      | font-size              | type-ramp
+  .hb-sys-name      | font-size              | type-ramp
+  .hb-sys-status    | column-gap             | spacing-scale
+  .hb-sys-status    | font-size              | type-ramp
+  .hb-sys-status    | row-gap                | spacing-scale
+  .hb-sysrow        | font-size              | type-ramp
+  .hb-sysrow        | padding-bottom         | spacing-scale
+  .hb-sysrow        | padding-top            | spacing-scale
+  .hb-systable      | border-radius          | radius-pair
+  .hb-systable      | font-size              | type-ramp
+  .hb-systable      | padding-bottom         | spacing-scale
+  .hb-systable      | padding-left           | spacing-scale
+  .hb-systable      | padding-right          | spacing-scale
+  .hb-systable      | padding-top            | spacing-scale
+  .hb-systable-head | font-size              | type-ramp
+  .hb-systable-head | padding-top            | spacing-scale
+  .hb-title         | font-size              | type-ramp
+  .hb-title         | line-height            | type-ramp
+  .hb-title         | margin-top             | spacing-scale
+  .lucide           | font-size              | type-ramp
+  .lucide           | stroke-width           | stroke
+  path              | font-size              | type-ramp
+  path              | stroke-width           | stroke
+  rect              | font-size              | type-ramp
+  span              | font-size              | type-ramp
+  svg               | font-size              | type-ramp
+  svg               | stroke-width           | stroke
+-->
+<style>
+  /* The user-agent default body margin is 8px on every side, which insets the
+     section from the viewport and lets the page ground show as a border around
+     it. A section is edge-to-edge; the gutter is authored, never inherited. */
+  html, body { margin: 0; }
+  .cr-hb {
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);
+    color: var(--cr-text-secondary);
+    font-size: var(--cr-text-body);
+  }
+  .cr-hb *, .cr-hb *::before, .cr-hb *::after { box-sizing: border-box; }
+
+  /* ── (0) Nav — light, because the hero surface is light ──────────────
+     Structure and link set unchanged. What moves is weight (700 → 500, the
+     system has two), radius (pill → the control radius; DR-25 retires the pill
+     for buttons) and the hairline. */
+  .hb-navband { background: var(--cr-page-ground); border-bottom: var(--cr-stroke) solid var(--cr-border-default); }
+  .hb-nav {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--cr-space-xs) var(--cr-page-gutter);
+    gap: var(--cr-space-s);
+  }
+  .hb-logo { height: 30px; width: auto; display: block; flex: 0 0 auto; }
+  .hb-links {
+    display: flex;
+    gap: var(--cr-space-s);
+    align-items: center;
+    font-family: var(--cr-font-body);
+    font-weight: 400;
+    font-size: var(--cr-text-supporting);
+    color: var(--cr-text-secondary);
+    letter-spacing: 0;
+  }
+  .hb-link { display: inline-flex; align-items: center; gap: var(--cr-space-xs); cursor: pointer; white-space: nowrap; }
+  .hb-link svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: var(--cr-icon-stroke-sm); fill: none; }
+  /* The one control on the band. Dark ink, not accent — DR-25: the default
+     primary is the dark pill and orange is an emphasis a page spends once. */
+  .hb-navcta {
+    flex: 0 0 auto;
+    background: var(--cr-text-primary); color: var(--cr-text-inverse);
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+    padding: var(--cr-space-xs) var(--cr-space-s); border-radius: var(--cr-radius-control);
+    border: 0; cursor: pointer;
+    letter-spacing: 0;
+    transition: background .18s ease;
+  }
+  .hb-navcta:hover { background: var(--cr-neutral-800, var(--cr-text-primary)); }
+
+  /* ── Body well ─────────────────────────────────────────────────────── */
+  .hb-body {
+    max-width: var(--cr-content-max);
+    margin: 0 auto;
+    padding: var(--cr-rhythm-opening) var(--cr-page-gutter) var(--cr-rhythm-opening);
+  }
+
+  /* ── (1) Announcement pill ─────────────────────────────────────────── */
+  .hb-core { text-align: center; max-width: var(--cr-measure-title); margin: 0 auto; }
+  .hb-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs);
+    background: var(--cr-bg-raised);
+    border: var(--cr-stroke) solid var(--cr-border-default);
+    border-radius: var(--cr-radius-control);
+    text-decoration: none;
+    font-size: var(--cr-text-supporting);
+    color: var(--cr-text-secondary);
+    transition: border-color .18s ease;
+  }
+  .hb-pill:hover { border-color: var(--cr-text-secondary); }
+  .hb-pill-chip {
+    width: 22px; height: 22px; border-radius: var(--cr-radius-control);
+    background: var(--cr-text-primary);
+    display: flex; align-items: center; justify-content: center;
+    flex: 0 0 auto;
+  }
+  .hb-pill-chip svg { width: 13px; height: 13px; color: var(--cr-text-inverse); stroke-width: var(--cr-icon-stroke-sm); }
+  .hb-pill-arrow { width: 15px; height: 15px; color: var(--cr-text-secondary); flex: 0 0 auto; }
+
+  /* ── (2) Headline — the field's one voice ──────────────────────────── */
+  .hb-title {
+    margin: var(--cr-space-m) 0 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h1);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-primary);
+  }
+
+  /* ── (3) Sub ───────────────────────────────────────────────────────── */
+  .hb-sub {
+    margin: var(--cr-space-s) auto 0;
+    max-width: var(--cr-measure-body);
+    font-size: var(--cr-text-body);
+    line-height: var(--cr-leading-body);
+    color: var(--cr-text-secondary);
+  }
+
+  /* ── (4) CTA — the page's single accent moment ─────────────────────── */
+  .hb-demo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--cr-space-xs);
+    margin-top: var(--cr-space-m);
+    padding: var(--cr-space-xs) var(--cr-space-s);
+    /* THE DARK PILL IS THE DEFAULT PRIMARY (COMPOSE.md §C.5). The emphasis fill
+       was baked in here, and four sections doing the same thing put any page
+       composing two of them over a bound that permits ONE — with no section
+       individually at fault and no author able to fix it, because a class and a
+       declaration are both outside the editable boundary. That is the drift the
+       rule predicted: "an emphasis fill becomes the default primary by drift".
+       The variant now belongs to the section whose declared role IS the page's
+       close, which composition already limits to one. (LIBRARY-AUDIT.md C-5.) */
+    background: var(--cr-fg); color: var(--cr-bg);
+    border: none;
+    border-radius: var(--cr-radius-control);
+    font-family: var(--cr-font-body);
+    font-weight: 500;
+    font-size: var(--cr-text-supporting);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .2s ease;
+  }
+  .hb-demo:hover { background: var(--cr-neutral-1000); color: var(--cr-bg); }
+
+  /* ── (5) Trust logos — attribution, at the lowest weight on the page ── */
+  .hb-logos {
+    display: flex; flex-wrap: wrap;
+    justify-content: center; align-items: center;
+    gap: var(--cr-space-m);
+    margin-top: var(--cr-rhythm-content);
+  }
+  .hb-logo-item { display: inline-flex; align-items: center; gap: var(--cr-space-xs); opacity: 0.42; }
+  .hb-logo-item svg { height: 22px; width: auto; display: block; }
+  .hb-logo-item svg * { fill: var(--cr-text-primary) !important; stroke: var(--cr-text-primary) !important; }
+  .hb-logo-wm {
+    font-family: var(--cr-font-display);
+    font-weight: 400; font-size: var(--cr-text-body);
+    color: var(--cr-text-primary); letter-spacing: var(--cr-tracking-heading);
+  }
+
+  /* ── (6) The bento — deliberately unequal, and that is the section ──── */
+  .hb-bento {
+    margin-top: var(--cr-rhythm-content);
+    display: grid;
+    grid-template-columns: 1.62fr 1fr;
+    gap: var(--cr-space-xs);
+  }
+  /* The card is now a COLUMN. That is what lets the text sit on its own solid
+     band while the image fills the card behind — the whole DR-46 move, made
+     without touching one element of the DOM. */
+  .hb-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    border-radius: var(--cr-radius-card);
+    overflow: hidden;
+    min-height: calc(var(--cr-space-3xl) * 3);
+    background: var(--cr-bg-dark);
+    text-decoration: none;
+  }
+  /* THE BAND CARRIES NO SURFACE — directed. The veil on the tile is the only
+     thing behind these words now, exactly as in the original: v2 gave this
+     element no background either and let the gradient do the work. That is the
+     point of a veil that never reaches transparent — it is already deep where
+     the caption sits, so the caption does not need a plate of its own, and the
+     picture runs unbroken from the top of the tile to the bottom.
+
+     WHAT THE PLATE WAS ALSO DOING is recorded here rather than discovered
+     twice: it occluded the floating system table on the right tile. Without it
+     the panel is visible behind the caption wherever the two overlap, which at
+     390 is directly behind the words — measured 1.0:1 there. That is a
+     composition collision between two frozen elements, not a property of the
+     veil, and it is reported rather than papered over with a plate the
+     direction has removed. */
+  .hb-card-inner {
+    position: relative; z-index: 2;
+    height: auto;
+    display: flex; flex-direction: column; justify-content: flex-start;
+    gap: var(--cr-space-xs);
+    padding: var(--cr-space-s);
+    background: transparent;
+  }
+  .hb-card-title {
+    margin: 0;
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    font-size: var(--cr-text-h5);
+    line-height: var(--cr-leading-heading);
+    letter-spacing: var(--cr-tracking-heading);
+    color: var(--cr-text-inverse);
+  }
+
+  /* Left tile — the human photograph, kept, and now the card's subject.
+     Brief: human / portrait imagery is never substituted. */
+  .hb-card-photo {
+    position: absolute; inset: 0; z-index: 0;
+    background: url("../../brand-pack/assets/imagery/avatars/leader-1.jpg") center 20% / cover no-repeat;
+  }
+  /* THE VEIL, AND IT IS v2's OWN — directed. The gradient is here to put the
+     weight on the words: it holds the picture back so the caption is what the
+     eye lands on. That is what the original did, so the original's shape is
+     what is used — the same three stops at the same three positions: 42% ink
+     at the top, 46% at 42%, 94% at the foot. Only the colour is new. Where v2
+     ramped an undeclared near-black, every stop here is the direction's own
+     `--cr-bg-dark` at a strength, mixed toward transparent rather than toward
+     a second colour, so it cannot drift off the palette and no literal enters
+     the file.
+
+     IT NEVER REACHES TRANSPARENT, and that is the mechanism rather than a
+     detail. A ramp that starts clear leaves the top of the frame at full
+     strength, and the picture competes with the words it was supposed to
+     introduce. A veil that holds across the whole frame subdues it everywhere
+     and lets the type carry — which is why it is the same value at the top as
+     at 42%, and only deepens where the caption arrives.
+
+     The band below keeps its opaque surface. DR-46's rule is untouched — no
+     surface carries both a photograph and type — and the band is also what
+     OCCLUDES the floating system table, which showed straight through the
+     caption at 390 the moment it was made transparent: measured 1.0:1. */
+  .hb-card-photo, .hb-card-grad {
+    --hb-wash: linear-gradient(180deg,
+      color-mix(in srgb, var(--cr-bg-dark) 42%, transparent)   0%,
+      color-mix(in srgb, var(--cr-bg-dark) 46%, transparent)  42%,
+      color-mix(in srgb, var(--cr-bg-dark) 94%, transparent) 100%);
+  }
+  .hb-card-photo::after {
+    content: ''; position: absolute; inset: 0;
+    background-image: var(--hb-wash);
+  }
+  .hb-card-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--cr-space-s); }
+  .hb-card-cap {
+    margin: 0; max-width: var(--cr-measure-body);
+    font-size: var(--cr-text-supporting); line-height: var(--cr-leading-body);
+    color: var(--cr-text-inverse);
+    opacity: .82;
+  }
+  .hb-card-arrow {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--cr-surface-1);
+    display: flex; align-items: center; justify-content: center;
+    flex: 0 0 auto;
+    border: 0 solid transparent;
+    transition: transform .2s ease;
+  }
+  .hb-card:hover .hb-card-arrow { transform: translate(2px, -2px); }
+  .hb-card-arrow svg { width: 20px; height: 20px; color: var(--cr-text-primary); stroke-width: var(--cr-icon-stroke-md); }
+
+  /* Right tile — the three-stop, two-hue gradient is replaced by an approved
+     environment. `ridges-distant` is the catalogue's own recommendation for a
+     hero: the largest quiet sky and the most versatile across ratios, which is
+     what a small tile carrying a floating panel needs. The URL is written out
+     rather than reached through `--cr-env-*`, because a `url()` inside a custom
+     property resolves against the CONSUMING document and fails silently. */
+  .hb-card-grad {
+    background-color: var(--cr-bg-dark);
+    /* THE STANDARD CREATIVE TREATMENT. One stack, three layers, in this order:
+       grain on top, grunge under it, the environment underneath both. It has to
+       be ONE stack — a blend mode composites against what is beneath it in the
+       SAME background, so putting the grain on a `::before` resolves `overlay`
+       against transparency and renders the texture at full strength as grey
+       static. The last position is the asset's measured focus from ASSETS.md,
+       not a guess.
+
+       The URLs are written out rather than reached through `--cr-env-*`,
+       because a `url()` inside a custom property resolves against the CONSUMING
+       document, not the sheet that declared it, and fails silently.
+
+       THE BRAND WASH RIDES THE SAME STACK — directed, DR-52. It is the first
+       layer, so it sits over the treatment rather than under it, and it blends
+       `normal`: an `overlay` here would composite the wash against the
+       environment instead of covering it, and the tile would ramp toward a
+       tint rather than toward the ink. Every other list below gains a matching
+       first entry, because the four lists are read in parallel and a missing
+       one shifts every layer under it. */
+    background-image:
+      var(--hb-wash),
+      url("../../brand-pack/assets/imagery/textures/noise-texture.webp"),
+      url("../../brand-pack/assets/imagery/textures/grunge-retro-texture.webp"),
+      url("../../brand-pack/assets/imagery/environments/env-ridges-distant.jpg");
+    background-size: cover, var(--cr-texture-noise-size, auto), cover, cover;
+    background-position: 0 0, 0 0, center, 50% 50%;
+    background-blend-mode: normal, var(--cr-texture-noise-blend, overlay), overlay, normal;
+    background-repeat: no-repeat, repeat, no-repeat, no-repeat;
+  }
+  .hb-card-arrow--ghost {
+    background: transparent;
+    border: var(--cr-stroke) solid var(--cr-text-inverse);
+  }
+  .hb-card-arrow--ghost svg { color: var(--cr-text-inverse); }
+  /* The systems panel is OPAQUE, which is the whole reason it may sit over a
+     photograph — and it is the artifact this tile exists to show. */
+  .hb-systable {
+    position: absolute;
+    top: var(--cr-space-s);
+    right: -12px;
+    width: 340px;
+    max-width: 88%;
+    z-index: 1;
+    background: var(--cr-surface-1);
+    border-radius: var(--cr-radius-card);
+    padding: var(--cr-space-xs);
+  }
+  .hb-systable-head {
+    display: flex; justify-content: space-between;
+    padding: var(--cr-space-xs);
+    font-size: var(--cr-text-supporting); color: var(--cr-text-secondary);
+    border-bottom: var(--cr-stroke) solid var(--cr-border-default);
+  }
+  .hb-sysrow {
+    display: flex; align-items: center; gap: var(--cr-space-xs);
+    padding: var(--cr-space-xs);
+  }
+  .hb-sysrow + .hb-sysrow { border-top: var(--cr-stroke) solid var(--cr-border-default); }
+  /* Five chips in five hues was five accent moments in one tile, against a
+     ceiling of three per section — and the accent is already spent on the CTA.
+     They become one neutral mark each, which is what a system identifier is. */
+  .hb-sys-chip {
+    width: 30px; height: 30px; border-radius: var(--cr-radius-control);
+    flex: 0 0 auto;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--cr-font-body); font-weight: 500; font-size: var(--cr-text-supporting);
+    color: var(--cr-text-inverse); background: var(--cr-text-primary);
+    letter-spacing: 0;
+  }
+  .hb-sys-name { flex: 1 1 auto; font-size: var(--cr-text-supporting); font-weight: 400; color: var(--cr-text-primary); white-space: nowrap; }
+  .hb-sys-status { display: flex; align-items: center; gap: var(--cr-space-xs); font-size: var(--cr-text-supporting); color: var(--cr-text-secondary); white-space: nowrap; }
+  .hb-sys-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--cr-text-secondary); flex: 0 0 auto; }
+
+  /* ── Reveal — unchanged in kind ────────────────────────────────────── */
+  .cr-hb.has-js .reveal { opacity: 0; transform: translateY(16px); }
+  .cr-hb.has-js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--d, 0ms);
+  }
+  /* Matched to the trigger's specificity — a guard that loses the cascade is
+     not a guard. */
+  @media (prefers-reduced-motion: reduce) {
+    .cr-hb.has-js .reveal,
+    .cr-hb.has-js .reveal.in { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ── Responsive — the ORIGINAL's breakpoints; type steps on the ramp ── */
+  @media (max-width: 1024px) {
+    .hb-title { font-size: var(--cr-text-h2); }
+    .hb-card-title { font-size: var(--cr-text-h6, var(--cr-text-h5)); }
+  }
+  @media (max-width: 879px) {
+    .hb-bento { grid-template-columns: 1fr; }
+    .hb-card { min-height: calc(var(--cr-space-3xl) * 2); }
+    .hb-systable { right: var(--cr-space-xs); width: 320px; max-width: calc(100% - 32px); }
+    /* The veil needs no breakpoint. It is proportional and never reaches
+       transparent, so it holds its character whatever share of the tile the
+       band takes — which is the advantage of a veil over a ramp. */
+  }
+  @media (max-width: 860px) {
+    .hb-links { display: none; }
+  }
+  @media (max-width: 700px) {
+    .hb-title { font-size: var(--cr-text-h3); }
+    .hb-body { padding-top: var(--cr-rhythm-content); padding-bottom: var(--cr-rhythm-content); }
+  }
+  @media (max-width: 520px) {
+    .hb-systable { width: 280px; }
+    .hb-card-foot { flex-direction: column; align-items: flex-start; gap: var(--cr-space-xs); }
+  }
+</style>
+</head>
+<body>
+
+<section class="cr-hb" data-screen-label="Hero · bento"
+         data-archetype="editorial-stack" data-hierarchy="hero" data-intent="orient"
+         data-register="editorial" data-signature="embedded-screenshot" data-density="medium">
+
+  <!-- ── (0) Canonical CR nav ────────────────────────────── -->
+  <div class="hb-navband">
+    <nav class="hb-nav">
+      <img class="hb-logo" src="../../brand-pack/assets/logo/logo-color.svg" alt="Example Brand">
+      <div class="hb-links">
+        <span class="hb-link">AI <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="hb-link">Industry <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="hb-link">FosterX <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="hb-link">About us</span>
+        <span class="hb-link">Resources <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+      <button class="hb-navcta">Let's talk</button>
+    </nav>
+  </div>
+
+  <!-- ── Light body ──────────────────────────────────────── -->
+  <div class="hb-body">
+
+    <div class="hb-core">
+      <a class="hb-pill reveal" style="--d:0ms" href="#">
+        <span class="hb-pill-chip"><i data-lucide="zap"></i></span>
+        Example Brand crosses 4M+ tasks automated
+        <i class="hb-pill-arrow" data-lucide="chevron-right"></i>
+      </a>
+
+      <h1 class="hb-title reveal" style="--d:80ms">Where iconic companies automate their hardest work</h1>
+
+      <p class="hb-sub reveal" style="--d:160ms">Deploy production AI agents and clear the operational work that&rsquo;s been holding your team back.</p>
+
+      <a class="hb-demo reveal" style="--d:240ms" href="#">Book a Demo Call</a>
+    </div>
+
+    <!-- ── (5) Trust logos ───────────────────────────────── -->
+    <div class="hb-logos reveal" style="--d:320ms" aria-label="Trusted by">
+      <span class="hb-logo-item">
+        <svg viewBox="0 0 122.8 122.8" aria-hidden="true"><path d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9zm6.5 0c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z"/><path d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2zm0 6.5c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 51.1 0 45.3 0 38.2s5.8-12.9 12.9-12.9h32.3z"/><path d="M97 38.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97V38.2zm-6.5 0c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V5.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9v25.3z"/><path d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9zm0-6.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z"/></svg>
+        <span class="hb-logo-wm">slack</span>
+      </span>
+      <span class="hb-logo-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.78 12.653a5.22 5.22 0 1 0 0 10.44 5.22 5.22 0 0 0 0-10.44zm-13.56 0a5.22 5.22 0 1 0 0 10.44 5.22 5.22 0 0 0 0-10.44zM12 .908a5.22 5.22 0 1 0 0 10.44A5.22 5.22 0 0 0 12 .908z"/></svg>
+        <span class="hb-logo-wm">asana</span>
+      </span>
+      <span class="hb-logo-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 1.807 0 5.629l6 3.822 6.001-3.822zM18 1.807l-6 3.822 6 3.822 6-3.822zM0 13.274l6 3.822 6.001-3.822L6 9.452zM18 9.452l-6.001 3.822L18 17.096l6-3.822zM6 18.371l6.001 3.822 6-3.822-6-3.822z"/></svg>
+        <span class="hb-logo-wm">Dropbox</span>
+      </span>
+      <span class="hb-logo-item">
+        <svg viewBox="0 0 23 23" aria-hidden="true"><rect x="1" y="1" width="10" height="10"/><rect x="12" y="1" width="10" height="10"/><rect x="1" y="12" width="10" height="10"/><rect x="12" y="12" width="10" height="10"/></svg>
+        <span class="hb-logo-wm">Microsoft</span>
+      </span>
+      <span class="hb-logo-item"><span class="hb-logo-wm">stripe</span></span>
+      <span class="hb-logo-item"><span class="hb-logo-wm">zoom</span></span>
+    </div>
+
+    <!-- ── (6) Feature-card bento ────────────────────────── -->
+    <div class="hb-bento">
+
+      <!-- Left: the photograph is the subject; the words sit on their own band -->
+      <a class="hb-card hb-card-dark reveal" style="--d:120ms" href="#">
+        <span class="hb-card-photo" aria-hidden="true"></span>
+        <span class="hb-card-inner">
+          <h3 class="hb-card-title">Work cleared, faster</h3>
+          <span class="hb-card-foot">
+            <span class="hb-card-cap">Deploy production AI agents and clear your highest-volume operations in record time.</span>
+            <span class="hb-card-arrow"><i data-lucide="arrow-up-right"></i></span>
+          </span>
+        </span>
+      </a>
+
+      <!-- Right: environment + the opaque systems artifact -->
+      <a class="hb-card hb-card-grad reveal" style="--d:200ms" href="#">
+        <span class="hb-systable" aria-hidden="true">
+          <span class="hb-systable-head"><span>System</span><span>Status</span></span>
+          <span class="hb-sysrow"><span class="hb-sys-chip">SAP</span><span class="hb-sys-name">SAP&nbsp;ERP</span><span class="hb-sys-status"><span class="hb-sys-dot"></span>Live</span></span>
+          <span class="hb-sysrow"><span class="hb-sys-chip">SF</span><span class="hb-sys-name">Salesforce</span><span class="hb-sys-status"><span class="hb-sys-dot"></span>Live</span></span>
+          <span class="hb-sysrow"><span class="hb-sys-chip">Z</span><span class="hb-sys-name">Zoho</span><span class="hb-sys-status"><span class="hb-sys-dot"></span>Live</span></span>
+          <span class="hb-sysrow"><span class="hb-sys-chip">O</span><span class="hb-sys-name">Oracle</span><span class="hb-sys-status"><span class="hb-sys-dot"></span>Live</span></span>
+          <span class="hb-sysrow"><span class="hb-sys-chip">E</span><span class="hb-sys-name">Epic</span><span class="hb-sys-status"><span class="hb-sys-dot"></span>Live</span></span>
+        </span>
+        <span class="hb-card-inner">
+          <h3 class="hb-card-title">Drops into your stack, finally</h3>
+          <span class="hb-card-foot">
+            <span class="hb-card-arrow hb-card-arrow--ghost"><i data-lucide="arrow-up-right"></i></span>
+          </span>
+        </span>
+      </a>
+
+    </div>
+
+  </div>
+</section>
+
+<script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" integrity="sha384-bdZtphetAEBgkGZvhZXOFDWc55tHGLqaSo1f4qZtgvEiolEBqlJ9u6FTk+CoLfj0" crossorigin="anonymous"></script>
+<script>
+  (function () {
+    if (window.lucide) lucide.createIcons();
+    var sec = document.querySelector('.cr-hb');
+    if (!sec || !('IntersectionObserver' in window)) return;
+    sec.classList.add('has-js');
+    var done = false;
+    function revealAll() {
+      if (done) return; done = true;
+      sec.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { revealAll(); io.disconnect(); } });
+    }, { threshold: 0.04 });
+    io.observe(sec);
+    setTimeout(revealAll, 1200);
+  })();
+</script>
+</body>
+</html>

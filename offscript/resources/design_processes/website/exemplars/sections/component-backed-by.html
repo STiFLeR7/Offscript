@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR · Backed by — investor logo wall</title>
+
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  v3 SPECIMEN — Backed by (investor logo wall)      grid-five-column-equal.html
+  ════════════════════════════════════════════════════════════════════════
+  WHAT THIS IS  The v2 section at `brand-pack/exemplars/sections/` authored
+                under the v3 editorial-restraint direction. Structure, markup,
+                script and every behavioural hook are byte-compatible with the
+                original (DR-22, the Pilot Constraint). Only the presentation
+                layer moved. The v2 file it came from is beside this one, in
+                `_v2/`, so the comparison is a diff rather than a claim.
+
+  THE CLAIM     **Stillness confers standing.** Investors and backers are read
+                one at a time and weighed; a moving rail would make them
+                scenery, and scenery cannot confer standing. Everything below
+                serves that: the frame never animates, nothing hovers, and the
+                marks are given room rather than volume.
+
+  COMPOSITION   Unchanged. A supporting-role opener, then a hairline grid in
+                two tiers — 2 wide lead cells over 5 narrower ones. The grid is
+                OPEN: horizontal rules run free on both sides, vertical rules
+                divide cells only, and the first cell of each row drops its
+                left border so the sides stay open at every breakpoint.
+
+  WHAT CHANGED  · Horizontal layout handed to `.cr-well` and section padding to
+                  `.cr-band`. A section may not re-declare content width, page
+                  gutter or its own outer container (SECTION_LAYOUT §16).
+                · The opener takes the supporting role: one step below body, at
+                  zero tracking, no uppercase. The tracked-out caps treatment is
+                  a v2 idiom the direction retires.
+                · Every wordmark onto the ramp — leads at H5, the second tier at
+                  body. Weight variation collapses to the system's two weights,
+                  so the tiers separate by SCALE, which is the direction's own
+                  mechanism ("emphasis comes from scale, not from a heavier or a
+                  different face").
+                · Breathing room now comes from padding on the closed spacing
+                  scale rather than from `min-height`, so a cell is sized by what
+                  it holds plus what it is given — which is what "give the logos
+                  room" means when whitespace is the communication tool.
+                · Rules moved to the one stroke width and the one stroke colour.
+
+  MOTION        Unchanged in kind: the FRAME is static and only the wordmarks
+                stagger in, once, on first entry — so the rules never jitter.
+                No hover: these are not controls. Reduced motion snaps in.
+
+  RESPONSIVE    Unchanged. 2 / 5 → at ≤620px the second tier becomes 2-up with
+                the fifth cell spanning, so there is no broken half-row. Type
+                steps with the pack's own ramp; nothing is re-declared here.
+  ════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="stylesheet" href="../../brand-pack/colors_and_type.css">
+<script>document.documentElement.classList.add('has-js');</script>
+<style>
+  html, body {
+    margin: 0;
+    background: var(--cr-page-ground);
+    font-family: var(--cr-font-body);      /* the page surface, so nothing falls to a UA serif */
+    color: var(--cr-text-secondary);
+  }
+  .bw-section, .bw-section * { box-sizing: border-box; }
+  .bw-section { font-family: var(--cr-font-body); }
+
+  /* The opener is supporting text, not a tracked-out label. Its gap to the
+     grid is the CONTENT role of the rhythm — the point where the section hands
+     off from what it is saying to what it is showing. */
+  .bw-eyebrow { margin: 0 0 var(--cr-rhythm-content); }
+
+  /* ─── OPEN grid — horizontal rules run free on both sides; internal vertical
+         dividers only (NO outer left/right borders, no enclosing box) ─── */
+  .bw-grid { border-top: var(--cr-stroke) solid var(--cr-border-default); }
+  .bw-tier { display: grid; }
+  .bw-tier--1 { grid-template-columns: repeat(2, 1fr); }
+  .bw-tier--2 { grid-template-columns: repeat(5, 1fr); }
+  .bw-cell {
+    border-left: var(--cr-stroke) solid var(--cr-border-default);   /* internal dividers */
+    border-bottom: var(--cr-stroke) solid var(--cr-border-default); /* horizontal rules  */
+    display: grid; place-items: center;
+    padding: var(--cr-space-m);
+  }
+  /* open both outer sides: drop the left border on the first cell of each row */
+  .bw-tier--1 .bw-cell:first-child,
+  .bw-tier--2 .bw-cell:first-child { border-left: none; }
+
+  /* The lead tier is taller because it is given MORE ROOM, not a floor. A cell
+     sized by a min-height is a cell whose emptiness is accidental; a cell sized
+     by its padding is one whose emptiness was decided. */
+  .bw-tier--1 .bw-cell { padding-block: var(--cr-space-xl); }
+
+  /* ─── placeholder investor wordmarks (swap for real investor SVGs) ─────
+     Two ramp steps, two tiers. The v2 file distinguished seven marks by seven
+     weights and seven trackings; the direction has two weights and one
+     tracking, so the tiers separate by SCALE and the marks by their own
+     wording — which is what a real logo wall does anyway. */
+  .bw-logo {
+    color: var(--cr-text-primary);
+    font-family: var(--cr-font-display);
+    font-weight: 400;
+    letter-spacing: var(--cr-tracking-heading);
+    line-height: var(--cr-leading-heading);
+    text-align: center;
+    white-space: nowrap;
+  }
+  .bw-tier--1 .bw-logo { font-size: var(--cr-text-h5); }
+  .bw-tier--2 .bw-logo { font-size: var(--cr-text-body); color: var(--cr-text-secondary); }
+  .bw-logo b { font-weight: 500; }
+  .bw-logo--stack small {
+    display: block;
+    margin-top: var(--cr-space-xs);
+    font-size: var(--cr-text-supporting);
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: var(--cr-leading-body);
+  }
+
+  /* ─── motion: logos stagger into the static frame (no border jitter) ─── */
+  .has-js .bw-section [data-reveal] { opacity: 0; transform: translateY(14px); }
+  .has-js .bw-section [data-reveal].in-view {
+    animation: bwRise 0.6s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes bwRise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .has-js .bw-section [data-reveal],
+    .has-js .bw-section [data-reveal].in-view { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* ─── responsive ───────────────────────────────────────────────────────
+     The breakpoints are the ORIGINAL's — responsive behaviour is frozen, so
+     the point at which the second tier folds is not this pass's to move. Type
+     steps with the pack's own ramp and is not re-declared. */
+  @media (max-width: 900px) {
+    .bw-tier--1 .bw-cell { padding-block: var(--cr-space-m); }
+  }
+  @media (max-width: 620px) {
+    .bw-tier--2 { grid-template-columns: repeat(2, 1fr); }
+    .bw-tier--2 .bw-cell:last-child { grid-column: 1 / -1; }       /* 5th spans full width — no broken half-row */
+    .bw-tier--2 .bw-cell:nth-child(2n+1) { border-left: none; }    /* keep both sides open per 2-col row */
+    .bw-cell { padding: var(--cr-space-s); }
+    .bw-tier--1 .bw-cell { padding-block: var(--cr-space-m); }
+  }
+</style>
+</head>
+<body>
+<!-- geometry-budget — every dimension this specimen moves, declared.
+     Predicate 6 fails on any change not listed here, and on any line
+     here that moved nothing. Retrofitted from measurement for the pilot
+     ten; declared before authoring from Phase 1 onward.
+  .bw-eyebrow | font-size              | type-ramp
+  .bw-eyebrow | line-height            | type-ramp
+  .bw-eyebrow | margin-bottom          | spacing-scale
+  .bw-logo    | font-size              | type-ramp
+  .bw-logo    | line-height            | type-ramp
+  .bw-tier    | grid-template-columns  | type-ramp
+  .bw-well    | padding-left           | spacing-scale
+  .bw-well    | padding-right          | spacing-scale
+  b           | font-size              | type-ramp
+  b           | line-height            | type-ramp
+  small       | font-size              | type-ramp
+  small       | line-height            | type-ramp
+  small       | margin-top             | spacing-scale
+-->
+
+
+<section class="bw-section cr-band" data-screen-label="Backed by · Investor logos"
+         data-archetype="feature-comparison" data-hierarchy="proof" data-intent="build-trust"
+         data-register="quiet" data-signature="architectural-whitespace" data-density="low">
+  <div class="bw-well cr-well">
+
+    <p class="bw-eyebrow cr-h-eyebrow" data-reveal style="--d:0s">Backed by</p>
+
+    <!-- bordered grid — PLACEHOLDER investor wordmarks; swap for real investor logo SVGs -->
+    <div class="bw-grid">
+
+      <div class="bw-tier bw-tier--1">
+        <div class="bw-cell"><span class="bw-logo bw-logo--word"  data-reveal style="--d:.10s">Northbridge</span></div>
+        <div class="bw-cell"><span class="bw-logo bw-logo--ven"   data-reveal style="--d:.16s"><b>Helix</b> Ventures</span></div>
+      </div>
+
+      <div class="bw-tier bw-tier--2">
+        <div class="bw-cell"><span class="bw-logo bw-logo--caps"  data-reveal style="--d:.24s">Catalyst</span></div>
+        <div class="bw-cell"><span class="bw-logo bw-logo--title" data-reveal style="--d:.30s">Greenfield</span></div>
+        <div class="bw-cell"><span class="bw-logo bw-logo--sv"    data-reveal style="--d:.36s"><b>SV</b> Foundry</span></div>
+        <div class="bw-cell"><span class="bw-logo bw-logo--light" data-reveal style="--d:.42s">Aperture</span></div>
+        <div class="bw-cell"><span class="bw-logo bw-logo--stack" data-reveal style="--d:.48s">Lumen<small>Deeptech</small></span></div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sec = document.querySelector('.bw-section');
+  if (!sec) return;
+
+  function reveal() {
+    sec.querySelectorAll('[data-reveal]').forEach(function (n) { n.classList.add('in-view'); });
+  }
+
+  if (reduce) { reveal(); return; }
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) { if (en.isIntersecting) { reveal(); io.disconnect(); } });
+    }, { threshold: 0.2 });
+    io.observe(sec);
+  } else {
+    reveal();
+  }
+})();
+</script>
+
+</body>
+</html>
