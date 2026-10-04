@@ -16,11 +16,11 @@ After all responses exist, repeat with a declared session label:
 node offscript/node_modules/tsx/dist/cli.mjs offscript/scripts/authoring-proof.ts --project offscript-proof --track website --run proof-001 --inputs examples/authoring-proof/northline.json --session "your actual assistant/session label"
 ```
 
-Exit 0 means the probe assembled and validated a complete output. Validation findings, skipped render coverage and creative acceptance remain separate. A session label is a declaration, not authentication or proof of creative quality. Scripted/test-generated fragments must be recorded as doubles, not real-session evidence.
+Exit 0 means the probe assembled and validated a complete output. Validation findings, skipped render coverage and creative acceptance remain separate. A session label is a declaration, not authentication or proof of creative quality. The evidence kind defaults to `session`. For scripted/test-generated fragments, pass `--evidence test-double`; both the proof record and score then identify the double. The API accepts the same `evidence` option. Other values are rejected.
 
 Requests bind section instructions, identity inputs, governance and supplied content. Responses from another digest do not count. Empty responses fail with exit 1. The runner refuses foreign projects, manually changed managed inputs and linked paths. It has a per-project exclusive lock; after a crash, inspect the recorded process/run and confirm it is no longer active before removing only that generated lock.
 
-Outputs are addressed by request and response digests under the run's artifacts directory. A pending/failed replay clears the current completion pointer while preserving older artifacts. Use the current proof record, not a guessed index.html path.
+HTML outputs are addressed by request and response digests under the run's artifacts directory. Each validation execution stores its score, manifest and proof record separately under `artifacts/<digest>/executions/<id>/`; repeating the same HTML preserves previous execution evidence, including session labels and render coverage. The result's `scorePath` identifies the current execution. After establishing safe ownership and acquiring its lock, a pending/failed replay clears the current completion pointer before managed-input/readiness checks. Rejected ownership, unsafe paths or lock contention leave that record untouched. Use the current proof record, not a guessed index.html path.
 
 For a scoped proof revision, save an ignored JSON file such as `{"hero":"Shorten the headline; preserve all other content."}` and pass `--instructions` with its path. Only that section's request changes. This probes request reuse; it does not implement the later product editing workspace.
 

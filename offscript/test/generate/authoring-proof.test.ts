@@ -2,10 +2,11 @@ import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync, symlinkSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { collectProof, responseKey, runAuthoringProof } from '../../src/generate/authoring-proof.js';
 import type { AuthoringRequest } from '../../src/generate/authoring-seam.js';
 import type { ProofInput } from '../../src/generate/proof-inputs.js';
+import * as validationModule from '../../src/generate/validate.js';
 import { projectDir, repoRoot } from '../../src/paths.js';
 
 const req:AuthoringRequest={item:{anchor:{id:'hero',anchor:'hero'},archetype:'hero',tokenRoles:[],intent:'Explain'},
@@ -125,10 +126,14 @@ it('CLI waits with exit 3, completes with declared session and rejects unsafe id
   expect(first.state).toBe('waiting');completeResponses(first);
   const withoutSession=spawnSync(process.execPath,args,{cwd:resolve(repoRoot,'..'),encoding:'utf8'});
   expect(withoutSession.status).toBe(1);expect(withoutSession.stderr).toContain('session');
-  const completed=spawnSync(process.execPath,[...args,'--session','CLI deterministic test double'],
+  const completed=spawnSync(process.execPath,[...args,'--session','CLI deterministic test double','--evidence','test-double'],
     {cwd:resolve(repoRoot,'..'),encoding:'utf8'});
   expect(completed.status,completed.stderr).toBe(0);
-  expect(JSON.parse(readFileSync(proofPath,'utf8')).state).toBe('complete');
+  const cliProof=JSON.parse(readFileSync(proofPath,'utf8'));
+  expect(cliProof.state).toBe('complete');expect(cliProof.evidence).toBe('test-double');
+  expect(JSON.parse(readFileSync(cliProof.scorePath,'utf8')).authorMode).toBe('test-double');
+  const invalidEvidence=spawnSync(process.execPath,[...args,'--evidence','fabricated'],{cwd:resolve(repoRoot,'..'),encoding:'utf8'});
+  expect(invalidEvidence.status).toBe(1);expect(invalidEvidence.stderr).toContain('evidence');
   const incompleteReplay=spawnSync(process.execPath,args,{cwd:resolve(repoRoot,'..'),encoding:'utf8'});
   expect(incompleteReplay.status).toBe(1);
   const pending=JSON.parse(readFileSync(proofPath,'utf8'));
@@ -139,3 +144,63 @@ it('CLI waits with exit 3, completes with declared session and rejects unsafe id
 },60000);
 
 
+
+it('clears completion before managed-input or readiness replay failures while preserving history',async()=>{
+  for(const failure of ['managed-input','readiness']){
+    const name=project();const options={project:name,track:'website' as const,run:'r1',inputs:input,
+      session:'regression double',evidence:'test-double' as const};
+    const waiting=await runAuthoringProof(options);completeResponses(waiting);
+    const completed=await runAuthoringProof(options);
+    if(failure==='managed-input')writeFileSync(join(projectDir(name),'references','voice.md'),'Manual correction');
+    else writeFileSync(join(projectDir(name),'readiness.json'),'{broken');
+    await expect(runAuthoringProof(options)).rejects.toThrow();
+    const current=JSON.parse(readFileSync(join(completed.runDir,'proof.json'),'utf8'));
+    expect(current.state).toBe('waiting');expect(current.outputPath).toBeUndefined();
+    expect(existsSync(completed.outputPath!)).toBe(true);
+  }
+},60000);
+
+it('does not clear another active execution when lock acquisition fails',async()=>{
+  const name=project();const options={project:name,track:'website' as const,run:'r1',inputs:input,
+    session:'regression double',evidence:'test-double' as const};
+  const waiting=await runAuthoringProof(options);completeResponses(waiting);
+  const completed=await runAuthoringProof(options);const record=join(completed.runDir,'proof.json');
+  const before=readFileSync(record,'utf8');writeFileSync(join(projectDir(name),'.engine-probe.lock'),'Active execution');
+  await expect(runAuthoringProof(options)).rejects.toThrow();
+  expect(readFileSync(record,'utf8')).toBe(before);
+});
+
+it('preserves execution evidence across changed session/render settings and failed validation',async()=>{
+  const name=project();const options={project:name,track:'website' as const,run:'r1',inputs:input,
+    session:'first deterministic double',evidence:'test-double' as const};
+  const waiting=await runAuthoringProof(options);completeResponses(waiting);
+  const first=await runAuthoringProof(options);const firstScore=readFileSync(first.scorePath!,'utf8');
+  const firstRecord=join(first.scorePath!,'..','proof.json');const firstProof=readFileSync(firstRecord,'utf8');
+  const flag=process.env.OFFSCRIPT_PLAYWRIGHT;
+  try {
+    process.env.OFFSCRIPT_PLAYWRIGHT='0';
+    const second=await runAuthoringProof({...options,session:'second deterministic double'});
+    expect(second.outputPath).toBe(first.outputPath);expect(second.scorePath).not.toBe(first.scorePath);
+    expect(readFileSync(first.scorePath!,'utf8')).toBe(firstScore);
+    expect(readFileSync(firstRecord,'utf8')).toBe(firstProof);
+    expect(JSON.parse(readFileSync(join(second.scorePath!,'..','proof.json'),'utf8')).session).toBe('second deterministic double');
+    const secondScore=readFileSync(second.scorePath!,'utf8');
+    const spy=vi.spyOn(validationModule,'validate').mockImplementationOnce(async (_html,_context,opts)=>{
+      writeFileSync(join(opts.outDir,'score.json'),'Incomplete failed validation');throw new Error('Validation failed');
+    });
+    try {await expect(runAuthoringProof({...options,session:'failed attempt'})).rejects.toThrow('Validation failed');}
+    finally {spy.mockRestore();}
+    expect(readFileSync(first.scorePath!,'utf8')).toBe(firstScore);
+    expect(readFileSync(firstRecord,'utf8')).toBe(firstProof);
+    expect(readFileSync(second.scorePath!,'utf8')).toBe(secondScore);
+    expect(JSON.parse(readFileSync(join(first.runDir,'proof.json'),'utf8')).state).toBe('waiting');
+  } finally {if(flag===undefined)delete process.env.OFFSCRIPT_PLAYWRIGHT;else process.env.OFFSCRIPT_PLAYWRIGHT=flag;}
+},60000);
+
+
+it('can retry a new project after invalid inputs without leaving an unowned workspace',async()=>{
+  const name=project();const options={project:name,track:'website' as const,run:'r1',inputs:input};
+  await expect(runAuthoringProof({...options,inputs:{...input,accent:'invalid'}})).rejects.toThrow();
+  expect(existsSync(projectDir(name))).toBe(false);
+  expect((await runAuthoringProof(options)).state).toBe('waiting');
+});

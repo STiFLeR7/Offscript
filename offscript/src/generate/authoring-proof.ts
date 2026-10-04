@@ -1,4 +1,4 @@
-import {createHash} from 'node:crypto';
+import {createHash,randomUUID} from 'node:crypto';
 import {existsSync,mkdirSync,readFileSync,readdirSync,lstatSync,writeFileSync,openSync,closeSync,unlinkSync} from 'node:fs';
 import {join,relative,resolve,sep} from 'node:path';
 import {versionedStructuralDigest} from '../canonical-digest.js';
@@ -48,7 +48,7 @@ export interface ProofRunResult {
   schemaVersion:1;mode:'engine-probe';state:'waiting'|'complete';project:string;track:'website'|'collateral';
   runDir:string;inputDigest:string;identityDigest:string;session:string|null;evidence:'session'|'test-double';
   nativeReadiness:{admitted:boolean;state:string;blockers:string[]};
-  requests:ProofRequest[];missing:string[];warnings:string[];outputPath?:string;scorePath?:string;htmlDigest?:string;
+  requests:ProofRequest[];missing:string[];warnings:string[];outputPath?:string;scorePath?:string;htmlDigest?:string;executionDir?:string;
 }
 interface Owner {schemaVersion:1;mode:'engine-probe';project:string;track:string;files:Record<string,string>}
 
@@ -71,8 +71,6 @@ function writeJson(path:string,value:unknown):void{writeFileSync(path,JSON.strin
 
 export async function runAuthoringProof(opts:ProofRunOptions):Promise<ProofRunResult> {
   identifier(opts.project);identifier(opts.run);
-  if(opts.track!==opts.inputs.track)throw new Error('proof: input/track disagreement');
-  const files=proofFiles(opts.inputs);
   const root=projectDir(opts.project);checkTree(join(repoRoot,'projects'),root);rejectLinks(root);
   const ownerPath=join(root,'.engine-probe-owner.json');
   let owner:Owner|undefined;
@@ -82,16 +80,30 @@ export async function runAuthoringProof(opts:ProofRunOptions):Promise<ProofRunRe
       throw new Error('proof: project is not owned by this engine probe');
   }else if(existsSync(root)&&readdirSync(root).length){throw new Error('proof: project is not owned by this engine probe');}
   const refs=join(root,'references');
-  if(owner)for(const [name,digest] of Object.entries(owner.files)){
-    if(!Object.hasOwn(files,name))throw new Error('proof: unknown managed input');
-    const file=join(refs,name);
-    if(!existsSync(file)||hash(readFileSync(file,'utf8'))!==digest)throw new Error(`proof: managed input changed: ${name}`);
+  if(!owner){
+    if(opts.track!==opts.inputs.track)throw new Error('proof: input/track disagreement');
+    proofFiles(opts.inputs); // Validate new inputs before claiming an empty workspace.
   }
   mkdirSync(root,{recursive:true});
   const lockPath=join(root,'.engine-probe.lock');
   const lock=openSync(lockPath,'wx');
   try {
     writeFileSync(lock,JSON.stringify({pid:process.pid,run:opts.run}));
+    const runDir=join(root,'proofs',opts.run);const dispatchDir=join(runDir,'dispatch');
+    const rawDir=join(dispatchDir,'.raw');mkdirSync(rawDir,{recursive:true});
+    writeJson(join(runDir,'proof.json'),{schemaVersion:1,mode:'engine-probe',state:'waiting',project:opts.project,
+      track:opts.track,runDir,session:opts.session?.trim()||null,evidence:opts.evidence??'session',requests:[],missing:[],
+      nativeReadiness:{admitted:false,state:'unchecked',blockers:['Current replay has not checked readiness.']},
+      warnings:['Current run is checking inputs, responses and validation; no current output published.']});
+    if(opts.evidence!==undefined&&opts.evidence!=='session'&&opts.evidence!=='test-double')
+      throw new Error('proof: evidence must be session or test-double');
+    if(opts.track!==opts.inputs.track)throw new Error('proof: input/track disagreement');
+    const files=proofFiles(opts.inputs);
+    if(owner)for(const [name,digest] of Object.entries(owner.files)){
+      if(!Object.hasOwn(files,name))throw new Error('proof: unknown managed input');
+      const file=join(refs,name);
+      if(!existsSync(file)||hash(readFileSync(file,'utf8'))!==digest)throw new Error(`proof: managed input changed: ${name}`);
+    }
     const readiness=readProjectReadiness(opts.project);
     const assessment=readiness?evaluateReadiness(readiness):null;
     const nativeReadiness={admitted:assessment?.admission.admitted??false,state:assessment?.state??'not-recorded',
@@ -100,12 +112,6 @@ export async function runAuthoringProof(opts:ProofRunOptions):Promise<ProofRunRe
     for(const [name,content] of Object.entries(files))writeFileSync(join(refs,name),content,'utf8');
     writeJson(ownerPath,{schemaVersion:1,mode:'engine-probe',project:opts.project,track:opts.track,
       files:Object.fromEntries(Object.entries(files).map(([name,content])=>[name,hash(content)]))});
-    const runDir=join(root,'proofs',opts.run);const dispatchDir=join(runDir,'dispatch');
-    const rawDir=join(dispatchDir,'.raw');mkdirSync(rawDir,{recursive:true});
-    writeJson(join(runDir,'proof.json'),{schemaVersion:1,mode:'engine-probe',state:'waiting',project:opts.project,
-      track:opts.track,runDir,inputDigest:versionedStructuralDigest(opts.inputs,'offscript-proof-input@1'),
-      nativeReadiness,session:opts.session?.trim()||null,evidence:opts.evidence??'session',requests:[],missing:[],
-      warnings:['Current run is checking inputs, responses and validation; no current output published.']});
     const context=buildContext(opts.project,opts.track);const authoringPlan=plan(context);
     const instructions=opts.sectionInstructions??{};
     for(const [id,text] of Object.entries(instructions)){
@@ -148,11 +154,13 @@ export async function runAuthoringProof(opts:ProofRunOptions):Promise<ProofRunRe
       const outDir=join(runDir,'artifacts',artifactDigest);mkdirSync(outDir,{recursive:true});
       const outputPath=join(outDir,'index.html');
       if(existsSync(outputPath)&&readFileSync(outputPath,'utf8')!==assembled.html)throw new Error('proof: existing output changed');
-      const validation=await validate(assembled.html,context,{outDir,authorMode:result.evidence==='session'?'session':'test-double'},authoringPlan);
-      writeFileSync(outputPath,assembled.html,'utf8');
-      Object.assign(result,{outputPath,scorePath:join(outDir,'score.json'),htmlDigest:hash(assembled.html)});
-      writeJson(join(outDir,'proof.json'),result);
+      const executionDir=join(outDir,'executions',randomUUID());mkdirSync(executionDir,{recursive:true});
+      const validation=await validate(assembled.html,context,{outDir:executionDir,
+        authorMode:result.evidence==='session'?'session':'test-double'},authoringPlan);
+      if(!existsSync(outputPath))writeFileSync(outputPath,assembled.html,'utf8');
+      Object.assign(result,{outputPath,scorePath:join(executionDir,'score.json'),htmlDigest:hash(assembled.html),executionDir});
       result.warnings.push(`Validation reports ${validation.perRail.reduce((n,r)=>n+r.findings.length,0)} findings; pipeline completion is not creative acceptance.`);
+      writeJson(join(executionDir,'proof.json'),result);
     }
     writeJson(join(runDir,'proof.json'),result);return result;
   } finally {closeSync(lock);unlinkSync(lockPath);}
