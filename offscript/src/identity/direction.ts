@@ -29,7 +29,7 @@ export function validateDirection(proposal:DirectionProposal):string[]{
   if(!observation||typeof observation!=='object'){errors.push('invalid observation');continue;}
   const ref=refs.find(r=>r?.id===observation.referenceId);
   if(!ref)errors.push('unknown observation reference');
-  if(!aspects.has(observation.aspect)||!ref?.selected?.includes(observation.aspect)||ref?.rejected?.includes(observation.aspect))errors.push('observation aspect was not selected');
+  if(!aspects.has(observation.aspect)||!(Array.isArray(ref?.selected)&&ref.selected.includes(observation.aspect))||(Array.isArray(ref?.rejected)&&ref.rejected.includes(observation.aspect)))errors.push('observation aspect was not selected');
   for(const key of ['observation','interpretation','uncertainty'] as const)if(!nonempty(observation[key]))errors.push(`missing ${key}`);
  }
  for(const ref of refs)for(const aspect of Array.isArray(ref?.selected)?ref.selected:[])if(!proposal.observations.some(o=>o?.referenceId===ref.id&&o.aspect===aspect))errors.push(`missing interpretation: ${ref.id}/${aspect}`);

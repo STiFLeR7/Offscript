@@ -1,7 +1,7 @@
-import {existsSync} from 'node:fs';import {projectReferencesDir} from '../paths.js';import type {ProjectReadiness} from './readiness.js';import {readProjectReadiness} from './readiness-store.js';import {loadProjectContext,projectContextPath} from './context-store.js';import {readInstalledIdentity} from '../identity/identity-materializer.js';import {assertUnlinked} from '../identity/fs-safety.js';import {safeIdentityId} from '../identity/identity.js';
+import {existsSync} from 'node:fs';import {projectReferencesDir} from '../paths.js';import type {ProjectReadiness} from './readiness.js';import {readProjectReadiness,projectReadinessPath} from './readiness-store.js';import {loadProjectContext,projectContextPath} from './context-store.js';import {readInstalledIdentity} from '../identity/identity-materializer.js';import {assertUnlinked,assertProjectClient} from '../identity/fs-safety.js';
 /** Runtime owns byte verification: never reuse a serialized or caller-supplied verified flag. */
 export function refreshIdentityReadiness(client:string,readiness:ProjectReadiness):ProjectReadiness{
- safeIdentityId(client);const identity=readInstalledIdentity(projectReferencesDir(client));const path=projectContextPath(client);assertUnlinked(path);
+ assertProjectClient(client);const identity=readInstalledIdentity(projectReferencesDir(client));const path=projectContextPath(client);assertUnlinked(path);
  let context=identity||existsSync(path)?loadProjectContext(client):readiness.context;
  if(identity&&context){
   const currentAssets=new Set(identity.assets.map(a=>`identity:${a.role}:${a.path}`));
@@ -13,5 +13,7 @@ export function refreshIdentityReadiness(client:string,readiness:ProjectReadines
  return {...rest,...(context?{context}:{}),...(identity?{installedIdentity:{digest:identity.digest,verified:true}}:{})};
 }
 export function readRuntimeProjectReadiness(client:string):ProjectReadiness|null{
- safeIdentityId(client);const readiness=readProjectReadiness(client);return readiness?refreshIdentityReadiness(client,readiness):null;
+ assertProjectClient(client);assertUnlinked(projectReadinessPath(client));const installed=readInstalledIdentity(projectReferencesDir(client));const readiness=readProjectReadiness(client);
+ if(installed&&!readiness)throw new Error('identity: managed identity requires acquisition readiness');
+ return readiness?refreshIdentityReadiness(client,readiness):null;
 }

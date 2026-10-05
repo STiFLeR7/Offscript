@@ -1,6 +1,6 @@
-import fs from 'node:fs';import {createHash,randomUUID} from 'node:crypto';import {tmpdir} from 'node:os';import {join} from 'node:path';import {afterEach,describe,expect,it,vi} from 'vitest';
-import {approveIdentity} from '../../src/identity/identity.js';import {materializeIdentity,readInstalledIdentity} from '../../src/identity/identity-materializer.js';import {buildContext} from '../../src/generate/context.js';import {buildAuthorContract} from '../../src/generate/author-contract.js';import {projectDir} from '../../src/paths.js';
-const roots:string[]=[];const root=()=>{const p=fs.mkdtempSync(join(tmpdir(),'offscript-materialize-'));roots.push(p);return p};afterEach(()=>{vi.restoreAllMocks();for(const p of roots.splice(0))fs.rmSync(p,{recursive:true,force:true})});
+import fs from 'node:fs';import {createHash,randomUUID} from 'node:crypto';import {tmpdir} from 'node:os';import {join,relative,resolve,sep} from 'node:path';import {afterEach,describe,expect,it,vi} from 'vitest';
+import {approveIdentity} from '../../src/identity/identity.js';import {materializeIdentity,readInstalledIdentity} from '../../src/identity/identity-materializer.js';import {buildContext} from '../../src/generate/context.js';import {buildAuthorContract} from '../../src/generate/author-contract.js';import {projectDir,repoRoot} from '../../src/paths.js';
+const roots:string[]=[];const root=()=>{const p=fs.mkdtempSync(join(tmpdir(),'offscript-materialize-'));roots.push(p);return p};afterEach(()=>{vi.restoreAllMocks();for(const p of roots.splice(0)){const parents=[tmpdir(),join(repoRoot,'projects')];if(!parents.some(parent=>{const rel=relative(resolve(parent),resolve(p));return !!rel&&!rel.startsWith('..')&&!rel.includes(sep)}))throw Error('Unsafe cleanup');fs.rmSync(p,{recursive:true,force:true})}});
 const draft={schemaVersion:1 as const,brandId:'northline',version:1,directionId:'d1',subject:'Northline',css:':root{--accent:#506342;--paper:#faf9f4;--font-text:Georgia}',voice:'Quiet and precise',assets:[]};const approval={actor:'Fixture user',at:'2026-10-05T04:00:00Z',source:'user' as const};const textIdentity=()=>approveIdentity(draft,approval,()=>new Uint8Array());
 function refs(p:string){const r=join(p,'references');fs.mkdirSync(r);fs.writeFileSync(join(r,'brief.md'),'---\nschemaVersion: 1\ntrack: website\nbrand: Northline\none-liner: Organize field notes\naudience: Researchers\n---\nOriginal factual content.');return r;}
 describe('recoverable identity materialization',()=>{
@@ -12,3 +12,25 @@ describe('recoverable identity materialization',()=>{
  it('existing engine consumers read installed project CSS and voice',()=>{const name='identity-test-'+randomUUID(),p=projectDir(name);fs.mkdirSync(p,{recursive:true});roots.push(p);const r=refs(p);materializeIdentity(textIdentity(),p,r);const context=buildContext(name,'website');expect(context.tokens.customProps.get('--accent')).toBe('#506342');expect(buildAuthorContract(context)).toContain('Quiet and precise');});
 });
 
+
+it('retains recovery backups and lock when installation and restoration both fail',()=>{
+ const p=root(),r=refs(p);materializeIdentity(textIdentity(),p,r);const rename=fs.renameSync;
+ vi.spyOn(fs,'renameSync').mockImplementation((from,to)=>{if(String(to)===join(r,'voice.md')&&(String(from).includes('staged')||String(from).includes('backup')))throw Error('Injected voice failure');return rename(from,to)});
+ expect(()=>materializeIdentity(approveIdentity({...draft,version:2,voice:'Revised'},approval,()=>new Uint8Array()),p,r)).toThrow();
+ vi.restoreAllMocks();const stage=fs.readdirSync(r).find(n=>n.startsWith('.offscript-identity-stage-'));expect(stage).toBeDefined();
+ expect(fs.readFileSync(join(r,stage!,'backup','voice.md'),'utf8')).toBe(draft.voice);expect(fs.existsSync(join(r,'.offscript-identity.lock'))).toBe(true);expect(()=>readInstalledIdentity(r)).toThrow(/installation|recovery/i);
+ expect(fs.readFileSync(join(r,'colors_and_type.css'),'utf8')).toBe(draft.css);
+});
+it.each(['facts.md','folder/../facts.md'])('protects previous managed asset now used as source-doc %s',sourceDoc=>{
+ const p=root(),r=refs(p),bytes=Buffer.from('Original facts');fs.writeFileSync(join(p,'facts.md'),bytes);
+ const first=approveIdentity({...draft,assets:[{path:'facts.md',role:'image',digest:createHash('sha256').update(bytes).digest('hex')}]},approval,()=>bytes);materializeIdentity(first,p,r);
+ fs.writeFileSync(join(r,'brief.md'),fs.readFileSync(join(r,'brief.md'),'utf8').replace('brand: Northline','brand: Northline\nsource-doc: '+sourceDoc));
+ const before=fs.readFileSync(join(r,'.offscript-identity.json'),'utf8');expect(()=>materializeIdentity(approveIdentity({...draft,version:2},approval,()=>bytes),p,r)).toThrow(/source-doc/i);
+ expect(fs.readFileSync(join(r,'facts.md'),'utf8')).toBe('Original facts');expect(fs.readFileSync(join(r,'.offscript-identity.json'),'utf8')).toBe(before);
+});
+it('stages exactly the asset buffer verified even if source changes after its read',()=>{
+ const p=root(),r=refs(p),bytes=Buffer.from('Approved bytes'),asset=join(p,'image.png');fs.writeFileSync(asset,bytes);
+ const identity=approveIdentity({...draft,assets:[{path:'image.png',role:'image',digest:createHash('sha256').update(bytes).digest('hex')}]},approval,()=>bytes);
+ const read=fs.readFileSync;let reads=0;vi.spyOn(fs,'readFileSync').mockImplementation(((file:any,options:any)=>{const result=read(file,options);if(String(file)===asset&&++reads===1)fs.writeFileSync(asset,'Changed bytes');return result}) as any);
+ materializeIdentity(identity,p,r);vi.restoreAllMocks();expect(fs.readFileSync(join(r,'image.png'))).toEqual(bytes);expect(reads).toBe(1);expect(readInstalledIdentity(r)?.digest).toBe(identity.digest);
+});

@@ -1,15 +1,15 @@
 import fs from 'node:fs';import {createHash,randomUUID} from 'node:crypto';import {join,dirname,relative,resolve,sep} from 'node:path';
 import {deriveBrandContract} from '../brand-contract.js';import {parseBrandKit} from '../brand-kit.js';import {parseBrief} from '../generate/brief.js';
-import {verifyIdentity,immutableIdentityCopy} from './identity.js';import {assertUnlinked,checkedAssetPath} from './fs-safety.js';import type {ApprovedIdentity} from './types.js';
+import {assertIdentitySnapshot,immutableIdentityCopy} from './identity.js';import {assertUnlinked,checkedAssetPath} from './fs-safety.js';import type {ApprovedIdentity} from './types.js';
 const markerName='.offscript-identity.json',lockName='.offscript-identity.lock';
 const hash=(value:Uint8Array)=>createHash('sha256').update(value).digest('hex');
 interface Marker {schemaVersion:1;identity:ApprovedIdentity;managed:Record<string,string>}
 function identityFiles(identity:ApprovedIdentity,readAsset:(path:string)=>Uint8Array):Record<string,Buffer>{
- if(!verifyIdentity(identity,readAsset))throw new Error('identity: snapshot or asset verification failed');
+ assertIdentitySnapshot(identity);
  const files:Record<string,Buffer>={};
  for(const asset of identity.assets){
   if(['brief.md','colors_and_type.css','voice.md','brand-contract.json','brand-kit.json',markerName,lockName].includes(asset.path.toLowerCase())||asset.path.split('/').some(p=>p.startsWith('.offscript-identity')))throw new Error('identity: protected asset collision');
-  files[asset.path]=Buffer.from(readAsset(asset.path));
+  const bytes=Buffer.from(readAsset(asset.path));if(hash(bytes)!==asset.digest)throw new Error(`identity: asset bytes mismatch ${asset.path}`);files[asset.path]=bytes;
  }
  files['colors_and_type.css']=Buffer.from(identity.css);files['voice.md']=Buffer.from(identity.voice);
  const contract=identity.brandContractJson??JSON.stringify(deriveBrandContract(identity.css,{subject:identity.subject,now:()=>new Date(identity.approval.at)}),null,2)+'\n';
@@ -39,13 +39,15 @@ export function materializeIdentity(identity:ApprovedIdentity,sourceRoot:string,
  const briefPath=join(referencesDir,'brief.md');assertUnlinked(briefPath);
  const brief=fs.existsSync(briefPath)?parseBrief(fs.readFileSync(briefPath,'utf8')):undefined;
  if(brief?.brand&&brief.brand!==identity.subject)throw new Error('identity: existing brief brand disagreement');
- if(brief?.sourceDoc&&Object.keys(files).some(p=>p.toLowerCase()===brief.sourceDoc?.toLowerCase()))throw new Error('identity: protected source-doc collision');
  fs.mkdirSync(referencesDir,{recursive:true});assertUnlinked(referencesDir);const lockPath=join(referencesDir,lockName);assertUnlinked(lockPath);const lock=fs.openSync(lockPath,'wx');
  const stage=join(referencesDir,'.offscript-identity-stage-'+randomUUID());
+ let retainRecovery=false;
  const changes:Array<{target:string;backup:string;hadOriginal:boolean;installed:boolean}>=[];
  try{
-  fs.writeFileSync(lock,JSON.stringify({pid:process.pid,digest:identity.digest}));const previous=readMarker(referencesDir);
-  for(const name of new Set([...Object.keys(files),...Object.keys(previous?.managed??{})])){
+  fs.writeFileSync(lock,JSON.stringify({pid:process.pid,digest:identity.digest,recoveryStage:stage}));const previous=readMarker(referencesDir);
+  const affected=new Set([...Object.keys(files),...Object.keys(previous?.managed??{})]);
+  if(brief?.sourceDoc&&[...affected].some(name=>resolve(referencesDir,name).toLowerCase()===resolve(referencesDir,brief.sourceDoc!).toLowerCase()))throw new Error('identity: protected source-doc collision');
+  for(const name of affected){
    const target=checkedAssetPath(referencesDir,name);if(fs.existsSync(target)&&!Object.hasOwn(previous?.managed??{},name))throw new Error(`identity: unowned file conflict ${name}`);
   }
   const marker:Marker={schemaVersion:1,identity,managed:Object.fromEntries(Object.entries(files).map(([name,content])=>[name,hash(content)]))};
@@ -60,10 +62,12 @@ export function materializeIdentity(identity:ApprovedIdentity,sourceRoot:string,
    if(Object.hasOwn(files,name)){fs.renameSync(checkedAssetPath(stage,'staged/'+name),target);change.installed=true;}
   }
  }catch(error){
-  for(const change of changes.reverse()){if(change.installed)fs.unlinkSync(change.target);if(change.hadOriginal&&fs.existsSync(change.backup))fs.renameSync(change.backup,change.target);}
+  const recoveryErrors:unknown[]=[];
+  for(const change of changes.reverse()){try{if(change.installed)fs.unlinkSync(change.target);if(change.hadOriginal&&fs.existsSync(change.backup))fs.renameSync(change.backup,change.target);}catch(recoveryError){recoveryErrors.push(recoveryError);}}
+  if(recoveryErrors.length){retainRecovery=true;throw new AggregateError([error,...recoveryErrors],`identity: rollback incomplete; lock and recovery retained at ${stage}`);}
   throw error;
  }finally{
-  const rel=relative(resolve(referencesDir),resolve(stage));if(rel.startsWith('.offscript-identity-stage-')&&!rel.includes(sep)){assertUnlinked(stage);fs.rmSync(stage,{recursive:true,force:true});}
-  fs.closeSync(lock);fs.unlinkSync(lockPath);
+  fs.closeSync(lock);
+  if(!retainRecovery){const rel=relative(resolve(referencesDir),resolve(stage));if(rel.startsWith('.offscript-identity-stage-')&&!rel.includes(sep)){assertUnlinked(stage);fs.rmSync(stage,{recursive:true,force:true});}fs.unlinkSync(lockPath);}
  }
 }

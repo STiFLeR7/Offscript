@@ -9,3 +9,5 @@ describe('selective reference direction',()=>{
  it('does not invent missing interpretation or accept rejected qualities',()=>{expect(validateDirection({...proposal,observations:[]})).not.toEqual([]);expect(validateDirection({...proposal,observations:[{...proposal.observations[0],interpretation:''}]})).not.toEqual([]);expect(validateDirection({...proposal,observations:[{...proposal.observations[0],aspect:'palette'}]})).not.toEqual([]);});
  it('validates runtime schema and aspect vocabulary',()=>{for(const bad of [null,{}, {...proposal,schemaVersion:2},{...proposal,references:[{...references[0],selected:['unknown']}] }])expect(validateDirection(bad as typeof proposal)).not.toEqual([]);expect(()=>directionPrompt('northline',[{...references[0],assetPath:'../escape'}])).toThrow();});
 });
+
+it.each([{},42,null])('returns diagnostics for malformed nested selected aspects %s',selected=>{expect(()=>validateDirection({...proposal,references:[{...references[0],selected}]} as any)).not.toThrow();expect(validateDirection({...proposal,references:[{...references[0],selected}]} as any)).not.toEqual([]);});

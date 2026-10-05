@@ -13,3 +13,8 @@ export function checkedAssetPath(root:string,asset:string):string{
  if(existsSync(root)&&existsSync(target)){const realRoot=realpathSync(root);const realTarget=realpathSync(target);const actual=relative(realRoot,realTarget);if(!actual||actual==='..'||actual.startsWith('..'+sep)||parse(actual).root)throw new Error('identity: asset outside real root');}
  return target;
 }
+
+/** Project names predate identity ids; keep safe mixed-case names and forbid path segments. */
+export function assertProjectClient(value:unknown):asserts value is string {
+ if(!isSafeAssetPath(value)||value.includes('/'))throw new Error('identity: unsafe project path');
+}
