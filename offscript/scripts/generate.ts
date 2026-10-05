@@ -112,7 +112,7 @@ import {
 } from '../src/platform-harness.js';
 import type { HarnessReportResult } from '../src/platform-harness.js';
 // ── G1-S4 — native generation entry from persisted Project Readiness (G1-S3) ──
-import { readProjectReadiness } from '../src/project/readiness-store.js';
+import { readRuntimeProjectReadiness } from '../src/project/identity-readiness-adapter.js';
 import { resolveGenerationEntry, nativeReviewPackage, type GenerationEntry } from '../src/project/generation-orchestration.js';
 import { buildReviewPackageFromContract, doctorContractFromLegacy } from '../src/project/doctor-contract-adapter.js';
 import type { ProjectReadiness } from '../src/project/readiness.js';
@@ -175,7 +175,7 @@ if (!existsSync(refsDir)) {
 // execution authority at the CLI boundary, not a behavioural change to rendering.
 let persistedReadiness: ProjectReadiness | null;
 try {
-  persistedReadiness = readProjectReadiness(client);
+  persistedReadiness = readRuntimeProjectReadiness(client);
 } catch (err) {
   console.error(
     `\n[readiness] persisted readiness is present but INVALID — failing closed (not regenerating).\n  ${(err as Error).message}`,

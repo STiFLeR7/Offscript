@@ -15,6 +15,7 @@ import { readProjectManifest } from '../src/project/workspace.js';
 import { createCreativeDirector, type AcquireRequest } from '../src/project/creative-director.js';
 import { recordAcquisition } from '../src/project/context-store.js';
 import { projectReadinessFor } from '../src/project/readiness-evaluator.js';
+import { refreshIdentityReadiness } from '../src/project/identity-readiness-adapter.js';
 import { writeProjectReadiness } from '../src/project/readiness-store.js';
 
 function argValue(args: string[], flag: string): string | undefined {
@@ -83,7 +84,7 @@ async function main(): Promise<void> {
     // deliverables; the workflow is derived and the just-recorded context threaded in. Own best-effort
     // guard so a readiness-write failure never masks the successful context record.
     try {
-      writeProjectReadiness(client, projectReadinessFor(plan, { context }));
+      writeProjectReadiness(client, refreshIdentityReadiness(client, projectReadinessFor(plan, { context })));
       console.log(`[readiness] persisted evaluated readiness → projects/${client}/readiness.json`);
     } catch (err) {
       console.warn(`[readiness] not persisted: ${(err as Error).message}`);

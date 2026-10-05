@@ -84,6 +84,8 @@ export interface ProjectReadiness {
   readonly workflow: WorkflowPlan;
   readonly strategy: CreativeStrategy;
   readonly context?: ProjectContext;
+  /** Runtime projection from verified installed snapshot/assets; refreshed at admission. */
+  readonly installedIdentity?: { readonly digest: string; readonly verified: boolean };
 }
 
 /** Information (non-approval) major categories vs the approval category — the WAITING_* split. */

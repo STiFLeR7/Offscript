@@ -7,6 +7,7 @@
  * touching the evaluator (P54 report §3/§7). The policy declares requirements; the evaluator
  * (readiness-evaluator.ts) checks them against the actual project state. The policy never reads fs.
  */
+import { isCurrentTextIdentityApproved } from '../identity/identity-approval.js';
 import type { Track } from '../paths.js';
 import type { ProjectReadiness } from './readiness.js';
 
@@ -45,7 +46,7 @@ export function ruleReadinessPolicy(): ReadinessPolicy {
         // The two foundation reviews (brand + audience) must rest on confirmed facts.
         minEvidence: ['brand', 'audience'],
         // The brand kit's core asset must exist.
-        minAssets: ['logo'],
+        minAssets: ['logo'].filter(asset => asset !== 'logo' || !isCurrentTextIdentityApproved(input.context, input.installedIdentity)),
         // Whatever the Creative Strategy says must be signed off.
         minApprovals: [...input.strategy.requiredApprovals],
         requiredDeliverables: [...input.deliverables],

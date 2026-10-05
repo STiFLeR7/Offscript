@@ -3,7 +3,7 @@ import {existsSync,mkdirSync,readFileSync,readdirSync,lstatSync,writeFileSync,op
 import {join,relative,resolve,sep} from 'node:path';
 import {versionedStructuralDigest} from '../canonical-digest.js';
 import {projectDir,repoRoot} from '../paths.js';
-import {readProjectReadiness} from '../project/readiness-store.js';
+import {readRuntimeProjectReadiness} from '../project/identity-readiness-adapter.js';
 import {evaluateReadiness} from '../project/readiness-evaluator.js';
 import {proofFiles,type ProofInput} from './proof-inputs.js';
 import {buildContext} from './context.js';
@@ -104,7 +104,7 @@ export async function runAuthoringProof(opts:ProofRunOptions):Promise<ProofRunRe
       const file=join(refs,name);
       if(!existsSync(file)||hash(readFileSync(file,'utf8'))!==digest)throw new Error(`proof: managed input changed: ${name}`);
     }
-    const readiness=readProjectReadiness(opts.project);
+    const readiness=readRuntimeProjectReadiness(opts.project);
     const assessment=readiness?evaluateReadiness(readiness):null;
     const nativeReadiness={admitted:assessment?.admission.admitted??false,state:assessment?.state??'not-recorded',
       blockers:assessment?assessment.blockers.map(b=>b.reason):['No native readiness snapshot supplied.']};
