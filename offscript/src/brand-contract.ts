@@ -143,6 +143,13 @@ function stableStringify(contract: BrandContract): string {
   return JSON.stringify(ordered, null, 2) + '\n';
 }
 
+/** Parse supplied contract text using the same shape rules as the filesystem loader. */
+export function parseBrandContract(raw: string): BrandContract {
+  const parsed: unknown = JSON.parse(raw);
+  if (!isBrandContract(parsed)) throw new Error('parseBrandContract: not a valid BrandContract');
+  return parsed;
+}
+
 function isSlotMapping(v: unknown): v is SlotMapping {
   if (v === null || typeof v !== 'object') return false;
   const o = v as Record<string, unknown>;
