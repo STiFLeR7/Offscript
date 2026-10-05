@@ -176,13 +176,17 @@ http.createServer((req, res) => res.end('ok')).listen(Number(process.env.PORT), 
 `;
 
 /** Prints the F10 readiness stdout signal IMMEDIATELY, but only opens the HTTP port after a
- *  delay — the exact "process running is not application ready" scenario this sprint exists for. */
+ *  test-controlled release — the exact "process running is not application ready" scenario this sprint exists for. */
 const SLOW_HTTP_SERVER = `
 console.log('ready - started server');
 const http = require('node:http');
-setTimeout(() => {
+const fs = require('node:fs');
+const path = require('node:path');
+const timer = setInterval(() => {
+  if (!fs.existsSync(path.join(__dirname, 'release-http'))) return;
+  clearInterval(timer);
   http.createServer((req, res) => res.end('ok')).listen(Number(process.env.PORT));
-}, 600);
+}, 20);
 `;
 
 const HANG_NO_HTTP = `setInterval(() => {}, 1000);`;
@@ -241,6 +245,7 @@ describe('F11 — createHttpReadinessProbe — real network probing', () => {
     const immediateSnap = await health.check(server.getSession(session.id));
     expect(immediateSnap.readiness).toBe('STARTING'); // the app itself isn't listening yet
 
+    writeFileSync(join(root, 'slow', 'release-http'), 'release');
     const readySnap = await health.waitUntilReady(() => server.getSession(session.id), { timeoutMs: 5000, intervalMs: 100 });
     expect(readySnap.readiness).toBe('READY');
   }, 15000);
